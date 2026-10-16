@@ -6,13 +6,13 @@ Guidance for Claude Code in this repository.
 
 **itch-live-css**: knowledge and tooling for customizing itch.io pages (profile, project/game, devlog, jam) with custom CSS, for creators who code and for those who don't. Planned layers (full plan in `ROADMAP.md`, in Spanish):
 
-1. An AI-ready **knowledge base** on itch custom CSS (`knowledge/`). **Done** 2026-10-14; checked with live probes on 2026-10-16 (devlog and jam fields still open).
+1. An AI-ready **knowledge base** on itch custom CSS (`knowledge/`). **Done** 2026-10-14; checked with live probes on 2026-10-16 (only jam fields still open).
 2. An open-source **engine** (npm): config → CSS, plugins with option schemas, a validator whose rules map to the knowledge base's R1–R24, two outputs (pasted / served).
 3. A public **hosted service** that serves per-visit CSS through `@import` (profile and project only; `@import` never loads on jams).
 4. A **web configurator**: forms generated from plugin schemas, mock previews per page type, exports per page type.
 5. **Framework adapters** (Tailwind v3.4, Bootstrap's CSS, Animate.css) and **AI integration** (llms.txt, an MCP server, a bring-your-own-key assistant in the configurator).
 
-**Status (2026-10-16): phase 0.** Live probe Runs 1 (draft project), 2 (profile) and 4 (size caps, without the jam part) are done; their results are in `knowledge/evidence/live-probes/` and the knowledge base is retagged. Nothing is published. A local git repo exists (branch `main`, first commit 2026-10-16) with no remote yet: commit or push only when the owner asks. The current next step and the open tasks are in `HANDOFF.md` (local, git-ignored). Read it first when it exists.
+**Status (2026-10-16): phase 0.** Live probe Runs 1 (draft project), 2 (profile), 3 (devlog post; the jam part is not done) and 4 (size caps, without the jam part) are done; their results are in `knowledge/evidence/live-probes/` and the knowledge base is retagged. Nothing is published. A local git repo exists (branch `main`, first commit 2026-10-16) with no remote yet: commit or push only when the owner asks. The current next step and the open tasks are in `HANDOFF.md` (local, git-ignored). Read it first when it exists.
 
 ## Origin: the owner's private repo
 
@@ -37,9 +37,9 @@ llms-full.txt                GENERATED: main file + all sections (rebuild after 
 knowledge/
   itch-custom-css.md         MAIN FILE (~78 KB): rules R1–R24, copy-exact blocks B1–B4, §1–§10 digests,
                              §11 open questions, evidence index, known inconsistencies
-  sections/01…10-*.md        detailed sections (~860 KB in total); 03, 05, 06 and 08 use CRLF, the rest LF
+  sections/01…10-*.md        detailed sections (~865 KB in total); 03, 05, 06 and 08 use CRLF, the rest LF
   evidence/<dimension>.md    reproducible evidence logs, plus *-tools/ scripts (Python/Node, headless Chrome via CDP)
-  evidence/live-probes/      results of live probe runs, 2026-10-16: Run 1 (project), Run 2 (profile), Run 4 (caps); JSON reports + results-*.md
+  evidence/live-probes/      results of live probe runs, 2026-10-16: Run 1 (project), 2 (profile), 3 (devlog), 4 (caps); JSON reports + results-*.md
   tests/                     18 self-checking local browser tests (_lib/ = synthetic itch stand-in, not itch's CSS)
   probes/                    live probe kit: README, probe-description.html, probe-bio.html, probe.css,
                              probe-cap.md, check.js, results-template.md, build.py
@@ -61,7 +61,7 @@ knowledge/
   { head -7 llms-full.txt; for f in knowledge/itch-custom-css.md knowledge/sections/*.md; do printf '\n---\n<!-- file: %s -->\n\n' "$f"; tr -d '\r' < "$f"; done; } > llms-full.tmp && mv llms-full.tmp llms-full.txt
   ```
 
-  Then update the main file's size in `llms.txt` (~78,000 characters on 2026-10-16, after Runs 1, 2, 4 and the pseudonyms).
+  Then update the main file's size in `llms.txt` (~78,600 characters on 2026-10-16, after Runs 1–4 and the pseudonyms).
 - **Publication hygiene.** This folder will become a public repo.
   - Never store third-party content verbatim: other creators' CSS/HTML, itch's own stylesheets or page exports, cloned code. Raw downloads go to a temp/scratch folder; only analysis, statistics and short original snippets belong here.
   - No personal data, tokens, csrf values or cookies.
@@ -95,7 +95,7 @@ From the knowledge base; details in ROADMAP §1.
 - **Size caps (measured 2026-10-16):** profile CSS ≤ **5,120 UTF-8 bytes** (the error message says characters), comments included, edge whitespace not; over it the save is refused, not truncated. Projects and devlogs have **no CSS cap** (659,742 characters saved; bigger saves fail as a request, "missing token"). Bio ≤ 5,000 characters of submitted HTML. Jam cap still unmeasured (20,410 known to save).
 - **`@import` blocks rendering.** A hanging host blanked a page for more than 330 s. So the pasted CSS must carry the full look, and the service must answer from memory.
 - **Native `random()`:** Safari 26.2+; announced for Chrome 156 on 2026-10-20. Re-check after 2026-10-28, together with scroll-driven animations in Firefox 159.
-- **Sanitizer:** a class survives only if it starts with lowercase `custom`; whatever follows is kept, so `custom-w-1/2`, `custom-w-[3px]` and `custom:md:flex` survive, while `md:custom-…`, `!custom-…` and `-custom-…` are dropped (verified on a project description and a bio, 2026-10-16). `id`, `data-*`, `aria-*` and `role` are stripped.
+- **Sanitizer:** a class survives only if it starts with lowercase `custom`; whatever follows is kept, so `custom-w-1/2`, `custom-w-[3px]` and `custom:md:flex` survive, while `md:custom-…`, `!custom-…` and `-custom-…` are dropped (verified on a project description, a bio and a devlog post, 2026-10-16). Iframes become click-to-activate placeholders only in project descriptions; bios and devlog posts keep them live. `id`, `data-*`, `aria-*` and `role` are stripped.
 - **Saved CSS as served (project and profile, 2026-10-16):** itch deletes every `</style>` (any case, `</STYLE >` too) and trims leading and trailing whitespace; everything else is served as pasted. Whether this happens at save or at render is unknown. Profiles store LF, projects CRLF.
 - **Logged-out cache:** after a save, visitors keep the old page for about 2.5 minutes (`X-Cache-Status: HIT`, then `EXPIRED`); the owner always sees the new one (`BYPASS`). A `data:` `@import` applies, so CSS can be split without a host.
 - **Cascade and naming:**

@@ -20,7 +20,7 @@ itch's own stylesheets won't do this for you. None of its bundles has a `prefers
 | `community` | Third-party reports only |
 | `inferred` | Deduced from verified facts |
 
-`s10-NN` ids are checks re-run for this section, listed in *Section notes* at the end. Unless a tag says otherwise, browser results come from Chromium: headless Chrome 155 over CDP, or the Chromium 152 preview pane. `s10-17` to `s10-30` were added later the same day: live renders with itch's JavaScript (§14.7), starter templates tested end to end (§15), and accessibility trees read in Firefox 142, WebKit 26 and through Windows UI Automation (§10.4). **Firefox and Safari layout, and what real screen readers speak, were not tested** (§10.4, §13). `live-*` ids come from the live probe runs of 2026-10-16 in Brave 155 (`evidence/live-probes/`): Run 1 on the owner's draft project page, viewed logged in, and Run 2 on the owner's profile, viewed logged in and logged out; each holds only for the page types and views its text names.
+`s10-NN` ids are checks re-run for this section, listed in *Section notes* at the end. Unless a tag says otherwise, browser results come from Chromium: headless Chrome 155 over CDP, or the Chromium 152 preview pane. `s10-17` to `s10-30` were added later the same day: live renders with itch's JavaScript (§14.7), starter templates tested end to end (§15), and accessibility trees read in Firefox 142, WebKit 26 and through Windows UI Automation (§10.4). **Firefox and Safari layout, and what real screen readers speak, were not tested** (§10.4, §13). `live-*` ids come from the live probe runs of 2026-10-16 in Brave 155 (`evidence/live-probes/`): Run 1 on the owner's draft project page, viewed logged in, Run 2 on the owner's profile, viewed logged in and logged out, and Run 3 on a draft devlog post of that project, viewed logged in; each holds only for the page types and views its text names.
 
 ---
 
@@ -594,7 +594,7 @@ Load the **real page URL** in an isolated headless Chrome and let itch's own scr
 
 **Caveats** **[verified (live render) 2026-10-14 · s10-17]**:
 
-- **Headers.** The rewritten document carries only a `Content-Type` header. That loses nothing CSS-relevant: itch sends no CSP on profiles, jams or devlogs, and only `frame-ancestors` on projects **[documented · corpus-24]**; the project header, and its absence on the profile (owner and logged out), were confirmed live **[verified 2026-10-16 · live-dom]**.
+- **Headers.** The rewritten document carries only a `Content-Type` header. That loses nothing CSS-relevant: itch sends no CSP on profiles, jams or devlogs, and only `frame-ancestors` on projects **[documented · corpus-24]**; the project header, and its absence on the profile (owner and logged out) and on a draft devlog post (owner), were confirmed live **[verified 2026-10-16 · live-dom]**.
 - **User agent.** The UA is `HeadlessChrome` unless you override it. itch's JS reads it (`I.is_mobile()`), so set a phone UA with `Emulation.setUserAgentOverride` for mobile checks: the embed-width pin in §14.8 depends on it.
 - **Blocked requests.** Blocked counters and analytics don't change layout; game iframes stay blank.
 - **Stale mirrors.** The bundles' `?<build>` stamp changed during this session (`?1791981660`, then `?1791985261`). Refetch the page and its bundles before trusting an old mirror.
@@ -616,7 +616,7 @@ All of the following is invisible in a script-free harness (§14.1). Each row wa
 | **Jam countdown** | The server sends six empty `.block_value`s. JS fills them, and adds `.hidden` (`display:none`) to zero units: years and months here, with label "Starts in". | Style the blocks that are shown. Don't assume there are six. |
 | **Jam skip link** | `#maincontent` is retargeted to `#view_jam_<id>`. | See §8.4. |
 
-Projects have an inline `min-height` too, on `#inner_column`: 618 px in a 708 px tall window in the owner's view of a draft project **[verified 2026-10-16 · live-dom]**. That a script sets it, as on profiles, and that logged-out visitors get it as well, is **[inferred]**.
+Projects have an inline `min-height` too, on `#inner_column`: 618 px in a 708 px tall window in the owner's view of a draft project, and 548 px in a 638 px window on its draft devlog post **[verified 2026-10-16 · live-dom]**. That a script sets it, as on profiles, and that logged-out visitors get it as well, is **[inferred]**.
 
 The live profile matched the profile rows above on 2026-10-16 (Brave, 708 px tall window, after itch's scripts): two `style[itchio-grid-sizer]` followed `style#custom_css`, `#wrapper` had `min-height: 658px` logged out (708 − 50 px padding) and `608px` for the owner, and the logged-out `#user_tools` had lost `.hidden` **[verified 2026-10-16 · live-dom]**. The owner's 50 px less fits `user.min.js` passing the site header's height as the offset (04 §9.1) **[inferred]**.
 

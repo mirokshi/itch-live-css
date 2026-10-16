@@ -20,7 +20,7 @@ This section covers every rule that constrains custom CSS on itch.io. For each r
 |---|---|---|---|---|
 | S1 | Have the CSS editor granted to your account first | Software gate, manual staff approval | There is no CSS field to paste into | documented · sanitizer-39, s02-n1 |
 | S2 | Expect custom CSS only on project pages (plus devlogs), jam overviews and profiles | Software (where itch emits the CSS) | CSS is never loaded elsewhere | verified · docs-05 |
-| S3 | Start every class you author in page **HTML** with `custom-` | Software (HTML sanitizer) | Class stripped; your selector matches nothing | documented · repo-56, s02-n1; verified 2026-10-16 (project description; bio subset) · live-k01 to live-k21 |
+| S3 | Start every class you author in page **HTML** with `custom-` | Software (HTML sanitizer) | Class stripped; your selector matches nothing | documented · repo-56, s02-n1; verified 2026-10-16 (project description, devlog post; bio subset) · live-k01 to live-k21 |
 | S4 | Fit the page type's size cap | Software (check on save) | CSS can't be saved: the save is refused with an error, never truncated (profile) | documented · repo-60, s02-n4; verified 2026-10-16 (profile, project) · live-cap-A1, live-cap-A2c, live-cap-B1, live-cap-B2 |
 | S5 | Leave itch's anti-scam markup working | Software adds it; policy protects it | The external-link warning is disguised (P6) | verified · itchcss-46; documented · sanitizer-39 |
 | B1 | Write `https://` in every `url()` and `@import` | Browser (mixed-content blocking) | The resource silently fails to load | documented · s02-n5; verified · s02-n6 |
@@ -57,7 +57,7 @@ This section covers every rule that constrains custom CSS on itch.io. For each r
 | Surface | Custom CSS served? | Evidence |
 |---|---|---|
 | Project page | Yes | documented · docs-05; verified 2026-10-16 · live-css |
-| Devlog index and devlog posts; project `/comments` | Yes. It is the same sheet as the project's. | documented · docs-05; observed · s02-n7 |
+| Devlog index and devlog posts; project `/comments` | Yes. It is the same sheet as the project's. | documented · docs-05; observed · s02-n7; verified 2026-10-16 (a draft devlog post) · live-css |
 | Jam overview page (`/jam/<slug>`) | Yes | documented · docs-05 |
 | Jam `/entries`, `/results` | **No.** The host's CSS is not loaded there. | observed · s02-n7 |
 | Profile page (`<user>.itch.io`) | Yes | documented · docs-05; verified 2026-10-16 · live-css |
@@ -76,7 +76,7 @@ This section covers every rule that constrains custom CSS on itch.io. For each r
   - the rich-text editor's own `text-center` and `text-justify`. **[observed · s02-n7]**
   
   Always write the documented `custom-` form anyway.
-- **What the filter actually tests (project description).** A case-sensitive prefix: every token that starts with lowercase `custom` survives, whatever follows (`customer`, `custom_d`, a bare `custom-`, `custom-hover:x`, `custom-w-[3px]`, `custom-w-1/2`, `custom-café`). `Custom-a`, `CUSTOM-b`, `-custom-f`, `md:custom-g`, `!custom-h` and `xcustom-i` are dropped. itch's `text-center`, `text-right`, `text-justify` and `spoiler` survive, `text-left` doesn't **[verified 2026-10-16 · live-k01 to live-k25, live-k34]**. A profile bio gave the same result on the tokens tested there (`customer`, `custom-hover:x`, `custom-w-[3px]`, `custom-w-1/2` and `custom:flex` kept; `Custom-a`, `-custom-f` and `foo` dropped) **[verified 2026-10-16 · live-k01, live-k05, live-k07, live-k09, live-k11, live-k14, live-k16, live-k26]**. Devlog posts and jam descriptions are untested.
+- **What the filter actually tests (project description).** A case-sensitive prefix: every token that starts with lowercase `custom` survives, whatever follows (`customer`, `custom_d`, a bare `custom-`, `custom-hover:x`, `custom-w-[3px]`, `custom-w-1/2`, `custom-café`). `Custom-a`, `CUSTOM-b`, `-custom-f`, `md:custom-g`, `!custom-h` and `xcustom-i` are dropped. itch's `text-center`, `text-right`, `text-justify` and `spoiler` survive, `text-left` doesn't **[verified 2026-10-16 · live-k01 to live-k25, live-k34]**. A profile bio gave the same result on the tokens tested there (`customer`, `custom-hover:x`, `custom-w-[3px]`, `custom-w-1/2` and `custom:flex` kept; `Custom-a`, `-custom-f` and `foo` dropped) **[verified 2026-10-16 · live-k01, live-k05, live-k07, live-k09, live-k11, live-k14, live-k16, live-k26]**. A devlog post body gave the project-description result on every token **[verified 2026-10-16 · live-k01 to live-k25, live-k34]**. Jam descriptions are untested.
 - **This rule constrains HTML, not CSS.** Your selectors may target itch's own classes (`.game_cell`, `.user_profile`, …). Whether those classes stay stable is a separate matter (P5).
 - **Keep editing as HTML once you start.** The guide warns that the rich-text editor may rewrite markup and strip tags you added **[documented · s02-n1]**.
 
@@ -103,7 +103,7 @@ This section covers every rule that constrains custom CSS on itch.io. For each r
 
 #### 1.5 S5: itch's anti-scam markup (added by software, protected by policy)
 
-- **Description links are marked server-side.** On project and devlog pages they are served with `rel="nofollow noopener"` **[verified · itchcss-46]**. On a project description, off-site links get `rel="nofollow noopener" referrerpolicy="origin"`, replacing any `rel` you wrote **[verified 2026-10-16 · live-l01, live-l12, live-l13]**.
+- **Description links are marked server-side.** On project and devlog pages they are served with `rel="nofollow noopener"` **[verified · itchcss-46]**. On a project description and on a devlog post, off-site links get `rel="nofollow noopener" referrerpolicy="origin"`, replacing any `rel` you wrote **[verified 2026-10-16 · live-l01, live-l12, live-l13]**.
 - **The "External link" badge.** `game.css` shows a red "External link" badge on hover and focus, through `.user_formatted a[rel~=nofollow]:hover::after` and `:focus::after`, and draws a red ring on linked images.
   - The badge exists only in `game.css`. It is absent from the profile (`user.css`) and jam (`jam.css`) stylesheets **[verified 2026-10-14 · itchcss-46]**.
 - **Third-party iframes are click-to-activate.** In descriptions they need a click before they load. itch announced this and the link highlighting in 2023 as anti-scam measures **[documented · sanitizer-39]**. On a project description every host tested (YouTube, youtube-nocookie, Vimeo, CodePen, GitHub Pages, example.com, `http://` and protocol-relative URLs) became a `button.embed_preload` placeholder **[verified 2026-10-16 · live-i01 to live-i07, live-i10]**. A profile bio is different: its iframes stayed live, with no placeholder **[verified 2026-10-16 · live-i01, live-i04]**.
@@ -152,7 +152,7 @@ This section covers every rule that constrains custom CSS on itch.io. For each r
 
 | Element | Where | Evidence |
 |---|---|---|
-| `ul#user_tools` (Follow, Related, …) | Direct child of `body` on project, devlog and profile pages, for visitors; absent from the owner's view of a project and of the profile | verified · docs-09; live profile and owner views verified 2026-10-16 · live-dom |
+| `ul#user_tools` (Follow, Related, …) | Direct child of `body` on project, devlog and profile pages, for visitors; absent from the owner's view of a project, of a devlog post and of the profile | verified · docs-09; live profile and owner views verified 2026-10-16 · live-dom |
 | Jam site header `.jam_layout_header_widget` | `body` child placed before `#wrapper` | verified · docs-09 |
 | Project site header `.game_header_widget` and jam banner `.above_game_banner` (jam entries during voting) | Before `#wrapper` | observed · s02-n7 |
 | Screenshot lightbox `#lightbox_container` | Outside `#wrapper` | observed · s02-n7 |

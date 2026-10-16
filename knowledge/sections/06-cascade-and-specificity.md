@@ -5,7 +5,7 @@ This section covers how your custom CSS ranks against five things: itch's base s
 - **Browsers tested:** Chromium only (Chrome/Edge 147–155). Firefox and Safari were not run.
 - **Tags:** `[confidence date · evidence id]`.
 - **`s06-*` and `gapfill06-*` ids:** checks made for this section on 2026-10-14 (see Section notes at the end).
-- **`live-*` ids:** the live probe runs of 2026-10-16 (Brave 155 = Chromium 155; `evidence/live-probes/`): Run 1 on the owner's draft project page (owner logged in), Run 2 on the owner's profile (logged in and logged out). Each holds only for the page types its text names; jams are untested.
+- **`live-*` ids:** the live probe runs of 2026-10-16 (Brave 155 = Chromium 155; `evidence/live-probes/`): Run 1 on the owner's draft project page (owner logged in), Run 2 on the owner's profile (logged in and logged out), Run 3 on a draft devlog post of that project (owner logged in). Each holds only for the page types its text names; jams are untested.
 
 ### Rules of thumb
 
@@ -27,7 +27,7 @@ This section covers how your custom CSS ranks against five things: itch's base s
 | Page | `<head>` order (earliest → latest) | Evidence |
 |---|---|---|
 | Profile | `link user.css` → scripts → `style#user_theme` → [Google Fonts `link`, only if the theme font needs one] → **`style#custom_css`**. At runtime, itch's JS appends two `style[itchio-grid-sizer]` after it | **[verified · crawlprofile-22 (51/51 pages), repo-03, itchcss-02, localtests-02, s06-heads]**, runtime part **[verified 2026-10-16 · live-dom]** (live profile, owner and logged out) |
-| Project / devlog | `link game.css` → scripts → `style#game_theme` → [0–2 Google Fonts links] → **`style#custom_css`** (always the last `<head>` element) | **[verified · crawlproject-36, docs-18, corpus-14, s06-heads; verified 2026-10-16 · live-dom]** |
+| Project / devlog | `link game.css` → scripts → `style#game_theme` → [0–2 Google Fonts links] → **`style#custom_css`** (always the last `<head>` element; also in the owner's views of a draft project and of its draft devlog post, with nothing added after it) | **[verified · crawlproject-36, docs-18, corpus-14, s06-heads; verified 2026-10-16 · live-dom]** |
 | Jam overview | `link jam.css` → scripts → **`style#jam_theme`, which holds the generated theme with the host CSS appended in the same element** → [theme font `link`, `@font-face` only] | **[verified · docs-18, corpus-14, s06-heads]** |
 
 What this means:
@@ -220,7 +220,7 @@ Layer a sheet only when you *want* it to lose. Checked on 2026-10-14 against the
 | Page | Theme declares on | Same node as `#wrapper`? | Override with |
 |---|---|---|---|
 | Profile | `.user_page` (and `--itchio_ui_bg` on `:root`) | no, it is a child | `#wrapper .user_page{--itchio_link_color:…}` |
-| Project / devlog | `.wrapper` (`<div class="main wrapper game_page_wrapper" id="wrapper">`; the same classes on a draft project's owner view **[verified 2026-10-16 · live-dom]**) | yes | `#wrapper{--…}` (the ID wins) |
+| Project / devlog | `.wrapper` (`<div class="main wrapper game_page_wrapper" id="wrapper">`; the same classes in the owner's views of a draft project and of its draft devlog post **[verified 2026-10-16 · live-dom]**) | yes | `#wrapper{--…}` (the ID wins) |
 | Jam overview | `.jam_page_wrap` | yes | `#wrapper{--…}` |
 
 - **A variable only reaches rules that read `var()`.** On profiles and projects, the theme writes literal colors on more specific selectors:

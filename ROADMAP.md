@@ -8,7 +8,7 @@ programe o no: un **motor open source**, un **servicio alojado** que sirve CSS q
 Todo se apoya en la base de conocimiento verificada de [`knowledge/`](knowledge/itch-custom-css.md) (2026-10-14):
 731 datos, 472 comprobados directamente. Las referencias `R7`, `§8`, `B1`… apuntan a ese archivo.
 
-Estado: **fase 0 casi cerrada**. Las pruebas en vivo 1 (proyecto en borrador), 2 (perfil) y 4 (topes de tamaño, sin la parte de jam) se hicieron el 2026-10-16; falta, si se puede, la prueba 3 (devlog y jam). Nada publicado todavía.
+Estado: **fase 0 casi cerrada**. Las pruebas en vivo 1 (proyecto en borrador), 2 (perfil), 3 (solo el devlog) y 4 (topes, sin la jam) se hicieron el 2026-10-16; solo faltan las jams. Nada publicado todavía.
 
 ---
 
@@ -53,12 +53,13 @@ Hallazgos de la base de conocimiento que condicionan el diseño. Cada uno es una
 ### Fase 0 · Cerrar la base de conocimiento (en curso)
 
 - [x] Investigación, pruebas y verificación adversarial (13 frentes).
-- [x] `knowledge/itch-custom-css.md` (~78 KB), 10 secciones (~860 KB), `llms.txt` y `llms-full.txt`.
+- [x] `knowledge/itch-custom-css.md` (~78 KB), 10 secciones (~865 KB), `llms.txt` y `llms-full.txt`.
 - [x] 18 páginas de prueba locales, registros de evidencia y kit de pruebas en vivo.
 - [x] **Prueba 1: proyecto en borrador** (2026-10-16, [resultados](knowledge/evidence/live-probes/results-2026-10-16-project.md)). Los tokens de clase con `/`, `[ ]` y `:` sobreviven; itch elimina `</style>` y recorta los espacios iniciales y finales del CSS; `@import` de `data:` funciona.
 - [x] **Prueba 2: perfil** (2026-10-16, [resultados](knowledge/evidence/live-probes/results-2026-10-16-profile.md)). Mismo trato del CSS que en proyectos, pero con LF; la bio sanea igual que la descripción, sus iframes siguen activos; sin sesión, caché de unos 2,5 minutos tras guardar.
 - [x] **Prueba 4: topes** (2026-10-16, [resultados](knowledge/evidence/live-probes/results-2026-10-16-caps.md)): perfil 5.120 bytes, proyecto sin tope de CSS, bio 5.000 caracteres. Falta el tope de las jams.
-- [ ] **Prueba 3 con tu cuenta** ([`knowledge/probes/`](knowledge/probes/README.md)): devlog y jam (descripción, CSS y tope), si hay borradores.
+- [x] **Prueba 3, devlog** (2026-10-16, [resultados](knowledge/evidence/live-probes/results-2026-10-16-devlog.md)): el cuerpo del post se sanea igual que una descripción de proyecto, pero sus iframes siguen activos; el CSS del proyecto se sirve igual.
+- [ ] **Prueba 3, jam** ([`knowledge/probes/`](knowledge/probes/README.md)): descripción, CSS y tope, si hay una jam en borrador.
 - [ ] Volver a comprobar después del 2026-10-28: `random()` en Chrome 156 y las animaciones ligadas al scroll en Firefox 159.
 - [x] Repo preparado (2026-10-16): licencias, aviso de terceros, README en inglés, seudónimos y revisión de limpieza.
 - [ ] Primer commit y repo público en GitHub.

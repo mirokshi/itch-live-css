@@ -10,7 +10,7 @@ This section covers both layers per page type. It describes what the theme edito
 How to read it:
 - **[verified 2026-10-14 · id]** = reproduced by a direct test or live observation. [documented · id] = itch docs, staff posts or itch's own source files. [observed · id] = seen on real pages but not systematically. [community · id] = third-party reports only. [inferred · …] = deduced from verified facts.
 - Ids such as `crawlprofile-35` point to facts backed by `knowledge/evidence/<dimension>.md`. Ids `s04-N` point to the checks made for this section, and `s04-gf-N` to the later gap-fill checks; both are listed under "Section notes" at the end.
-- Everything was observed logged out on 2026-10-14 unless a tag says otherwise. `live-*` ids come from the live probe runs of 2026-10-16 in Brave 155 (`evidence/live-probes/`): Run 1 on the owner's draft project, viewed logged in, and Run 2 on the owner's profile, viewed logged in and logged out; each holds only for the page types and views its text names. No third-party CSS is reproduced here. Code blocks are paraphrases or original examples.
+- Everything was observed logged out on 2026-10-14 unless a tag says otherwise. `live-*` ids come from the live probe runs of 2026-10-16 in Brave 155 (`evidence/live-probes/`): Run 1 on the owner's draft project, viewed logged in, Run 2 on the owner's profile, viewed logged in and logged out, and Run 3 on a draft devlog post of that project, viewed logged in; each holds only for the page types and views its text names. No third-party CSS is reproduced here. Code blocks are paraphrases or original examples.
 
 ---
 
@@ -37,7 +37,7 @@ How to read it:
 - **For keyboard focus, paste the one block in §9.6.** It was the only recipe tested that gave every Tab stop a visible, uncut ring on profile, project and jam pages. Recolouring `:focus` alone leaves spoilers and disabled buttons without a ring, and cuts the rings on game titles. **[verified 2026-10-14 · s04-gf-01, s04-gf-02]**
 - **On HTML5 project pages, keep effects off the embed's ancestors.** A `backdrop-filter`, `filter`, `transform` or `will-change` on `#wrapper`, `#inner_column`, `.view_game_page` or `.embed_wrapper` breaks the maximized game: it grows to the page height or disappears. `isolation` there puts itch's tool bar over the game. §9.2 has guarded recipes. **[verified 2026-10-14 · s04-gf-08, s04-gf-09]** for the pairs rendered: `backdrop-filter` on `#inner_column`, `transform` on `.view_game_page`, a `both`-fill transform entrance on `#inner_column`, `filter` on `#wrapper`, `will-change:transform` on `.embed_wrapper`, `isolation` on `#wrapper`, `opacity`+`isolation` on `#inner_column`. The other pairings follow from the same containing-block and stacking rules **[inferred]**.
 - **Read the live theme block before you pick colours.** The theme's colours, and the alphas and shades derived from them, never appear in the CSS editor. **[verified 2026-10-14 · a11y-38, crawlprofile-54]**
-- **Judge every design logged out.** The owner gets `theme_editor.css` and owner bars that visitors never see. [observed · itchcss-51] On projects, the owner bar (`.game_header_widget` with `.owner_tools` and `.edit_theme_btn`) and the `.game_page_apperance_columns` wrappers around `#wrapper` are confirmed **[verified 2026-10-16 · live-dom]**. On the profile, the owner's view had a second itch stylesheet link, the site header with `.owner_tools` and `.edit_theme_btn`, `body.has_header`, the `.theme_editor_columns` wrappers around `#wrapper` (editor closed) and no `#user_tools` **[verified 2026-10-16 · live-dom]**.
+- **Judge every design logged out.** The owner gets `theme_editor.css` and owner bars that visitors never see. [observed · itchcss-51] On projects, the owner bar (`.game_header_widget` with `.owner_tools` and `.edit_theme_btn`) and the `.game_page_apperance_columns` wrappers around `#wrapper` are confirmed **[verified 2026-10-16 · live-dom]**. A draft devlog post of that project shows the owner less: `.owner_tools` but no `.edit_theme_btn`, and no wrappers, `#wrapper` being a direct child of `body` **[verified 2026-10-16 · live-dom]**. On the profile, the owner's view had a second itch stylesheet link, the site header with `.owner_tools` and `.edit_theme_btn`, `body.has_header`, the `.theme_editor_columns` wrappers around `#wrapper` (editor closed) and no `#user_tools` **[verified 2026-10-16 · live-dom]**.
 
 ---
 
@@ -46,7 +46,7 @@ How to read it:
 | Page | itch bundle (exactly one) | Theme block | Where your CSS ends up | Theme Google Fonts `<link>` | Added after your CSS at runtime |
 |---|---|---|---|---|---|
 | Profile `<user>.itch.io/` | `static.itch.io/user.css` (71,824 B) | `style#user_theme`: one line, native CSS nesting | `style#custom_css`, the last `<style>` in the served `<head>` | between `user_theme` and `custom_css` | 2 × `<style itchio-grid-sizer>` (also on the live profile, owner and logged out **[verified 2026-10-16 · live-dom]**) |
-| Project, devlog post | `game.css` (164,629 B) | `style#game_theme`: flat, always 40 rules | `style#custom_css`, after the theme and font links | 0–2 links between `game_theme` and `custom_css` | none seen (none on a draft project's owner view either **[verified 2026-10-16 · live-dom]**) |
+| Project, devlog post | `game.css` (164,629 B) | `style#game_theme`: flat, always 40 rules | `style#custom_css`, after the theme and font links | 0–2 links between `game_theme` and `custom_css` | none seen (none in the owner's view of a draft project or of its draft devlog post either **[verified 2026-10-16 · live-dom]**) |
 | Jam overview `itch.io/jam/<slug>` | `jam.css` (71,053 B) | `style#jam_theme`: flat, 14 generated rules | **inside `style#jam_theme`**, appended after the generated rules. There is no `style#custom_css` | after `jam_theme`'s closing `</style>` | none seen |
 | Jam sub-pages (`/entries`, `/results`, `/rate/<id>`) | site-wide `main.css` (643,506 B) | `style#jam_theme` with only `:root` + `.page_widget` variables | **not applied**: host CSS never reaches these pages | — | — |
 
@@ -179,7 +179,7 @@ The template's nested rules, including the type-led `hr{…}`, need *relaxed* ne
 
 ### 4. Project and devlog theme: `style#game_theme`
 
-The same 40 selector groups appear on 48/48 pages; only the values differ. The theme is flat (no nesting), uses no IDs, has a highest specificity of (0,5,1), contains 0 `var()` uses and has 8 `!important` declarations. Devlog posts get the same structure. **[verified 2026-10-14 · crawlproject-21, s04-2]** On the owner's draft project, with near-default colours, `style#game_theme` was 4,649 characters on a single line **[verified 2026-10-16 · live-dom]**.
+The same 40 selector groups appear on 48/48 pages; only the values differ. The theme is flat (no nesting), uses no IDs, has a highest specificity of (0,5,1), contains 0 `var()` uses and has 8 `!important` declarations. Devlog posts get the same structure. **[verified 2026-10-14 · crawlproject-21, s04-2]** On the owner's draft project, with near-default colours, `style#game_theme` was 4,649 characters on a single line, and its draft devlog post served a block of the same length with the same background declarations **[verified 2026-10-16 · live-dom]**.
 
 | Emitted | What to know |
 |---|---|
@@ -700,7 +700,7 @@ The synthetic page from s10-16, extended with a collection row and a jam grid ca
 - **No automatic dark mode.**
   - There is no `prefers-color-scheme` in any bundle.
   - Logged-out creator pages (profile, project, devlog, jam overview) carry `body.no_theme_toggle` and never `dark_theme`, and itch's page scripts never add it. So a visitor's OS dark mode doesn't change a themed page.
-  - For variants, write your own `@media (prefers-color-scheme: …)` under `#wrapper`. Whether a logged-in visitor's site dark mode affects creator pages is untested. The owner's own logged-in views of a draft project and of the profile, with the OS in dark mode, also had `no_theme_toggle` and no `dark_theme`; the account's site-theme setting wasn't recorded **[verified 2026-10-16 · live-dom]**.
+  - For variants, write your own `@media (prefers-color-scheme: …)` under `#wrapper`. Whether a logged-in visitor's site dark mode affects creator pages is untested. The owner's own logged-in views of a draft project, of its draft devlog post and of the profile, with the OS in dark mode, also had `no_theme_toggle` and no `dark_theme`; the account's site-theme setting wasn't recorded **[verified 2026-10-16 · live-dom]**.
 
   **[verified 2026-10-14 · itchcss-27]**
 - **Print:** `@media print` only hides `.header_widget`, plus two lightbox resets in game.css. Add your own `@media print` under `#wrapper` if print matters, e.g. to drop fixed backgrounds and animations. **[verified 2026-10-14 · itchcss-50]**

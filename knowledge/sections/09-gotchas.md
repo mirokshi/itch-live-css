@@ -435,7 +435,7 @@ Tags read `[confidence · fact-id]`. Evidence was checked on **2026-10-14** unle
 - *Symptom:* CSS that "works on a project" fails on a profile, or an old jam stylesheet suddenly won't re-save.
 - *Cause:*
   - **Projects:**
-    - There is no CSS cap. Single-line ASCII CSS of 659,742 characters saved whole on a draft project; 659,743 and more fail with "missing token", because the request is too big for its form to be read. That is a request-size limit, not a CSS rule, and the exact number depends on the rest of the form [verified 2026-10-16 · live-cap-B1, live-cap-B2; inferred for the cause]. Devlogs and the comments page use the project's CSS, so the same holds for them.
+    - There is no CSS cap. Single-line ASCII CSS of 659,742 characters saved whole on a draft project; 659,743 and more fail with "missing token", because the request is too big for its form to be read. That is a request-size limit, not a CSS rule, and the exact number depends on the rest of the form [verified 2026-10-16 · live-cap-B1, live-cap-B2; inferred for the cause]. Devlogs and the comments page use the project's CSS, so the same holds for them; a draft devlog post served its project's stored sheet unchanged [verified 2026-10-16 · live-css].
     - Live sheets of 9,004 to 93,105 characters exist [verified · crawlproject-47], and a 38,576-byte sheet is served intact [verified · corpus-07].
     - An admin said game pages "might actually be missing the size check" [documented · repo-60].
     - A jam host claimed in 2026 that 5,120 now also applies to projects. That report is quoted in [observed · community-08, docs-33] and does not hold [verified 2026-10-16 · live-cap-B1].
@@ -699,7 +699,7 @@ Tags read `[confidence · fact-id]`. Evidence was checked on **2026-10-14** unle
   - A fragment-only `href="#x"` is removed, but because the original href was non-itch, itch still injects `rel="nofollow noopener"` [observed · sanitizer-06, sanitizer-45; verified 2026-10-16 · live-l03].
   - An author-written `rel` is replaced on external links [verified · sanitizer-07], and dropped on itch.io links [verified 2026-10-16 · live-l01, live-l02, live-l13]. Bios are no exception: `rel="me"` on an off-site link became `nofollow noopener`, and `rel="me author"` on an itch link was removed [verified 2026-10-16 · live-l01, live-l02].
 - *Fix:*
-  - Make the target `<a name="x"></a>` and link to the full page URL plus `#x`. On a project description and in a bio `<a name>` survives and matches `:target` [verified 2026-10-16 · live-l10]. Same-page itch links are internal and get no badge [observed · sanitizer-42].
+  - Make the target `<a name="x"></a>` and link to the full page URL plus `#x`. On a project description, on a devlog post and in a bio `<a name>` survives and matches `:target` [verified 2026-10-16 · live-l10]. Same-page itch links are internal and get no badge [observed · sanitizer-42].
   - Select real outbound links with `a[href][rel~=nofollow]`.
   - Profile links in the links widget get `rel="me"` from itch itself [verified · crawlprofile-07], so use the widget, not a bio link, for `rel="me"` verification.
 
@@ -709,16 +709,16 @@ Tags read `[confidence · fact-id]`. Evidence was checked on **2026-10-14** unle
   - Disallowed tags are escaped as visible text, not deleted [observed · sanitizer-15; verified 2026-10-16 · live-t02, live-t04, live-t10 to live-t22, live-a13, live-e04]. A bio escaped `<link>`, `<meta>` and a comment the same way [verified 2026-10-16 · live-t21, live-e04].
   - `<wbr>` was accepted until 2024 and has been shown as text since at least 2025-04 [observed · sanitizer-44]. Yet on a project description on 2026-10-16 it survived, served as `soft<wbr>break</wbr>` [verified 2026-10-16 · live-t11]. Stored descriptions are re-sanitised on output, so whitelist changes reach old content [inferred · sanitizer-43].
   - Not expected to work: `svg`, `video`, `audio`, `picture`, `canvas`, form controls, `section`/`article`/`nav`, `style`, `script`, `button`, `center` [inferred · sanitizer-14]. On a project description all of these were escaped as text except `video`, which survives with `controls` (its class, width and height are dropped) [verified 2026-10-16 · live-t10, live-t13 to live-t20, live-a13].
-  - Library-level rules, now checked on a project description (in a bio only the unquoted value and the comment were tested; devlogs and jams are untested):
+  - Library-level rules, now checked on a project description and, with the same results, on a devlog post (in a bio only the unquoted value and the comment were tested; jams are untested) [verified 2026-10-16 · live-html]:
     - An unquoted value with `%` or `/` escapes the whole tag [documented · sanitizer-16]. Confirmed for `width=40%`, in project descriptions and bios; the bare URL inside the escaped text is also auto-linked [verified 2026-10-16 · live-g07].
     - `@click` attributes and a CR inside a tag do the same [inferred · sanitizer-17]. A line break inside a tag escaped it [verified 2026-10-16 · live-e06].
     - `<span/>` self-closing is escaped [inferred · sanitizer-18; verified 2026-10-16 · live-t12].
     - `<!-- comments -->` show as text by default, in project descriptions and bios [documented · sanitizer-20; verified 2026-10-16 · live-e04].
-    - A raw `x < div > y` gets a `</div>` appended that can close itch's container [inferred · sanitizer-19]. It did: the content after it landed outside `div.formatted_description` [verified 2026-10-16 · live-e08].
+    - A raw `x < div > y` gets a `</div>` appended that can close itch's container [inferred · sanitizer-19]. It did: the content after it landed outside `div.formatted_description`, and on a devlog post outside `section.post_body` [verified 2026-10-16 · live-e08].
 - *Fix:*
   - Quote every attribute value, keep each tag on one line, and write explicit closing tags.
   - Write `&lt;` for a literal `<`, and keep notes out of the HTML.
-  - Use CSS `overflow-wrap:anywhere` rather than relying on `<wbr>`, which is kept on project descriptions but untested elsewhere [verified 2026-10-16 · live-t11].
+  - Use CSS `overflow-wrap:anywhere` rather than relying on `<wbr>`, which is kept on project descriptions and devlog posts but untested elsewhere [verified 2026-10-16 · live-t11].
 
 **67. Inline `style=""` is partly or completely dropped.**
 - *Symptom:* `float`, `display`, `border-radius` or `font-family` inline styles do nothing. Sometimes the whole `style` attribute is gone.
@@ -748,7 +748,7 @@ Tags read `[confidence · fact-id]`. Evidence was checked on **2026-10-14** unle
 - *Symptom:* a YouTube iframe shows as a 250×140 thumbnail button, not a player.
 - *Cause:*
   - Since 2023, third-party iframes in project descriptions are replaced by `button.embed_preload` click-to-activate placeholders with inline sizes. Authors can't write such buttons themselves [verified · sanitizer-24]. On a project description YouTube became `.youtube_preload` and every other host tested `.other_embed`, with the cleaned iframe kept in `data-embed_code` [verified 2026-10-16 · live-i01 to live-i07, live-i10].
-  - Devlog bodies and jam descriptions keep live iframes [observed · sanitizer-25], and so do profile bios: a YouTube and an arbitrary `https://` iframe stayed live, with 0 placeholders [verified 2026-10-16 · live-i01, live-i04]. Iframe `title`, `allow` and `loading` attributes were never seen surviving [observed · sanitizer-26]; on a project description they, `sandbox`, `srcdoc` and a `data:` `src` were dropped, and in a bio `title`, `allow`, `loading` and `sandbox` were too [verified 2026-10-16 · live-i01, live-i08, live-i09].
+  - Devlog bodies and jam descriptions keep live iframes [observed · sanitizer-25]; on a draft devlog post all 10 probe iframes stayed live, with 0 placeholders [verified 2026-10-16 · live-i01 to live-i10]. So do profile bios: a YouTube and an arbitrary `https://` iframe stayed live, with 0 placeholders [verified 2026-10-16 · live-i01, live-i04]. Iframe `title`, `allow` and `loading` attributes were never seen surviving [observed · sanitizer-26]; on a project description and on a devlog post they, `sandbox`, `srcdoc` and a `data:` `src` were dropped, and in a bio `title`, `allow`, `loading` and `sandbox` were too [verified 2026-10-16 · live-i01, live-i08, live-i09].
 - *Fix:*
   - Restyle via `#wrapper .embed_preload`. The inline width and height probably need `!important` (inferred from item 11).
   - Put a visible caption next to embeds.
@@ -779,7 +779,7 @@ Tags read `[confidence · fact-id]`. Evidence was checked on **2026-10-14** unle
 - *Symptom:* `#wrapper .formatted_description p{…}` styles the project page but nothing else.
 - *Cause:* each page type has its own container [verified · sanitizer-30].
   - Profile bio: `.user_profile.formatted`. There are 0 `.formatted_description` on the live profile [verified · repo-29]. The bio has no `.user_formatted`, so itch's table, spoiler and external-link rules don't apply there [verified · sanitizer-30]. A probe bio confirms it: container `div.user_profile.formatted`, and a hand-written spoiler stayed visible [verified 2026-10-16 · live-html, live-k34].
-  - Devlog post: `section.object_text_widget_widget.user_formatted.post_body`. Devlogs have no `.columns`, `.left_col` or `.formatted_description` [verified · docs-06, crawlproject-39].
+  - Devlog post: `section.object_text_widget_widget.user_formatted.post_body`. Devlogs have no `.columns`, `.left_col` or `.formatted_description` [verified · docs-06, crawlproject-39]. A draft post confirms the container, `section#object_text_widget_N.object_text_widget_widget.base_widget.user_formatted.post_body`, whose `.user_formatted` hides a hand-written spoiler [verified 2026-10-16 · live-html, live-k34].
   - Jam: `.jam_content.user_formatted` [verified · sanitizer-30].
 - *Fix:* list every container you mean.
   ```css
@@ -799,7 +799,7 @@ Tags read `[confidence · fact-id]`. Evidence was checked on **2026-10-14** unle
 **76. Project CSS also styles every devlog post and the comments page.**
 - *Symptom:* a rule written for the main page breaks devlog posts. For example, `#wrapper .header{display:none}` removes the project title and banner link on every devlog post.
 - *Cause:*
-  - `/devlog`, each post and `/comments` serve a byte-identical `custom_css` and `game_theme` [verified · docs-06, crawlproject-37, corpus-29, itchcss-10, community-35].
+  - `/devlog`, each post and `/comments` serve a byte-identical `custom_css` and `game_theme` [verified · docs-06, crawlproject-37, corpus-29, itchcss-10, community-35]. A draft post served its project's stored `custom_css` unchanged (2,752 characters, 52 CR) [verified 2026-10-16 · live-css].
   - The header differs: `#header > img` on the main page, `#header > a > img` elsewhere [verified · crawlproject-38].
   - The h1 layout of posts varies [observed · a11y-07].
 - *Fix:* scope page-specific rules with the page widget class: `.view_game_page` (main), `.game_devlog_post_page`, `.game_devlog_page`, `.game_comments_page` [verified · crawlproject-38]. Test both page kinds.
@@ -1308,10 +1308,10 @@ curl -sS --compressed -A '<Chrome 155 UA>' -D profN.hdr -o profN.html https://mi
 - **Background shorthand:** it wipes the theme image (crawljam-10), yet itch's jam migration guide uses it. It is correct only when you supply your own image (item 19).
 - **Brave blocking:** the blocking was observed (repo-14, community-36), but no Brave default list rule matches the URL (external-27). The cause is unexplained, and items 52 and 72 treat blocking as a risk to design around.
 - **Nesting fallout in older browsers:** the corrected crawlprofile-33 and itchcss-05 agree. Browsers without nesting drop every nested theme rule. Partial-support Chrome 112–119 and Safari 16.5–17.1 drop `hr{…}` and the rest of the `.user_page{}` block, and keep the separate game-cell block.
-- **External-link badge vs click-to-activate on devlogs:** the badge is a game.css rule and applies to devlog `.user_formatted` bodies (docs-14, sanitizer-08). Click-to-activate iframes do not apply on devlogs (sanitizer-25). These are two different features.
+- **External-link badge vs click-to-activate on devlogs:** the badge is a game.css rule and applies to devlog `.user_formatted` bodies (docs-14, sanitizer-08). Click-to-activate iframes do not apply on devlogs (sanitizer-25; confirmed on a draft devlog post, live-i01 to live-i10). These are two different features.
 - **Safe crawl spacing:** thresholds from 4 s to 30 s were reported (crawljam-39, corpus-38, crawlproject-52, crawlprofile-47). The budget is shared per IP (repo-55, plus this section's own 429), so item 121 advises ≥10 s plus backoff.
 
 **Limits of this section:**
 - Firefox and Safari behaviour was not tested for most rendering traps (items 22–28, 108–110).
 - Real screen-reader output (NVDA, JAWS, VoiceOver) was not tested; only Chrome's accessibility tree was.
-- Sanitizer rules marked *inferred* come from the open-source library itch appears to use, not from saving content on itch. Tags `[verified 2026-10-16 · live-…]` come from the owner's live probe runs in Brave 155 = Chromium 155: Run 1 on a draft project (description and Custom CSS, owner logged in) and Run 2 on the profile (its bio with the 33-probe bio set, and its Custom CSS; read logged in and logged out). Run 4 (`live-cap-…`) measured the size caps of the profile's CSS and bio and of the draft project's CSS. They hold for projects unless the text names bios or profiles too. The jam cap was not measured.
+- Sanitizer rules marked *inferred* come from the open-source library itch appears to use, not from saving content on itch. Tags `[verified 2026-10-16 · live-…]` come from the owner's live probe runs in Brave 155 = Chromium 155: Run 1 on a draft project (description and Custom CSS, owner logged in), Run 2 on the profile (its bio with the 33-probe bio set, and its Custom CSS; read logged in and logged out) and Run 3 on a draft devlog post of that project (its body, and the project's CSS as served there). Run 4 (`live-cap-…`) measured the size caps of the profile's CSS and bio and of the draft project's CSS. They hold for projects unless the text names bios, profiles or devlog posts too. The jam cap was not measured.

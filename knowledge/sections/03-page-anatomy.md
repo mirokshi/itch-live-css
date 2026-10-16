@@ -14,7 +14,7 @@ How to read it:
   - [community · id]: third-party reports only.
   - `S03-N*` ids point to the extra checks in the **Section notes** at the end.
   - `gapfill03-*` ids point to the round-2 gap fill in `knowledge/evidence/gapfill.md`.
-  - `live-*` ids point to the live probe runs of 2026-10-16 (`knowledge/evidence/live-probes/`). Run 1 read the **owner's logged-in view** of one draft project; Run 2 read the owner's **profile**, logged in and logged out (private window). Both read the page after itch's scripts ran, with the theme editor closed, so each fact holds only for the view and page type its text names. Run 4 (`live-cap-*`) saved generated CSS of set sizes on the profile and the draft project to measure the size caps.
+  - `live-*` ids point to the live probe runs of 2026-10-16 (`knowledge/evidence/live-probes/`). Run 1 read the **owner's logged-in view** of one draft project; Run 2 read the owner's **profile**, logged in and logged out (private window); Run 3 read the owner's view of a **draft devlog post** of that project. All three read the page after itch's scripts ran, with the theme editor closed, so each fact holds only for the view and page type its text names. Run 4 (`live-cap-*`) saved generated CSS of set sizes on the profile and the draft project to measure the size caps.
 - **This is the HTML before itch's JavaScript runs.** Where it matters, the trees flag what JS changes later: lazy image `src`, removal of `.hidden`, `.game_loaded` after a click, and countdown values.
 
 ---
@@ -26,7 +26,7 @@ How to read it:
 | Page type | Wrapper element | Parent | What else is on it |
 |---|---|---|---|
 | Profile | `div#wrapper.user_page_wrap` (no other class; the same on the live profile, owner and logged out **[verified 2026-10-16 · live-dom]**) | `body` (logged out) | The theme paints the background image on `.user_page_wrap`, which is this same node **[verified 2026-10-14 · repo-18]** |
-| Project, devlog, comments | `div#wrapper.main.wrapper.game_page_wrapper` (also in a project's owner view **[verified 2026-10-16 · live-dom]**) | `body` (logged out) | The theme sets its variables on `.wrapper`, again this node [observed · docs-23] |
+| Project, devlog, comments | `div#wrapper.main.wrapper.game_page_wrapper` (also in the owner's view of a project and of a devlog post **[verified 2026-10-16 · live-dom]**) | `body` (logged out, and in the owner's view of a devlog post **[verified 2026-10-16 · live-dom]**) | The theme sets its variables on `.wrapper`, again this node [observed · docs-23] |
 | Jam overview | `div#wrapper.jam_page_wrap` | `body` | It has existed on jams only since the June 2026 revamp [documented · docs-30, crawljam-17] |
 
 - The `.wrapper` class matches only on project and devlog pages. `#wrapper` matches on all three **[verified 2026-10-14 · corpus-31]**.
@@ -34,7 +34,8 @@ How to read it:
 - **Never write `body > #wrapper` or `body > .jam_page_wrap`.** Logged out, `#wrapper` is a direct child of `body` on every type **[verified 2026-10-14 · crawljam-18, crawlprofile-01, crawlproject-01]**, and so it was on the live logged-out profile **[verified 2026-10-16 · live-dom]**. In the owner's view, itch wraps it:
   - on jams, in `.theme_editor_columns > .theme_editor_primary_column` [documented · docs-28, crawljam-18];
   - on profiles, in the same wrappers (`div.theme_editor_columns > div.theme_editor_primary_column`, a child of `body`), even with the theme editor closed: first seen in one export **[verified 2026-10-14 · S03-N7, gapfill03-11]**, then on the owner's live profile **[verified 2026-10-16 · live-dom]**;
-  - on project pages, in `div.game_page_apperance_columns > div#maincontent.game_page_primary_column` (itch's spelling), a child of `body`, even with the theme editor closed. This was first deduced from `game.css` rules [inferred · gapfill03-12], then seen on the owner's draft project **[verified 2026-10-16 · live-dom]**.
+  - on project pages, in `div.game_page_apperance_columns > div#maincontent.game_page_primary_column` (itch's spelling), a child of `body`, even with the theme editor closed. This was first deduced from `game.css` rules [inferred · gapfill03-12], then seen on the owner's draft project **[verified 2026-10-16 · live-dom]**;
+  - but not on a devlog post: in the owner's view of a draft post, `#wrapper` was a direct child of `body`, with no theme-editor columns **[verified 2026-10-16 · live-dom]**. The same project CSS reaches the project page, so `body > #wrapper` still fails there.
 
 **2. Never target numbered ids.**
 - Widget ids such as `#user_N`, `#view_game_N`, `#view_html_game_N`, `#html_embed_N`, `#game_devlog_post_N`, `#user_links_N`, `#jam_header_N` and `#jam_submitter_N` are random per render **[verified 2026-10-14 · crawlproject-01]**.
@@ -65,11 +66,11 @@ How to read it:
 | `ul#user_tools.user_tools.hidden` | profile, project, devlog, comments | Always, logged out. Profile: one `li > a.action_btn`, "Follow <name>", linking to login. Projects add more `li`, including `li.jam_entry` for jam entries. `.hidden` is in the served HTML only: on the live logged-out profile, after itch's scripts, it was `ul#user_tools.user_tools`, the first child of `body`. | **[verified 2026-10-14 · crawlprofile-19, crawlproject-08, crawlproject-53]**; live profile **[verified 2026-10-16 · live-dom]** |
 | `div.goal_banner_widget` | project | Project has a fundraising goal | **[verified 2026-10-14 · crawlproject-08]** |
 | `div.jam_banner.above_game_banner > .jam_banner_inner > .jam_cover + .jam_information` | project | Project is an entry of a jam currently in voting | **[verified 2026-10-14 · crawlproject-53]** |
-| `div.game_header_widget.header_widget` (+ `body.has_site_header`) | project, devlog | On 7/7 jam entries in voting and 0/64 other project pages; also on one devlog post, and in the owner's view of a draft project (next rows). Its trigger for visitors is not documented. | [observed · crawlproject-54, a11y-55]; owner view **[verified 2026-10-16 · live-dom]** |
+| `div.game_header_widget.header_widget` (+ `body.has_site_header`) | project, devlog | On 7/7 jam entries in voting and 0/64 other project pages; also on one devlog post, and in the owner's views of a draft project and of its draft devlog post (next rows). Its trigger for visitors is not documented. | [observed · crawlproject-54, a11y-55]; owner view **[verified 2026-10-16 · live-dom]** |
 | `div#jam_layout_header_N.jam_layout_header_widget.header_widget.small_logo.gray` | jam overview | Always: the 50px site header with `a.skip_to_main` and a logo `h1.title` | **[verified 2026-10-14 · crawljam-15, itchcss-33]**; [observed · a11y-08] |
 | `div.header_widget` … `div.footer` (site chrome, no `#wrapper` at all) | jam subpages, community profiles, 404s | Always | **[verified 2026-10-14 · crawljam-40, crawlprofile-21, crawlprofile-52]** |
 | `div#user_profile_header_N.small_logo.user_profile_header_widget.header_widget.base_widget.gray` (with `.owner_tools > button.edit_theme_btn` and `#user_panel_N.user_panel_widget.logged_in`) + `div.theme_editor_columns`. **`#user_tools` is absent**, and `body` adds `.has_header`. | profile, **owner only** | Owner logged in (seen with the theme editor closed) | **[verified 2026-10-14 · S03-N7, gapfill03-11]**, from one June 2026 export; the header widget, `.owner_tools`, `.edit_theme_btn`, `.theme_editor_columns`, `.has_header` and the missing `#user_tools` also on the live profile **[verified 2026-10-16 · live-dom]** (`#user_panel_N` not checked) |
-| `div#game_header_N.small_logo.game_header_widget.header_widget.base_widget.gray` with `.owner_tools` and `.edit_theme_btn` (and, from `game.css`, `.publish_status .pub_toggle`), then `div.game_page_apperance_columns > div#maincontent.game_page_primary_column > #wrapper`. `body` adds `.has_site_header`, and **`#user_tools` is absent**. | project, devlog, **owner only** | Owner logged in (seen with the theme editor closed) | Project: **[verified 2026-10-16 · live-dom]**, one draft. `.pub_toggle` and devlogs: [inferred · gapfill03-12], from `game.css` rules only |
+| `div#game_header_N.small_logo.game_header_widget.header_widget.base_widget.gray` with `.owner_tools` and `.edit_theme_btn` (and, from `game.css`, `.publish_status .pub_toggle`), then `div.game_page_apperance_columns > div#maincontent.game_page_primary_column > #wrapper`. `body` adds `.has_site_header`, and **`#user_tools` is absent**. | project (a devlog post differs, last column), **owner only** | Owner logged in (seen with the theme editor closed) | Project: **[verified 2026-10-16 · live-dom]**, one draft. Devlog post, one draft: the same header widget with `.owner_tools`, `body.has_site_header` and no `#user_tools`, but **no `.edit_theme_btn` and no columns**: `#wrapper` is a direct child of `body` **[verified 2026-10-16 · live-dom]** (gapfill03-12 had inferred the project's wrappers there). `.pub_toggle`: [inferred · gapfill03-12], from `game.css` rules only |
 | Site header / `#user_tools` for a logged-in **non-owner** | all creator pages | Any logged-in visitor | **Unknown.** `user.css` has `.has_header .user_tools{top:50px}` and `game.css` has `.has_site_header .user_tools{top:50px}`, so both can coexist [inferred · gapfill03-12]; see §11 |
 
 Where `#user_tools` sits:
@@ -95,7 +96,7 @@ Where `#user_tools` sits:
 | Creator profile | `https://<user>.itch.io/` (`http://` answers **301** to it) | `user` | `.user_page_wrap` | `user.css` | `style#user_theme` | **Yes**, profile editor → `style#custom_css` |
 | Project | `https://<user>.itch.io/<project>` | `view_game` | `.game_page_wrapper` | `game.css` | `style#game_theme` | **Yes**, project editor → `style#custom_css` |
 | Devlog index | `…/<project>/devlog` | `game.devlog` | same | `game.css` | same | **Yes**, byte-identical to the project's |
-| Devlog post | `…/<project>/devlog/<id>/<slug>` | `game.devlog_post` | same | `game.css` | same | **Yes**, byte-identical |
+| Devlog post | `…/<project>/devlog/<id>/<slug>` | `game.devlog_post` | same | `game.css` | same | **Yes**, byte-identical; a draft post served its project's stored sheet, with `data-page_name` `game.devlog_post` **[verified 2026-10-16 · live-css, live-dom]** |
 | Comments | `…/<project>/comments` (pager: `?before=N`, `?after=0`) | `game.comments` | same | `game.css` | same | **Yes**, byte-identical |
 | Purchase popup | `…/<project>/purchase` | `game_purchase` | none | `popup.css` | none | **No** |
 | Project board | `…/<project>/community` | `game.community` | none | `main.css` | `style#jam_theme`, variables only | **No** |
@@ -144,8 +145,9 @@ Consequences:
 | Jam subpages | `link main.css` → `style#jam_theme` (252 chars) → scripts | Not served |
 | Profile, **owner view** | `link user.css` → `link theme_editor.css` → `style#user_theme` → [font link] → [`style#custom_css`]. Live: two `static.itch.io` links → `style#user_theme` → `style#custom_css` (no font link), then two `style[itchio-grid-sizer]` after the scripts | Still last in the served HTML |
 | Project, **owner view** | two `static.itch.io` `link`s → `style#game_theme` → `style#custom_css` (a Lato theme, so no font link), the same in the served HTML and after scripts; nothing is added after it | Still last |
+| Devlog post, **owner view** | three `static.itch.io` `link`s → `style#game_theme` (4,649 characters, as on its project page) → `style#custom_css`, the same in the served HTML and after scripts; nothing is added after it | Still last |
 
-Evidence: **[verified 2026-10-14 · S03-N1, S03-N2, crawljam-01, corpus-09, itchcss-06, itchcss-10, crawlproject-37]**. Owner view: profile **[verified 2026-10-14 · S03-N7]**, one export, and the live profile **[verified 2026-10-16 · live-dom]**; project **[verified 2026-10-16 · live-dom]**, one draft (neither run recorded which two itch sheets were linked). The logged-out live profile, with its single itch link and the two runtime sizers: **[verified 2026-10-16 · live-dom]**.
+Evidence: **[verified 2026-10-14 · S03-N1, S03-N2, crawljam-01, corpus-09, itchcss-06, itchcss-10, crawlproject-37]**. Owner view: profile **[verified 2026-10-14 · S03-N7]**, one export, and the live profile **[verified 2026-10-16 · live-dom]**; project **[verified 2026-10-16 · live-dom]**, one draft, and one of its draft devlog posts **[verified 2026-10-16 · live-dom]** (no run recorded which itch sheets were linked). The logged-out live profile, with its single itch link and the two runtime sizers: **[verified 2026-10-16 · live-dom]**.
 
 What the order means:
 - **Profile and project.** Your CSS comes after itch's sheet and the theme, so it wins every specificity tie **[verified 2026-10-14 · S03-N2]**. itch's own `!important` declarations still beat a normal declaration: those in the project theme, and `user.css`'s `color:inherit !important` on collection headings (see the selector tables) **[verified 2026-10-14 · itchcss-16, itchcss-17]**.
@@ -395,7 +397,7 @@ Evidence: **[verified 2026-10-14 · crawlproject-01, crawlproject-02, crawlproje
 - **The wrapper chain is fixed.** On 48/48 project pages (and 2 jam entries), `#wrapper` has exactly one child and `#inner_column` has exactly three: `#header`, the page widget and `#view_game_footer`. Unlike on profiles, **the footer is inside `#inner_column`** **[verified 2026-10-14 · crawlproject-01]**.
 - **`#inner_column` classes vary:** `size_small|medium|large|very_large` (the theme's font size) and `family_<font>`, e.g. `family_sans-serif`, `family_manrope` [observed · docs-22]; **[verified 2026-10-14 · S03-N1]**. The owner's draft project had `size_large family_lato` **[verified 2026-10-16 · live-dom]**.
 - **`#inner_column` clips.** It has `width:960px;margin:0 auto;position:relative;padding-bottom:40px;overflow:hidden` (`max-width:960px;width:auto` under `.responsive`). Shadows, transforms and tooltips that leave it are clipped. The footer is absolutely positioned in that 40px above 1000px and static below **[verified 2026-10-14 · itchcss-35]**.
-- **After itch's scripts, `#inner_column` carries an inline `min-height`.** In the owner's view of a draft project it was `min-height: 618px` in a 708 px tall window **[verified 2026-10-16 · live-dom]**. The 90 px difference fits a 50 px header bar plus the column's 40 px bottom padding, so it is most likely the same `max_height` helper that sizes profile `#wrapper` (04 §9.1); whether logged-out visitors get it too, and with what offset, was not checked [inferred · live-dom]. Like any inline style it beats `#wrapper #inner_column{min-height:…}` unless you add `!important` [inferred].
+- **After itch's scripts, `#inner_column` carries an inline `min-height`.** In the owner's view of a draft project it was `min-height: 618px` in a 708 px tall window, and on its draft devlog post `548px` in a 638 px window, the same 90 px offset **[verified 2026-10-16 · live-dom]**. The 90 px difference fits a 50 px header bar plus the column's 40 px bottom padding, so it is most likely the same `max_height` helper that sizes profile `#wrapper` (04 §9.1); whether logged-out visitors get it too, and with what offset, was not checked [inferred · live-dom]. Like any inline style it beats `#wrapper #inner_column{min-height:…}` unless you add `!important` [inferred].
 
 #### 6.3 Header variants
 
@@ -531,7 +533,7 @@ The project's classification is visible only in the footer breadcrumbs (`#view_g
 
 ### 7. Devlog index, devlog posts, comments page
 
-These three pages get the project's own `game_theme` and `custom_css`, byte for byte. They keep `#wrapper.game_page_wrapper > #inner_column` and `#view_game_footer.footer`, but have **no `.columns`, `.left_col`, `.right_col` or `.formatted_description`** **[verified 2026-10-14 · docs-06, crawlproject-37, community-35, corpus-29, itchcss-10, itchcss-47, S03-N3]**.
+These three pages get the project's own `game_theme` and `custom_css`, byte for byte; in the owner's view of a draft post, `custom_css` held the project's stored text and `game_theme` had the same length (4,649 characters) **[verified 2026-10-16 · live-css, live-dom]**. They keep `#wrapper.game_page_wrapper > #inner_column` and `#view_game_footer.footer`, but have **no `.columns`, `.left_col`, `.right_col` or `.formatted_description`** **[verified 2026-10-14 · docs-06, crawlproject-37, community-35, corpus-29, itchcss-10, itchcss-47, S03-N3]**.
 
 ```
 devlog post   [data-page_name=game.devlog_post]   …/<project>/devlog/<id>/<slug>
@@ -566,7 +568,7 @@ comments page [data-page_name=game.comments]   …/<project>/comments
 └─ div#view_game_footer.footer
 ```
 
-Evidence: **[verified 2026-10-14 · crawlproject-39, crawlproject-40, crawlproject-41, itchcss-47, S03-N1, S03-N4, gapfill03-03, gapfill03-04]**; [observed · a11y-07].
+Evidence: **[verified 2026-10-14 · crawlproject-39, crawlproject-40, crawlproject-41, itchcss-47, S03-N1, S03-N4, gapfill03-03, gapfill03-04]**; [observed · a11y-07]. The post-body container, as drawn, was confirmed on a draft post **[verified 2026-10-16 · live-html]**.
 
 #### 7.1 `#header` presence depends on page type and banner
 
@@ -577,7 +579,7 @@ Evidence: **[verified 2026-10-14 · crawlproject-39, crawlproject-40, crawlproje
 | Devlog post | `#header.has_image` > `a` > `img`, + hidden `h1.game_title` | **No `#header` and no `.game_title` at all** (7/7). `#inner_column` holds only the post widget and the footer. |
 | Comments page | `#header` > `a` > `img`, + `h1.game_title` | `#header` > `h1.game_title`: no link, **visible** (5/5) |
 
-Evidence: **[verified 2026-10-14 · crawlproject-09, crawlproject-41, S03-N1, S03-N4, gapfill03-03, gapfill03-04]**; [observed · a11y-07].
+Evidence: **[verified 2026-10-14 · crawlproject-09, crawlproject-41, S03-N1, S03-N4, gapfill03-03, gapfill03-04]**; [observed · a11y-07]. A draft post of a bannerless draft project had no `#header` either **[verified 2026-10-16 · live-dom]**.
 
 - Bannerless samples: 5 projects for comments, 5 for indexes and 7 for posts, each checked against the project's bannerless main page. Across all 45 same-day post captures (files), the 32 with a `#header` all had `.has_image`, and 13 had no `#header` at all.
 - `body.embedded_game` sits only on the HTML5 **main** page (0 of the 7 sub-pages of 4 HTML5 projects). An HTML5 project without a banner therefore shows its title `h1` on `/devlog` and `/comments`, though itch hides it on the main page **[verified 2026-10-14 · gapfill03-03]**.
@@ -802,11 +804,11 @@ Evidence: **[verified 2026-10-14 · crawlproject-37, crawlproject-39, crawlproje
 |---|---|---|
 | Profile bio | `div.user_profile.formatted` (**no** `.user_formatted`) | Bio-specific sizes from `.user_page .user_profile.formatted …` |
 | Project description | `div.formatted_description.user_formatted`, plus a second one inside `.download_instructions` | Site `h2`s are siblings under `.left_col`, not inside it |
-| Devlog post | `section.object_text_widget_widget.base_widget.user_formatted.post_body` (id varies per request) | |
+| Devlog post | `section.object_text_widget_widget.base_widget.user_formatted.post_body` (id varies per request) | Has `.user_formatted`, so itch's spoiler styles apply: a hand-written spoiler is hidden, as on a project page |
 | Jam description | `div.jam_content.user_formatted` | |
 | Comments | `div.post_body.user_formatted[dir=auto]` | Present on project, devlog and comments pages |
 
-Evidence: **[verified 2026-10-14 · sanitizer-30, crawlproject-56]**; [documented · docs-25]; the project description container **[verified 2026-10-16 · live-html]**.
+Evidence: **[verified 2026-10-14 · sanitizer-30, crawlproject-56]**; [documented · docs-25]; the project description and devlog post containers **[verified 2026-10-16 · live-html]**, and the devlog spoiler **[verified 2026-10-16 · live-k34]**.
 
 ---
 
@@ -816,7 +818,7 @@ Everything in §1–§10 is what a **logged-out** visitor receives. No logged-in
 - one owner export of a profile (June 2026);
 - itch's own stylesheets (`user.css`, `game.css`);
 - `game.min.js`;
-- the live probe runs of 2026-10-16, which recorded DOM facts (no page copy) from the owner's view of one draft project and of the profile, and from the logged-out profile (`live-dom`).
+- the live probe runs of 2026-10-16, which recorded DOM facts (no page copy) from the owner's view of one draft project, of one of its draft devlog posts and of the profile, and from the logged-out profile (`live-dom`).
 
 Rows marked inferred or unverified were never seen rendered.
 
@@ -825,11 +827,11 @@ Rows marked inferred or unverified were never seen rendered.
 | Comment form `form.form.post_form`. Closed: `input.click_input[type=text]`. Open: a markdown widget (`.forms_markdown_input_widget`) with `.markdown_toolbar > li > button[type=button][tabindex=-1]`, `textarea.markdown_textarea` (`min-height:160px`, monospace, `resize:vertical`), a `.buttons` row and a hidden `input[name=csrf_token]` | **Inside `#wrapper`**, in `.game_comments_widget` on the main page, devlog posts and `/comments`, in place of the logged-out `p.form_placeholder` | Logged-in visitors; built by `game.min.js` after load | [inferred · gapfill03-13]: code and CSS read, never seen rendered |
 | Reply and edit forms `.post_form.inline_reply` / `.post_form.inline_edit` | Inside comment lists (`.community_post_list_widget`) | Logged-in visitors (edit: the comment's author) | [inferred · gapfill03-13] |
 | `.game_cell_tools > a.action_btn.add_to_collection_btn` | Inside `.game_thumb` of a grid card: `position:absolute;top:5px;right:10px`, faded in on `.game_cell:hover`, hidden at ≤650px | Present on 36/36 cards of every logged-out browse page. Found on 0 of 59 logged-out profile captures, and absent from the owner export and from the live profile, owner and logged out. Logged-in non-owners: unknown. | **[verified 2026-10-14 · gapfill03-14]** for presence and absence; live profile **[verified 2026-10-16 · live-dom]**; [unverified] logged-in non-owners |
-| `body.dark_theme` (`game.css`: `body.dark_theme{background:#1b1b1b}` + 49 more rules; `user.css` 30; `jam.css` 23) | `body` | Never logged out (0/839 captures). Creator pages carry `body.no_theme_toggle`, which hides the site's theme toggle. The owner's view of a draft project, with the OS in dark mode, also had `no_theme_toggle` and no `.dark_theme`, and so did the profile, owner and logged out (the account's site-theme setting wasn't recorded). Dark-mode accounts: unknown. | **[verified 2026-10-14 · gapfill03-14]** for absence and rules; owner views and logged-out profile **[verified 2026-10-16 · live-dom]**; [unverified] for dark-mode accounts |
+| `body.dark_theme` (`game.css`: `body.dark_theme{background:#1b1b1b}` + 49 more rules; `user.css` 30; `jam.css` 23) | `body` | Never logged out (0/839 captures). Creator pages carry `body.no_theme_toggle`, which hides the site's theme toggle. The owner's views of a draft project and of its draft devlog post, with the OS in dark mode, also had `no_theme_toggle` and no `.dark_theme`, and so did the profile, owner and logged out (the account's site-theme setting wasn't recorded). Dark-mode accounts: unknown. | **[verified 2026-10-14 · gapfill03-14]** for absence and rules; owner views and logged-out profile **[verified 2026-10-16 · live-dom]**; [unverified] for dark-mode accounts |
 | Owner's profile chrome: site header with `.owner_tools > button.edit_theme_btn`, `.theme_editor_columns`, no `#user_tools` | Body level | Profile owner, with the theme editor closed too | **[verified 2026-10-14 · S03-N7, gapfill03-11]**, from one export; live profile **[verified 2026-10-16 · live-dom]** |
 | Hidden pre-rendered items: inline `display:none` cards and collection rows; `section.purchased_games` without `.mode_show_purchases` | **Inside `#wrapper`** | Profile owner | **[verified 2026-10-14 · gapfill03-11]**, from one export; on the live profile, two inline `display:none` elements, two collection rows and a purchases section in the owner's view only **[verified 2026-10-16 · live-dom]** |
-| Editor scroll container: `.theme_editor_open .theme_editor_columns{height:calc(100vh - 50px)}`, primary column `overflow:auto` (`user.css`); the same on `.game_page_apperance_columns` (`game.css`) | Around `#wrapper` | Owner with the theme editor open | Rules **[verified 2026-10-14 · gapfill03-12]**; the `.game_page_apperance_columns` wrapper (project) and the `.theme_editor_columns` wrapper (profile) are there with the editor closed too **[verified 2026-10-16 · live-dom]**; the effect is [inferred] |
-| Project owner header `div.game_header_widget` (`.publish_status .pub_toggle.published\|.private\|.restricted`, `.edit_theme_btn`) | Body level, before `#wrapper` | Project owner | The bar with `.owner_tools` and `.edit_theme_btn` **[verified 2026-10-16 · live-dom]**, one draft; the `.pub_toggle` states [inferred · gapfill03-12], from `game.css` only |
+| Editor scroll container: `.theme_editor_open .theme_editor_columns{height:calc(100vh - 50px)}`, primary column `overflow:auto` (`user.css`); the same on `.game_page_apperance_columns` (`game.css`) | Around `#wrapper` | Owner with the theme editor open | Rules **[verified 2026-10-14 · gapfill03-12]**; the `.game_page_apperance_columns` wrapper (project) and the `.theme_editor_columns` wrapper (profile) are there with the editor closed too, while a draft devlog post has neither **[verified 2026-10-16 · live-dom]**; the effect is [inferred] |
+| Project owner header `div.game_header_widget` (`.publish_status .pub_toggle.published\|.private\|.restricted`, `.edit_theme_btn`) | Body level, before `#wrapper` | Project owner | The bar with `.owner_tools` and `.edit_theme_btn` **[verified 2026-10-16 · live-dom]**, one draft; on its draft devlog post `.owner_tools` without `.edit_theme_btn` **[verified 2026-10-16 · live-dom]**; the `.pub_toggle` states [inferred · gapfill03-12], from `game.css` only |
 
 Rules that follow:
 - **Never style bare form controls or lists under `#wrapper`** [inferred · gapfill03-13]. Logged in, the comment toolbar is `li > button` and the editor is a `textarea`, both inside `#wrapper`.
@@ -842,7 +844,7 @@ Rules that follow:
 
 Still open, because it needs an account:
 1. A logged-in **non-owner's** view of a profile, a project page, a devlog post and `/comments`. Does `#user_tools` stay, a site header appear, `.game_cell_tools` show on cards, the comment form render as above, and `body.dark_theme` apply for a dark-mode account?
-2. The **owner's** view of a devlog post (`.game_page_apperance_columns`, `.game_header_widget`). The project page's owner view was read on 2026-10-16 (`live-dom`, §1): the wrappers and the owner bar are there, `#user_tools` is not.
+2. The **owner's** view of a devlog post. **Settled on 2026-10-16** for one draft post (`live-dom`, §1): `.game_header_widget` with `.owner_tools` but no `.edit_theme_btn`, no `.game_page_apperance_columns` (so `#wrapper` is a direct child of `body`), `body.has_site_header` and no `#user_tools`. The project page's owner view, read the same day, has the wrappers and the owner bar with `.edit_theme_btn`.
 3. A current owner export of a profile. Run 2 (2026-10-16) recorded its key DOM facts (`live-dom`: wrappers, site header, no `#user_tools`, hidden items) but no page copy.
 
 Probe: use "Save page as… → Webpage, HTML only", then `skel.py <file> 9` and `matrix2.py` against the logged-out captures. Redact `csrf_token` values before sharing (see gapfill03 in `evidence/gapfill.md`).

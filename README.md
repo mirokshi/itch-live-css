@@ -10,7 +10,7 @@ Every non-obvious claim carries a confidence tag and a fact id that leads to its
 
 **Phase 0: the knowledge base.**
 - Done on 2026-10-14.
-- Checked against live saves on 2026-10-16: a draft project, the profile, and the size caps.
+- Checked against live saves on 2026-10-16: a draft project, a devlog post, the profile, and the size caps. Jam fields are still untested.
 
 Planned on top of it ([ROADMAP.md](ROADMAP.md), in Spanish):
 - an open-source engine that turns a configuration into CSS;
@@ -24,9 +24,9 @@ None of these exist yet.
 
 | You are… | Read |
 |---|---|
-| An AI assistant, or setting one up | [`llms.txt`](llms.txt), then [`knowledge/itch-custom-css.md`](knowledge/itch-custom-css.md) (~78,000 characters): the rules an AI must never break, copy-exact CSS blocks, and a digest of each topic |
+| An AI assistant, or setting one up | [`llms.txt`](llms.txt), then [`knowledge/itch-custom-css.md`](knowledge/itch-custom-css.md) (~78,600 characters): the rules an AI must never break, copy-exact CSS blocks, and a digest of each topic |
 | A creator writing CSS | The same main file. Start with §0 (rules) and §0.1 (copy-exact blocks), then the section for your page type |
-| Looking for detail or evidence | [`knowledge/sections/`](knowledge/sections/) (ten files, ~860 KB in total) and [`knowledge/evidence/`](knowledge/evidence/) (logs and scripts per research dimension) |
+| Looking for detail or evidence | [`knowledge/sections/`](knowledge/sections/) (ten files, ~865 KB in total) and [`knowledge/evidence/`](knowledge/evidence/) (logs and scripts per research dimension) |
 | Loading everything at once | [`llms-full.txt`](llms-full.txt): the main file plus all sections in one file (very large) |
 
 ## A few facts that surprise people
