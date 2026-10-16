@@ -1,0 +1,2 @@
+/* Verification fixture: @import placed after @fontface */
+#wrapper .v14-fontface { color: rgb(2, 2, 2); }

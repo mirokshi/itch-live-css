@@ -1,0 +1,120 @@
+[
+ {
+  "fn": "html",
+  "input": "<b>x</i></b></b>",
+  "output": "<b>x&lt;/i&gt;</b>&lt;/b&gt;",
+  "pass": true
+ },
+ {
+  "fn": "style",
+  "input": "margin-left: 50px;",
+  "output": "margin-left: 50px",
+  "pass": true
+ },
+ {
+  "fn": "style",
+  "input": "background: url(http://example.com/image.png)",
+  "output": "<nil failed to parse>",
+  "pass": true
+ },
+ {
+  "fn": "style",
+  "input": "--i: 1",
+  "output": ""
+ },
+ {
+  "fn": "style",
+  "input": "--i: 1; color: red",
+  "output": "color: red"
+ },
+ {
+  "fn": "style",
+  "input": "color: var(--gold)",
+  "output": "color: var(--gold)"
+ },
+ {
+  "fn": "style",
+  "input": "background: var(--gold)",
+  "output": ""
+ },
+ {
+  "fn": "style",
+  "input": "background-color: var(--gold)",
+  "output": "background-color: var(--gold)"
+ },
+ {
+  "fn": "style",
+  "input": "color: currentColor",
+  "output": "color: currentColor"
+ },
+ {
+  "fn": "style",
+  "input": "font-size: 2em",
+  "output": "font-size: 2em"
+ },
+ {
+  "fn": "style",
+  "input": "width: 100%",
+  "output": "width: 100%"
+ },
+ {
+  "fn": "style",
+  "input": "max-width: 320px",
+  "output": "max-width: 320px"
+ },
+ {
+  "fn": "style",
+  "input": "text-align: center",
+  "output": "text-align: center"
+ },
+ {
+  "fn": "style",
+  "input": "opacity: 50%",
+  "output": "opacity: 50%"
+ },
+ {
+  "fn": "style",
+  "input": "border: 2px solid var(--gold)",
+  "output": "border: 2px solid var(--gold)"
+ },
+ {
+  "fn": "style",
+  "input": "border-style: dashed",
+  "output": "border-style: dashed"
+ },
+ {
+  "fn": "style",
+  "input": "background-image: url('https://a.example/b.png')",
+  "output": "background-image: url('https://a.example/b.png')"
+ },
+ {
+  "fn": "style",
+  "input": "background-image: url(\"https://a.example/b.png\")",
+  "output": "background-image: url(\"https://a.example/b.png\")"
+ },
+ {
+  "fn": "html",
+  "input": "<span></span><div></div><p></p>",
+  "output": "<span></span><div></div><p></p>"
+ },
+ {
+  "fn": "html",
+  "input": "<p lang=\"ja\" title=\"t\">x</p><abbr title=\"HyperText\">HTML</abbr>",
+  "output": "<p lang=\"ja\" title=\"t\">x</p><abbr title=\"HyperText\">HTML</abbr>"
+ },
+ {
+  "fn": "html",
+  "input": "<a name=\"faq\"></a>",
+  "output": "<a name=\"faq\" rel=\"nofollow\"></a>"
+ },
+ {
+  "fn": "html",
+  "input": "<img src=\"https://a.example/i.png\" alt=\"\">",
+  "output": "<img src=\"https://a.example/i.png\" alt=\"\">"
+ },
+ {
+  "fn": "html",
+  "input": "<h1><span>M</span><span>i</span></h1>",
+  "output": "<h1><span>M</span><span>i</span></h1>"
+ }
+]

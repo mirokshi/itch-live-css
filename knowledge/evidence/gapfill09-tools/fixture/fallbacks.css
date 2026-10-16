@@ -1,0 +1,28 @@
+/* Second fixture: common "same property twice" fallbacks. One rule per pattern, selector .f-<n>. */
+#wrapper .f-01 { content: "*"; content: "*" / ""; }
+#wrapper .f-02 { width: 28px; width: random(20px, 40px); }
+#wrapper .f-03 { width: 28px; width: future-fn(1); }
+#wrapper .f-04 { color: rgb(0, 0, 255); color: future-fn(1); }
+#wrapper .f-05 { color: rgb(0, 0, 255); color: future-fn(var(--custom-v)); }
+#wrapper .f-06 { color: #123456; color: color-mix(in srgb, #123456 50%, #fff); }
+#wrapper .f-07 { color: #123456; color: color-mix(in srgb, var(--custom-c) 50%, #fff); }
+#wrapper .f-08 { color: #123456; color: color-mix(in oklch, currentColor 50%, #fff); }
+#wrapper .f-09 { color: #fff; color: light-dark(#000, #fff); }
+#wrapper .f-10 { height: 100vh; height: 100dvh; }
+#wrapper .f-11 { -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+#wrapper .f-12 { -webkit-background-clip: text; background-clip: text; }
+#wrapper .f-13 { -webkit-mask-image: linear-gradient(#000, #0000); mask-image: linear-gradient(#000, #0000); }
+#wrapper .f-14 { position: -webkit-sticky; position: sticky; }
+#wrapper .f-15 { width: -moz-fit-content; width: fit-content; }
+#wrapper .f-16 { -webkit-user-select: none; user-select: none; }
+#wrapper .f-17 { display: block; display: grid-lanes; }
+#wrapper .f-18 { animation-delay: .2s; animation-delay: calc(sibling-index() * 60ms); }
+#wrapper .f-19 { font-weight: 550; font-weight: calc(550 + 150 * sin(var(--custom-b))); }
+#wrapper .f-20 { background: #123; background: linear-gradient(in oklch, #123, #456); }
+#wrapper .f-21 { text-wrap: wrap; text-wrap: pretty; }
+#wrapper .f-22 { inset: 0; inset: anchor(top) 0 0 0; }
+#wrapper .f-23 { margin: 0 auto; margin-inline: auto; }
+#wrapper .f-24 { color: red; color: rgb(from red r g b / 50%); }
+#wrapper .f-25 { width: 100%; width: -webkit-fill-available; width: stretch; }
+@media (min-width: 600px) { #wrapper .f-26 { color: red; } }
+@media (600px <= width) { #wrapper .f-27 { color: red; } }

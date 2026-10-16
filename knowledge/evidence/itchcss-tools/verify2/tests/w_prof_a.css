@@ -1,0 +1,8 @@
+@import url("w_imp_a.css");
+#wrapper .game_title a{color:rgb(255,0,7)}
+.game_grid_widget .game_cell .game_text{color:rgb(0,128,7)}
+.game_genre{color:rgb(0,0,7)}
+#wrapper{--itchio_link_color:rgb(255,0,9);--itchio_grid_gap:31px;--itchio_input_focus_color:rgb(255,200,87)}
+#wrapper .user_page{--itchio_gray_back:rgb(3,4,5)}
+#wrapper .user_profile{color:rgb(2,2,2)}
+#wrapper .game_thumb{background-color:rgb(255,0,10)}

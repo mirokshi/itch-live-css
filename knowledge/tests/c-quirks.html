@@ -1,0 +1,32 @@
+<html lang="en">
+<!-- NO DOCTYPE on purpose: this page renders in quirks mode. -->
+<head>
+<meta charset="UTF-8">
+<title>C-quirks - MIME leniency in quirks mode</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="user_theme">.user_page { color: rgb(1, 1, 1); }</style>
+<style id="custom_css">
+  @import url("c/plain.txt");
+  @import url("http://localhost:8091/knowledge/tests/c/plain-x.txt");
+  @import url("c/noext");
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test C (quirks) - same text/plain imports as c-mime-charset.html, but without a doctype.</b>
+itch pages DO have a doctype (standards mode); this page only documents why a sheet that "works locally" in a doctype-less file can fail on itch.</p></div>
+<div class="user_page_wrap" id="wrapper"><div class="user_page"><div class="user_profile formatted">
+<p class="c1">c1</p><p class="c2">c2</p><p class="c8">c8</p>
+</div></div></div>
+<script>
+T.run(() => {
+  const M = { 'rgb(1, 1, 1)': 'rejected', 'rgb(2, 2, 2)': 'applied' };
+  const w = c => T.who(T.cs('.' + c, 'color'), M);
+  T.info('CQ-mode', 'document.compatMode', document.compatMode);
+  T.check('CQ1', 'quirks mode: same-origin text/plain @import', w('c1'), 'applied');
+  T.check('CQ2', 'quirks mode: cross-origin text/plain @import', w('c2'), 'rejected');
+  T.info('CQ8', 'quirks mode: application/octet-stream @import', w('c8'));
+});
+</script>
+</body>
+</html>

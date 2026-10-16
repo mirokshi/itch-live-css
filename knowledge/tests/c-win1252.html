@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="windows-1252">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C-win1252 - imported UTF-8 CSS on a non-UTF-8 page</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<link rel="stylesheet" href="c/utf8-link-nocharset.css">
+<style id="custom_css">
+  @import url("c/utf8-nocharset.css");
+  @import url("c/utf8-bom.css");
+  @import url("c/utf8-atcharset.css");
+  @import url("c/escaped.css");
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test C (windows-1252 page) - the same UTF-8 sheets loaded by a page whose encoding is windows-1252.</b>
+Which fallback encoding does the browser use for a CSS file that has no BOM, no @charset and no HTTP charset: the page's, or UTF-8?
+Compared for a sheet @import'ed from the inline style and for a sheet loaded with &lt;link&gt;. itch pages are UTF-8, so this mostly matters
+for local harnesses. This file is pure ASCII on purpose (expected strings are built with String.fromCodePoint).</p></div>
+<div class="user_page_wrap" id="wrapper"><div class="user_page"><div class="user_profile formatted">
+<p class="c3"></p><p class="c4"></p><p class="c5"></p><p class="c6"></p><p class="c10"></p>
+</div></div></div>
+<script>
+T.run(() => {
+  const want = '"' + String.fromCodePoint(0xa1) + 'Hola! ' + String.fromCodePoint(0x2192, 0x20, 0x2713, 0x20, 0xc548, 0xb155) + '"';
+  const c = k => T.cs('.' + k, 'content', '::before');
+  T.info('CW-charset', 'document.characterSet', document.characterSet);
+  T.info('CW3', '@import from inline <style>, no BOM / @charset / HTTP charset: decoded as UTF-8?', c('c3') === want ? 'UTF-8 (correct text)' : 'page encoding (mojibake): ' + c('c3'));
+  T.info('CW10', '<link> stylesheet, no BOM / @charset / HTTP charset: decoded as UTF-8?', c('c10') === want ? 'UTF-8 (correct text)' : 'page encoding (mojibake): ' + c('c10'));
+  T.check('CW4', 'BOM: correct text', c('c4'), want);
+  T.check('CW5', '@charset "UTF-8": correct text', c('c5'), want);
+  T.check('CW6', 'ASCII + hex escapes: correct text', c('c6'), want);
+});
+</script>
+</body>
+</html>

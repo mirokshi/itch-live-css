@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>J · modern CSS feature support (functional checks)</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="user_theme">.user_page { color: rgb(1, 1, 1); }</style>
+<style id="custom_css">
+  /* Every rule paints its target rgb(0, 128, 0) when the feature works. */
+  #wrapper { .j-nest { color: rgb(0, 128, 0); } }
+  #wrapper { p.j-nest-type { color: rgb(0, 128, 0); } }
+  #wrapper { & .j-amp { color: rgb(0, 128, 0); } }
+  #wrapper .j-nest-media { @media (min-width: 1px) { color: rgb(0, 128, 0); } }
+  #wrapper .j-has:has(> b) { color: rgb(0, 128, 0); }
+  #wrapper .j-cq-box { container-type: inline-size; width: 300px; }
+  @container (min-width: 200px) { #wrapper .j-cq { color: rgb(0, 128, 0); } }
+  #wrapper .j-cqs-box { --j-flag: on; }
+  @container style(--j-flag: on) { #wrapper .j-cqs { color: rgb(0, 128, 0); } }
+  @scope (#wrapper .j-scope) to (.j-scope-stop) { p { color: rgb(0, 128, 0); } }
+  #wrapper .j-sib span { width: calc(sibling-index() * 10px); display: inline-block; }
+  #wrapper .j-if { --j-x: 1; color: if(style(--j-x: 1): rgb(0, 128, 0); else: rgb(200, 0, 0)); }
+  #wrapper .j-is :is(.ok, .x::-moz-focus-inner) { color: rgb(0, 128, 0); }
+  #wrapper .j-list-a, #wrapper .j-list-b::-moz-focus-inner { color: rgb(0, 128, 0); }
+  #wrapper .j-nth :nth-child(2 of .k) { color: rgb(0, 128, 0); }
+  #wrapper .j-rel { color: rgb(from rgb(0, 128, 0) r g b); }
+  #wrapper .j-mix { color: color-mix(in srgb, rgb(0, 128, 0) 100%, white); }
+  #wrapper .j-ld { color-scheme: light; color: light-dark(rgb(0, 128, 0), rgb(200, 0, 0)); }
+  @function --j-double(--v) { result: calc(var(--v) * 2); }
+  #wrapper .j-fn { width: --j-double(21px); }
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test J — which modern CSS features work in this browser</b> (functional checks: a rule must actually apply, not just parse),
+plus a CSS.supports() table. Results are Chromium-only; other engines need their own run.</p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <p class="j-nest">nest</p><p class="j-nest-type">nest-type</p><p class="j-amp">amp</p><p class="j-nest-media">nest-media</p>
+      <p class="j-has"><b>has</b></p>
+      <div class="j-cq-box"><p class="j-cq">cq</p></div>
+      <div class="j-cqs-box"><p class="j-cqs">cqs</p></div>
+      <div class="j-scope"><p class="j-scope-p">scope</p><div class="j-scope-stop"><p class="j-scope-out">out</p></div></div>
+      <div class="j-sib"><span>a</span><span>b</span><span class="j-sib3">c</span></div>
+      <p class="j-if">if</p>
+      <p class="j-is"><span class="ok">is</span></p>
+      <p class="j-list-a">list</p>
+      <div class="j-nth"><span class="k">1</span><span>x</span><span class="k j-nth2">2</span></div>
+      <p class="j-rel">rel</p><p class="j-mix">mix</p><p class="j-ld">ld</p>
+      <div class="j-fn">fn</div>
+    </div>
+  </div>
+</div>
+<script>
+T.run(() => {
+  const G = 'rgb(0, 128, 0)';
+  // rgb(0,128,0) may serialize as color(srgb 0 0.501961 0) when produced by color-mix()/relative color syntax.
+  const isGreen = v => v === G || /^color\(srgb 0 0\.50196\d* 0\)$/.test(v);
+  const ok = s => isGreen(T.cs(s, 'color')) ? 'works' : 'no (' + T.cs(s, 'color') + ')';
+  T.check('J-nest', 'CSS nesting: #wrapper { .x {} }', ok('.j-nest'), 'works');
+  T.check('J-nest-type', 'nesting with a bare type selector: #wrapper { p.x {} }', ok('.j-nest-type'), 'works');
+  T.check('J-amp', 'nesting with &', ok('.j-amp'), 'works');
+  T.check('J-nest-media', '@media nested inside a style rule', ok('.j-nest-media'), 'works');
+  T.check('J-has', ':has(> b)', ok('.j-has'), 'works');
+  T.check('J-cq', '@container size query', ok('.j-cq'), 'works');
+  T.check('J-cqs', '@container style(--custom: value) query', ok('.j-cqs'), 'works');
+  T.check('J-scope', '@scope (...) to (...) applies inside', ok('.j-scope-p'), 'works');
+  T.check('J-scope-out', '@scope lower boundary excludes', ok('.j-scope-out'), 'no (rgb(1, 1, 1))');
+  T.info('J-sibling-index', 'sibling-index() → 3rd span width (30px if supported)', T.cs('.j-sib3', 'width'));
+  T.info('J-if', 'if(style(--x: 1): ...; else: ...)', ok('.j-if'));
+  T.check('J-is-forgiving', ':is() with one unknown selector inside is forgiving', ok('.j-is .ok'), 'works');
+  T.check('J-list-strict', 'plain selector list with one unknown pseudo-element (::-moz-focus-inner) drops the WHOLE rule', ok('.j-list-a'), 'no (rgb(1, 1, 1))');
+  T.check('J-nth-of', ':nth-child(2 of .k)', ok('.j-nth2'), 'works');
+  T.check('J-relcolor', 'relative color syntax rgb(from ...)', ok('.j-rel'), 'works');
+  T.check('J-colormix', 'color-mix()', ok('.j-mix'), 'works');
+  T.info('J-color-serialization', 'computed color produced by color-mix() / rgb(from ...) serializes as', T.cs('.j-mix', 'color') + ' / ' + T.cs('.j-rel', 'color'));
+  T.check('J-lightdark', 'light-dark() with color-scheme: light', ok('.j-ld'), 'works');
+  T.info('J-function', '@function --j-double(21px) → width (42px if supported)', T.cs('.j-fn', 'width'));
+  const S = [
+    ['selector(&)', () => CSS.supports('selector(&)')],
+    ['selector(:has(a))', () => CSS.supports('selector(:has(a))')],
+    ['selector(:nth-child(1 of .a))', () => CSS.supports('selector(:nth-child(1 of .a))')],
+    ['selector(::-webkit-scrollbar)', () => CSS.supports('selector(::-webkit-scrollbar)')],
+    ['selector(::-moz-selection)', () => CSS.supports('selector(::-moz-selection)')],
+    ['backdrop-filter', () => CSS.supports('backdrop-filter', 'blur(2px)')],
+    ['-webkit-backdrop-filter', () => CSS.supports('-webkit-backdrop-filter', 'blur(2px)')],
+    ['text-wrap: balance', () => CSS.supports('text-wrap', 'balance')],
+    ['text-wrap: pretty', () => CSS.supports('text-wrap', 'pretty')],
+    ['100dvh', () => CSS.supports('height', '100dvh')],
+    ['oklch()', () => CSS.supports('color', 'oklch(70% 0.1 200)')],
+    ['color-mix()', () => CSS.supports('color', 'color-mix(in oklch, red, blue)')],
+    ['light-dark()', () => CSS.supports('color', 'light-dark(red, blue)')],
+    ['rgb(from …) relative color', () => CSS.supports('color', 'rgb(from red r g b)')],
+    ['sin() in calc', () => CSS.supports('width', 'calc(10px * sin(30deg))')],
+    ['round()/mod()', () => CSS.supports('width', 'round(10.4px, 1px)') + '/' + CSS.supports('width', 'mod(10px, 3px)')],
+    ['anchor positioning (anchor-name)', () => CSS.supports('anchor-name', '--a')],
+    ['position-try', () => CSS.supports('position-try-fallbacks', 'flip-block')],
+    ['scroll-driven animation-timeline: view()', () => CSS.supports('animation-timeline', 'view()')],
+    ['@starting-style (CSSStartingStyleRule)', () => 'CSSStartingStyleRule' in window],
+    ['@scope (CSSScopeRule)', () => 'CSSScopeRule' in window],
+    ['@container (CSSContainerRule)', () => 'CSSContainerRule' in window],
+    ['@layer (CSSLayerBlockRule)', () => 'CSSLayerBlockRule' in window],
+    ['@property (CSSPropertyRule)', () => 'CSSPropertyRule' in window],
+    ['@function (CSSFunctionRule)', () => 'CSSFunctionRule' in window],
+    ['individual transforms (translate/rotate/scale)', () => CSS.supports('rotate', '10deg') && CSS.supports('translate', '1px 2px')],
+    ['interpolate-size', () => CSS.supports('interpolate-size', 'allow-keywords')],
+    ['calc-size()', () => CSS.supports('height', 'calc-size(auto, size)')],
+    ['field-sizing', () => CSS.supports('field-sizing', 'content')],
+    ['text-box', () => CSS.supports('text-box', 'trim-both cap alphabetic')],
+    ['corner-shape', () => CSS.supports('corner-shape', 'squircle')],
+    ['shape()', () => CSS.supports('clip-path', 'shape(from 0 0, line to 10px 10px)')],
+    ['random()', () => CSS.supports('width', 'random(1px, 10px)')],
+    ['sibling-index()', () => CSS.supports('width', 'calc(sibling-index() * 1px)')],
+    ['if()', () => CSS.supports('color', 'if(style(--x: 1): red; else: blue)')],
+    ['attr() typed', () => CSS.supports('width', 'attr(data-w type(<length>))')],
+    ['content alt text', () => CSS.supports('content', '"a" / ""')],
+    ['scrollbar-color', () => CSS.supports('scrollbar-color', 'red blue')],
+    ['scrollbar-gutter', () => CSS.supports('scrollbar-gutter', 'stable')],
+    ['content-visibility', () => CSS.supports('content-visibility', 'auto')],
+    ['view-transition-name', () => CSS.supports('view-transition-name', 'x')],
+    ['font-variation-settings', () => CSS.supports('font-variation-settings', '"wght" 500')],
+    ['text-decoration-thickness', () => CSS.supports('text-decoration-thickness', '2px')],
+    ['mask-image (unprefixed)', () => CSS.supports('mask-image', 'linear-gradient(red, blue)')],
+    ['overflow: clip', () => CSS.supports('overflow', 'clip')],
+    ['overflow-clip-margin', () => CSS.supports('overflow-clip-margin', '10px')],
+    ['@import supports() condition', () => 'see b-import-position.html B7'],
+    ['dynamic-range-limit', () => CSS.supports('dynamic-range-limit', 'standard')],
+    ['reading-flow', () => CSS.supports('reading-flow', 'normal')],
+    ['::scroll-marker', () => CSS.supports('selector(::scroll-marker)')],
+    ['appearance: base-select', () => CSS.supports('appearance', 'base-select')]
+  ];
+  for (const [name, fn] of S) { let v; try { v = fn(); } catch (e) { v = 'threw ' + e.name; } T.info('S:' + name, 'CSS.supports / API presence', String(v)); }
+});
+</script>
+</body>
+</html>

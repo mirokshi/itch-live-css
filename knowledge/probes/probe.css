@@ -1,0 +1,57 @@
+
+
+  /*PROBE-START probe.css kit=v1 2026-10-14 (temporary test CSS)*/
+@charset "utf-8";
+@layer probe-pre;
+@import url("https://example.com/probe-c03.css");
+@import url("http://example.com/probe-c04.css");
+@import url("data:text/css,%23wrapper%7B--probe-c05%3A1%7D");
+@import url("data:text/css,%23wrapper%7B--probe-c06%3A1%7D") layer(probe-imp);
+@import url("data:text/css,%23wrapper%7B--probe-c07%3A1%7D") supports(display:grid);
+@import url("data:text/css,%23wrapper%7B--probe-c08%3A1%7D") screen;
+#wrapper{--probe-c00:1}
+@layer probe-pre{#wrapper{--probe-c02:1}}
+@font-face{font-family:probe-c09;src:local("Arial")}
+@font-face{font-family:probe-c10;src:url(http://example.com/probe-c10.woff2)}
+@layer probe-c11{#wrapper{--probe-c11:1}}
+@property --probe-c12{syntax:"<length>";inherits:false;initial-value:7px}
+#wrapper{container:probe-c13/inline-size}
+@container probe-c13 (width>1px){#wrapper>*{--probe-c13:1}}
+#wrapper{--probe-c14s:1}
+@container style(--probe-c14s:1){#wrapper>*{--probe-c14:1}}
+@scope (#wrapper){:scope{--probe-c15:1}}
+#wrapper{&:is(#wrapper){--probe-c16:1}@media (min-width:1px){--probe-c17:1}}
+@starting-style{#wrapper{--probe-c18:1}}
+@view-transition{navigation:auto}
+@supports (display:grid) and (not (display:probe)){#wrapper{--probe-c20:1}}
+@media (1px<=width<=99999px){#wrapper{--probe-c21:1}}
+#wrapper{--probe-c22:1!important}
+#wrapper>*{--probe-c23:1}
+#wrapper{--probe-c24:"a&b<i>c>d"}
+#wrapper{--probe-c25:"→é漢😀"}
+#wrapper{quotes:"\2192" "\3c /x>"}
+#wrapper :is(.formatted_description,.user_profile,.post_body,.jam_content)::after{content:"[c27]";content:"[c27]" / ""}
+@property --probe-c28{syntax:"<number>";inherits:false;initial-value:0}
+#wrapper{--probe-c28:random(1,1000)}
+@property --probe-c29{syntax:"<integer>";inherits:false;initial-value:0}
+#wrapper>*{--probe-c29:sibling-index()}
+@function --probe-f(){result:1}
+#wrapper{--probe-c30:--probe-f()}
+#wrapper{--probe-c31:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>")}
+#wrapper .custom-probe-void{width:expression(1)}
+#wrapper .custom-probe-void{behavior:url(#default#probe)}
+#wrapper .custom-probe-void{-moz-binding:url(about:blank)}
+#wrapper .custom-probe-void{background:url(javascript:void(0))}
+@counter-style probe-c36{system:cyclic;symbols:"*"}
+/* c37 é → 漢 😀 */#wrapper{--probe-c37:1}
+#wrapper .custom-hover\:x{--probe-c38:1}
+#wrapper .custom-w-\[3px\]{--probe-c39:1}
+/* <!-- c40 --> */#wrapper{--probe-c40:1}
+/* <script>c41</script> */#wrapper{--probe-c41:1}
+/* </style> c42 */#wrapper{--probe-c42:1}
+#wrapper{--probe-c43:"</STYLE >"}
+#wrapper{--probe-c44:1}
+#wrapper :is(.formatted_description,.user_profile,.post_body,.jam_content)::before{content:"[c45] probe.css: end of sheet reached"}
+/*PROBE-END*/
+
+  

@@ -1,0 +1,2 @@
+(function(){var g=document.querySelector('.game_grid_widget');var s=getComputedStyle(g);var cells=[].slice.call(document.querySelectorAll('.game_grid_widget .game_cell'),0,8).map(function(c){return Math.round(c.getBoundingClientRect().height)});
+var o={colgap:s.columnGap,rowgap:s.rowGap,align:s.alignItems,cols:s.gridTemplateColumns,heights:cells};document.getElementById('vout').textContent='VRESULT '+JSON.stringify(o);})();

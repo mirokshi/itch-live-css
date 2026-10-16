@@ -1,0 +1,1661 @@
+[
+ {
+  "question": "What exactly is the profile CSS editor's length cap (5120?), is it counted in characters or UTF-8 bytes, and what happens when you exceed it (server-side error, silent truncation, refusal to save)?",
+  "howToTest": "On an account with CSS access, save minified CSS of 5,100, 5,120, 5,121 and 5,200 ASCII chars, then the same with multibyte characters (e.g. content:\"→\" repeated). Read back style#custom_css logged out and diff. Note any error message.",
+  "needsAccount": true,
+  "whyItMatters": "Every AI-written stylesheet has to fit, and the client JS has no maxLength, so the real limit and how it fails are unknown.",
+  "from": "research:repo"
+ },
+ {
+  "question": "Does the server-side sanitizer also strip or reject '</style>' in saved CSS, or is it only the client's strip_css (first match removed)?",
+  "howToTest": "Save CSS containing content:\"</style>\" plus a canary rule after it. Fetch the page logged out and inspect style#custom_css and whether the canary applies.",
+  "needsAccount": true,
+  "whyItMatters": "Determines whether such strings silently break the CSS block.",
+  "from": "research:repo"
+ },
+ {
+  "question": "Which non-custom classes and attributes survive the bio sanitizer (text-left/text-right/text-justify? role? aria-label? aria-hidden stripping re-check)?",
+  "howToTest": "Paste a bio with <p class=\"text-right foo\">, <span role=\"img\" aria-label=\"x\" aria-hidden=\"true\" class=\"custom-a bar\">, save, then curl the profile logged out and list the surviving attributes.",
+  "needsAccount": true,
+  "whyItMatters": "Accessibility workarounds and alignment depend on what markup is allowed.",
+  "from": "research:repo"
+ },
+ {
+  "question": "Why does Brave Shields block the external @import: a filter list match for *.vercel.app, a general rule against third-party stylesheets, or fingerprinting protection? Would another host (GitHub Pages, Cloudflare Pages, jsDelivr) pass?",
+  "howToTest": "In Brave with default Shields, open a test page that @imports the same CSS from several hosts and check DevTools Network for blocked requests. No itch account needed.",
+  "needsAccount": false,
+  "whyItMatters": "Decides which host to recommend for external CSS on itch.",
+  "from": "research:repo"
+ },
+ {
+  "question": "Does '#wrapper .footer{margin-top:…}' have any visible effect, given that itch positions .footer absolutely with bottom:0 inside #wrapper's padding-bottom:50px?",
+  "howToTest": "In the local harness with real user.css, toggle the rule and compare the footer's getBoundingClientRect(); then try padding-bottom on #wrapper instead.",
+  "needsAccount": false,
+  "whyItMatters": "An AI might ship no-op spacing rules or break the footer overlap.",
+  "from": "research:repo"
+ },
+ {
+  "question": "Do real screen readers (NVDA+Chrome/Firefox, VoiceOver+Safari) read the transparent marker text in a 0-width inline-grid column, and do they honor content:\"…\" / \"\" by skipping the generated text?",
+  "howToTest": "Open the live profile (or the harness) with each screen reader and record the announcement of the bio h2 and the custom h1.",
+  "needsAccount": false,
+  "whyItMatters": "The repo's accessibility claims for the text-replacement technique are unverified with real assistive technology.",
+  "from": "research:repo"
+ },
+ {
+  "question": "What triggers changes to the numeric widget ids (#user_NNN, #user_links_NNN): every render, login state, edits, or cache refresh?",
+  "howToTest": "Fetch the same logged-out profile on different days and after the owner edits the page, and compare the ids (compare logged-in vs logged-out with an account).",
+  "needsAccount": false,
+  "whyItMatters": "Confirms they must never be used as selectors.",
+  "from": "research:repo"
+ },
+ {
+  "question": "Is the 'Supported by' (section.purchased_games) block owner-only, or a profile setting that the repo owner turned off?",
+  "howToTest": "Find a public profile that shows 'Supported by …' logged out, or toggle the setting on a test account and fetch logged out.",
+  "needsAccount": true,
+  "whyItMatters": "Determines which profile sections CSS must handle for visitors.",
+  "from": "research:repo"
+ },
+ {
+  "question": "Once Chrome 156 is stable (2026-10-20), does random() in itch-pasted CSS give a fresh value on each page load in Chrome and Safari, and does itch keep it verbatim?",
+  "howToTest": "Paste a rule like #wrapper .custom-x{rotate:random(-10deg,10deg)} on a test page, reload in Chrome 156 and Safari 26.2, and compare computed values. Locally, a plain HTML test is enough for the browser part.",
+  "needsAccount": true,
+  "whyItMatters": "Could replace the external per-visit service for simple randomness.",
+  "from": "research:repo"
+ },
+ {
+  "question": "Is the 3 MB background-image upload limit still current, and which formats does the profile theme editor accept?",
+  "howToTest": "Log in, open the theme editor and read init_UserThemeEditor's image_size_limit in the page source, then try uploading a 3.2 MB image.",
+  "needsAccount": true,
+  "whyItMatters": "Background images are the main theme-editor asset that CSS builds on.",
+  "from": "research:repo"
+ },
+ {
+  "question": "Do browsers without native CSS nesting lose the nested part of the theme's user_theme rules (game title color, hr, svg fill), and how much of the page changes?",
+  "howToTest": "Load the harness with the live user_theme in an old browser (e.g. Chrome 111 or Safari 16 via BrowserStack) and compare the computed colors of .game_title a.title and .user_links .svgicon.",
+  "needsAccount": false,
+  "whyItMatters": "Tells AIs whether to restate theme colors defensively in flat #wrapper rules.",
+  "from": "research:repo"
+ },
+ {
+  "question": "What exactly does each CSS editor enforce today: the profile 5120 cap (characters or bytes, are whitespace/comments counted), the project cap if any, and the jam '20kb' cap (20,000 or 20,480)? What happens past the cap: the save is refused with an error, or the CSS is truncated?",
+  "howToTest": "With a CSS-enabled account, paste generated CSS of N = 5119/5120/5121, 19,999/20,000/20,480/20,481 characters (ASCII, then multibyte) into each editor (profile, project, jam). Record the save result and the served style#custom_css / jam_theme length.",
+  "needsAccount": true,
+  "whyItMatters": "Decides how much CSS an AI may generate per page type, and whether project pages share the profile's 5120 cap (leafo in 2023 suggested no check; a host in 2026 claimed one).",
+  "from": "research:docs"
+ },
+ {
+  "question": "What does the in-editor 'Custom CSS' 'READ ME' popup say (seen in the profile Edit Theme panel)? Does it state limits or rules missing from the public guide?",
+  "howToTest": "Logged in with CSS access, open Edit theme on the profile, project and jam pages, click READ ME next to Custom CSS, and transcribe or paraphrase it.",
+  "needsAccount": true,
+  "whyItMatters": "It may be the only official place where the character limit or extra rules are written down.",
+  "from": "research:docs"
+ },
+ {
+  "question": "Does itch sanitize the CSS text itself (e.g. strip @import, '</style>', url(javascript:), expression(), @font-face with non-HTTPS URLs), or is it injected fully verbatim as leafo says for jams?",
+  "howToTest": "Save CSS with each construct in a test page's editor, then diff the served style#custom_css against the input.",
+  "needsAccount": true,
+  "whyItMatters": "Tells an AI which CSS features survive saving; the docs are silent.",
+  "from": "research:docs"
+ },
+ {
+  "question": "Is there an official or observable allowlist of HTML tags and attributes for descriptions, bios and jam content (style attribute, id, aria-*, details/summary, iframe, svg)?",
+  "howToTest": "Save a test description containing each tag/attribute and read back the served HTML logged out.",
+  "needsAccount": true,
+  "whyItMatters": "CSS hooks depend on which markup survives; the guide only says 'a subset of HTML'.",
+  "from": "research:docs"
+ },
+ {
+  "question": "Is CSS access per account for all page types at once, or can staff enable it per page type (profile vs project vs jam)?",
+  "howToTest": "After access is granted, check whether the Custom CSS field appears in all three theme editors (profile, any project, any hosted jam).",
+  "needsAccount": true,
+  "whyItMatters": "Users ask 'I got CSS but can't see it on my jam/profile'.",
+  "from": "research:docs"
+ },
+ {
+  "question": "Are the guide's default widths still accurate (#inner_column 960px, .formatted_description 553px, .jam_body max-width 960px), given #inner_column now carries size_* classes (e.g. size_large)?",
+  "howToTest": "In a browser, open several logged-out project pages with different theme 'size' settings and read getComputedStyle widths of #inner_column, .formatted_description and .jam_body at 1280px viewport.",
+  "needsAccount": false,
+  "whyItMatters": "Layout math (grids, max-widths) in generated CSS depends on these numbers.",
+  "from": "research:docs"
+ },
+ {
+  "question": "Do itch's static stylesheets read the project-page variables set on .wrapper (e.g. --itchio_link_color, --itchio_button_color) the way jam pages do after the 2026 revamp, so that overriding the variable alone recolours links and buttons?",
+  "howToTest": "Fetch https://static.itch.io/game.css (or whatever stylesheet the project page links) and grep for var(--itchio_link_color...), then confirm with computed styles after injecting '#wrapper{--itchio_link_color:red}' in a local copy.",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether an AI should override variables or explicit selectors on project and profile pages.",
+  "from": "research:docs"
+ },
+ {
+  "question": "Does a project's custom CSS also apply to its other subpages (/purchase, /download pages, /community board, /comments, jam submission /rate pages)?",
+  "howToTest": "Fetch those subpages of a CSS-enabled project (e.g. a CSS Showcase entry) logged out and check for style#custom_css and #wrapper.",
+  "needsAccount": false,
+  "whyItMatters": "Defines where a creator's CSS must keep working and where it is absent.",
+  "from": "research:docs"
+ },
+ {
+  "question": "What is the exact current character limit of the jam CSS editor (20 KB as stated, ~32 KB, or per-jam overrides), and do comments and whitespace count toward it?",
+  "howToTest": "As a jam host with CSS access, paste generated CSS of increasing size (for example 20480, 20481, 32768 chars, with and without comments) into the jam theme editor's CSS field and save. Then check the served style#jam_theme length logged out.",
+  "needsAccount": true,
+  "whyItMatters": "An AI must know when to minify, or to split work between the theme editor and CSS.",
+  "from": "research:crawljam"
+ },
+ {
+  "question": "Does itch escape or strip `</style>`, `<`, or HTML-like content in jam custom CSS, and does it reject invalid CSS on save?",
+  "howToTest": "Save CSS containing `content:\"</style>\"` and an unbalanced brace in a test jam, then fetch the overview logged out and inspect style#jam_theme.",
+  "needsAccount": true,
+  "whyItMatters": "Generated content strings with `<` could break the page or be silently altered.",
+  "from": "research:crawljam"
+ },
+ {
+  "question": "What markup and classes do the owner and editor views add (`.theme_editor_columns`, `.theme_editor_primary_column`), and do rules scoped to #wrapper still render identically there?",
+  "howToTest": "Open your own jam while logged in and compare its DOM with the logged-out DOM using devtools.",
+  "needsAccount": true,
+  "whyItMatters": "The live preview in the editor may differ from what visitors see.",
+  "from": "research:crawljam"
+ },
+ {
+  "question": "Does the jam description sanitizer strip non-`custom-` classes and `id` attributes, or only some of them? `text-center` and `custom_backing` were seen surviving.",
+  "howToTest": "Save a jam description with `<p class=\"foo custom-a custom_b text-center\" id=\"x\" style=\"color:red\">` and inspect the published HTML.",
+  "needsAccount": true,
+  "whyItMatters": "Determines which hooks an AI can rely on in jam description HTML.",
+  "from": "research:crawljam"
+ },
+ {
+  "question": "Which iframe hosts does the jam description allow? Seen: youtube.com, discordapp.com and a third-party poll host.",
+  "howToTest": "Save iframes from several hosts (youtube, vimeo, codepen, an arbitrary https site) in a test jam description and check which survive.",
+  "needsAccount": true,
+  "whyItMatters": "Embedding widgets is a common jam-page technique.",
+  "from": "research:crawljam"
+ },
+ {
+  "question": "Does `background-size: cover` (theme option) appear as `background-size:cover` on .jam_page_wrap, like the observed `contain`?",
+  "howToTest": "Fetch more jam overviews (or set the option in a test jam) and grep style#jam_theme for background-size.",
+  "needsAccount": false,
+  "whyItMatters": "It completes the generated-theme template so an AI knows which longhands to override.",
+  "from": "research:crawljam"
+ },
+ {
+  "question": "Are jam overview pages served differently to logged-in non-owners (extra elements, a theme toggle, a different header) in ways that affect custom CSS?",
+  "howToTest": "Compare the DOM of the same jam logged out and logged in as a non-owner, for example diffing the skel.py output of saved pages.",
+  "needsAccount": true,
+  "whyItMatters": "Custom CSS is tested logged out, but most visitors may be logged in.",
+  "from": "research:crawljam"
+ },
+ {
+  "question": "Does Firefox or Safari behave the same for the dropped mid-sheet @import and the cascade tests?",
+  "howToTest": "Open crawljam-tools/tests/import-order.html and the harness pages in Firefox and Safari and compare the RESULT JSON.",
+  "needsAccount": false,
+  "whyItMatters": "The tests here used only Chrome 155, although the @import rule is spec-mandated.",
+  "from": "research:crawljam"
+ },
+ {
+  "question": "What exactly does the profile CSS limit count (UTF-16 units, code points or UTF-8 bytes), is it exactly 5120, and what happens on save when it's exceeded (error text, refusal, truncation)?",
+  "howToTest": "On a test profile with CSS access, save ASCII CSS of exactly 5120 and then 5121 characters (a comment padded with 'a'), then 2,600 '€' characters inside a comment (2,600 code points, 7,800 bytes). Record whether each save is accepted, any error lightbox text, and the served length of style#custom_css.",
+  "whyItMatters": "Sources say 5120 chars, 5KB, ≈4.5K Unicode chars and 5000 chars. An AI needs the exact budget and failure mode to decide when to split CSS.",
+  "needsAccount": true,
+  "from": "research:community"
+ },
+ {
+  "question": "Do project pages (and therefore devlogs) currently enforce any custom CSS size limit, or was the 21,944-character Pitch CSS grandfathered?",
+  "howToTest": "Save 25 KB and then 60 KB of commented CSS on a test project page, reload logged out and measure style#custom_css length.",
+  "whyItMatters": "It decides whether project CSS needs minification or splitting at all.",
+  "needsAccount": true,
+  "from": "research:community"
+ },
+ {
+  "question": "Is the jam CSS limit 20,000 or 20,480 characters, and is it counted on the custom part only?",
+  "howToTest": "On a test jam, save 20,000, 20,480 and 20,481 characters of CSS and check which saves are accepted.",
+  "whyItMatters": "It sets the jam-page budget precisely.",
+  "needsAccount": true,
+  "from": "research:community"
+ },
+ {
+  "question": "Is an @import placed in jam custom CSS ignored by browsers, since it ends up after the generated theme rules inside style#jam_theme?",
+  "howToTest": "Without an account: scan public jam pages for '@import' inside style#jam_theme and check in a browser whether the imported rules apply (document.styleSheets → the CSSImportRule's .styleSheet is null or its rules are absent). With an account: put @import of a test sheet as line 1 of a jam's CSS.",
+  "whyItMatters": "Fonts and split CSS via @import would silently fail on jam pages.",
+  "needsAccount": false,
+  "from": "research:community"
+ },
+ {
+  "question": "What is the full allowlist of inline style properties kept by the description and bio sanitizer?",
+  "howToTest": "Save a bio with one element per property (float, border, border-radius, background, display, position, padding, transform, font-family, …), then diff the served HTML.",
+  "whyItMatters": "Community sources contradict each other (inline CSS 'stripped' vs 'a few simple properties'); knowing the list lets an AI use inline styles where no class is possible.",
+  "needsAccount": true,
+  "from": "research:community"
+ },
+ {
+  "question": "Which class names survive the sanitizer exactly: anything starting with 'custom' (customer, custom_x, CUSTOM-a), and which itch classes besides text-center, text-right and text-justify?",
+  "howToTest": "Save a bio with spans carrying class='customer custom_x CUSTOM-a custom- text-center button inner_column' and inspect the served classes.",
+  "whyItMatters": "The guide says 'custom-'; live evidence shows 'custom' without a hyphen plus alignment classes surviving.",
+  "needsAccount": true,
+  "from": "research:community"
+ },
+ {
+  "question": "Is the 5000-character profile bio HTML limit measured on the submitted HTML or on the sanitized and expanded HTML, and what happens when it is exceeded?",
+  "howToTest": "Save bios of 4,900, 5,000 and 5,001 characters containing several <img> and external links (which itch expands), and observe acceptance and the served HTML.",
+  "whyItMatters": "itch adds attributes (loading, rel, referrerpolicy), so served HTML is about 15% longer than the source.",
+  "needsAccount": true,
+  "from": "research:community"
+ },
+ {
+  "question": "Does itch's server sanitize anything inside saved CSS (e.g. '</style>', '<script', 'expression(', 'javascript:', '-moz-binding', 'behavior:'), or store it verbatim?",
+  "howToTest": "Save CSS containing each token inside a comment and inside a declaration, then compare the served style#custom_css byte-for-byte.",
+  "whyItMatters": "The client preview only removes the first '</style>'; the server-side behaviour determines what breaks.",
+  "needsAccount": true,
+  "from": "research:community"
+ },
+ {
+  "question": "Does itch ever add or require alt attributes on bio and description images (a creator claims it 'enforces' alt)?",
+  "howToTest": "Save <img> with no alt, with alt='' and with alt='x', then inspect the served HTML.",
+  "whyItMatters": "Accessibility guidance for AIs: whether itch helps or the author must always supply alt.",
+  "needsAccount": true,
+  "from": "research:community"
+ },
+ {
+  "question": "Are arbitrary <iframe> embeds (e.g. GitHub Pages) allowed in descriptions for accounts with CSS access, as one plugin developer implies?",
+  "howToTest": "Save a description with an iframe to a GitHub Pages URL on a test project, then inspect the served HTML logged out.",
+  "whyItMatters": "It would be a way around the CSS size limit and the custom- class rule, with policy implications.",
+  "needsAccount": true,
+  "from": "research:community"
+ },
+ {
+  "question": "Does itch trim trailing whitespace or newlines from saved CSS?",
+  "howToTest": "Save CSS ending in '}\\n\\n  ' and compare the served text.",
+  "whyItMatters": "It affects byte-exact verification and the size budget.",
+  "needsAccount": true,
+  "from": "research:community"
+ },
+ {
+  "question": "Has any creator publicly reported actually losing CSS access (not just a warning)?",
+  "howToTest": "Periodically search itch.io forums for 'CSS access removed' or 'revoked', or ask support in a ticket.",
+  "whyItMatters": "It calibrates how strictly the 'don't touch site UI' rule is enforced.",
+  "needsAccount": false,
+  "from": "research:community"
+ },
+ {
+  "question": "Do common content blockers (uBlock Origin defaults, Brave Shields standard, Firefox ETP strict) block @import from cdn.jsdelivr.net or fonts.googleapis.com on *.itch.io, as Brave did for a Vercel host?",
+  "howToTest": "Load a profile that imports from jsDelivr, Google Fonts and Vercel in each browser or blocker configuration, and check the Network panel and computed styles.",
+  "whyItMatters": "It decides which hosts are safe for split CSS and fonts.",
+  "needsAccount": false,
+  "from": "research:community"
+ },
+ {
+  "question": "What is the current turnaround time for CSS access requests, and does support grant per account or per project?",
+  "howToTest": "Submit a request from a non-empty test account with the four confirmations, then note the dates and the exact scope granted.",
+  "whyItMatters": "Sources conflict (per account vs 'one of your projects'), and reported waits range from 30 minutes to 2+ months.",
+  "needsAccount": true,
+  "from": "research:community"
+ },
+ {
+  "question": "Do logged-in visitors who are not the owner see the itch site header (body.has_header, div.header_widget) on creator profiles, so that unscoped CSS hits it?",
+  "howToTest": "Log in with any secondary account, open https://<user>.itch.io/ and inspect body classes and children; compare with the logged-out DOM in knowledge/evidence/crawlprofile.md §9.",
+  "needsAccount": true,
+  "whyItMatters": "It decides whether position:fixed layers and top offsets must leave 50px for a header, and how much damage unscoped selectors do.",
+  "from": "research:crawlprofile"
+ },
+ {
+  "question": "Is the ~5120-character cap counted before or after CRLF→LF normalization, and do comments count?",
+  "howToTest": "In the CSS editor paste a 5119-char CRLF text with comments, save, then curl the page logged out and measure style#custom_css bytes and CR count.",
+  "needsAccount": true,
+  "whyItMatters": "It tells authors whether to strip comments and newlines before pasting.",
+  "from": "research:crawlprofile"
+ },
+ {
+  "question": "Is the `</style>` removal done on save or on render, and are other sequences (`<script`, `<!--`, `</head`) altered or escaped?",
+  "howToTest": "Save CSS containing `/* </style> <script> <!-- */` in a comment, then curl the logged-out page and diff against the saved text.",
+  "needsAccount": true,
+  "whyItMatters": "It explains which characters are safe in content strings and comments.",
+  "from": "research:crawlprofile"
+ },
+ {
+  "question": "Are games hidden through the theme editor (hidden_games) omitted from logged-out HTML, or rendered with display:none?",
+  "howToTest": "Hide one game in the theme editor, then curl the profile logged out and search for its data-game_id.",
+  "needsAccount": true,
+  "whyItMatters": "It decides whether :nth-child card selectors count hidden games.",
+  "from": "research:crawlprofile"
+ },
+ {
+  "question": "Which background-repeat and alignment values can the theme editor emit (repeat-y? 100% 0 right alignment?), and what does the theme emit for the 'stretch'/'cover' options if any?",
+  "howToTest": "Cycle through every background option in the theme editor and curl style#user_theme after each save.",
+  "needsAccount": true,
+  "whyItMatters": "It completes the list of .user_page_wrap longhands that custom CSS must override.",
+  "from": "research:crawlprofile"
+ },
+ {
+  "question": "Can body ever carry .dark_theme or a non-en locale_xx class on profile pages (e.g. via itch's language picker cookie)?",
+  "howToTest": "Logged out, use itch's language selector if one exists (footer or settings), then curl the profile with that cookie and check <body class> and <html lang>.",
+  "needsAccount": false,
+  "whyItMatters": "CSS that keys on locale or dark mode needs to know these hooks exist.",
+  "from": "research:crawlprofile"
+ },
+ {
+  "question": "Are there .user_page modifier classes beyond mode_grid, mode_column, has_banner, mode_collection_grid and mode_show_purchases?",
+  "howToTest": "Crawl a larger sample (200+ creator subdomains from several browse pages, 3 s spacing) with knowledge/evidence/crawlprofile-tools/analyze.py and tally user_page classes.",
+  "needsAccount": false,
+  "whyItMatters": "Conditional CSS should cover every layout state.",
+  "from": "research:crawlprofile"
+ },
+ {
+  "question": "Does a saved CSS change appear immediately to logged-out visitors, given the X-Cache-Status header?",
+  "howToTest": "Save a CSS change, then immediately curl the profile several times logged out and compare style#custom_css.",
+  "needsAccount": true,
+  "whyItMatters": "It sets expectations when verifying changes right after saving.",
+  "from": "research:crawlprofile"
+ },
+ {
+  "question": "Does Firefox (and Safari) resolve a relative url() inside an unregistered custom property against the declaring sheet instead of the sheet where var() is used (Chromium 152: use site → 404)?",
+  "howToTest": "Serve the repo on :8090 and :8091 and open knowledge/tests/f-relative-url.html in Firefox and Safari; compare rows F4, F5, F8 and the network log.",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether a CSS service may hand image URLs to the editor CSS through custom properties.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "Do Firefox and Safari also reject text/plain or octet-stream stylesheets in standards mode for same-origin @import, and decode imported UTF-8 sheets without charset the same way?",
+  "howToTest": "Open knowledge/tests/c-mime-charset.html, c-quirks.html and c-win1252.html in Firefox and Safari.",
+  "needsAccount": false,
+  "whyItMatters": "Determines the exact Content-Type/charset contract a CSS service must honour for all visitors.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "Which of the newer features verified in Chromium 152 (sibling-index(), if(), @function, typed attr(), content alt text, @scope, @container style(), anchor positioning, @import supports()) work in current Firefox and Safari, and is random() really Safari-only?",
+  "howToTest": "Run knowledge/tests/j-support.html, h-content.html and b-import-position.html (B7) in Firefox and Safari; record the INFO/PASS rows per engine.",
+  "needsAccount": false,
+  "whyItMatters": "An AI must know which features need @supports fallbacks before using them on a public page.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "In Firefox, does a selector list containing a WebKit-only pseudo-element (::-webkit-scrollbar-thumb) drop the whole rule, as ::-moz-range-thumb does in Chromium?",
+  "howToTest": "Open knowledge/tests/m-syntax-gotchas.html in Firefox and check row M3-vendor-webkit (expected: dropped).",
+  "needsAccount": false,
+  "whyItMatters": "Common scrollbar-styling snippets combine vendor selectors in one list and would silently fail.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "How does `& .x` inside `@scope (#wrapper)` contribute specificity in Firefox/Safari (Chromium 152: none), and do they apply scope proximity before order?",
+  "howToTest": "Open knowledge/tests/n-scope-specificity.html in Firefox and Safari.",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether @scope can ever replace #wrapper prefixes safely.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "Do Firefox/Safari trap position:fixed descendants for the same ancestor properties (notably container-type:inline-size and content-visibility:auto, where specs changed)?",
+  "howToTest": "Open knowledge/tests/m-containing-block.html in Firefox and Safari and compare the CB rows.",
+  "needsAccount": false,
+  "whyItMatters": "Fixed backdrop/star layers can scroll away or be cropped in one engine only.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "Do real screen readers (NVDA+Chrome/Firefox, VoiceOver+Safari) honour `content: \"…\" / \"\"` (skip generated text) and still read color:transparent marker text (the roller pattern)?",
+  "howToTest": "Load knowledge/tests/k-a11y.html and h-content.html with NVDA and VoiceOver; read the #wrapper region line by line and note which markers (CHARLIE, GOLF, INDIA/JULIET, PAPA, QUEBEC) are announced. Also inspect Chrome DevTools > Accessibility pane.",
+  "needsAccount": false,
+  "whyItMatters": "The agent tools cannot see generated content, so accessibility claims about pseudo-element text remain unverified.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "Does a reduced-motion rule (`@media (prefers-reduced-motion: reduce) { ...animation:none }`) behave as expected when the OS setting is on?",
+  "howToTest": "Enable Windows 'Animation effects: off' (or macOS Reduce motion), reload knowledge/tests/l-media.html and check L (prefers-reduced-motion: reduce)=true and L-anim=none.",
+  "needsAccount": false,
+  "whyItMatters": "itch's guide asks to verify pages for accessibility; the preview tools cannot emulate this media feature.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "Does itch's CSS editor/sanitizer preserve modern syntax when saving: @layer, @scope, @property, @function, nesting, `content: \"x\" / \"\"`, @import with layer()/supports(), non-ASCII characters and `\\hex` escapes?",
+  "howToTest": "Paste a small CSS containing each construct into the CSS editor of a test project, save, view the page logged out and diff style#custom_css against the input.",
+  "needsAccount": true,
+  "whyItMatters": "Local tests prove browser behaviour; only a save on itch proves the editor does not rewrite or strip it.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "Does any itch stylesheet (static.itch.io/user.css, theme_editor.css, game page CSS) use @layer? If itch ever layered its CSS, the layer results (localtests-16/17) would flip.",
+  "howToTest": "curl the stylesheets referenced in a live page's <head> (respecting robots.txt and rate limits) and grep for '@layer'.",
+  "needsAccount": false,
+  "whyItMatters": "Tailwind/@layer advice depends on itch's own sheets being unlayered.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "How long does a slow or hanging @import (e.g. a cold-starting serverless CSS service) delay the first render of an itch page?",
+  "howToTest": "Run a local node server that delays /live.css by 3-10 s, @import it into knowledge/tests/a-import-cascade.html, and measure first-contentful-paint via PerformanceObserver (needs a visible pane or a normal browser, since rAF/timeline are frozen in the agent pane).",
+  "needsAccount": false,
+  "whyItMatters": "Every @import is render-blocking; services must be fast or the whole page waits.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "Is `background-attachment: fixed` on #wrapper ignored on iOS Safari (falls back to scroll) and how does background-size: cover behave there?",
+  "howToTest": "Open a test page with the e-background.html E3 longhands on an iPhone.",
+  "needsAccount": false,
+  "whyItMatters": "The private repo uses fixed + cover for the panel image; mobile Safari may render it differently.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "Does 100dvh/100svh differ from 100vh on real phones for itch pages (dynamic toolbars), given the preview emulation reports equal values?",
+  "howToTest": "Open knowledge/tests/l-media.html on Android Chrome and iOS Safari, scroll to hide the toolbar, and compare L-units.",
+  "needsAccount": false,
+  "whyItMatters": "Full-height layers or min-height:100vh can jump or leave gaps on mobile.",
+  "from": "research:localtests"
+ },
+ {
+  "question": "Does the jam CSS editor (or itch's save step) ever hoist @import to the top of jam_theme, or warn the host? The only sampled jam with @import had it dropped.",
+  "howToTest": "As a jam host, save CSS that starts with an @import (e.g. a Google font) and read the served <style id=jam_theme>: check the @import's position and whether document.getElementById('jam_theme').sheet contains a CSSImportRule.",
+  "needsAccount": true,
+  "whyItMatters": "If imports are always dropped on jams, AIs must use @font-face for web fonts there.",
+  "from": "research:itchcss"
+ },
+ {
+  "question": "Is jam custom CSS applied on /jam/<slug>/rate/<id>, /results and submission pages, or only on the overview?",
+  "howToTest": "curl those sub-pages of a finished jam that has custom CSS (≥5 s spacing) and look for #wrapper and the custom rules in jam_theme.",
+  "needsAccount": false,
+  "whyItMatters": "Tells authors which jam pages their CSS reaches.",
+  "from": "research:itchcss"
+ },
+ {
+  "question": "Do logged-in visitors (non-owners) get different chrome on creator pages, such as a dark_theme class, a site header, or a different #user_tools?",
+  "howToTest": "Open the same profile/project logged in with site dark mode on and off, then compare body/html classes and the elements before #wrapper.",
+  "needsAccount": true,
+  "whyItMatters": "It determines whether dark-mode or header assumptions hold for logged-in visitors.",
+  "from": "research:itchcss"
+ },
+ {
+  "question": "Where does itch's JS insert #lightbox_container and #lightbox_shroud (body level, outside #wrapper?), and does a #wrapper with isolation or transform affect lightbox positioning?",
+  "howToTest": "Load a public project page with JS enabled in a test browser, open the screenshot lightbox, and inspect its parent node and stacking.",
+  "needsAccount": false,
+  "whyItMatters": "It confirms that custom z-index and transforms on #wrapper cannot trap itch modals.",
+  "from": "research:itchcss"
+ },
+ {
+  "question": "Does Chromium paint the outline-color set by itch's :focus rule when outline-style is auto, or does it draw its own two-tone ring?",
+  "howToTest": "Take a headless screenshot after keyboard-focusing a link (Tab) on a dark profile harness, then sample the ring pixels with and without #wrapper{--itchio_input_focus_color:#ffc857}.",
+  "needsAccount": false,
+  "whyItMatters": "It decides whether the variable alone is enough for visible focus or an explicit outline style and width is required.",
+  "from": "research:itchcss"
+ },
+ {
+  "question": "Are the theme-editor's nested CSS rules (profile) also emitted for project/jam themes in some theme settings, e.g. a 'Column layout' or other options?",
+  "howToTest": "Survey more profile, project and jam pages with varied theme options and grep the theme blocks for nested '{' inside a rule body.",
+  "needsAccount": false,
+  "whyItMatters": "Nesting changes the effective specificity and the support in old browsers.",
+  "from": "research:itchcss"
+ },
+ {
+  "question": "Which theme-editor settings produce .user_page.mode_column vs mode_grid vs mode_collection_grid and mode_show_purchases, and do they add other layout classes?",
+  "howToTest": "Toggle each profile theme-editor layout option on an account and diff the .user_page classes and user_theme output.",
+  "needsAccount": true,
+  "whyItMatters": "Profile layout rules in user.css are keyed on these mode classes.",
+  "from": "research:itchcss"
+ },
+ {
+  "question": "Does itch's CSS editor store modern syntax untouched: nesting, @property, @container (size and style), @scope, @starting-style, @view-transition, `content: \"x\" / \"\"`, random(), sibling-index()?",
+  "howToTest": "Paste a test sheet with one rule per construct into a draft project's custom CSS, save, then curl the public page and read the text of style#custom_css (or compare with the pasted text).",
+  "needsAccount": true,
+  "whyItMatters": "Browser support is irrelevant if the editor rewrites or strips the syntax; nesting and @property would save characters under the ~5120 cap.",
+  "from": "research:support"
+ },
+ {
+  "question": "Do cross-document view transitions actually fire between https://<creator>.itch.io/ and https://<creator>.itch.io/<game> when both pages' custom CSS contain `@view-transition{navigation:auto}`?",
+  "howToTest": "Add the rule (plus a shared view-transition-name on the cover/banner) to the profile CSS and one project's CSS, navigate in Chrome 126+ and Safari 18.2+, watch for the crossfade; check for redirects or slow renders (Chrome aborts after a timeout).",
+  "needsAccount": true,
+  "whyItMatters": "It would be the only JS-free page-transition effect available to creators; itch's own scripts, redirects or render-blocking could prevent it.",
+  "from": "research:support"
+ },
+ {
+  "question": "Does the bio/description sanitizer keep data-* attributes, popover/popovertarget, <details>/<summary> and <button>?",
+  "howToTest": "Save a description containing each element/attribute with a custom- class, then curl the public page and diff the HTML.",
+  "needsAccount": true,
+  "whyItMatters": "Typed attr(), :popover-open and ::details-content are only usable if the markup survives.",
+  "from": "research:support"
+ },
+ {
+  "question": "Do Firefox 158 and Safari 27 pass the same probe rows Chrome passes (especially @scope & specificity, content alt text in the accessibility tree, light-dark/color-scheme, backdrop-filter containing block)?",
+  "howToTest": "Open knowledge/evidence/support-probe.html in Firefox stable and Safari 27 (macOS and iOS) and record the PROBE_JSON; for a11y use Firefox's Accessibility Inspector / Safari's Web Inspector on support-a11y.html.",
+  "needsAccount": false,
+  "whyItMatters": "Every Firefox/Safari claim here is documented, not verified; no Firefox/WebKit binary was available on the test machine.",
+  "from": "research:support"
+ },
+ {
+  "question": "Is the container style-query range syntax `style(--n > 5)` enabled by default in Firefox 151+?",
+  "howToTest": "Run the cq-style-range-fx row of support-probe.html in Firefox stable (BCD says 151; MDN's Firefox 151 notes and Experimental features page say experimental/off).",
+  "needsAccount": false,
+  "whyItMatters": "Determines whether range-based style queries are usable outside Chrome.",
+  "from": "research:support"
+ },
+ {
+  "question": "Does Firefox 154+ actually render text-box trimming, or only parse it?",
+  "howToTest": "Measure the height of an inline-block with `text-box: trim-both cap alphabetic` vs without in Firefox stable.",
+  "needsAccount": false,
+  "whyItMatters": "web-features withholds Baseline because Firefox's <text-edge> data says parse-only.",
+  "from": "research:support"
+ },
+ {
+  "question": "Did Chrome 156 ship random() to stable on 2026-10-20 with the same semantics (named values global, element-scoped keyword, positional step)?",
+  "howToTest": "Re-run support-probe.html headless with the updated Chrome after 2026-10-20 (random, random-fx, random-shared-fx rows).",
+  "needsAccount": false,
+  "whyItMatters": "random() would go from ~13% to the majority of users and replace external per-visit CSS services.",
+  "from": "research:support"
+ },
+ {
+  "question": "Does WebKit bug 297620 (backdrop-filter ignored when its value uses var()) also affect Safari 27 on macOS Sonoma or any iOS version?",
+  "howToTest": "Load a page with `backdrop-filter: blur(var(--b))` vs a literal value in Safari 27 on macOS 14 and on iOS 27.",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether frosted-glass cards may use design tokens in the filter value.",
+  "from": "research:support"
+ },
+ {
+  "question": "Does @starting-style trigger on the initial page render for elements present in the HTML (not inserted later), in all three engines?",
+  "howToTest": "Static page with `#x{transition:opacity 1s} @starting-style{#x{opacity:0}}`; read `document.getElementById('x').getAnimations().length` on load in each browser.",
+  "needsAccount": false,
+  "whyItMatters": "Entry fades on itch rely on the first render, not on DOM insertion (only insertion was tested here).",
+  "from": "research:support"
+ },
+ {
+  "question": "What browser mix do itch visitors actually have?",
+  "howToTest": "Check whether the itch creator dashboard analytics show browser/OS breakdowns; otherwise the global caniuse shares remain the only proxy.",
+  "needsAccount": true,
+  "whyItMatters": "Coverage percentages here are global web traffic; itch's audience is probably more desktop-heavy, which raises Firefox's weight.",
+  "from": "research:support"
+ },
+ {
+  "question": "Does itch's HTML sanitizer keep empty <span class=\"custom-...\"> elements, a visually-hidden <span class=\"custom-sr\"> inside an <h1>, and attributes such as aria-label, role, lang, title and id in profile bios and project descriptions?",
+  "howToTest": "Paste a test snippet in HTML mode (<>) on a throwaway project description, save, then curl the public page and diff the markup.",
+  "needsAccount": true,
+  "whyItMatters": "It decides whether the accessible letter-split heading fix (a11y-13), language tagging and CSS-only :target pause controls are possible.",
+  "from": "research:a11y"
+ },
+ {
+  "question": "How do Firefox and Safari render outline-style:auto when itch sets outline-color:#361275 on dark themes? Is the ring still visible like Chrome's two-tone ring?",
+  "howToTest": "Open a dark-themed itch profile logged out in Firefox and Safari, Tab to a game title, and screenshot/zoom the ring.",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether a custom :focus-visible ring is mandatory or only recommended on dark themes.",
+  "from": "research:a11y"
+ },
+ {
+  "question": "What do NVDA, JAWS and VoiceOver actually announce for a heading built from display:inline-block letter spans, given that Chrome's accessible name is 'M i r o'?",
+  "howToTest": "Load knowledge/evidence/a11y-tests/t1b-letters.html with each screen reader and read the heading list and the headings in browse mode.",
+  "needsAccount": false,
+  "whyItMatters": "Confirms the severity of a common itch title effect and the value of the sr-only workaround.",
+  "from": "research:a11y"
+ },
+ {
+  "question": "Does a real Windows 11 contrast theme (Edge/Chrome/Firefox) behave like CDP forced-colors emulation for gradient text, transparent text and url() theme backgrounds with backplates?",
+  "howToTest": "Enable a contrast theme in Windows settings and open t5-forced.html and the live profile in Edge, Chrome and Firefox. Compare with shots/forced-active.png.",
+  "needsAccount": false,
+  "whyItMatters": "Emulation may differ from the OS mode, especially in Firefox.",
+  "from": "research:a11y"
+ },
+ {
+  "question": "On iOS Safari, how does an itch profile with background-attachment:fixed + background-size:cover on #wrapper actually render (scrolling, over-zoom)?",
+  "howToTest": "Open the live profile on an iPhone/iPad and scroll. Compare with a variant that uses a position:fixed pseudo-element layer.",
+  "needsAccount": false,
+  "whyItMatters": "itch's own theme now emits background-attachment:fixed and many custom CSS files add cover/fixed.",
+  "from": "research:a11y"
+ },
+ {
+  "question": "Does itch's JavaScript remove the 'hidden' class from ul#user_tools (the Follow / Related games buttons) for logged-out visitors, or does that invisible link stay the first Tab stop?",
+  "howToTest": "Open a profile logged out with JS enabled, press Tab once and inspect document.activeElement and its computed opacity.",
+  "needsAccount": false,
+  "whyItMatters": "An invisible first focus stop is a 2.4.7 problem outside #wrapper that creators can't fix but should not make worse.",
+  "from": "research:a11y"
+ },
+ {
+  "question": "What extra elements does a logged-in owner see on project pages (edit toolbars, admin buttons), and do they shift layout or headings like the profile header does?",
+  "howToTest": "As an owner, save the project page HTML and diff its classes and headings against the logged-out curl.",
+  "needsAccount": true,
+  "whyItMatters": "Final a11y checks must be done in the visitor view. Knowing the diff tells an AI which differences to ignore.",
+  "from": "research:a11y"
+ },
+ {
+  "question": "Which rules does axe-core (or Lighthouse) report on an unmodified logged-out itch profile, project and jam page? This would give a baseline of platform issues (link-name, image-alt, duplicate h1) to subtract from custom-CSS audits.",
+  "howToTest": "Run the axe DevTools extension or Lighthouse accessibility audit on default-theme pages without custom CSS and record the rule IDs.",
+  "needsAccount": false,
+  "whyItMatters": "Lets an AI tell its own regressions apart from itch's pre-existing issues.",
+  "from": "research:a11y"
+ },
+ {
+  "question": "Is there any CSS-only pause/stop control for infinite animations that survives the sanitizer (e.g. <details>/<summary>, anchors with :target, :focus-within on a link) to satisfy WCAG 2.2.2?",
+  "howToTest": "Paste candidate markup into a test description, save, and check the public HTML. Then test a #wrapper:has(.custom-pause:target) .custom-anim{animation-play-state:paused} pattern.",
+  "needsAccount": true,
+  "whyItMatters": "itch forbids JS, so a markup-based mechanism is the only way to meet 2.2.2 for long-running decorative motion.",
+  "from": "research:a11y"
+ },
+ {
+  "question": "Which accessibility media queries (prefers-reduced-transparency, prefers-contrast) are supported in Firefox and Safari as of late 2026?",
+  "howToTest": "Check MDN BCD css/at-rules/media.json for prefers-reduced-transparency, and run matchMedia in each browser.",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether the glass-card opacity fallback (a11y-51) reaches non-Chromium users.",
+  "from": "research:a11y"
+ },
+ {
+  "question": "Why did Brave Shields block https://itch-io-custom-css-custom-css.vercel.app/live.css on 2026-10-12, when no rule in Brave's default lists (as of 2026-10-14) matches it?",
+  "howToTest": "Open https://mirokshi.itch.io/ in Brave with Shields Standard, then Aggressive, then Standard plus the regional (Spanish) lists. Expand the Shields panel to read the blocked-resource list, and check brave://adblock-internals. Repeat with a copy of live.css on a custom domain and on *.pages.dev.",
+  "whyItMatters": "Tells AIs whether to recommend a custom domain or other host, and whether the block came from a list, from fingerprinting protection or from a since-removed rule.",
+  "needsAccount": false,
+  "from": "research:external"
+ },
+ {
+  "question": "Does itch's bio/description sanitizer keep <link rel=preconnect> or <link rel=stylesheet> tags?",
+  "howToTest": "Save `<link rel=preconnect href=https://fonts.gstatic.com crossorigin>` and a `<link rel=stylesheet href=...>` in a profile bio, then curl the public page and search for them.",
+  "whyItMatters": "It would allow a body preconnect (a verified Chrome feature) or a non-render-blocking stylesheet without @import.",
+  "needsAccount": true,
+  "from": "research:external"
+ },
+ {
+  "question": "Does itch's CSS editor keep http:// imports, `@import ... layer()/supports()/media` conditions, `@charset`, data: URIs, or several @import lines, or does it reject or strip any of them?",
+  "howToTest": "Paste a CSS containing each variant into a test project's CSS editor, save, and diff the public page's style#custom_css with the input.",
+  "whyItMatters": "Confirms which @import forms survive saving. So far only plain `@import url('https://...')` is verified to survive.",
+  "needsAccount": true,
+  "from": "research:external"
+ },
+ {
+  "question": "Do Firefox and Safari also fetch media-mismatched @imports, send origin-only Referer for url() in inline styles, honour `Link: rel=preconnect` on stylesheet responses, and apply sheets with no Content-Type?",
+  "howToTest": "Re-run knowledge/evidence/external-tools (server.py, gen.py) with Playwright Firefox and WebKit instead of cdp.mjs, reading window.__result() and the server logs.",
+  "whyItMatters": "All lab results are from Chrome 155 only, and some facts may be engine-specific.",
+  "needsAccount": false,
+  "from": "research:external"
+ },
+ {
+  "question": "Are itch pages actually bfcache-eligible (no unload handlers or other blockers), so that Back shows the same per-visit CSS variant?",
+  "howToTest": "Chrome DevTools → Application → Back/forward cache → 'Test back/forward cache' on https://mirokshi.itch.io/ and on a project page, logged out.",
+  "whyItMatters": "Decides whether per-visit randomness changes on Back navigation for real visitors.",
+  "needsAccount": false,
+  "from": "research:external"
+ },
+ {
+  "question": "How much does the live.css import delay first contentful paint on the real profile (cold vs warm Vercel function, iad1 vs a European region)?",
+  "howToTest": "Run Lighthouse or WebPageTest on https://mirokshi.itch.io/ with and without DevTools request blocking of the vercel URL, and before and after setting `regions: [\"cdg1\"]` in vercel.json.",
+  "whyItMatters": "Quantifies the render-blocking cost of per-visit CSS, which is needed for the performance guidance.",
+  "needsAccount": false,
+  "from": "research:external"
+ },
+ {
+  "question": "Does a CSS service for an itch page that sells games count as 'commercial use' under Vercel Hobby?",
+  "howToTest": "Ask Vercel support with a concrete description, or check for an updated fair-use FAQ.",
+  "whyItMatters": "Affects which free host the knowledge base recommends for creators with paid games.",
+  "needsAccount": false,
+  "from": "research:external"
+ },
+ {
+  "question": "Do Firefox Enhanced Tracking Protection (strict) and Safari ITP block or restrict third-party stylesheets from *.vercel.app / *.workers.dev, or strip their Referer?",
+  "howToTest": "Load the lab page via a public HTTPS tunnel, or the live profile, in Firefox (strict ETP) and Safari, and read the Network panel and the host's request logs.",
+  "whyItMatters": "Completes the content-blocker picture beyond Brave and uBO lists.",
+  "needsAccount": false,
+  "from": "research:external"
+ },
+ {
+  "question": "Does the itch desktop app or any itch embed/proxy context render custom CSS with the external @import, and does it fetch it directly?",
+  "howToTest": "Open the profile in the itch desktop app with a network monitor (or point the @import at a logging host you control) and check request headers and Referer.",
+  "whyItMatters": "External CSS may behave differently, or not load at all, outside browsers.",
+  "needsAccount": false,
+  "from": "research:external"
+ },
+ {
+  "question": "OPERATIONAL NOTE (not a research question): this agent once ran `taskkill /F /IM python.exe` at about 12:15 local time (10:15 UTC) on 2026-10-14. That would have killed any other python process on this machine at that moment, for example another agent's lab server or the repo's `static` preview server (`python -m http.server 8080`). Did any parallel agent lose a local server?",
+  "howToTest": "Run `netstat -ano | findstr LISTENING` and restart any expected python server (for example preview_start {name:'static'}) that is missing. Re-run any parallel-agent tests that failed around 10:15 UTC.",
+  "whyItMatters": "Other dimensions' local-test evidence could contain spurious failures from that moment.",
+  "needsAccount": false,
+  "from": "research:external"
+ },
+ {
+  "question": "Does the project-page CSS editor enforce a ~5,120-character cap (as the profile editor does), or a different one?",
+  "howToTest": "With CSS access on a test project, paste 6,000, 10,000 and 20,000 characters of commented CSS, save, then curl the page and measure style#custom_css.",
+  "needsAccount": true,
+  "whyItMatters": "Live pages serve 7.6 KB, 9 KB and 93 KB. An AI needs the real budget before deciding to minify or split.",
+  "from": "research:crawlproject"
+ },
+ {
+  "question": "What triggers body.has_site_header (the itch site header above a project page)?",
+  "howToTest": "Curl about 20 pages from new or small accounts and 20 established jam entries during voting, and compare body classes. Also compare one page before and after its jam's voting ends.",
+  "needsAccount": false,
+  "whyItMatters": "The extra header changes the layout (#user_tools top:50px) and can collide with fixed custom elements.",
+  "from": "research:crawlproject"
+ },
+ {
+  "question": "Does the download interstitial (/<project>/download/<key>) carry the project's game_theme and custom_css?",
+  "howToTest": "Manually, in a browser: open a free downloadable page with custom CSS, click Download, choose 'No thanks', and check document.getElementById('custom_css'). Robots.txt forbids automated fetching.",
+  "needsAccount": false,
+  "whyItMatters": "Tells whether creators can theme the download step.",
+  "from": "research:crawlproject"
+ },
+ {
+  "question": "Does setting --itchio_link_color / --itchio_button_color on #wrapper change any visible element of a project page?",
+  "howToTest": "Save a project page locally, inject '#wrapper{--itchio_link_color:red;--itchio_button_color:red}' after style#custom_css, and compare getComputedStyle on .formatted_description a, .buy_btn, .button.outline and comment links.",
+  "needsAccount": false,
+  "whyItMatters": "The jam guide recommends variables, but the project theme hard-codes hex colors. This decides which advice to give for project pages.",
+  "from": "research:crawlproject"
+ },
+ {
+  "question": "Which theme-editor controls produce size_small/medium/large/very_large, the heading color, .video_embed.big_video, align_right and the embed background, and what are their exact labels?",
+  "howToTest": "Open the theme editor on a test project, toggle each control, and diff style#game_theme and the #header/#inner_column classes.",
+  "needsAccount": true,
+  "whyItMatters": "Lets an AI tell a creator 'set X in the theme editor' versus 'do it in CSS'.",
+  "from": "research:crawlproject"
+ },
+ {
+  "question": "Does saving project CSS rewrite or reject anything (non-Google @import, </style>, javascript: URLs, very large data: URIs, @font-face from external hosts)?",
+  "howToTest": "Save test CSS containing each construct on a test project and curl the page to compare the served style#custom_css.",
+  "needsAccount": true,
+  "whyItMatters": "Determines which techniques survive the editor.",
+  "from": "research:crawlproject"
+ },
+ {
+  "question": "Which classes does itch's JS add at runtime on project pages (body.frame_maximized, .game_frame.maximized, .game_loaded after click, .more_information_toggle.open, lightbox_open), and where does the screenshot lightbox (#lightbox_container) live?",
+  "howToTest": "In a real browser on a click-to-launch page, record document.body.className and .game_frame classes before and after clicking play, maximize and the screenshots.",
+  "needsAccount": false,
+  "whyItMatters": "Custom CSS that targets the maximized or open states needs the exact runtime classes.",
+  "from": "research:crawlproject"
+ },
+ {
+  "question": "What markup do rarer embed modes use (embed disabled / 'open in new window', Unity, Java, Flash legacy classes in game.css)?",
+  "howToTest": "Find such pages via itch.io/games/platform-web listings or older jam entries and run skel.py on .view_game_page.",
+  "needsAccount": false,
+  "whyItMatters": "Completes the embed map; custom CSS for .game_frame may not apply to them.",
+  "from": "research:crawlproject"
+ },
+ {
+  "question": "Is project custom CSS applied on the jam rating page (itch.io/jam/<slug>/rate/<id>) for that entry?",
+  "howToTest": "Curl the rate page of a submission whose project has custom CSS and look for style#custom_css or game_theme.",
+  "needsAccount": false,
+  "whyItMatters": "Jam voters mostly see the rate page; creators may expect their styling there.",
+  "from": "research:crawlproject"
+ },
+ {
+  "question": "Does itch ESCAPE an unknown tag (showing it as text) or DELETE it?",
+  "howToTest": "In a project description in <> HTML mode, save <p>A<marquee>B</marquee>C<wbr>D<svg><circle r=\"1\"/></svg>E</p>. View the public page source logged out. Literal &lt;marquee&gt; text means escape; plain 'ABCDE' means strip. Repeat on the profile bio and a devlog.",
+  "needsAccount": true,
+  "whyItMatters": "Decides whether unsupported markup becomes visible garbage or disappears silently.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "What exactly is the class rule: custom- prefix only, or any 'custom' prefix? Which editor classes are kept, and is an emptied class attribute dropped?",
+  "howToTest": "Save <span class=\"custom-a custom_b customc Custom-d xcustom-e text-right text-left text-center foo\">x</span><span class=\"foo bar\">y</span>. Read the served class attributes, and check whether the second span has class=\"\" or no class.",
+  "needsAccount": true,
+  "whyItMatters": "An AI must know which class names are safe to emit.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "Are id, data-*, aria-*, role, tabindex, hidden and details[open] stripped on every page type, including profile, devlog and jam?",
+  "howToTest": "Save <details open id=\"x\" hidden data-x=\"1\" aria-label=\"y\" role=\"note\" tabindex=\"0\" title=\"t\" lang=\"es\"><summary>s</summary>t</details> on a project, a profile bio and a devlog. Compare the served HTML.",
+  "needsAccount": true,
+  "whyItMatters": "Confirms the global-attribute whitelist for selectors and accessibility.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "Does itch's inline style handling match web_sanitize exactly: whole attribute dropped on !important, 1.5em dropped, style=\"\" kept?",
+  "howToTest": "Save these spans: <span style=\"color:red !important\">1</span>, <span style=\"font-size:1.5em\">2</span>, <span style=\"font-size:150%;line-height:2\">3</span>, <span style=\"display:flex;float:left\">4</span>, <span style=\"background:url('https://example.com/a.png') no-repeat\">5</span>, <span style=\"border-radius:4px;color:rgb(1 2 3 / 50%)\">6</span>. Expected per the library: no style / style=\"\" / font-size:150% / style=\"\" / style=\"\" / no style.",
+  "needsAccount": true,
+  "whyItMatters": "Pins down the inline-style rules an AI can rely on when the user has no CSS access.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "Which iframe hosts and attributes are accepted, and are iframes click-to-activate on profile bios?",
+  "howToTest": "Save <iframe src=\"https://example.com/\" width=\"300\" height=\"200\" allow=\"autoplay\" title=\"t\" loading=\"lazy\" sandbox referrerpolicy=\"no-referrer\" style=\"width:100%\"></iframe> plus a YouTube and a Bandcamp iframe. Do it in a project description, a profile bio, a devlog and a jam description. Check for <iframe> versus <button class=\"embed_preload\">, and which attributes remain inside data-embed_code.",
+  "needsAccount": true,
+  "whyItMatters": "Embeds are common on game pages; CSS for iframes and placeholders depends on it.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "Does the Redactor source mode normalise HTML before sending it, which would rescue unquoted attributes, CRLF inside tags and self-closing spans?",
+  "howToTest": "In HTML mode, paste <img src=\"https://img.itch.zone/…\" width=100%>, <span class=\"custom-x\"/>after, and a <div title=\"x\"> split across two lines with CRLF. Save without switching to visual mode, then inspect the served HTML. Repeat with ?redactor=0 appended to the edit URL.",
+  "needsAccount": true,
+  "whyItMatters": "Tells whether the library's 'whole tag escaped' gotchas apply in practice.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "Does adding ?redactor=0 to an itch edit page give a plain textarea that submits raw HTML?",
+  "howToTest": "Open the project or profile edit page with ?redactor=0 (game.min.js skips Redactor when the URL contains redactor=0), check the description field type, and save a small snippet.",
+  "needsAccount": true,
+  "whyItMatters": "A reliable way to author exact HTML without editor rewrites such as b to strong.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "How does the CSS editor treat dangerous or odd text, and is anything stripped?",
+  "howToTest": "Save as custom CSS: #wrapper{--a:\"</style><b>x</b>\"} #wrapper .x{background:url(javascript:alert(1));width:expression(1);behavior:url(x.htc);-moz-binding:url(x)} @import url(http://example.com/a.css); /* comment */. Then read style#custom_css in the served page (logged out) for escaping, removal or rejection.",
+  "needsAccount": true,
+  "whyItMatters": "Defines what CSS-editor content survives and whether </style> can break out.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "What is the real CSS editor cap: does it count comments and whitespace, is it enforced on save or in the textarea, and is it the same for project, profile and jam?",
+  "howToTest": "Paste CSS of 5,100, 5,200 and 6,000 characters, with and without comments, into each page type's editor. Note the textarea maxlength or error message, and compare the stored length in style#custom_css or style#jam_theme.",
+  "needsAccount": true,
+  "whyItMatters": "Live pages store 9,967-12,274 chars, which contradicts a hard ~5,120 cap.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "Are HTML comments in page HTML escaped as visible text, stripped, or kept?",
+  "howToTest": "Save <p>a<!-- hidden note -->b</p> in HTML mode and inspect the served HTML.",
+  "needsAccount": true,
+  "whyItMatters": "Authors often leave notes in HTML; escaped comments would be visible.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "For accounts WITHOUT CSS-editor access, are custom-* classes and style attributes still kept?",
+  "howToTest": "With an account that has never been granted CSS access, save <span class=\"custom-x\" style=\"color:red\">x</span> in a project description and inspect the output.",
+  "needsAccount": true,
+  "whyItMatters": "A community post claims classes are stripped without CSS access; this changes advice for most users.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "Are external <img> URLs still accepted unchanged on new saves, or rewritten or uploaded?",
+  "howToTest": "Save <img src=\"https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png\" alt=\"t\"> and <img src=\"http://example.com/x.png\">, then check the served src.",
+  "needsAccount": true,
+  "whyItMatters": "Only one old external image was seen live; hotlink policy affects CSS and asset advice.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "Can rel=\"me\" (Mastodon or Bluesky verification) survive on any link in a profile bio?",
+  "howToTest": "Save <a rel=\"me\" href=\"https://mastodon.social/@example\">m</a> in the bio and inspect the served rel value.",
+  "needsAccount": true,
+  "whyItMatters": "Users ask for it, and the library overwrites rel on external links.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "Do the probes behave identically under real C LPeg/OpenResty as under the LuLPeg port used here?",
+  "howToTest": "Under OpenResty, or Lua 5.1 with luarocks lpeg, run: luarocks install web_sanitize 1.8.0. Then run knowledge/evidence/sanitizer/cases.lua through a Lua harness equivalent to run_ws.py and diff the output against ws_results.json.",
+  "needsAccount": false,
+  "whyItMatters": "All 27 spec vectors passed under LuLPeg, but the extra probes weren't cross-checked against the reference LPeg.",
+  "from": "research:sanitizer"
+ },
+ {
+  "question": "Do Firefox and Safari also evaluate sibling-index() inside an unregistered custom property at the var() use site (Chromium 152: use site), and do they support sibling-index() at all?",
+  "howToTest": "Serve the repo on :8090/:8091 and open knowledge/evidence/localtests-verify-tools/verify.html in Firefox and Safari; compare rows V18, V18b and V18c.",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether an index-driven per-letter animation can drop the :nth-child fallback, and whether the index must be a registered property.",
+  "from": "verify:localtests"
+ },
+ {
+  "question": "Is the agent pane's frozen timeline caused by the pane being hidden? Do rAF and transitions run normally when the pane is displayed?",
+  "howToTest": "Open knowledge/tests/l-media.html with the Browser pane visible (user brings it forward) and compare L-env-raf / L-env-timeline / L-env-transition with a hidden-pane run.",
+  "needsAccount": false,
+  "whyItMatters": "Determines whether animation checks in the agent preview must always use paused negative-delay animations.",
+  "from": "verify:localtests"
+ },
+ {
+  "question": "Does itch's CSS editor keep a `@layer` statement or a Tailwind `important` build intact when saving, and does a compiled Tailwind v4 bundle fit the ~5120-character cap?",
+  "howToTest": "Compile a minimal Tailwind v4 bundle with `@import \"tailwindcss\" important;` limited to the classes in a test bio, paste it into a test project's CSS editor, save, and diff style#custom_css logged out.",
+  "needsAccount": true,
+  "whyItMatters": "localtests-16 recommends !important builds for Tailwind on itch, but that only helps if the editor preserves them and they fit.",
+  "from": "verify:localtests"
+ },
+ {
+  "question": "Does itch's bio sanitizer keep aria-label (and role) on a custom h1, and do real screen readers then announce 'Mirokshi' instead of spelling out the inline-block letters?",
+  "howToTest": "Save a bio with <h1 class=\"custom-title\" aria-label=\"Name\"><span …>N</span>…</h1>, curl the profile logged out to see which attributes survived, then listen with NVDA+Chrome and VoiceOver+Safari.",
+  "needsAccount": true,
+  "whyItMatters": "Per-letter animated titles are a common itch technique, and Chrome already computes a spelled-out name for them.",
+  "from": "verify:repo"
+ },
+ {
+  "question": "Do project/game pages really lack a CSS size check (itch admin, 2023), and is there any cap today?",
+  "howToTest": "On a test project with CSS access, save 6 KB, 10 KB and 20 KB of valid CSS with a canary rule at the end, and check style#custom_css logged out.",
+  "needsAccount": true,
+  "whyItMatters": "It decides whether AIs must squeeze project CSS into 5 KB or can write freely.",
+  "from": "verify:repo"
+ },
+ {
+  "question": "How is itch's anonymous 429 budget computed (per IP? per path? what window?)",
+  "howToTest": "From a dedicated IP with no other traffic, fetch one profile at fixed spacings (60 s, 20 s, 5 s) and record when the first 429 appears and how long until a 200 returns.",
+  "needsAccount": false,
+  "whyItMatters": "Agents verifying itch pages need a safe crawl rate; a 429 arrived even 7.5 min after this client's previous request.",
+  "from": "verify:repo"
+ },
+ {
+  "question": "Does a logged-out profile whose theme font is a Google font include the css v1 <link> in <head> (between user_theme and custom_css), as the owner export did?",
+  "howToTest": "Find a public profile whose user_theme shows a non-built-in font family, curl it logged out, and list the <head> elements.",
+  "needsAccount": false,
+  "whyItMatters": "Determines whether visitors get the theme font without an extra @import.",
+  "from": "verify:repo"
+ },
+ {
+  "question": "Is the profile CSS cap exactly 5,120, and is it counted in characters (code points or UTF-16 units) or in bytes?",
+  "howToTest": "On a test account's profile CSS editor, save 5,120 ASCII chars (should pass) and 5,121 (should fail), then ~2,600 copies of 'é' (2 bytes each) and ~1,300 of '漢' (3 bytes each), and see which are accepted.",
+  "needsAccount": true,
+  "whyItMatters": "Decides whether non-ASCII content and CRLF/LF affect the budget an AI must target.",
+  "from": "research:corpus"
+ },
+ {
+  "question": "What happens when profile CSS is over the cap: client-side maxlength truncation, a server error (exact message?), or silent truncation?",
+  "howToTest": "Paste 6,000 chars into the profile CSS field, save, then curl the profile and measure style#custom_css; note any UI message.",
+  "needsAccount": true,
+  "whyItMatters": "Silent truncation would cut the stylesheet mid-rule and break everything after it.",
+  "from": "research:corpus"
+ },
+ {
+  "question": "Is there any upper limit for project-page and jam-page custom CSS? The largest seen are 38,576 B (project) and 20,203 chars (jam).",
+  "howToTest": "On a test project and a test jam, save 64 KB, 128 KB and 1 MB of CSS and curl the page each time.",
+  "needsAccount": true,
+  "whyItMatters": "Tells an AI whether big stylesheets (e.g. data: URIs, font embeds) are safe on projects and jams.",
+  "from": "research:corpus"
+ },
+ {
+  "question": "Does itch neutralise a literal `</style` inside custom CSS (escape, strip, reject), or could it close the style element?",
+  "howToTest": "On a test project save `/* </style><b id=x>t</b> */ #wrapper{}` and inspect the raw HTML returned by curl.",
+  "needsAccount": true,
+  "whyItMatters": "Tells us the one escaping rule an AI must avoid; the corpus shows other raw '<' survive.",
+  "from": "research:corpus"
+ },
+ {
+  "question": "Why do 2 of 20 multi-line jam stylesheets have CRLF while 18 have LF? Is it a different editor path, the host's OS, or edit history?",
+  "howToTest": "On a test jam, save CSS containing LF newlines from the current editor and curl jam_theme; repeat with CRLF pasted from a Windows file.",
+  "needsAccount": true,
+  "whyItMatters": "Affects char counting and diffing against sources on jam pages.",
+  "from": "research:corpus"
+ },
+ {
+  "question": "Is leading whitespace also trimmed (only trailing trimming was observed in source pairs)?",
+  "howToTest": "Save CSS that starts with two blank lines and a space on a test profile, then curl and inspect the first bytes of style#custom_css.",
+  "needsAccount": true,
+  "whyItMatters": "Minor budget effect on the profile cap; confirms the trim rule.",
+  "from": "research:corpus"
+ },
+ {
+  "question": "Does the bio sanitizer accept any class starting with 'custom' (no hyphen), as seen on nnda.itch.io, or only 'custom-'?",
+  "howToTest": "Save `<p class=\"customx custom-y other\">t</p>` in a test profile bio and curl the profile to see which classes remain.",
+  "needsAccount": true,
+  "whyItMatters": "Shorter class names save characters under the 5,120 profile cap.",
+  "from": "research:corpus"
+ },
+ {
+  "question": "Does itch reject or rewrite non-HTTPS (http://) URLs or relative URLs in custom CSS at save time? 0 of 62 pages had any.",
+  "howToTest": "Save `#wrapper{background-image:url(http://example.com/a.png)}` on a test project and curl the result.",
+  "needsAccount": true,
+  "whyItMatters": "The guide demands HTTPS; we don't know whether it is enforced or only advised.",
+  "from": "research:corpus"
+ },
+ {
+  "question": "Do AMP devlog pages ever include any project custom CSS, e.g. for other projects or newer posts?",
+  "howToTest": "curl the `.amp` URL (from <link rel=\"amphtml\">) of 5–10 devlog posts belonging to projects that have custom CSS, and search style[amp-custom] for chunks of their custom_css.",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether devlog styling can be relied on for mobile/AMP visitors.",
+  "from": "research:corpus"
+ },
+ {
+  "question": "Does the theme-editor font <link> always use the v1 CSS API with only 400/700 + italics, including for variable fonts?",
+  "howToTest": "curl several profiles, projects and jams whose theme font is a variable Google font and compare the emitted fonts.googleapis.com href.",
+  "needsAccount": false,
+  "whyItMatters": "Decides when an extra @font-face/@import is needed for other weights.",
+  "from": "research:corpus"
+ },
+ {
+  "question": "How long after saving custom CSS do logged-out visitors see it, given the server-side HTML cache (X-Cache-Status HIT, ids stable for several minutes)?",
+  "howToTest": "Save a small CSS change, then curl the profile logged out every 30 s for 15 min, recording X-Cache-Status, Date, the #user_N id and whether style#custom_css changed.",
+  "needsAccount": true,
+  "whyItMatters": "Authors verifying a change right after saving may see stale CSS and wrongly conclude itch rejected it.",
+  "from": "verify:crawlprofile"
+ },
+ {
+  "question": "Why do some accounts' subdomains 302 to itch.io/profile/<user>? Is it zero public projects, or a setting that disables the creator page?",
+  "howToTest": "Logged out, fetch (without -L) the subdomains of several collection authors and of creators with only unlisted projects, and compare the 302/200 outcome with their public project counts on itch.io/profile/<user>.",
+  "needsAccount": false,
+  "whyItMatters": "It decides when profile CSS can apply at all.",
+  "from": "verify:crawlprofile"
+ },
+ {
+  "question": "Is the ~5120 cap counted in characters or UTF-8 bytes?",
+  "howToTest": "In the CSS editor, paste a sheet with multibyte characters (e.g. content:'é') whose character count is under 5120 but byte count is over, save, and curl style#custom_css.",
+  "needsAccount": true,
+  "whyItMatters": "Non-ASCII content strings (one live sheet has 1765 characters / 1767 bytes) could hit the cap earlier than expected.",
+  "from": "verify:crawlprofile"
+ },
+ {
+  "question": "Does a logged-in visitor with itch's dark mode or a non-English site language get .dark_theme or locale_xx on creator profiles, given that the server cache ignores Accept-Language?",
+  "howToTest": "Log in with a secondary account, switch itch's theme and language, open https://<user>.itch.io/ and inspect <body class> and <html lang>.",
+  "needsAccount": true,
+  "whyItMatters": "CSS keyed on .dark_theme or locale classes would silently never match.",
+  "from": "verify:crawlprofile"
+ },
+ {
+  "question": "How do the CSS editors count length against the caps (profile 5kb, jam 20kb, project ?): characters or UTF-8 bytes, and are CRLF line endings counted as 2? Does a fresh save normalize CRLF to LF?",
+  "howToTest": "With a CSS-enabled account, save the same CSS with LF and with CRLF line endings, and with multibyte characters, near 5,120 and 20,480. Then read back the served style#custom_css / jam_theme with newline='' and compare lengths and CR counts.",
+  "needsAccount": true,
+  "whyItMatters": "Live CSS is served with CRLF from older saves (igua 10,569 vs 10,203), so an AI's length budget may be off by hundreds of characters.",
+  "from": "verify:docs"
+ },
+ {
+  "question": "Is the jam cap exactly 20,480 characters (20 KiB)? A live jam already holds 20,411 host characters.",
+  "howToTest": "Save jam CSS of 20,480 and 20,481 ASCII characters (LF) in a test jam's theme editor and see whether it is refused or truncated.",
+  "needsAccount": true,
+  "whyItMatters": "Pins down the real jam budget; 20,000 is now known to be too low a reading of '20kb'.",
+  "from": "verify:docs"
+ },
+ {
+  "question": "Do a project's own community board (/<game>/community and its topics) and jam rate pages (/jam/<slug>/rate/<id>) carry the project's or jam's custom CSS?",
+  "howToTest": "Logged out, fetch a CSS Showcase project that has a community board enabled, one of its topics, and a jam entry's /rate page; check for style#custom_css / style#jam_theme and #wrapper with an.py.",
+  "needsAccount": false,
+  "whyItMatters": "docs-05 only checked site-wide forum topics, and /comments was found to carry custom CSS while /purchase does not.",
+  "from": "verify:docs"
+ },
+ {
+  "question": "Is the 'External link' hover label really absent on profile bios and jam descriptions (jam.css and user.css have no nofollow rule), or is it injected another way (JS, another stylesheet)?",
+  "howToTest": "In a browser, hover an outbound link in leafo.itch.io's bio and in a jam description (.jam_content.user_formatted), and compare getComputedStyle(a,'::after').content with a project description link.",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether link-decoration CSS can collide with itch's warning on every page type or only on projects and devlogs.",
+  "from": "verify:docs"
+ },
+ {
+  "question": "Does overriding --itchio_link_color / --itchio_button_color on #wrapper (projects) or '#wrapper .user_page' (profiles) change any computed colour, given the theme's literal per-selector colours?",
+  "howToTest": "Save a logged-out copy of a project and a profile page locally, inject '#wrapper{--itchio_link_color:red}' after style#custom_css, and read getComputedStyle on description links, buttons and footer links.",
+  "needsAccount": false,
+  "whyItMatters": "docs-56 is inferred from the cascade; a browser test would make the variables-vs-selectors advice verified.",
+  "from": "verify:docs"
+ },
+ {
+  "question": "Is the attribute and class-order variation in itch's HTML per request or per deploy?",
+  "howToTest": "Within one deploy stamp (same `?<n>` on jam.css), fetch the same jam overview 3–4 times ≥7 s apart. Compare the order of attributes on style#jam_theme, #wrapper and #entries, and the class order on the site-header div.",
+  "needsAccount": false,
+  "whyItMatters": "It decides whether a saved offline harness stays representative, and how robust scraping and testing tools must be.",
+  "from": "verify:crawljam"
+ },
+ {
+  "question": "Is the subpage link-colour rule exactly 'equal per-channel darkening until YIQ ≤ 120', and why did witchcraft-jam change by 1 in blue (#744918 → #744917)?",
+  "howToTest": "Fetch the overview and one subpage for 10+ more jams with varied link colours (very bright, saturated, already dark). Compare against the model with the inline script in crawljam.md (second pass).",
+  "needsAccount": false,
+  "whyItMatters": "Hosts can't style subpages with CSS, so predicting the subpage link colour is the only way to pick a theme link colour that stays legible there.",
+  "from": "verify:crawljam"
+ },
+ {
+  "question": "Which background-repeat and background-size values can the jam theme editor emit (repeat-x, no-repeat, cover)?",
+  "howToTest": "Crawl more jam overviews and grep `.jam_page_wrap{…}` for background-repeat/background-size, or toggle each option in a test jam's theme editor and fetch the overview logged out.",
+  "needsAccount": false,
+  "whyItMatters": "It completes the generated-template knowledge, so an AI knows which longhands it may need to override.",
+  "from": "verify:crawljam"
+ },
+ {
+  "question": "Is the jam CSS limit 20,480 characters or 20,480 bytes, and does it count comments and whitespace? gamelike-jam-010 serves 20,410 ASCII chars, including 14 comments.",
+  "howToTest": "As a jam host with CSS access, save CSS of exactly 20,480 and 20,481 ASCII chars, then the same length with multibyte characters, and note which saves are rejected.",
+  "needsAccount": true,
+  "whyItMatters": "It tells an AI when it must minify or move styling into the theme editor.",
+  "from": "verify:crawljam"
+ },
+ {
+  "question": "With JavaScript running, which countdown units get `.time_block.hidden`, and what text format does `.block_value` use (zero-padded? leading zero units hidden?)?",
+  "howToTest": "Load a running jam overview in a JS-enabled headless browser with network access (not offline) and read the countdown's DOM after a few seconds.",
+  "needsAccount": false,
+  "whyItMatters": "Countdown restyling (a common jam CSS target) depends on which blocks are visible and how wide their values are.",
+  "from": "verify:crawljam"
+ },
+ {
+  "question": "Does a slow or blocked @import inside style#custom_css produce a blank or delayed first paint (render-blocking, as the HTML spec implies) or a flash of unstyled content (as the nnda README says) in Chrome, Firefox and Safari?",
+  "howToTest": "Locally, serve a page with <style>@import url('http://localhost:9000/slow.css'); …</style> in <head>, where slow.css is delayed 3 s, plus visible body content. Record first paint (Performance panel / screenshots) in each browser. Repeat with the import placed in a <style> in <body>.",
+  "needsAccount": false,
+  "whyItMatters": "It decides whether advice should say 'keep critical rules in the pasted part to avoid FOUC' or 'keep imports small/fast because they delay the whole page'.",
+  "from": "verify:community"
+ },
+ {
+  "question": "Does the runtime `<style itchio-grid-sizer>` (appended after #custom_css) override custom `.mode_grid .user_game_grid{grid-template-columns:…}` rules on a live profile, and does the 2022 admin flexbox recipe still center trailing items?",
+  "howToTest": "On any public profile with a game grid, in DevTools: confirm the style[itchio-grid-sizer] element exists in <head> after style#custom_css. Add a test rule with the same selector in a new <style> before it and read the computed grid-template-columns. Then apply the admin recipe and check the layout.",
+  "needsAccount": false,
+  "whyItMatters": "It tells an AI whether grid overrides need #wrapper and whether the old centering recipe is still valid.",
+  "from": "verify:community"
+ },
+ {
+  "question": "Is the inline style allowlist in bios and descriptions different for accounts without CSS access (a Moderator says inline CSS is stripped) compared with CSS-enabled accounts (6 properties kept on nnda)?",
+  "howToTest": "On a test account without CSS access, save a bio containing elements with style='margin:1px;height:2px;width:3px;font-size:4px;text-align:right;color:red;float:left;border-radius:5px'. Diff the served HTML. Repeat on a CSS-enabled account.",
+  "needsAccount": true,
+  "whyItMatters": "Advice about inline styles depends on whether the user has CSS access.",
+  "from": "verify:community"
+ },
+ {
+  "question": "Does opening a page as the owner with the URL hash #edit_theme open the theme editor on a phone-width viewport where the Edit theme button is hidden?",
+  "howToTest": "As the owner of a test project, open https://USER.itch.io/GAME#edit_theme in a 375-px-wide window and check whether the editor sidebar appears and the Custom CSS field is reachable.",
+  "needsAccount": true,
+  "whyItMatters": "It would be a simpler, scriptless workaround to recommend to mobile users.",
+  "from": "verify:community"
+ },
+ {
+  "question": "Does itch trim trailing whitespace from saved CSS? The maintainer's profile lost a final newline, while a jam's custom CSS kept a trailing space.",
+  "howToTest": "Save profile CSS ending in '}\\n\\n  ' and jam CSS ending the same way, then compare the served bytes. Also check whether the jam css_template adds characters around custom_css.",
+  "needsAccount": true,
+  "whyItMatters": "It affects byte-exact verification and the size budget near the cap.",
+  "from": "verify:community"
+ },
+ {
+  "question": "How do partial-nesting browsers (Chrome/Edge 112-119, Safari 16.5-17.1) and no-nesting browsers actually render the nested profile theme: does the bare 'hr{}' rule also swallow the nested '.user_links .svgicon' and '.game_column,...' rules that follow it?",
+  "howToTest": "Run a portable Chromium 115 and a Chromium 110 build headless against the itchcss-tools/verify2 harness for mirokshi.itch.io (mode none), and read the computed fill of '.user_links .svgicon', border-color of '.game_column', background-color of '.user_profile hr' and color of '.game_title a.title'.",
+  "needsAccount": false,
+  "whyItMatters": "It decides which theme colours a knowledge-base rule should tell authors to restate for older browsers.",
+  "from": "verify:itchcss"
+ },
+ {
+  "question": "Does running itch's JS (lib/bundle/react/user.min.js) change any computed value custom CSS depends on, beyond removing #user_tools.hidden and retargeting the jam skip link (e.g. inline styles, html scroll-padding-top, lightbox insertion point)?",
+  "howToTest": "Build the harness keeping the <script> tags and allow only static.itch.io in --host-resolver-rules, then diff the w_plays.js / w_pw.js / w_jam.js outputs against the script-less runs.",
+  "needsAccount": false,
+  "whyItMatters": "All headless measurements so far ran without JS; real visitors run it.",
+  "from": "verify:itchcss"
+ },
+ {
+  "question": "When the jam skip link is retargeted to .view_jam_page (tabindex=-1), does activating it show a focus ring around the whole jam page, and can #wrapper-scoped CSS style that state?",
+  "howToTest": "With JS enabled on a jam overview, Tab to 'Skip to main content', press Enter, then read document.activeElement and its computed outline; repeat with '#wrapper .view_jam_page:focus{outline:none}' and ':focus-visible' variants.",
+  "needsAccount": false,
+  "whyItMatters": "Jam CSS might accidentally draw (or hide) a page-sized outline after keyboard skip navigation.",
+  "from": "verify:itchcss"
+ },
+ {
+  "question": "Does Firefox 158 apply `@container style(--n > 5)` by default, as its source suggests, even though MDN lists it as experimental behind layout.css.attr.enabled?",
+  "howToTest": "Open knowledge/evidence/support-probe.html in Firefox 158 stable and read the cq-style-range-fx row (expect 34px if it works).",
+  "needsAccount": false,
+  "whyItMatters": "MDN and Firefox's source disagree; this decides whether range style queries are Chromium-only or Chromium + Firefox.",
+  "from": "verify:support"
+ },
+ {
+  "question": "Does Firefox 159 (2026-10-27) ship scroll-driven animations to release as bug 1324602 says, including view() and animation-range?",
+  "howToTest": "After 2026-10-27, run the sda-* rows of support-probe.html in Firefox 159 stable, plus a functional reveal test (computed opacity at different scroll positions).",
+  "needsAccount": false,
+  "whyItMatters": "It would make scroll-driven reveals cross-engine and change the progressive-enhancement advice.",
+  "from": "verify:support"
+ },
+ {
+  "question": "Does Safari 18.2+/27 honour `@view-transition{navigation:auto}` nested inside a style rule (`#wrapper{@view-transition{navigation:auto}}`), as Chrome 155 does?",
+  "howToTest": "Serve two same-origin pages with the nested rule and navigate between them in Safari 27. Check `pagereveal` event.viewTransition, or watch for the crossfade.",
+  "needsAccount": false,
+  "whyItMatters": "If itch's editor or a minifier requires every rule under #wrapper, the nested form would be the only way to ship cross-document transitions.",
+  "from": "verify:support"
+ },
+ {
+  "question": "On a live dark-themed itch page, does `#wrapper{color-scheme:dark}` visibly change anything itch renders (comment textarea, selects, scrollbars of inner scroll containers)?",
+  "howToTest": "Add the rule to a test project's custom CSS, view it logged in with the OS in dark and light mode, and compare computed background-color of the comment textarea and other controls.",
+  "needsAccount": true,
+  "whyItMatters": "Itch's own .form rules set explicit colours from --itchio variables, so the benefit may be limited to unstyled controls.",
+  "from": "verify:support"
+ },
+ {
+  "question": "When will Safari ship if(), @function, random-item(), corner-shape and calc-size(), which WebKit trunk already enables by default?",
+  "howToTest": "Check the WebKit release notes for Safari 27.2/27.4 and Safari Technology Preview, or re-run support-probe.html in each new Safari.",
+  "needsAccount": false,
+  "whyItMatters": "These would move from Chromium-only to two engines, changing which fallbacks are worth their characters under the ~5120 cap.",
+  "from": "verify:support"
+ },
+ {
+  "question": "Why did Brave Shields block https://itch-io-custom-css-custom-css.vercel.app/live.css on 2026-10-12, when no rule in Brave's 30 default desktop sources (re-checked 2026-10-14, 133,415 network rules) or in the Spanish regional lists matches it?",
+  "howToTest": "Open https://mirokshi.itch.io/ in Brave three times: with Shields Standard, with Aggressive, and with Standard plus the regional (Spanish) lists. Read the Shields panel's blocked list and brave://adblock-internals each time. Repeat with a copy of live.css on a custom domain and on *.pages.dev.",
+  "whyItMatters": "Decides whether to recommend a custom domain or a different host, and whether the block came from a list, from fingerprinting protection, or from a since-removed rule.",
+  "needsAccount": false,
+  "from": "verify:external"
+ },
+ {
+  "question": "Do Firefox (Total Cookie Protection), Safari (ITP) and Brave partition or block a cookie set by an @import-ed cross-site stylesheet, and do they send it back when another site imports the same sheet?",
+  "howToTest": "Run external-tools cookie1.html then cookie2.html (also under http://127.0.0.2:8701) with Playwright Firefox and WebKit and with Brave, then read the Cookie header in log-8702.jsonl.",
+  "whyItMatters": "Chrome 155 sends it unpartitioned (verified), so the cross-site tracking risk of a CSS host depends on the browser.",
+  "needsAccount": false,
+  "from": "verify:external"
+ },
+ {
+  "question": "Does itch's bio/description sanitizer keep <link rel=preconnect> or <link rel=stylesheet> tags?",
+  "howToTest": "Save `<link rel=preconnect href=https://fonts.gstatic.com crossorigin>` and a `<link rel=stylesheet href=...>` in a profile bio, then curl the public page and search for them.",
+  "whyItMatters": "It would allow a body preconnect (a verified Chrome feature) or a non-render-blocking stylesheet without @import.",
+  "needsAccount": true,
+  "from": "verify:external"
+ },
+ {
+  "question": "Does itch's CSS editor keep http:// imports, `@import ... layer()/supports()/media` conditions, `@charset`, data: URIs, or several @import lines, or does it reject or strip any of them?",
+  "howToTest": "Paste a CSS containing each variant into a test project's CSS editor, save, and diff the public page's style#custom_css with the input.",
+  "whyItMatters": "So far only plain `@import url('https://...')` (two of them) is verified to survive saving.",
+  "needsAccount": true,
+  "from": "verify:external"
+ },
+ {
+  "question": "Do Firefox and Safari also fetch media-mismatched @imports, send origin-only Referer for url() in inline styles, honour `Link: rel=preconnect` on stylesheet responses, and apply sheets with no Content-Type?",
+  "howToTest": "Re-run knowledge/evidence/external-tools (server.py, gen.py) with Playwright Firefox and WebKit instead of cdp.mjs, then read window.__result() and the server logs.",
+  "whyItMatters": "All lab results come from Chrome 155 only, and some facts may be engine-specific.",
+  "needsAccount": false,
+  "from": "verify:external"
+ },
+ {
+  "question": "Are itch pages actually bfcache-eligible, so that Back shows the same per-visit CSS variant?",
+  "howToTest": "On https://mirokshi.itch.io/ and a project page, logged out, run Chrome DevTools → Application → Back/forward cache → 'Test back/forward cache'. Or use CDP Page.backForwardCacheNotUsed with external-tools cdp.mjs pointed at the live URL (a single GET).",
+  "whyItMatters": "Static analysis found only an iframe-only jQuery unload handler and beforeunload, both non-blocking in Chrome, but nothing was tested in a browser.",
+  "needsAccount": false,
+  "from": "verify:external"
+ },
+ {
+  "question": "How much does the live.css import delay first contentful paint on the real profile (cold vs warm Vercel function, iad1 vs cdg1)?",
+  "howToTest": "Run Lighthouse or WebPageTest on https://mirokshi.itch.io/ with and without DevTools request blocking of the vercel URL, and before and after setting `\"regions\": [\"cdg1\"]` in vercel.json.",
+  "whyItMatters": "curl shows about 0.1–0.15 s for the iad1 hop and 0.18–0.35 s warm TTFB; the real FCP cost is needed for the performance guidance.",
+  "needsAccount": false,
+  "from": "verify:external"
+ },
+ {
+  "question": "Does a CSS service for an itch page that sells games count as 'commercial use' under Vercel Hobby?",
+  "howToTest": "Ask Vercel support with a concrete description, or check for an updated fair-use FAQ.",
+  "whyItMatters": "Affects which free host the knowledge base recommends for creators with paid games.",
+  "needsAccount": false,
+  "from": "verify:external"
+ },
+ {
+  "question": "What happens to a Netlify Free site when its 300 credits run out: production deploys paused only, or the site taken offline?",
+  "howToTest": "Look for an official Netlify docs page on credit-based Free plans, or a staff answer on answers.netlify.com. Community threads (mid-2026) quote a banner saying sites 'may go offline'.",
+  "whyItMatters": "Decides whether Netlify Free is a safe host for an itch @import (the pasted CSS must survive an outage anyway).",
+  "needsAccount": false,
+  "from": "verify:external"
+ },
+ {
+  "question": "Do Firefox Enhanced Tracking Protection (strict) and Safari ITP block or restrict third-party stylesheets from *.vercel.app or *.workers.dev, or strip their Referer?",
+  "howToTest": "Load the lab page via a public HTTPS tunnel, or the live profile, in Firefox (strict ETP) and Safari, and read the Network panel and the host's request logs.",
+  "whyItMatters": "Completes the content-blocker picture beyond Brave and uBO lists.",
+  "needsAccount": false,
+  "from": "verify:external"
+ },
+ {
+  "question": "Does the itch desktop app, or any itch embed or proxy context, render custom CSS with the external @import, and does it fetch the URL directly?",
+  "howToTest": "Open the profile in the itch desktop app with a network monitor, or point the @import at a logging host you control, and check the request headers and Referer.",
+  "whyItMatters": "External CSS may behave differently, or not load at all, outside browsers.",
+  "needsAccount": false,
+  "from": "verify:external"
+ },
+ {
+  "question": "OPERATIONAL NOTE (carried over from the first agent, not re-checkable): that agent once ran `taskkill /F /IM python.exe` at about 10:15 UTC on 2026-10-14. Did any parallel agent lose a local python server at that time?",
+  "howToTest": "Run `netstat -ano | findstr LISTENING` and restart any expected server that is missing (for example the repo's `static` preview on :8080). Re-run any other dimension's local tests that failed around 10:15 UTC. This second verifier stopped only its own 4 PIDs on ports 8751–8754.",
+  "whyItMatters": "Other dimensions' local-test evidence could contain spurious failures from that moment.",
+  "needsAccount": false,
+  "from": "verify:external"
+ },
+ {
+  "question": "Does #wrapper{--itchio_button_color:red;--itchio_link_color:red} visibly change .button.outline borders, voted vote arrows, tooltips or star pickers on a project page, while leaving .inner_column a and .inner_column .button unchanged?",
+  "howToTest": "Save a project page locally (with game.css and the theme style), add the rule after style#custom_css, and compare getComputedStyle for .formatted_description a, .buy_btn, .button.outline (border-color) and .post_votes .vote_btn.voted (color).",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether to advise variables, explicit rules, or both for project pages.",
+  "from": "verify:crawlproject"
+ },
+ {
+  "question": "Does backdrop-filter or transform on #inner_column really confine the maximized HTML5 game, and does container-type (not in MDN's list) do the same?",
+  "howToTest": "Locally, on a saved click-to-launch page, add #wrapper #inner_column{backdrop-filter:blur(4px)}, add the .maximized class to .game_frame and body.frame_maximized via devtools, and measure .game_frame's getBoundingClientRect against the viewport. Repeat with transform:translateZ(0) and container-type:inline-size.",
+  "needsAccount": false,
+  "whyItMatters": "Frosted-glass and transform effects are common creator requests and could silently break fullscreen play.",
+  "from": "verify:crawlproject"
+ },
+ {
+  "question": "Where in itch's editor do creators set banner and screenshot alt text, and is it available on all project types?",
+  "howToTest": "With a test project, look in the edit page's media/screenshot settings for an alt-text field, save one, and check that img.screenshot[alt] appears logged out.",
+  "needsAccount": true,
+  "whyItMatters": "Lets an AI recommend real alt text instead of CSS workarounds.",
+  "from": "verify:crawlproject"
+ },
+ {
+  "question": "Is the YouTube 'facade' (.video_embed_facade, styled in game.css) ever rendered server-side or swapped in by JS on project pages?",
+  "howToTest": "In a real browser, load a page with a trailer, check whether .video_embed contains .video_embed_facade or an iframe before and after interaction, and compare with the curl'd HTML.",
+  "needsAccount": false,
+  "whyItMatters": "Trailer styling selectors differ (iframe vs facade img/button).",
+  "from": "verify:crawlproject"
+ },
+ {
+  "question": "Does the .direct_download top button (.header_buy_row > .direct_download_row) really stay hidden on desktop widths?",
+  "howToTest": "Open a direct-download page (e.g. kay-yu.itch.io/holocure) in a browser at 1200px and 900px widths, and check getComputedStyle(.header_buy_row).display.",
+  "needsAccount": false,
+  "whyItMatters": "Confirms crawlproject-65 and tells creators whether CSS is needed to surface the top download button.",
+  "from": "verify:crawlproject"
+ },
+ {
+  "question": "Is the whitelist itself (not just attribute injection) applied at render time, so that old, unedited descriptions change when itch changes the whitelist?",
+  "howToTest": "Find itch pages whose Wayback captures from 2024 or earlier contain real <wbr> (or another tag since removed). Confirm that the description is otherwise unchanged across captures after normalizing rel/referrerpolicy order. Then fetch the live page: &lt;wbr&gt; on unedited content proves render-time sanitizing.",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether existing pages silently degrade when itch tightens its whitelist, and whether 'it worked when I saved it' is reliable.",
+  "from": "verify:sanitizer"
+ },
+ {
+  "question": "Do the tags itch added (details, summary, figure, figcaption, del, ruby/rt/rp, font) accept class, style, title or lang?",
+  "howToTest": "Save <details class=\"custom-a\" title=\"t\" style=\"color:red\"><summary class=\"custom-b\" lang=\"es\">s</summary>x</details><figure class=\"custom-c\"><figcaption style=\"color:red\">c</figcaption></figure><del class=\"custom-d\">x</del> in a project description and inspect the served HTML logged out.",
+  "needsAccount": true,
+  "whyItMatters": "0 of ~350 live occurrences carried any attribute; if classes are stripped there, an AI must style them through a custom- wrapper.",
+  "from": "verify:sanitizer"
+ },
+ {
+  "question": "Can raw '< tag' text in HTML mode reach the server, so that the sanitizer's auto-inserted closing tag (e.g. 'x < div > y' becomes 'x < div > y</div>') closes itch's content container?",
+  "howToTest": "On a throwaway project, save <p>x < div > y</p><p>after</p> in <> HTML mode without switching to visual mode, then check the served HTML for a stray </div> and whether the page layout below the description breaks.",
+  "needsAccount": true,
+  "whyItMatters": "It would let ordinary prose break the page layout; an AI must then always write &lt; in HTML mode.",
+  "from": "verify:sanitizer"
+ },
+ {
+  "question": "Is the editor's spoiler markup <span class=\"spoiler\" tabindex=\"0\"> kept in project descriptions, devlogs and profile bios (it survives in comments), and is a hand-written class=\"spoiler\" kept?",
+  "howToTest": "Use the Redactor spoiler button in a project description and a bio, and separately type <span class=\"spoiler\" tabindex=\"0\">x</span> in HTML mode. Inspect the served class and tabindex values.",
+  "needsAccount": true,
+  "whyItMatters": ".user_formatted .spoiler styling exists in game, user and jam CSS; it would be a sanctioned non-custom class, and tabindex the only surviving focus attribute.",
+  "from": "verify:sanitizer"
+ },
+ {
+  "question": "Does the CSS editor's ~5,120 cap count CRLF line breaks as one or two characters, and is it enforced in the textarea or on save?",
+  "howToTest": "Paste a 5,100-character multi-line CSS block (about 200 lines) and the same CSS minified to one line. Note which one the editor refuses or truncates, then compare with the raw length of style#custom_css as served (CRLF preserved).",
+  "needsAccount": true,
+  "whyItMatters": "Served blocks keep CRLF, so raw lengths overstate editor counts by one per line; this matters when advising how much CSS fits.",
+  "from": "verify:sanitizer"
+ },
+ {
+  "question": "What makes itch's HTML attribute order flip (e.g. `<style id=… type=…>` vs `<style type=… id=…>`)? Is it per deploy, per server process, or random per request?",
+  "howToTest": "Without logging in, curl one profile page every 30 minutes for a day (≤50 requests). Log the attribute order of style#custom_css and #wrapper next to the `?NNNNNNNNNN` cache-buster on static.itch.io/user.css.",
+  "needsAccount": false,
+  "whyItMatters": "Harness exports and scrapers that hardcode markup break silently. Knowing the cause tells tool authors whether retrying helps.",
+  "from": "verify:corpus"
+ },
+ {
+  "question": "Does the jam CSS editor currently store pasted CRLF as LF? The scream-jam 2025 (CRLF) / 2026 (LF) pair suggests the save path changed over time.",
+  "howToTest": "On a test jam, save CSS pasted from a Windows file with CRLF, then curl the jam page and count CRLF vs LF in the jam_theme tail. Repeat with LF input.",
+  "needsAccount": true,
+  "whyItMatters": "Character counting and source/live diffs on jam pages.",
+  "from": "verify:corpus"
+ },
+ {
+  "question": "On project pages, does `#wrapper{--itchio_link_color:…}` actually recolor everything the theme colors, given that game_theme also hardcodes colors per selector?",
+  "howToTest": "Save a project page locally, inject `#wrapper{--itchio_link_color:#f00;--itchio_text_color:#0f0}` after style#custom_css, and read getComputedStyle on links, .formatted_description text, buttons and .footer a.",
+  "needsAccount": false,
+  "whyItMatters": "Decides whether overriding the variables is enough, or explicit selectors are still needed, on project pages.",
+  "from": "verify:corpus"
+ },
+ {
+  "question": "Do real visitors reach the AMP devlog pages (itch.io/devlog/<id>/<slug>.amp), e.g. via Google's AMP cache, which never show project custom CSS?",
+  "howToTest": "Check whether search results for an itch devlog link to the .amp URL or the AMP cache (itch-io.cdn.ampproject.org/c/s/itch.io/devlog/…). curl the cache URL once and confirm it serves.",
+  "needsAccount": false,
+  "whyItMatters": "Decides how much devlog styling can be relied on and how strongly to require readability without custom CSS.",
+  "from": "verify:corpus"
+ },
+ {
+  "question": "Does itch's sanitizer keep the lang (and title/dir) attribute in profile bios and project descriptions? web_sanitize's default whitelist allows them on any tag, but itch's configuration is unknown.",
+  "howToTest": "Save <p lang=\"es\" title=\"t\" dir=\"ltr\">Hola</p> in a throwaway description (HTML mode), then curl the public page and diff the markup.",
+  "needsAccount": true,
+  "whyItMatters": "Pages are always lang=\"en\", so a surviving lang attribute is the only way to get non-English bio text pronounced correctly.",
+  "from": "verify:a11y"
+ },
+ {
+  "question": "Does a logged-in viewer whose itch language setting is not English get a different <html lang> / body.locale_* on profile, project and jam pages?",
+  "howToTest": "Log in with an account set to another itch language, open a public profile and read document.documentElement.lang and body classes.",
+  "needsAccount": true,
+  "whyItMatters": "Decides whether lang reflects the viewer's UI locale (as the original fact assumed) or is fixed to en.",
+  "from": "verify:a11y"
+ },
+ {
+  "question": "Do real Windows contrast themes reveal itch's plain-text spoilers the way Chrome's forced-colors emulation does (Edge, Chrome, Firefox)?",
+  "howToTest": "Enable a Windows contrast theme, open a project page or comment with a spoiler logged out, and screenshot it unfocused.",
+  "needsAccount": false,
+  "whyItMatters": "If confirmed, it's a platform issue to document; creators should not build similar hide-by-transparent-fill effects.",
+  "from": "verify:a11y"
+ },
+ {
+  "question": "Which itch setting puts the site header (body.has_site_header with h1.title and a skip link) on project and devlog pages, and does it change layout offsets for custom CSS?",
+  "howToTest": "Compare logged-out curls of several projects with and without has_site_header. As an owner, look for the related option in the project's theme/edit page.",
+  "needsAccount": false,
+  "whyItMatters": "The header adds an h1 and a skip link before #wrapper, which changes heading audits and top spacing.",
+  "from": "verify:a11y"
+ },
+ {
+  "question": "Cross-section consistency: sections 04 (~line 599, three-selector form), 07 §7.5 and 09 #112 (both the `.01ms` transition form) still differ from the canonical block now in 02 §2.7. 10 §5.1 already matches. This pass was limited to section 02, so the others were not edited.",
+  "howToTest": "grep -n \"prefers-reduced-motion\" knowledge/sections/*.md, then replace every guard snippet with exactly: @media (prefers-reduced-motion:reduce){#wrapper,#wrapper::before,#wrapper::after,#wrapper *,#wrapper *::before,#wrapper *::after{animation:none!important;transition:none!important}}. Cite gapfill02-01/02/03 from knowledge/evidence/gapfill.md.",
+  "needsAccount": false,
+  "whyItMatters": "An AI that reads 04, 07 or 09 first still gets a three-selector guard (which leaves #wrapper-level star layers running) or the .01ms form (which never reaches the end state on a frozen timeline).",
+  "from": "fill:02-rules-and-policy.md"
+ },
+ {
+  "question": "Do logged-in visitors get comment or reply form elements inside #wrapper on project, devlog and profile pages? Logged-out HTML can't show this. The new P9 rule is unconditional, so the answer only affects how the risk is explained, not the rule.",
+  "howToTest": "Log in to any itch account in a normal browser (no CSS access needed; save nothing). On a project page with comments, a devlog post and a profile, run in DevTools: document.querySelectorAll('#wrapper form').length and list each form's action path. Record counts only.",
+  "needsAccount": false,
+  "whyItMatters": "It shows whether the form-field risk applies to real visitors of each page type. The rule stays the same either way.",
+  "from": "fill:02-rules-and-policy.md"
+ },
+ {
+  "question": "Does the six-selector guard with transition:none behave the same in Firefox and Safari? It was measured in Chrome 155 only.",
+  "howToTest": "Open knowledge/evidence/gapfill-02-tools/motion-guard.html in Firefox and Safari with the OS reduced-motion setting on. Paste the six-selector block into style#guard via DevTools. Check document.getAnimations() for running CSSAnimations (expect 0), and that hovering #hcard and adding .on to #ccard show translateY(-8px) immediately.",
+  "needsAccount": false,
+  "whyItMatters": "Safari and iOS are about 18% of visitors. The guard is only proven in Chromium.",
+  "from": "fill:02-rules-and-policy.md"
+ },
+ {
+  "question": "Does itch's custom-CSS save keep @layer, @scope, @container, @starting-style, @view-transition, and (on profiles and projects) @property unchanged? None of these was ever seen in served profile or project CSS, except one project with @container and one jam with @property.",
+  "howToTest": "On an owner account, paste the 6-line probe from 06's Section notes into a profile's custom CSS and save: @layer custom-a{…}, @scope (#wrapper){:scope …}, @property --custom-a{syntax:'<angle>';…}, @container (width<1px){…}, @starting-style{…}, @view-transition{navigation:auto}. Then curl the logged-out profile and diff style#custom_css byte-for-byte against what was pasted. Repeat on a project page, where line endings become CRLF, and remove the probe afterwards.",
+  "whyItMatters": "06 §3 and 07 §7.1 can only infer that these at-rules survive. If the save pipeline strips or escapes any of them (for example the '<' in a @property syntax, or an unknown at-rule), the §6.1 layer recipes and the @scope/@property techniques would fail silently on live pages.",
+  "needsAccount": true,
+  "from": "fill:06-cascade-and-specificity.md"
+ },
+ {
+  "question": "Do the layer results (layer(fw) keeps itch's bounce; layered !important beats unlayered !important; an earlier-declared override layer wins) hold in Firefox and Safari?",
+  "howToTest": "Open the pages built by knowledge/evidence/gapfill-06-tools/build.py (v0–v8) in Firefox 158 and Safari 27, served from 127.0.0.1, and compare each RESULT line with the Chrome 155 table in gapfill.md (gapfill06-01/03).",
+  "whyItMatters": "Every result in this pass is Chromium-only. The cascade-layers spec defines this behaviour, but an engine bug would change the §6.1 recommendations for about 18% of visitors (Safari).",
+  "needsAccount": false,
+  "from": "fill:06-cascade-and-specificity.md"
+ },
+ {
+  "question": "Does an empty <span class=\"custom-l\"></span> survive a save inside a bio <h1 class=\"custom-title\"> (the accessible letter-split heading of 05 §11 B2, 07 §7.5, 09 #105, 10 §9.4)?",
+  "howToTest": "Account owner, HTML mode: paste `<h1 class=\"custom-title\"><span class=\"custom-sr\">Miro</span><span class=\"custom-l\"></span><span class=\"custom-l\"></span></h1>` into the bio and save. Run `curl -A \"<browser UA>\" https://mirokshi.itch.io/` logged out and count `<span class=\"custom-l\"></span>` inside div.user_profile; expect 2. Restore the bio within 2 minutes. This is the first line of the combined probe in evidence/gapfill.md.",
+  "whyItMatters": "Three sections recommend this pattern for an accessible name read once without spaces. If empty spans were dropped, the visible heading would be blank. Live evidence covers only empty attribute-less spans, empty custom divs and &nbsp;-filled custom spans.",
+  "needsAccount": true,
+  "from": "fill:05-html-in-descriptions.md"
+ },
+ {
+  "question": "Exact class-token filter: is `Custom-x` kept? Are tokens with : / [ ] . (Tailwind variants such as custom-md:flex, custom-w-1/2) kept? Are a leading '-' and an empty class=\"\" dropped?",
+  "howToTest": "Same probe bio, in a <div class=\"custom-probe\">: spans with class `Custom-a`, `custom-md:b`, `custom-w-1/2`, `custom-[c]`, `custom-d.e`, `-custom-f` and `\"\"`. curl the page logged out and diff the stored class attributes. H1 (prefix test) predicts the : / [ ] . tokens are kept; H2 (strict charset) predicts they are dropped. Both models drop Custom-a and -custom-f.",
+  "whyItMatters": "Decides whether utility-framework or build-tool class names can be used in bios and descriptions. Live data (1,204 tokens) fits both models.",
+  "needsAccount": true,
+  "from": "fill:05-html-in-descriptions.md"
+ },
+ {
+  "question": "Do itch-added tags (details, summary, figure, figcaption) really reject class/style, or were they just never given any?",
+  "howToTest": "In the probe bio: `<details class=\"custom-g\" style=\"color: red\"><summary class=\"custom-h\">s</summary>t</details><figure class=\"custom-i\"><figcaption>f</figcaption></figure>`. curl and check whether any attribute survives. The library mechanism (tag added as `true` after clone) predicts none.",
+  "whyItMatters": "Pattern F (style through a wrapper div) is needed only if these tags reject classes. 0 of 771 live occurrences carry an attribute, but that may be author behaviour.",
+  "needsAccount": true,
+  "from": "fill:05-html-in-descriptions.md"
+ },
+ {
+  "question": "Are popover/popovertarget, aria-label/role and inline `--i:3` dropped on save on a profile bio?",
+  "howToTest": "In the probe bio: `<div class=\"custom-p\" popover>p</div><a popovertarget=\"x\" class=\"custom-q\">q</a><span style=\"--i:3; color: red\">r</span><span class=\"custom-r\" aria-label=\"x\" role=\"img\">s</span>`. curl and diff. The library predicts `<div class=\"custom-p\">`, `<a class=\"custom-q\">`, `style=\"color: red\"` and `<span class=\"custom-r\">`.",
+  "whyItMatters": "aria stripping rests on one owner note (repo-28) plus 0-of-35,801 absence. The popover and --i rules are library-only.",
+  "needsAccount": true,
+  "from": "fill:05-html-in-descriptions.md"
+ },
+ {
+  "question": "Are iframes allowed in profile bios? Are they click-to-activate there? Do `title`/`allow`/`loading` survive on them?",
+  "howToTest": "In the probe bio: `<iframe src=\"https://www.youtube.com/embed/dQw4w9WgXcQ\" width=\"320\" height=\"180\" title=\"t\" allow=\"autoplay\" loading=\"lazy\" frameborder=\"0\" allowfullscreen></iframe>`. curl and check whether it is stored as a live <iframe>, as a button.embed_preload with data-embed_code, or escaped, and which attributes remain.",
+  "whyItMatters": "0 iframes in 50 sampled bios. allow/loading are shown dropped only on a jam page; title has never been seen on any stored iframe, so whether embeds can have an accessible name is still open.",
+  "needsAccount": true,
+  "from": "fill:05-html-in-descriptions.md"
+ },
+ {
+  "question": "Are the 6 never-seen properties of the 27-list (padding-top, background-image, border-width, border-color, border-style, min-width) kept, and are border-radius and display really dropped from inline style?",
+  "howToTest": "In the probe bio: `<span style=\"opacity: .5; background-image: url('https://img.itch.zone/x.png'); border-width: 2px; border-color: #ccc; border-style: dashed; min-width: 10px; padding-top: 4px\">u</span><span style=\"border-radius: 4px\">v</span><span style=\"display: block\">w</span>`. curl and compare. The library predicts all 7 kept and the last two become style=\"\".",
+  "whyItMatters": "The 27-property list is a library model. 21 properties are confirmed live, and only one live negative is known (border-radius on a Spotify iframe).",
+  "needsAccount": true,
+  "from": "fill:05-html-in-descriptions.md"
+ },
+ {
+  "question": "Does itch's profile cap count characters, UTF-8 bytes or UTF-16 units, and what happens past it: refused save or truncation? This decides whether the budget sentence can drop its byte clause.",
+  "howToTest": "On a CSS-enabled test profile, save each sheet below, then read `<style id=\"custom_css\">` back logged out with curl (raw copy to the scratchpad), noting whether the save failed or what was stored. (a) Exactly 5,120 ASCII characters. (b) 5,121 ASCII characters: is it refused or truncated? (c) 5,110 characters including 10 × `→`, which is 5,130 bytes: accepted means the cap counts characters, refused means bytes. (d) 5,115 characters including 10 × 😀, which is 5,125 UTF-16 units and 5,145 bytes: separates code points from UTF-16 units. Use one-line CSS made of padding comments plus one rule, and run the 01 §3 snippet on each file before saving.",
+  "needsAccount": true,
+  "whyItMatters": "The canonical budget sentence keeps both chars and bytes ≤ 5,120 only because the unit is unknown. Knowing the unit and the over-cap behaviour would let the KB give one exact number.",
+  "from": "fill:09-gotchas.md"
+ },
+ {
+  "question": "Do the minifier outputs render identically in Firefox and Safari? Only Chromium was compared.",
+  "howToTest": "Install a Firefox build (e.g. `npx playwright install firefox`, after the user approves the download) or open the pages in desktop Firefox and Safari. Rebuild the harness pages with `python -I build-harness.py fixture <S>/out` and `build-fb-harness.py`, serve them on 127.0.0.1, then read the same computed values as `probe.mjs` / `probe-fb.mjs` (e.g. with Playwright's `page.evaluate`). Diff each output against its `.source` page. Firefox 158 should keep `content:\"*\" / \"\"` working and lose `width:stretch` (it supports only `-webkit-fill-available`, from 146).",
+  "needsAccount": false,
+  "whyItMatters": "Several fallbacks dropped by lightningcss and csso matter only in non-Chromium engines. The static diffs show what those engines would receive, but their real rendering is unverified.",
+  "from": "fill:09-gotchas.md"
+ },
+ {
+  "question": "Is cssnano (default preset) safe for itch CSS? Does it keep fallback pairs, nesting, range media, `@layer` before `@import`, and `content` strings?",
+  "howToTest": "In a scratch dir, after the user approves the npm download, run `npm i cssnano postcss postcss-cli`. Then run `npx postcss fixture/src.css --use cssnano -o out/main.cssnano.css`, and the same for `src-layerfirst.css`, `fallbacks.css` and `modern.css`. Then run `build-harness.py`, `build-fb-harness.py`, `probe.mjs`, `probe-fb.mjs` and `fb-table.py` from knowledge/evidence/gapfill09-tools, and add a row to the 09 #44 table.",
+  "needsAccount": false,
+  "whyItMatters": "cssnano is one of the most common minifiers. The 09 #44 table marks it 'untested, diff before use'.",
+  "from": "fill:09-gotchas.md"
+ },
+ {
+  "question": "Do the CLI binaries (lightningcss-cli, csso-cli, esbuild CLI) behave exactly like the Node APIs that were tested? Does `esbuild --target=…` (nesting lowering) or `--bundle` (`@import` inlining) change the verdict?",
+  "howToTest": "With the user's approval for the download, install lightningcss-cli and csso-cli. Run `lightningcss --minify [--targets '>= 0.25%'] fixture/src.css`, `csso fixture/src.css [--no-restructure]` and `esbuild fixture/src.css --minify [--charset=utf8] [--target=chrome100,safari15] [--bundle]`. Byte-compare the results with knowledge/evidence/gapfill09-tools/outputs/main.*.css, then rerun the probes for any variant that differs.",
+  "needsAccount": false,
+  "whyItMatters": "09 #44 recommends `esbuild --minify --charset=utf8` by its CLI name. The flag-to-API mapping is tagged [inferred].",
+  "from": "fill:09-gotchas.md"
+ },
+ {
+  "question": "Sections 01, 02 and 07 still state the budget differently: 01 says '≤ 5,120 characters, with a margin', 02 says 'about 5 KB' and 07 says 'about 5,120 characters'. 01 §3 also lacks the safe-minifier table and still lists only a regex-minifier pitfall. Those files were outside this pass.",
+  "howToTest": "In 01 (TL;DR item 3 and §3 'What to do'), 02 (size table and checklist item 6) and 07 §7.1 item 6, insert verbatim: 'Budget: ≤ 5,120 characters and ≤ 5,120 UTF-8 bytes, keeping at least 30 spare.' Copy or link the 09 #44 safe-minifier table into 01 §3, citing gapfill09-03 to gapfill09-18. Then grep all sections for '5,000', 'about 5 KB' and 'about 5,120' to confirm one wording remains.",
+  "needsAccount": false,
+  "whyItMatters": "The gap asked for one budget sentence used word for word across the KB. Until 01, 02 and 07 match, an AI reader still sees three formulations.",
+  "from": "fill:09-gotchas.md"
+ },
+ {
+  "question": "What does a logged-in NON-owner visitor receive on a profile, a project page, a devlog post and /comments? Specifically: does #user_tools stay, does a site header (.has_header / .has_site_header) appear, does .game_cell_tools appear on profile cards, does the comment form render inside .game_comments_widget with the classes in §11, and does body.dark_theme apply for a dark-mode account?",
+  "howToTest": "The user logs in with any account and saves another creator's profile, one of that creator's project pages, a devlog post and /comments via 'Save page as… → Webpage, HTML only', once in light site theme and once in dark. Redact csrf_token values, then run knowledge/evidence/section03-tools/skel.py <file> 9 and matrix2.py against the logged-out captures. Also grep for game_cell_tools, post_form, markdown_toolbar, dark_theme, has_header, has_site_header and user_tools.",
+  "whyItMatters": "Broad rules such as #wrapper textarea/button/li, card overlays and z-index layers in the top-right corner may break UI that only logged-in visitors see. Body-level headers change the top spacing.",
+  "needsAccount": true,
+  "from": "fill:03-page-anatomy.md"
+ },
+ {
+  "question": "What is the owner's view of a project page and a devlog post? Is #wrapper inside .game_page_apperance_columns > .game_page_primary_column, is div.game_header_widget (.publish_status, .edit_theme_btn) before it, and does the editor hide #user_tools, .above_game_banner and .goal_banner_widget?",
+  "howToTest": "The project owner saves their own project page and one devlog post while logged in ('HTML only'), both with the theme editor closed and open. Then run skel.py <file> 9 and head.py, and check the ancestors of #wrapper and the body children.",
+  "whyItMatters": "This shows whether body > #wrapper selectors fail in the editor, and whether the owner's preview differs from what visitors see (missing strips, scroll container).",
+  "needsAccount": true,
+  "from": "fill:03-page-anatomy.md"
+ },
+ {
+  "question": "Does a current (October 2026) owner export of a profile still pre-render hidden items inside #wrapper: inline style=\"display: none\" on hidden projects and collection rows, and section.purchased_games without .mode_show_purchases? Does this shift :nth-child() counts relative to the public page?",
+  "howToTest": "The profile owner saves their profile logged in ('HTML only') with at least one hidden project or collection and 'Supported by' turned off. Count inline display:none occurrences and .game_cell/.collection_row siblings, and diff them against a logged-out capture taken the same minute (fetch.sh).",
+  "whyItMatters": "The new §5.4 rules (never force display with !important on those items, never key layout on :nth-child of cards) rest on a single June 2026 export.",
+  "needsAccount": true,
+  "from": "fill:03-page-anatomy.md"
+ },
+ {
+  "question": "Is the 'big video' layout (.header_buy_row → .video_embed.big_video → .columns, with no .video_embed left in .right_col) stable across projects? Only one project has been seen so far.",
+  "howToTest": "Within the request budget, sample more pages from itch.io/games/css and itch.io/games/on-sale listings (≥7 s spacing) and grep for 'big_video'. Run kinds.py and skel.py on every hit. Alternatively, a creator enables the big-video option on a test project and saves the logged-out page.",
+  "whyItMatters": "Rules such as '.right_col .video_embed' break on that layout; with n=1 its tree is provisional.",
+  "needsAccount": false,
+  "from": "fill:03-page-anatomy.md"
+ },
+ {
+  "question": "Do 01 §3 and 09 #41 now quote the canonical size figures from gapfill03-01? I did not edit them because they are out of this task's scope.",
+  "howToTest": "Whoever owns those sections should replace '93,105 chars' with '93,105 chars CRLF-normalised (93,948 B served; 69,436 chars of data: URIs)' and give the jam as '20,410 host chars (20,411 with itch's trailing space)', citing gapfill03-01. Then grep the three sections for 38,576, 93,105, 20,203 and 20,410 to confirm the wording is consistent.",
+  "whyItMatters": "An AI reading 01 or 09 alone could still quote a ceiling without its metric or sample.",
+  "needsAccount": false,
+  "from": "fill:03-page-anatomy.md"
+ },
+ {
+  "question": "Gap 3: do the Firefox and Safari/WebKit cells of the support matrix and the cross-browser warnings hold when actually run? The warnings cover: an @import dropped because a selector is invalid in another engine, & inside @scope, backdrop-filter with var(), alt text for generated content, the colour of outline:auto, @starting-style on first render, view transitions, MIME strictness, cookie partitioning, and finite-motion behaviour.",
+  "howToTest": "1. With the user's explicit go-ahead, run `npx playwright install firefox webkit`. It downloads roughly 100–200 MB of browser binaries; the Playwright cache on this machine holds only chromium-1217, and no Firefox is installed. 2. In firefox.launch() and webkit.launch(), load: knowledge/evidence/support-probe.html; sec07-tools/sec07-probe.html, sec07-probe2.html and sec07-target.html; support-tools/verify2/v2-probe.html; knowledge/tests/index.html (via the :8090 and :8091 servers); the section08-tools framework lab; and gapfill07-tools/finite-motion.html. 3. Record the results per engine and retag the FF/Sa halves in §7.4 as 'verified (Playwright WebKit ≠ Safari)'.",
+  "whyItMatters": "Safari and iOS Safari are about 18 % of users. Every Firefox/Safari support claim and every cross-browser warning in 07 is documented only, so an AI cannot know whether a fallback is needed in practice.",
+  "needsAccount": false,
+  "from": "fill:07-techniques-and-support.md"
+ },
+ {
+  "question": "iOS-only behaviour: does the theme-editor background with background-attachment:fixed scroll with the page on iOS Safari, and do dvh units track the toolbar there?",
+  "howToTest": "Open a test profile on a real iPhone (or a BrowserStack iOS Safari session), scroll, and compare the panel image with a position:fixed pseudo-element layer. Then measure an element sized 100dvh before and after the toolbar collapses.",
+  "whyItMatters": "§7.13 recommends a fixed pseudo-element layer as the portable backdrop, based only on documentation (a11y-43). Playwright WebKit on Windows does not reproduce iOS scrolling.",
+  "needsAccount": false,
+  "from": "fill:07-techniques-and-support.md"
+ },
+ {
+  "question": "Do the §7.17 relative costs hold on real phones with GPU compositing, i.e. Chrome Android on a mid-range device and iOS Safari? Specifically, does the font-weight breath drop frames there, and does backdrop-filter plus the fixed star layers cost frames on weak GPUs?",
+  "howToTest": "Chrome DevTools remote debugging on a mid-range Android phone: load the owner's live profile, or the scratch harness through a LAN server, and record the Performance panel with and without `#wrapper .custom-title{animation:none!important}`, then with backdrop-filter off. On an iPhone, use Safari Web Inspector's Timelines in the same three states.",
+  "whyItMatters": "The measurements used a throttled desktop CPU and a desktop GPU in headless Chrome. They rank effects reliably but do not give device frame rates.",
+  "needsAccount": false,
+  "from": "fill:07-techniques-and-support.md"
+ },
+ {
+  "question": "After 2026-10-28, are the time-bound rows still correct? random() should be in Chrome 156, scroll-driven animations in Firefox 159, and caniuse/Baseline data will have moved.",
+  "howToTest": "Re-run support-probe.html and sec07-tools/sec07-probe.html in Chrome 156 (and in Firefox 159 if available, e.g. through the Playwright channels). Re-fetch BCD, web-features and caniuse as in support.md §1.4, then update §7.4, §7.7, §7.14 and the time-bound box.",
+  "whyItMatters": "After those dates, guidance such as 'Chrome 155 rejects random()' or 'Firefox lacks scroll-driven animations' becomes wrong.",
+  "needsAccount": false,
+  "from": "fill:07-techniques-and-support.md"
+ },
+ {
+  "question": "The verified grid-sizer rule has not yet been carried into the other sections that contradict it: 03 §5.4, §8.7 and §9; the 04 §1 table and §6 jam column; and 09 #15. This pass may only edit 07.",
+  "howToTest": "No new test is needed. Copy the rule and the numbers from 07 §7.13 and gapfill07-01 to -03 in knowledge/evidence/gapfill.md into those sections. Optionally re-render a project page with `livegrid.mjs` to check whether any project-page grid is sized too; that was not tested.",
+  "whyItMatters": "Until those sections change, an AI reading 03, 04 or 09 will still copy `#wrapper{--itchio_grid_gap}` or expect 1 column under 510px. Both silently fail on live pages.",
+  "needsAccount": false,
+  "from": "fill:07-techniques-and-support.md"
+ },
+ {
+  "question": "Exact profile cap value and unit: characters (code points), UTF-8 bytes, or UTF-16 units?",
+  "howToTest": "On mirokshi.itch.io (the account owner, manually), save exactly 5,120 ASCII characters, then 5,121. Then save 5,000 ASCII + 40 '→' (5,040 chars / 5,120 B), then 5,000 ASCII + 40 emoji (5,040 chars / 5,160 B / 5,080 UTF-16 units). After each save, note any lightbox text and run curl on the logged-out page to measure style#custom_css (e.g. with gapfill01-tools/blockstats.py). Restore dist/main.min.css afterwards.",
+  "needsAccount": true,
+  "whyItMatters": "Every answer has to fit the profile budget. The section currently uses the conservative rule: ≤5,120 chars AND ≤5,120 UTF-8 bytes, with 30 spare.",
+  "from": "fill:01-how-it-works.md"
+ },
+ {
+  "question": "What does an over-cap save do: reject with an error message (and what wording), or truncate and serve broken CSS?",
+  "howToTest": "During the boundary test above, record the exact text of the 'Your changes were not saved, please try again' lightbox, if one appears. If the save appears to succeed, curl the served length and check whether the CSS ends mid-rule.",
+  "needsAccount": true,
+  "whyItMatters": "Truncation would break pages silently. A rejection is safe but needs the right advice for users. 02 S4 and 09 #40 currently overclaim 'won't save'.",
+  "from": "fill:01-how-it-works.md"
+ },
+ {
+  "question": "Does the project/devlog editor enforce any cap above 38,576 B?",
+  "howToTest": "On a restricted or draft project of the owner's account, save 60,000 and then 100,000 ASCII characters of valid CSS. Record any error, then curl the served style#custom_css length (remember each newline is served as CRLF). Remove the test CSS afterwards.",
+  "needsAccount": true,
+  "whyItMatters": "Git history proves a save of 38,576 B in Aug 2026. Anything larger, such as the 93,105-char live block, has an unknown save date.",
+  "from": "fill:01-how-it-works.md"
+ },
+ {
+  "question": "Exact jam cap boundary: is '20kb' exactly 20,480 characters/bytes of host CSS?",
+  "howToTest": "If the user hosts or co-hosts a jam (a draft jam is enough), save 20,480 then 20,481 ASCII characters in Misc → Custom CSS. Record errors and curl the overview's style#jam_theme. Measure the host part with gapfill01-tools/jamsplit.py.",
+  "needsAccount": true,
+  "whyItMatters": "Jam hosts with big themes sit right at the cap. Live evidence only proves at least 20,410.",
+  "from": "fill:01-how-it-works.md"
+ },
+ {
+  "question": "Is leading whitespace trimmed on save (it would be if itch uses Lapis limited_text/trim)?",
+  "howToTest": "Save CSS that starts with two newlines and two spaces (e.g. '\\n\\n  #wrapper{}'), then curl the page and inspect the first bytes inside style#custom_css.",
+  "needsAccount": true,
+  "whyItMatters": "This affects size accounting and the source-vs-live diff normalisation. It would also support or refute the Lapis-unit hypothesis (gapfill01-06).",
+  "from": "fill:01-how-it-works.md"
+ },
+ {
+  "question": "Is </style> removed on save or only on render, and how are '<!--' and '<script' sequences inside CSS handled?",
+  "howToTest": "In the same session, save CSS containing a comment with '</style>', then '<!--', then '<script'. Curl the served block each time and compare it byte for byte with what was pasted.",
+  "needsAccount": true,
+  "whyItMatters": "A stray </style> can end the style element early and spill CSS into the page. The rule 'never write it' stands until this is tested.",
+  "from": "fill:01-how-it-works.md"
+ },
+ {
+  "question": "What label and markup does the jam host's edit button have, and what is the logged-in owner DOM (.theme_editor_columns, sidebar)?",
+  "howToTest": "Logged in as a host, open the jam overview and do a browser 'Save page as' (HTML only). Share the file with the csrf_token redacted. Grep it for edit_theme_btn, owner_tools and theme_editor_columns.",
+  "needsAccount": true,
+  "whyItMatters": "The JS shows any .edit_theme_btn works and the wrappers are documented, but the visible label a host clicks has never been observed.",
+  "from": "fill:01-how-it-works.md"
+ },
+ {
+  "question": "Does the #edit_theme hash open the editor on a phone-width viewport (profile, project and jam)?",
+  "howToTest": "Logged in as the owner on a phone, or in a desktop browser emulating 375px, open https://<user>.itch.io/#edit_theme (and the jam URL + #edit_theme). Note whether the overlay editor appears and whether the Misc → Custom CSS field is usable.",
+  "needsAccount": true,
+  "whyItMatters": "itch's CSS hides the Edit theme button at ≤980px, so the hash is the documented-in-code workaround. The code path does not depend on width, but it is untested live.",
+  "from": "fill:01-how-it-works.md"
+ },
+ {
+  "question": "Does the profile Readme popup still link to the 404 <user>.itch.io/support?",
+  "howToTest": "Logged in, open Edit theme → Misc → Readme on the profile and check the href of the 'contact us' link.",
+  "needsAccount": true,
+  "whyItMatters": "A minor note: it tells users where to request help and which link to ignore.",
+  "from": "fill:01-how-it-works.md"
+ },
+ {
+  "question": "Is hiding or restyling .itch_footer on jam overviews allowed by itch policy?",
+  "howToTest": "Not testable by saving. Ask itch support or watch for an official statement. Re-check the guide's jam layout section periodically for a footer entry.",
+  "needsAccount": false,
+  "whyItMatters": "The guide's 'do not hide these links' rule names only the project .footer. The section treats .itch_footer as protected only by inference.",
+  "from": "fill:01-how-it-works.md"
+ },
+ {
+  "question": "Why did Brave Shields block the owner's `https://itch-io-custom-css-custom-css.vercel.app/live.css` import on 2026-10-12, when no default filter-list rule matches it? A headless fresh-profile Brave 1.97.56 had no active filter lists (even itch's gtag loaded), so it was inconclusive.",
+  "howToTest": "A person opens https://mirokshi.itch.io/ in a normal (non-headless) Brave window. First with Shields at Standard, then at Aggressive (Shields panel, 'Trackers & ads blocking'): note whether live.css is listed as blocked and copy the matching rule from brave://adblock-internals. Also record the enabled lists in brave://settings/shields/filters, including regional lists and custom filters. Repeat in a fresh Brave profile to separate default lists from user settings.",
+  "whyItMatters": "Brave users are a notable share of itch's audience. If a default rule or Aggressive mode blocks vercel.app CSS imports, per-visit services lose those visitors, and the KB should name a host or path that is not blocked.",
+  "needsAccount": false,
+  "from": "fill:08-external-css.md"
+ },
+ {
+  "question": "Which framework class-token shapes survive itch's HTML sanitizer: `custom:flex` / `custom:md:flex` (Tailwind v4), `custom-w-1/2`, `custom-w-[37px]`, `custom-mt-[-1rem]`, `custom-bg-red-500/50`? And are `md:custom-flex`, `hover:custom-text-red-500`, `-custom-mt-4` and `!custom-flex` really dropped?",
+  "howToTest": "On a test account with CSS access, save a bio (Edit profile, HTML mode) containing one `<span class=\"TOKEN\">TOKEN</span>` per shape, plus a control `custom-ok`. Log out, curl the public profile and diff the class attributes of `.user_profile` against the saved list. Also check whether a class list with one bad token keeps the good ones.",
+  "whyItMatters": "This decides whether Tailwind fractions, arbitrary values, opacity modifiers or v4's prefix syntax can be used in itch HTML at all. Today the KB can only recommend plain `custom-…` words.",
+  "needsAccount": true,
+  "from": "fill:08-external-css.md"
+ },
+ {
+  "question": "How long does an unreachable or hung @import host blank the page on macOS/iOS Safari and on Linux/macOS Chrome and Firefox? The 21 s SYN timeout measured is the Windows TCP default, and WebKit was Playwright's Windows port with its own network stack.",
+  "howToTest": "Run knowledge/evidence/gapfill08-tools/stallserver.py, stallpages.py, stall-chrome.mjs and stall-pw.mjs (Playwright webkit and firefox) on macOS and Linux, plus Safari on macOS via safaridriver. Use the same 10 failure modes and a 330 s cap.",
+  "whyItMatters": "It sets the real worst-case blank time for most itch visitors, and so how strict the per-visit service deadline must be.",
+  "needsAccount": false,
+  "from": "fill:08-external-css.md"
+ },
+ {
+  "question": "What does Vercel return to the browser when a function exceeds its maxDuration (status code and body), and is a 1–5 s maxDuration honoured on Hobby?",
+  "howToTest": "Deploy a Hobby function with `export const config={maxDuration:2}` that sleeps 10 s. curl -i it and record the status, headers and time to response. Then @import it from a local page in Chrome and confirm the page paints after about 2 s with the sheet ignored.",
+  "whyItMatters": "§10.2 recommends a short maxDuration as the fail-fast mechanism. A non-2xx answer is known to be ignored, but the actual timeout behaviour is undocumented on the page that was read.",
+  "needsAccount": false,
+  "from": "fill:08-external-css.md"
+ },
+ {
+  "question": "Do framework utility classes (as-is Bootstrap `.visible`, `.invisible`, `.active`, `.disabled`, `.small`, `.icon-link`) affect itch's logged-in UI, such as header dropdowns that toggle `.visible`? Only logged-out profile and project pages were diffed.",
+  "howToTest": "While logged in, save a copy of a profile and a project page (or use DevTools on the live pages). Add the as-is Bootstrap import through the CSSOM (`document.getElementById('custom_css').sheet.insertRule('@import url(...)',0)` does not work for imports after rules; use a new `<style>` instead), open the header dropdowns, and diff computed styles of elements carrying those classes.",
+  "whyItMatters": "It completes the collision picture for as-is imports. The renamed builds can't match itch classes by construction.",
+  "needsAccount": false,
+  "from": "fill:08-external-css.md"
+ }
+]

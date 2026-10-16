@@ -1,0 +1,8 @@
+# raw itch downloads and generated harnesses stay local (never commit itch HTML/CSS)
+raw/
+requests.log
+tests/jam.css
+tests/g_*.html
+tests/t_*.html
+tests/r_*.html
+tests/prof/

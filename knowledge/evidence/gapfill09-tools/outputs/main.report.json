@@ -1,0 +1,48 @@
+{
+ "versions": {
+  "lightningcss": "1.33.0",
+  "browserslist": "4.28.7",
+  "caniuse": "1.0.30001806",
+  "csso": "5.0.5",
+  "esbuild": "0.28.0"
+ },
+ "query": ">= 0.25%",
+ "results": {
+  "lightningcss": {
+   "ok": true,
+   "chars": 1925,
+   "bytes": 1932,
+   "warnings": []
+  },
+  "lightningcss-targets": {
+   "ok": true,
+   "chars": 2059,
+   "bytes": 2066,
+   "warnings": []
+  },
+  "csso": {
+   "ok": true,
+   "chars": 1976,
+   "bytes": 1981,
+   "warnings": []
+  },
+  "csso-norestructure": {
+   "ok": true,
+   "chars": 2070,
+   "bytes": 2080,
+   "warnings": []
+  },
+  "esbuild": {
+   "ok": true,
+   "chars": 2136,
+   "bytes": 2136,
+   "warnings": []
+  },
+  "esbuild-utf8": {
+   "ok": true,
+   "chars": 2114,
+   "bytes": 2124,
+   "warnings": []
+  }
+ }
+}

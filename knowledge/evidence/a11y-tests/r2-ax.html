@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>verifier ax names</title>
+<style>
+#wrapper .dn{display:none}
+#wrapper .vh{visibility:hidden}
+#wrapper .op{opacity:0}
+#wrapper .tr{color:transparent}
+#wrapper .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+#wrapper .fz{font-size:0}
+#wrapper .ti{text-indent:-9999px;overflow:hidden;white-space:nowrap}
+#wrapper .b1::before{content:"PRE "}
+#wrapper .b2::before{content:"PRE ";content:"PRE " / ""}
+#wrapper .b3::before{content:"\2605 ";content:"\2605 " / "rated "}
+#wrapper .lk::after{content:" \2192"}
+#wrapper .lk2::after{content:" \2192";content:" \2192" / ""}
+#wrapper .rep{font-size:0}
+#wrapper .rep::before{content:"NEW";font-size:20px}
+#wrapper .rep2{font-size:0}
+#wrapper .rep2::before{content:"NEW";content:"NEW" / "";font-size:20px}
+#wrapper .ib span{display:inline-block}
+#wrapper .ifl{display:inline-flex}
+#wrapper .gr{display:grid;grid-auto-flow:column;justify-content:start}
+#wrapper .tf span{translate:0 4px}
+#wrapper .rl span{position:relative;top:3px}
+#wrapper .ab span{display:inline-block;animation:w 1s infinite alternate}
+@keyframes w{to{translate:0 -4px}}
+#wrapper .fix span:not(.sr){display:inline-block}
+#wrapper .fix span:nth-child(2)::before{content:"A";content:"A" / ""}
+#wrapper .fix span:nth-child(3)::before{content:"B";content:"B" / ""}
+#wrapper .fix span:nth-child(4)::before{content:"C";content:"C" / ""}
+</style></head>
+<body><div id="wrapper">
+<h2 id="dn" class="dn">Hidden by display none</h2>
+<h2 id="vh" class="vh">Hidden by visibility</h2>
+<h2 id="op" class="op">Opacity zero text</h2>
+<h2 id="tr" class="tr">Transparent text</h2>
+<h2 id="sr" class="sr">Screen reader only</h2>
+<h2 id="fz" class="fz">Font size zero</h2>
+<h2 id="ti" class="ti">Text indent</h2>
+<h2 id="b1" class="b1">Base</h2>
+<h2 id="b2" class="b2">Base</h2>
+<h2 id="b3" class="b3">Base</h2>
+<p><a id="lk" class="lk" href="#a">Next</a> <a id="lk2" class="lk2" href="#b">Next</a></p>
+<h2 id="rep" class="rep">OLD</h2>
+<h2 id="rep2" class="rep2">OLD</h2>
+<h3 id="plain"><span>A</span><span>B</span><span>C</span></h3>
+<h3 id="ib" class="ib"><span>A</span><span>B</span><span>C</span></h3>
+<h3 id="ifl" class="ifl"><span>A</span><span>B</span><span>C</span></h3>
+<h3 id="gr" class="gr"><span>A</span><span>B</span><span>C</span></h3>
+<h3 id="tf" class="tf"><span>A</span><span>B</span><span>C</span></h3>
+<h3 id="rl" class="rl"><span>A</span><span>B</span><span>C</span></h3>
+<h3 id="ab" class="ab"><span>A</span><span>B</span><span>C</span></h3>
+<h3 id="fix" class="fix"><span class="sr">ABC</span><span></span><span></span><span></span></h3>
+</div></body></html>

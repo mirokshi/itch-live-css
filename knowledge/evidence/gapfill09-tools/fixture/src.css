@@ -1,0 +1,93 @@
+/* Minifier fixture (gap 09-#44), 2026-10-14. Each rule feeds one probe in harness.html. */
+@import url("imp.css");
+@layer custom-a, custom-b;
+
+/* F1 alt-text fallback: old browsers keep the first, new ones the second */
+#wrapper .p-alt::before { content: "★"; content: "★" / ""; }
+
+/* F2 unknown-function fallback (random() is Safari-only; Chrome must keep 28px) */
+#wrapper .p-rand { width: 28px; width: random(20px, 40px); }
+
+/* F3 prefixed fallback before the standard property */
+#wrapper .p-bdf { -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+
+/* F4 plain colour before color-mix(): static, and dynamic through var() */
+#wrapper .p-mix { background-color: #123456; background-color: color-mix(in srgb, #123456 50%, #ffffff); }
+#wrapper .p-mixv { --custom-c: #123456; color: #123456; color: color-mix(in srgb, var(--custom-c) 50%, #ffffff); }
+
+/* F5 a value Chrome doesn't know (future function) after a safe one */
+#wrapper .p-fut { color: rgb(0, 0, 255); color: future-fn(1); }
+
+/* F6 sibling-index() progressive enhancement */
+#wrapper .p-sib { animation-delay: .2s; animation-delay: calc(sibling-index() * 60ms); }
+
+/* S1 descendant ::selection (space is significant) */
+#wrapper ::selection { background-color: rgb(1, 2, 3); }
+
+/* S2 calc spacing and 0px inside calc */
+#wrapper .p-calc { width: calc(100% - 2rem); }
+#wrapper .p-calc0 { width: calc(50px - 0px); }
+
+/* S3 punctuation inside a string */
+#wrapper .p-str::after { content: "Hi, you: there  {x}; /* y */"; }
+
+/* S4 raw UTF-8 and an escape in content */
+#wrapper .p-raw::after { content: "→ ñ"; }
+#wrapper .p-esc::after { content: "\2192  \f1"; }
+
+/* S5 native nesting */
+#wrapper .p-nest {
+  color: rgb(1, 2, 3);
+  & > .p-kid { color: rgb(4, 5, 6); }
+  &.p-deep { color: rgb(7, 8, 9); }
+  @media (min-width: 1px) { & { word-spacing: 3px; } }
+}
+
+/* S6 registered custom property */
+@property --custom-ang { syntax: "<angle>"; inherits: false; initial-value: 30deg; }
+#wrapper .p-prop { rotate: var(--custom-ang); }
+
+/* S7 cascade layers: the statement fixes the order, b beats a */
+@layer custom-b { #wrapper .p-layer { color: rgb(0, 0, 200); } }
+@layer custom-a { #wrapper .p-layer { color: rgb(200, 0, 0); } }
+
+/* S8 tie with the imported sheet: this later rule must win */
+#wrapper .p-tie { color: rgb(0, 128, 0); }
+
+/* R1 re-declared rule: element has both classes, the last .p-x must win (green) */
+#wrapper .p-x { color: rgb(255, 0, 0); }
+#wrapper .p-y { color: rgb(0, 0, 255); }
+#wrapper .p-x { color: rgb(0, 255, 0); }
+
+/* R2 duplicate rule: element has both classes, last .p-u wins (red) */
+#wrapper .p-u { outline-color: rgb(255, 0, 0); }
+#wrapper .p-v { outline-color: rgb(0, 0, 255); }
+#wrapper .p-u { outline-color: rgb(255, 0, 0); }
+
+/* R3 doubled class for specificity: must beat the later single-class rule */
+#wrapper .p-dbl.p-dbl { color: rgb(0, 128, 0); }
+#wrapper .p-dbl { color: rgb(255, 0, 0); }
+
+/* R4 identical @media blocks around a plain rule: plain blue must win */
+@media (min-width: 1px) { #wrapper .p-mq { color: rgb(255, 0, 0); } }
+#wrapper .p-mq { color: rgb(0, 0, 255); }
+@media (min-width: 1px) { #wrapper .p-mq2 { color: rgb(0, 128, 0); } }
+
+/* R5 shorthand after longhand on another selector (same element) */
+#wrapper .p-sh1 { margin-left: 7px; }
+#wrapper .p-sh2 { margin: 3px; }
+#wrapper .p-sh1 { padding-left: 1px; }
+
+/* M1 media query spacing */
+@media (min-width: 1px) and (max-width: 99999px) { #wrapper .p-and { letter-spacing: 2px; } }
+
+/* M2 reduced motion block */
+@media (prefers-reduced-motion: reduce) { #wrapper *, #wrapper *::before { animation: none !important; } }
+
+/* M3 data URI with quotes and spaces */
+#wrapper .p-svg { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23f00'/%3E%3C/svg%3E"); }
+
+/* M4 @starting-style and @supports */
+#wrapper .p-start { opacity: 1; transition: opacity .3s; }
+@starting-style { #wrapper .p-start { opacity: 0; } }
+@supports not (backdrop-filter: blur(1px)) { #wrapper .p-bdf { background-color: rgb(9, 9, 9); } }

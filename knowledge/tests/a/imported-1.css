@@ -1,0 +1,9 @@
+/* Test A: first @import of style#custom_css. Marker rgb(2,2,2). */
+@import url("nested.css");
+#wrapper .a1 { color: rgb(2, 2, 2); }
+#wrapper div.a2 { color: rgb(2, 2, 2); }
+.user_page .a3 { color: rgb(2, 2, 2); }
+.a4 { color: rgb(2, 2, 2); }
+#wrapper .a5 { color: rgb(2, 2, 2); }
+#wrapper .a6 { color: rgb(2, 2, 2); }
+#wrapper .a7 { color: rgb(2, 2, 2) !important; }

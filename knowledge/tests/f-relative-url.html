@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F · relative url() resolution: inline style vs imported sheet</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="custom_css">
+  @import url("f/sub/imported.css");
+  @import url("http://localhost:8091/knowledge/tests/f/sub/imported-x.css");
+  @property --f-reg { syntax: '<url>'; inherits: true; initial-value: url("data:,initial"); }
+  #wrapper .f1 { background-image: url("f/img/dot.svg"); }
+  #wrapper { --f-img2: url("f/img/dot.svg"); }
+  #wrapper .f4 { background-image: var(--f-img); }
+  #wrapper .f6 { background-image: var(--f-reg); }
+  #wrapper .f8 { background-image: var(--f-img-x); }
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test F — where a relative url() resolves.</b> Page: /knowledge/tests/f-relative-url.html. On itch the page lives on
+&lt;user&gt;.itch.io, so a relative url() typed into the CSS editor resolves against the itch page, while one inside an @import'ed service sheet
+resolves against the service. Also checks url() carried through custom properties (declared in one sheet, used in another).</p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <p class="f1">f1</p><p class="f2">f2</p><p class="f3">f3</p><p class="f4">f4</p><p class="f5">f5</p><p class="f6">f6</p><p class="f7">f7</p><p class="f8">f8</p>
+    </div>
+  </div>
+</div>
+<script>
+T.run(async () => {
+  await new Promise(r => setTimeout(r, 300));
+  const B = 'http://localhost:8090/knowledge/tests/';
+  const X = 'http://localhost:8091/knowledge/tests/';
+  const bg = c => T.cs('.' + c, 'background-image');
+  const u = p => 'url("' + p + '")';
+  T.check('F1', 'url() in the inline style#custom_css → relative to the PAGE', bg('f1'), u(B + 'f/img/dot.svg'));
+  T.check('F2', 'url() in an imported sheet → relative to that SHEET', bg('f2'), u(B + 'f/sub/dot.svg'));
+  T.check('F3', 'url() in a cross-origin imported sheet → that sheet\'s origin and path', bg('f3'), u(X + 'f/sub/dot.svg'));
+  T.info('F4', 'custom property declared in imported sheet (f/sub/) as url("dot.svg"), used via var() in the inline sheet', bg('f4'));
+  T.info('F5', 'custom property declared in the inline sheet as url("f/img/dot.svg"), used via var() in the imported sheet (f/sub/)', bg('f5'));
+  T.info('F6', 'REGISTERED <url> custom property (@property) declared in imported sheet, used inline', bg('f6'));
+  T.check('F7', 'relative @import inside an imported sheet → relative to the importing sheet (f/sub/deeper/)', bg('f7'), u(B + 'f/sub/deeper/dot.svg'));
+  T.info('F8', 'custom property declared in the CROSS-ORIGIN sheet as url("dot.svg"), used inline', bg('f8'));
+  const fetched = performance.getEntriesByType('resource').map(e => e.name).filter(n => /dot\.svg/.test(n));
+  T.info('F-fetched', 'dot.svg URLs actually requested (Resource Timing)', fetched.join(' , '));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,748 @@
+{
+ "kit": "itch-live-probe-kit v1 (2026-10-14)",
+ "ranAt": "2026-10-16T10:32:16.629Z",
+ "page": {
+  "pageName": "user",
+  "type": "profile",
+  "urlShape": "<user>.itch.io/",
+  "browser": "Brave 155, Chromium 155",
+  "platform": "Windows",
+  "viewport": "2560x708",
+  "dpr": 1,
+  "prefersDark": true,
+  "prefersReducedMotion": false,
+  "ownerView": {
+   "editThemeBtn": 1,
+   "ownerTools": 1,
+   "gameHeaderWidget": 0,
+   "themeEditorColumns": 1,
+   "bodyThemeEditorOpen": false
+  }
+ },
+ "served": {
+  "status": 200,
+  "redirected": false,
+  "headers": {
+   "content-type": "text/html",
+   "cache-control": "no-store",
+   "x-cache-status": "BYPASS",
+   "x-frame-options": "SAMEORIGIN",
+   "vary": "accept-encoding"
+  },
+  "chars": 35136
+ },
+ "css": {
+  "blocks": [
+   {
+    "id": "custom_css",
+    "chars": 2700,
+    "bytes": 2716,
+    "cr": 0,
+    "lf": 52
+   }
+  ],
+  "found": true,
+  "block": "custom_css",
+  "stored": {
+   "chars": 2700,
+   "utf16": 2702,
+   "bytes": 2716,
+   "cr": 0,
+   "lf": 52
+  },
+  "sent": {
+   "chars": 2717,
+   "utf16": 2719,
+   "bytes": 2733,
+   "cr": 0,
+   "lf": 52
+  },
+  "endMarkerFound": true,
+  "styleElementClosedEarly": false,
+  "leadingBeforeStartMarker": "\"\"",
+  "trailingAfterEndMarker": "\"\"",
+  "identicalIgnoringLineEndings": false,
+  "firstDifference": {
+   "at": 2477,
+   "sent": "\" */#wrapper{--probe-c41:1}\\n/* </style> c42 */#wrapper{--probe-c42:1}\\n#wrapper{--probe-c43:\"",
+   "stored": "\" */#wrapper{--probe-c41:1}\\n/*  c42 */#wrapper{--probe-c42:1}\\n#wrapper{--probe-c43:\\\"\\\"}\\n#wra\""
+  },
+  "probes": {
+   "c00": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c01": {
+    "outcome": "survived"
+   },
+   "c02": {
+    "outcome": "survived",
+    "value": "1 | CSSLayerStatementRule",
+    "applied": true
+   },
+   "c03": {
+    "outcome": "survived",
+    "value": "CSSImportRule +requested",
+    "applied": true
+   },
+   "c04": {
+    "outcome": "survived",
+    "value": "CSSImportRule +requested",
+    "applied": true
+   },
+   "c05": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c06": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c07": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c08": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c09": {
+    "outcome": "survived",
+    "value": "FontFace unloaded",
+    "applied": true
+   },
+   "c10": {
+    "outcome": "survived",
+    "value": "FontFace unloaded",
+    "applied": true
+   },
+   "c11": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c12": {
+    "outcome": "survived",
+    "value": "7px",
+    "applied": true
+   },
+   "c13": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c14": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c15": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c16": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c17": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c18": {
+    "outcome": "survived",
+    "value": "CSSStartingStyleRule",
+    "applied": true
+   },
+   "c19": {
+    "outcome": "survived",
+    "value": "CSSViewTransitionRule",
+    "applied": true
+   },
+   "c20": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c21": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c22": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c23": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c24": {
+    "outcome": "survived",
+    "value": "\"a&b<i>c>d\"",
+    "applied": true
+   },
+   "c25": {
+    "outcome": "survived",
+    "value": "\"→é漢😀\"",
+    "applied": true
+   },
+   "c26": {
+    "outcome": "survived",
+    "value": "\"→\" \"</x>\"",
+    "applied": true
+   },
+   "c27": {
+    "outcome": "survived",
+    "value": "\"[c27]\" / \"\"",
+    "applied": true
+   },
+   "c28": {
+    "outcome": "survived",
+    "value": "0",
+    "applied": false
+   },
+   "c29": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c30": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c31": {
+    "outcome": "survived",
+    "value": "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>\")",
+    "applied": true
+   },
+   "c32": {
+    "outcome": "survived"
+   },
+   "c33": {
+    "outcome": "survived"
+   },
+   "c34": {
+    "outcome": "survived"
+   },
+   "c35": {
+    "outcome": "survived"
+   },
+   "c36": {
+    "outcome": "survived",
+    "value": "CSSCounterStyleRule",
+    "applied": true
+   },
+   "c37": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c38": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c39": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c40": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c41": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c42": {
+    "outcome": "rewritten",
+    "how": "</style> removed",
+    "near": "\"script>c41</script> */#wrapper{--probe-c41:1}\\n/*  c42 */#wrapper{--probe-c42:1}\\n#wrapper{--probe-c43:\\\"\\\"}\\n#wrapper{--prob\"",
+    "value": "1",
+    "applied": true
+   },
+   "c43": {
+    "outcome": "rewritten",
+    "how": "</style> removed",
+    "near": "\"*  c42 */#wrapper{--probe-c42:1}\\n#wrapper{--probe-c43:\\\"\\\"}\\n#wrapper{--probe-c44:1}\\n#wrapper :is(.formatted_description,.u\"",
+    "value": "\"\"",
+    "applied": false
+   },
+   "c44": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c45": {
+    "outcome": "survived",
+    "value": "\"[c45] probe.css: end of sheet reached\"",
+    "applied": true
+   }
+  },
+  "cssom": {
+   "topLevelRules": 50,
+   "types": {
+    "CSSLayerStatementRule": 1,
+    "CSSImportRule": 6,
+    "CSSStyleRule": 27,
+    "CSSLayerBlockRule": 2,
+    "CSSFontFaceRule": 2,
+    "CSSPropertyRule": 3,
+    "CSSContainerRule": 2,
+    "CSSScopeRule": 1,
+    "CSSStartingStyleRule": 1,
+    "CSSViewTransitionRule": 1,
+    "CSSSupportsRule": 1,
+    "CSSMediaRule": 1,
+    "CSSFunctionRule": 1,
+    "CSSCounterStyleRule": 1
+   },
+   "imports": [
+    {
+     "href": "https://example.com/probe-c03.css",
+     "layer": null,
+     "supports": null,
+     "media": ""
+    },
+    {
+     "href": "http://example.com/probe-c04.css",
+     "layer": null,
+     "supports": null,
+     "media": ""
+    },
+    {
+     "href": "data:text/css,%23wrapper%7B--probe-c05%3A1%7D",
+     "layer": null,
+     "supports": null,
+     "media": ""
+    },
+    {
+     "href": "data:text/css,%23wrapper%7B--probe-c06%3A1%7D",
+     "layer": "probe-imp",
+     "supports": null,
+     "media": ""
+    },
+    {
+     "href": "data:text/css,%23wrapper%7B--probe-c07%3A1%7D",
+     "layer": null,
+     "supports": "display:grid",
+     "media": ""
+    },
+    {
+     "href": "data:text/css,%23wrapper%7B--probe-c08%3A1%7D",
+     "layer": null,
+     "supports": null,
+     "media": "screen"
+    }
+   ],
+   "probeRequests": [
+    {
+     "url": "https://example.com/probe-c03.css",
+     "initiator": "css",
+     "status": 0
+    },
+    {
+     "url": "http://example.com/probe-c04.css",
+     "initiator": "css",
+     "status": 0
+    },
+    {
+     "url": "http://example.com/probe-c10.woff2",
+     "initiator": "css",
+     "status": 0
+    },
+    {
+     "url": "https://example.com/probe-s08.png",
+     "initiator": "css",
+     "status": 0
+    }
+   ]
+  }
+ },
+ "html": {
+  "found": true,
+  "container": "div.user_profile.formatted",
+  "set": "bio",
+  "setFrom": "start marker",
+  "served": {
+   "containerInnerHTMLChars": 3482,
+   "rawCharsFromContainerTagToEndMarker": 3633,
+   "sentChars": 3857,
+   "crInContainer": 32
+  },
+  "probes": {
+   "x00": {
+    "label": "PROBE-HTML-START set=bio kit=v1 2026-10-14 (temporary test c…(+23)",
+    "outcome": "survived",
+    "details": [],
+    "raw": "<div class=\"user_profile formatted\"><p class=\"custom-probe-x00\">[x00] PROBE-HTML-START set=bio kit=v1 2026-10-14 (temporary test content, safe to delete)</p>\r\n<p><span class=\"custom-probe-k01\">[k01] Custom-a</span></p>\r\n<p><span class=\"custom-probe-k05 customer\">[k05] customer</span></p>\r\n<p><span class=\"custom-p"
+   },
+   "k01": {
+    "label": "Custom-a",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: Custom-a"
+    ]
+   },
+   "k05": {
+    "label": "customer",
+    "outcome": "survived",
+    "details": []
+   },
+   "k07": {
+    "label": "custom-hover:x",
+    "outcome": "survived",
+    "details": []
+   },
+   "k09": {
+    "label": "custom-w-[3px]",
+    "outcome": "survived",
+    "details": []
+   },
+   "k11": {
+    "label": "custom-w-1/2",
+    "outcome": "survived",
+    "details": []
+   },
+   "k14": {
+    "label": "custom:flex",
+    "outcome": "survived",
+    "details": []
+   },
+   "k16": {
+    "label": "-custom-f",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: -custom-f"
+    ]
+   },
+   "k26": {
+    "label": "foo",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: foo"
+    ]
+   },
+   "k31": {
+    "label": "all tokens invalid",
+    "outcome": "stripped",
+    "details": [
+     "<span.foo.bar> @class dropped"
+    ]
+   },
+   "k34": {
+    "label": "hand-written spoiler",
+    "outcome": "survived",
+    "details": []
+   },
+   "a01": {
+    "label": "id",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @id dropped"
+    ]
+   },
+   "a02": {
+    "label": "data-*",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @data-probe dropped"
+    ]
+   },
+   "a04": {
+    "label": "aria-hidden",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @aria-hidden dropped"
+    ]
+   },
+   "a05": {
+    "label": "role",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @role dropped"
+    ]
+   },
+   "a09": {
+    "label": "lang",
+    "outcome": "survived",
+    "details": []
+   },
+   "a12": {
+    "label": "popover + id",
+    "outcome": "stripped",
+    "details": [
+     "<div> @popover dropped",
+     "<div> @id dropped"
+    ]
+   },
+   "a20": {
+    "label": "h1 aria-label",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @aria-label dropped"
+    ]
+   },
+   "s02": {
+    "label": "!important",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @style dropped"
+    ]
+   },
+   "s08": {
+    "label": "six never-seen list properties",
+    "outcome": "survived",
+    "details": []
+   },
+   "s11": {
+    "label": "custom property + color",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: --i:3"
+    ]
+   },
+   "s18": {
+    "label": "no-space list",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: float:left; border-radius:5px"
+    ]
+   },
+   "t08": {
+    "label": "details name open",
+    "outcome": "stripped",
+    "details": [
+     "<details.custom-t08d> @class dropped",
+     "<details.custom-t08d> @title dropped",
+     "<details.custom-t08d> @style dropped",
+     "<details.custom-t08d> @name dropped",
+     "<details.custom-t08d> @open dropped",
+     "<summary.custom-t08s> @class dropped",
+     "<summary.custom-t08s> @lang dropped",
+     "<details> @name dropped"
+    ]
+   },
+   "t21": {
+    "label": "link meta",
+    "textSame": false,
+    "sentText": "[t21] link meta: ",
+    "storedText": "[t21] link meta: <link rel=\"stylesheet\" href=\"https://example.com/probe-t21.css\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><meta name=…(+22)",
+    "outcome": "rewritten",
+    "details": [
+     "<link> escaped as visible text",
+     "<link> escaped as visible text",
+     "<meta> escaped as visible text"
+    ],
+    "raw": "open: <details><summary>summary A</summary>body A</details><details><summary>summary B</summary>body B</details></div>\r\n<div class=\"custom-probe-t21\">[t21] link meta: &lt;link rel=&quot;stylesheet&quot; href=&quot;https://example.com/probe-t21.css&quot;&gt;&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;&lt;meta name=&quot;probe&quot; content=&quot;t21"
+   },
+   "t23": {
+    "label": "Name",
+    "outcome": "survived",
+    "details": []
+   },
+   "i01": {
+    "label": "youtube, all attributes",
+    "outcome": "stripped",
+    "details": [
+     "<iframe.custom-i01x> @title dropped",
+     "<iframe.custom-i01x> @allow dropped",
+     "<iframe.custom-i01x> @loading dropped",
+     "<iframe.custom-i01x> @sandbox dropped",
+     "<iframe.custom-i01x> @referrerpolicy dropped",
+     "<iframe.custom-i01x> @class dropped",
+     "<iframe.custom-i01x> @name dropped"
+    ]
+   },
+   "i04": {
+    "label": "arbitrary https host",
+    "outcome": "survived",
+    "details": []
+   },
+   "l01": {
+    "label": "rel=me off-site",
+    "outcome": "rewritten",
+    "details": [
+     "<a> @rel changed: \"me\" -> \"nofollow noopener\"",
+     "<a> @referrerpolicy added: \"origin\""
+    ],
+    "raw": "ustom-probe-i04\">[i04] arbitrary https host: <iframe src=\"https://example.com/\" width=\"320\" height=\"180\"></iframe></div>\r\n<p class=\"custom-probe-l01\">[l01] rel=me off-site: <a href=\"https://mastodon.example/@probe\" target=\"_blank\" rel=\"nofollow noopener\" referrerpolicy=\"origin\">link</a></p>\r\n<p class=\"custom-probe-l02\">[l02] rel on itch link: <a href=\"https://itch.io/\">link</a></p>\r\n<p class=\"cust"
+   },
+   "l02": {
+    "label": "rel on itch link",
+    "outcome": "stripped",
+    "details": [
+     "<a> @rel dropped"
+    ]
+   },
+   "l10": {
+    "label": "named anchor",
+    "outcome": "survived",
+    "details": []
+   },
+   "g07": {
+    "label": "img unquoted width",
+    "textSame": false,
+    "sentText": "[g07] img unquoted width: ",
+    "storedText": "[g07] img unquoted width: <img src=\"https://example.com/probe-g07.png\" alt=\"g07\" width=40%>",
+    "outcome": "rewritten",
+    "details": [
+     "<img> escaped as visible text",
+     "extra elements in the stored markup: a"
+    ],
+    "raw": "f=\"https://itch.io/\">link</a></p>\r\n<p class=\"custom-probe-l10\">[l10] named anchor: <a name=\"probe-target\">target</a></p>\r\n<p class=\"custom-probe-g07\">[g07] img unquoted width: &lt;img src=&quot;<a href=\"https://example.com/probe-g07.png\" rel=\"nofollow noopener\" referrerpolicy=\"origin\">https://example.com/probe-g07.png</a>&quot; alt=&quot;g07&quot; width=40%&gt;</p>\r\n<p class=\"custom-probe-e04\">[e0"
+   },
+   "e04": {
+    "label": "html comment",
+    "textSame": false,
+    "sentText": "[e04] html comment: ab",
+    "storedText": "[e04] html comment: a<!-- probe comment e04 -->b",
+    "outcome": "rewritten",
+    "details": [
+     "HTML comment escaped as visible text"
+    ],
+    "raw": "llow noopener\" referrerpolicy=\"origin\">https://example.com/probe-g07.png</a>&quot; alt=&quot;g07&quot; width=40%&gt;</p>\r\n<p class=\"custom-probe-e04\">[e04] html comment: a&lt;!-- probe comment e04 --&gt;b</p>\r\n<p class=\"custom-probe-x99\">[x99] PROBE-HTML-END</p></div></div><div class=\"column game_column\"><div class=\"game_grid_widget base_widget user_game_grid\"><div data-game_id=\"N\" class=\"ga"
+   },
+   "x99": {
+    "label": "PROBE-HTML-END",
+    "outcome": "survived",
+    "details": [],
+    "raw": "quot;g07&quot; width=40%&gt;</p>\r\n<p class=\"custom-probe-e04\">[e04] html comment: a&lt;!-- probe comment e04 --&gt;b</p>\r\n<p class=\"custom-probe-x99\">[x99] PROBE-HTML-END</p></div></div><div class=\"column game_column\"><div class=\"game_grid_widget base_widget user_game_grid\"><div data-game_id=\"N\" class=\"game_cell has_cover lazy_images\" dir=\"auto\"><div style=\"background-color:#000000;\" class=\"",
+    "insideContainer": true
+   }
+  },
+  "live": {
+   "target_aName_l10": "matches :target",
+   "target_id_a01": "element absent",
+   "detailsExclusive_t08": "0 details[name] element(s) survived",
+   "spoiler_k34": {
+    "textFill": "rgb(238, 243, 255)",
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "rgb(238, 243, 255)",
+    "tabindex": "0"
+   },
+   "styleTagVar_t20": "(not set)",
+   "linkStylesheetRequested_t21": false,
+   "liveContainer": {
+    "iframes": 2,
+    "placeholders": 0,
+    "emptyLetterSpans_t23": 2,
+    "popoverAttr_a12": 0,
+    "inputs_t18": 0
+   }
+  }
+ },
+ "cap": null,
+ "theme": {
+  "id": "user_theme",
+  "chars": 966,
+  "cr": 0,
+  "lf": 0,
+  "backgroundDeclarations": [
+   "background-color: #0b1433",
+   "background-color: #213168",
+   "background-image: url(…)",
+   "background-repeat: no-repeat",
+   "background-position: 50% 0",
+   "background-attachment: fixed",
+   "background: #213168"
+  ],
+  "fontLinks": [],
+  "classes": {
+   "body": "has_header locale_en user_layout_widget layout_widget no_theme_toggle responsive",
+   "wrapper": "div#wrapper.user_page_wrap",
+   "userPage": "div#user_N.user_page.page_widget.base_widget.mode_grid",
+   "innerColumn": "div.inner_column.text_header",
+   "header": "div#profile_header.header"
+  }
+ },
+ "dom": {
+  "htmlLang": "en",
+  "htmlClass": "",
+  "bodyClassLive": "has_header locale_en user_layout_widget layout_widget no_theme_toggle responsive disable_hover",
+  "bodyClassServed": "has_header locale_en user_layout_widget layout_widget no_theme_toggle responsive",
+  "bodyChildren": [
+   "div#user_profile_header_N.small_logo.user_profile_header_widget.header_widget.base_widget.gray",
+   "div.theme_editor_columns",
+   "script#loading_lightbox_tpl",
+   "script",
+   "script"
+  ],
+  "wrapperChain": [
+   "div#wrapper.user_page_wrap",
+   "div.theme_editor_primary_column",
+   "div.theme_editor_columns",
+   "body.has_header.locale_en.user_layout_widget.layout_widget.no_theme_toggle.responsive"
+  ],
+  "inlineStyle": {
+   "wrapper": "min-height: 608px;",
+   "innerColumn": null
+  },
+  "sheetsServed": [
+   "link static.itch.io",
+   "link static.itch.io",
+   "style#user_theme",
+   "style#custom_css"
+  ],
+  "sheetsLive": [
+   "link static.itch.io",
+   "link static.itch.io",
+   "style#user_theme",
+   "style#custom_css",
+   "style[itchio-grid-sizer]",
+   "style[itchio-grid-sizer]"
+  ],
+  "afterCustomCssLive": [
+   "style itchio-grid-sizer,type",
+   "style itchio-grid-sizer,type"
+  ],
+  "counts": {
+   "h1": 4,
+   "h1Visible": 4,
+   "gameCell": 9,
+   "gameCellTools": 0,
+   "userTools": 0,
+   "userToolsHidden": 0,
+   "headerWidget": 1,
+   "siteHeader": 1,
+   "darkTheme": 0,
+   "purchasedGames": 1,
+   "collectionRow": 2,
+   "servedInlineDisplayNoneInWrapper": 2
+  },
+  "ownerConfig": {
+   "imageSizeLimit": "3145728",
+   "canUseCssFlag": true
+  }
+ },
+ "warnings": [],
+ "summary": {
+  "css": {
+   "survived": 44,
+   "rewritten": 2
+  },
+  "html": {
+   "survived": 13,
+   "stripped": 16,
+   "rewritten": 4
+  },
+  "cssNotApplied": [
+   "c28",
+   "c43"
+  ]
+ }
+}

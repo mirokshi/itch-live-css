@@ -1,0 +1,1022 @@
+[
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<li><i>Hello world</li>",
+  "output": "<li><i>Hello world</i></li>",
+  "expect": "<li><i>Hello world</i></li>",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<!-- comment -->Hello",
+  "output": "&lt;!-- comment --&gt;Hello",
+  "expect": "&lt;!-- comment --&gt;Hello",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<pre/>",
+  "output": "&lt;pre/&gt;",
+  "expect": "&lt;pre/&gt;",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<h1 title=yes></h1>",
+  "output": "<h1 title=yes></h1>",
+  "expect": "<h1 title=yes></h1>",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<a href=\"http://leafo.net\"></a>",
+  "output": "<a href=\"http://leafo.net\" rel=\"nofollow\"></a>",
+  "expect": "<a href=\"http://leafo.net\" rel=\"nofollow\"></a>",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<a href=\"//leafo.net\"></a>",
+  "output": "<a href=\"//leafo.net\" rel=\"nofollow\"></a>",
+  "expect": "<a href=\"//leafo.net\" rel=\"nofollow\"></a>",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "hello <script dad=\"world\"><b>yes</b></b>",
+  "output": "hello &lt;script dad=&quot;world&quot;&gt;<b>yes</b>&lt;/b&gt;",
+  "expect": "hello &lt;script dad=&quot;world&quot;&gt;<b>yes</b>&lt;/b&gt;",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<IMG color='red'></IMG>",
+  "output": "<IMG></IMG>",
+  "expect": "<IMG></IMG>",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<IMG SRC=\"javascript:alert('XSS');\">",
+  "output": "<IMG>",
+  "expect": "<IMG>",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<IMG SRC=javascript:alert('XSS')>",
+  "output": "&lt;IMG SRC=javascript:alert(&#x27;XSS&#x27;)&gt;",
+  "expect": "&lt;IMG SRC=javascript:alert(&#x27;XSS&#x27;)&gt;",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<div />",
+  "output": "&lt;div /&gt;",
+  "expect": "&lt;div /&gt;",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<br />",
+  "output": "<br />",
+  "expect": "<br />",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<div   dir = \"ltr\" height=429  ></div>",
+  "output": "<div   dir = \"ltr\"  ></div>",
+  "expect": "<div   dir = \"ltr\"  ></div>",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<b>x</i></b></b>",
+  "output": "<b>x&lt;/i&gt;</b>&lt;/b&gt;",
+  "expect": "<b>x&lt;/i&gt;</b>&lt;/b&gt;",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<b><i><u>x</b>y</i>",
+  "output": "<b><i><u>x</u></i></b>y&lt;/i&gt;",
+  "expect": "<b><i><u>x</u></i></b>y&lt;/i&gt;",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<img><span title='</img><script>Hello world</script'></span>",
+  "output": "<img><span title='&lt;/img&gt;&lt;script&gt;Hello world&lt;/script'></span>",
+  "expect": "<img><span title='&lt;/img&gt;&lt;script&gt;Hello world&lt;/script'></span>",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<div attr=\"<!-- m -->\"></div>",
+  "output": "<div></div>",
+  "expect": "<div></div>",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "margin-left: 50px;",
+  "output": "margin-left: 50px",
+  "expect": "margin-left: 50px",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "padding-left: hello",
+  "output": "",
+  "expect": "",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "margin: 10px; fake-property: 100; margin: 10px",
+  "output": "margin: 10px; margin: 10px",
+  "expect": "margin: 10px; margin: 10px",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "color: rgba(0.2,0.3,232)",
+  "output": "color: rgba(0.2,0.3,232)",
+  "expect": "color: rgba(0.2,0.3,232)",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "border: 1px solid blue",
+  "output": "border: 1px solid blue",
+  "expect": "border: 1px solid blue",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "background: url(\"javascript:alert(1)\")",
+  "output": "",
+  "expect": "",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "background: url(http://example.com/image.png)",
+  "output": "<nil: failed to parse>",
+  "expect": "<nil: failed to parse>",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "background-image: url(\"https://example.com/bg.jpg\")",
+  "output": "background-image: url(\"https://example.com/bg.jpg\")",
+  "expect": "background-image: url(\"https://example.com/bg.jpg\")",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "margin: 10em 10em 10em 10em 23px;",
+  "output": "",
+  "expect": "",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html_strip",
+  "input": "<body>Hello <strong>world</strong></body>",
+  "output": "Hello <strong>world</strong>",
+  "expect": "Hello <strong>world</strong>",
+  "pass": true
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<div class=\"custom-x\">a</div>",
+  "output": "<div>a</div>"
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<span aria-hidden=\"true\" role=\"img\">x</span>",
+  "output": "<span>x</span>"
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<div id=\"x\" data-y=\"1\" tabindex=\"0\" onclick=\"alert(1)\">a</div>",
+  "output": "<div>a</div>"
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<p style=\"color:red\">x</p>",
+  "output": "<p>x</p>"
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<h1 class=\"custom-title\" title=\"T\" lang=\"en\" dir=\"rtl\">x</h1>",
+  "output": "<h1 title=\"T\" lang=\"en\" dir=\"rtl\">x</h1>"
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<a href=\"https://itch.io\" target=\"_blank\" title=\"t\" name=\"n\">x</a>",
+  "output": "<a href=\"https://itch.io\" title=\"t\" name=\"n\" rel=\"nofollow\">x</a>"
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<a href=\"https://a.example\" rel=\"me\">x</a>",
+  "output": "<a href=\"https://a.example\" rel=\"nofollow\">x</a>"
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<img src=\"https://a.example/c.png\" alt=\"x\" title=\"t\" width=\"10\" height=\"20\" align=\"left\" loading=\"lazy\" srcset=\"x 2x\">",
+  "output": "<img src=\"https://a.example/c.png\" alt=\"x\" title=\"t\" width=\"10\" height=\"20\" align=\"left\">"
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<table summary=\"s\" width=\"100\" border=\"1\" cellpadding=\"2\"><tr><td colspan=\"2\" rowspan=\"1\" width=\"5\" align=\"center\">x</td></tr></table>",
+  "output": "<table summary=\"s\" width=\"100\"><tr><td colspan=\"2\" rowspan=\"1\" width=\"5\">x</td></tr></table>"
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<time datetime=\"2026-10-14\" pubdate>x</time><abbr title=\"t\">a</abbr><q cite=\"https://x\">q</q>",
+  "output": "<time datetime=\"2026-10-14\" pubdate>x</time><abbr title=\"t\">a</abbr><q cite=\"https://x\">q</q>"
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<a href=\"https://a.example\" HREF=\"javascript:alert(1)\">dup</a>",
+  "output": "<a href=\"https://a.example\" rel=\"nofollow\">dup</a>"
+ },
+ {
+  "group": "attrs",
+  "fn": "html",
+  "input": "<span title=\"a > b &amp; c\">x</span>",
+  "output": "<span title=\"a &gt; b &amp; c\">x</span>"
+ },
+ {
+  "group": "unquoted",
+  "fn": "html",
+  "input": "<img src=\"https://a.example/c.png\" width=100%>",
+  "output": "&lt;img src=&quot;https://a.example/c.png&quot; width=100%&gt;"
+ },
+ {
+  "group": "unquoted",
+  "fn": "html",
+  "input": "<img width=100 src=\"https://a.example/c.png\">",
+  "output": "<img width=100 src=\"https://a.example/c.png\">"
+ },
+ {
+  "group": "unquoted",
+  "fn": "html",
+  "input": "<a href=https://a.example>x</a>",
+  "output": "&lt;a href=https://a.example&gt;x&lt;/a&gt;"
+ },
+ {
+  "group": "unquoted",
+  "fn": "html",
+  "input": "<div title=a:b-c_d.e>x</div>",
+  "output": "<div title=a:b-c_d.e>x</div>"
+ },
+ {
+  "group": "attrname",
+  "fn": "html",
+  "input": "<div @click=\"x\">a</div>",
+  "output": "&lt;div @click=&quot;x&quot;&gt;a&lt;/div&gt;"
+ },
+ {
+  "group": "attrname",
+  "fn": "html",
+  "input": "<div x-on:click=\"x\" v-bind:y=\"z\">a</div>",
+  "output": "<div>a</div>"
+ },
+ {
+  "group": "whitespace",
+  "fn": "html",
+  "input": "<div\r\n title=\"x\">a</div>",
+  "output": "&lt;div\r\n title=&quot;x&quot;&gt;a&lt;/div&gt;"
+ },
+ {
+  "group": "whitespace",
+  "fn": "html",
+  "input": "<div\n\ttitle=\"x\">a</div>",
+  "output": "<div\n\ttitle=\"x\">a</div>"
+ },
+ {
+  "group": "urls",
+  "fn": "html",
+  "input": "<a href=\"#top\">x</a>",
+  "output": "<a rel=\"nofollow\">x</a>"
+ },
+ {
+  "group": "urls",
+  "fn": "html",
+  "input": "<a href=\"/relative/path\">x</a>",
+  "output": "<a rel=\"nofollow\">x</a>"
+ },
+ {
+  "group": "urls",
+  "fn": "html",
+  "input": "<a href=\"HTTPS://A.EXAMPLE/\">x</a>",
+  "output": "<a rel=\"nofollow\">x</a>"
+ },
+ {
+  "group": "urls",
+  "fn": "html",
+  "input": "<a href=\"javascript:alert(1)\">x</a>",
+  "output": "<a rel=\"nofollow\">x</a>"
+ },
+ {
+  "group": "urls",
+  "fn": "html",
+  "input": "<a href=\"mailto:a@b.example\">x</a>",
+  "output": "<a href=\"mailto:a@b.example\" rel=\"nofollow\">x</a>"
+ },
+ {
+  "group": "urls",
+  "fn": "html",
+  "input": "<a href=\"tel:+123\">x</a>",
+  "output": "<a rel=\"nofollow\">x</a>"
+ },
+ {
+  "group": "urls",
+  "fn": "html",
+  "input": "<a href=\" https://a.example\">x</a>",
+  "output": "<a rel=\"nofollow\">x</a>"
+ },
+ {
+  "group": "urls",
+  "fn": "html",
+  "input": "<img src=\"data:image/png;base64,AAAA\">",
+  "output": "<img>"
+ },
+ {
+  "group": "urls",
+  "fn": "html",
+  "input": "<img src=\"//cdn.example/x.png\">",
+  "output": "<img src=\"//cdn.example/x.png\">"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<center>x</center><font color=\"red\">y</font><marquee>z</marquee>",
+  "output": "&lt;center&gt;x&lt;/center&gt;&lt;font color=&quot;red&quot;&gt;y&lt;/font&gt;&lt;marquee&gt;z&lt;/marquee&gt;"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<details open><summary>s</summary>t</details>",
+  "output": "&lt;details open&gt;&lt;summary&gt;s&lt;/summary&gt;t&lt;/details&gt;"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<figure><img src=\"https://a.example/x.png\"><figcaption>c</figcaption></figure>",
+  "output": "&lt;figure&gt;<img src=\"https://a.example/x.png\">&lt;figcaption&gt;c&lt;/figcaption&gt;&lt;/figure&gt;"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<del>a</del><ins>b</ins><s>c</s><strike>d</strike><u>e</u><mark>f</mark>",
+  "output": "&lt;del&gt;a&lt;/del&gt;&lt;ins&gt;b&lt;/ins&gt;<s>c</s><strike>d</strike><u>e</u><mark>f</mark>"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<ruby>W<rp>(</rp><rt>w</rt><rp>)</rp></ruby>",
+  "output": "&lt;ruby&gt;W&lt;rp&gt;(&lt;/rp&gt;&lt;rt&gt;w&lt;/rt&gt;&lt;rp&gt;)&lt;/rp&gt;&lt;/ruby&gt;"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<section><article><header>h</header></article></section>",
+  "output": "&lt;section&gt;&lt;article&gt;&lt;header&gt;h&lt;/header&gt;&lt;/article&gt;&lt;/section&gt;"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<svg viewBox=\"0 0 1 1\"><circle r=\"1\"/></svg>",
+  "output": "&lt;svg viewBox=&quot;0 0 1 1&quot;&gt;&lt;circle r=&quot;1&quot;/&gt;&lt;/svg&gt;"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<video src=\"https://a.example/v.mp4\" controls></video><audio src=\"x\"></audio>",
+  "output": "&lt;video src=&quot;https://a.example/v.mp4&quot; controls&gt;&lt;/video&gt;&lt;audio src=&quot;x&quot;&gt;&lt;/audio&gt;"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<iframe src=\"https://www.youtube.com/embed/x\"></iframe>",
+  "output": "&lt;iframe src=&quot;https://www.youtube.com/embed/x&quot;&gt;&lt;/iframe&gt;"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<style>#wrapper{color:red}</style>",
+  "output": "&lt;style&gt;#wrapper{color:red}&lt;/style&gt;"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<script>alert(1)</script>",
+  "output": "&lt;script&gt;alert(1)&lt;/script&gt;"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<button>b</button><input type=\"text\"><form></form>",
+  "output": "&lt;button&gt;b&lt;/button&gt;&lt;input type=&quot;text&quot;&gt;&lt;form&gt;&lt;/form&gt;"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<dl><dt>t</dt><dd>d</dd></dl><kbd>k</kbd><samp>s</samp><var>v</var><dfn>d</dfn><cite>c</cite><small>s</small><sub>1</sub><sup>2</sup>",
+  "output": "<dl><dt>t</dt><dd>d</dd></dl><kbd>k</kbd><samp>s</samp><var>v</var><dfn>d</dfn><cite>c</cite><small>s</small><sub>1</sub><sup>2</sup>"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "a<wbr>b",
+  "output": "a&lt;wbr&gt;b"
+ },
+ {
+  "group": "tags",
+  "fn": "html",
+  "input": "<DIV TITLE=\"x\">upper</DIV>",
+  "output": "<DIV TITLE=\"x\">upper</DIV>"
+ },
+ {
+  "group": "selfclose",
+  "fn": "html",
+  "input": "<br/><hr/><img src=\"https://a.example/x.png\"/>",
+  "output": "<br/><hr/><img src=\"https://a.example/x.png\"/>"
+ },
+ {
+  "group": "selfclose",
+  "fn": "html",
+  "input": "<span/>after",
+  "output": "&lt;span/&gt;after"
+ },
+ {
+  "group": "selfclose",
+  "fn": "html",
+  "input": "<p>para <div>block</div>",
+  "output": "<p>para <div>block</div></p>"
+ },
+ {
+  "group": "unclosed",
+  "fn": "html",
+  "input": "<div><span>open",
+  "output": "<div><span>open</span></div>"
+ },
+ {
+  "group": "unclosed",
+  "fn": "html",
+  "input": "<h1>Title</h2>",
+  "output": "<h1>Title&lt;/h2&gt;</h1>"
+ },
+ {
+  "group": "comments",
+  "fn": "html",
+  "input": "a<!-- note -->b",
+  "output": "a&lt;!-- note --&gt;b"
+ },
+ {
+  "group": "text",
+  "fn": "html",
+  "input": "It's \"quoted\" & 3 > 2 < 4 &nbsp; &copy &#169; &bogus;",
+  "output": "It&#x27;s &quot;quoted&quot; &amp; 3 &gt; 2 &lt; 4 &nbsp; &copy &#169; &bogus;"
+ },
+ {
+  "group": "text",
+  "fn": "html",
+  "input": "AT&T",
+  "output": "AT&T"
+ },
+ {
+  "group": "text",
+  "fn": "html",
+  "input": "< div>not a tag",
+  "output": "< div>not a tag</div>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "display:flex;color:red",
+  "output": "color:red"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: red !important",
+  "output": "<nil: failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: red;;",
+  "output": "<nil: failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color:red;",
+  "output": "color:red"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "COLOR: red",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "font-family: Arial, sans-serif",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "font-weight: bold",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "float: right; color: blue",
+  "output": "color: blue"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "width: calc(100% - 10px)",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "width: 100%; max-width: 640px; height: auto",
+  "output": "width: 100%; max-width: 640px"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: var(--itchio_link_color)",
+  "output": "color: var(--itchio_link_color)"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "background-color: var(--x, #fff)",
+  "output": "background-color: var(--x, #fff)"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "background: url('https://a.example/b.png')",
+  "output": "background: url('https://a.example/b.png')"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "background: url('https://a.example/b.png') no-repeat",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "background-image: url('data:image/png;base64,AAAA')",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "text-align:center",
+  "output": "text-align:center"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "margin: 0 auto",
+  "output": "margin: 0 auto"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "padding: 10px 20px",
+  "output": "padding: 10px 20px"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "padding: auto",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "border: 1px solid #ccc",
+  "output": "border: 1px solid #ccc"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "border-radius: 4px",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "border-style: dashed; border-width: 2px; border-color: red",
+  "output": "border-style: dashed; border-width: 2px; border-color: red"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "font-size: 2em; line-height: 1.5",
+  "output": "font-size: 2em"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "opacity: .5",
+  "output": "opacity: .5"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "opacity: 0.5",
+  "output": "opacity: 0.5"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: #ff000080",
+  "output": "color: #ff000080"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: rgb(1 2 3 / 50%)",
+  "output": "<nil: failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: hsl(120deg, 50%, 50%)",
+  "output": "color: hsl(120deg, 50%, 50%)"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "width: -10px",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "margin-top: -10px",
+  "output": "margin-top: -10px"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "width: 10.5px",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "content: 'x'",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "position: absolute; top: 0",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "transform: rotate(5deg)",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "behavior: url(x.htc); color: red",
+  "output": "<nil: failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "width: expression(alert(1))",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "/* c */ color: red",
+  "output": "<nil: failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color : red ; font-size : 12px",
+  "output": "color : red; font-size : 12px"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "vertical-align: inherit;",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "   ",
+  "output": ""
+ },
+ {
+  "group": "itchlike",
+  "fn": "html_itchlike",
+  "input": "<div class=\"foo custom-a text-center bar\">x</div>",
+  "output": "<div class=\"custom-a text-center\">x</div>"
+ },
+ {
+  "group": "itchlike",
+  "fn": "html_itchlike",
+  "input": "<div class=\"foo\">x</div>",
+  "output": "<div>x</div>"
+ },
+ {
+  "group": "itchlike",
+  "fn": "html_itchlike",
+  "input": "<span style=\"vertical-align: inherit;\">x</span>",
+  "output": "<span style=\"\">x</span>"
+ },
+ {
+  "group": "itchlike",
+  "fn": "html_itchlike",
+  "input": "<span style=\"color: red !important\">x</span>",
+  "output": "<span>x</span>"
+ },
+ {
+  "group": "itchlike",
+  "fn": "html_itchlike",
+  "input": "<a href=\"#header\">x</a>",
+  "output": "<a rel=\"nofollow noopener\">x</a>"
+ },
+ {
+  "group": "itchlike",
+  "fn": "html_itchlike",
+  "input": "<a href=\"https://speakthesky.itch.io/page#x\">in</a> <a href=\"https://a.example\" target=\"_new\">out</a>",
+  "output": "<a href=\"https://speakthesky.itch.io/page#x\">in</a> <a href=\"https://a.example\" target=\"_new\" rel=\"nofollow noopener\">out</a>"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "font-size: 1.5em",
+  "output": ""
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "font-size: 150%",
+  "output": "font-size: 150%"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "font-size: 24px",
+  "output": "font-size: 24px"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "margin: 0.5em 1em",
+  "output": "margin: 0.5em 1em"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "margin: .5em",
+  "output": "margin: .5em"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "line-height: 2; letter-spacing: 1px; text-decoration: underline",
+  "output": ""
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "width: 50vw; height: 300px; min-height: 10px; max-height: 20rem",
+  "output": "width: 50vw; height: 300px; min-height: 10px; max-height: 20rem"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "color: transparent; background-color: rgba(0,0,0,.5)",
+  "output": "color: transparent; background-color: rgba(0,0,0,.5)"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "background: #fff",
+  "output": "background: #fff"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "background: none",
+  "output": "background: none"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "background: linear-gradient(red, blue)",
+  "output": ""
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "background-image: linear-gradient(red, blue)",
+  "output": ""
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "border: none",
+  "output": ""
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "border: 0",
+  "output": "border: 0"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "border: 2px dashed",
+  "output": ""
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "border: 2px dashed rgb(1,2,3)",
+  "output": "border: 2px dashed rgb(1,2,3)"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "text-align: justify",
+  "output": "text-align: justify"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "color: RED",
+  "output": "color: RED"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "color:red;font-size:12px;",
+  "output": "color:red; font-size:12px"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "color: red; display: none",
+  "output": "color: red"
+ },
+ {
+  "group": "style2",
+  "fn": "style",
+  "input": "display: none",
+  "output": ""
+ },
+ {
+  "group": "text2",
+  "fn": "html",
+  "input": "a < b and c > d",
+  "output": "a < b > d</b>"
+ },
+ {
+  "group": "text2",
+  "fn": "html",
+  "input": "x < div > y",
+  "output": "x < div > y</div>"
+ },
+ {
+  "group": "text2",
+  "fn": "html",
+  "input": "1 <2 and 3> 4",
+  "output": "1 &lt;2 and 3&gt; 4"
+ },
+ {
+  "group": "text2",
+  "fn": "html",
+  "input": "a &lt;div&gt; b",
+  "output": "a &lt;div&gt; b"
+ },
+ {
+  "group": "attrs2",
+  "fn": "html",
+  "input": "<p title=\"multi\nline\">x</p>",
+  "output": "<p title=\"multi\nline\">x</p>"
+ },
+ {
+  "group": "attrs2",
+  "fn": "html",
+  "input": "<p title='single \"dq\"'>x</p>",
+  "output": "<p title='single \"dq\"'>x</p>"
+ },
+ {
+  "group": "attrs2",
+  "fn": "html",
+  "input": "<img src=\"https://a.example/x.png\" alt=\"\">",
+  "output": "<img src=\"https://a.example/x.png\" alt=\"\">"
+ },
+ {
+  "group": "attrs2",
+  "fn": "html",
+  "input": "<img src=\"https://a.example/x.png\" alt>",
+  "output": "<img src=\"https://a.example/x.png\" alt>"
+ },
+ {
+  "group": "attrs2",
+  "fn": "html",
+  "input": "<a href=\"https://a.example/?q=1&b=2\">x</a>",
+  "output": "<a href=\"https://a.example/?q=1&b=2\" rel=\"nofollow\">x</a>"
+ },
+ {
+  "group": "attrs2",
+  "fn": "html",
+  "input": "<a href=\"https://a.example/?q=1&amp;b=2\">x</a>",
+  "output": "<a href=\"https://a.example/?q=1&amp;b=2\" rel=\"nofollow\">x</a>"
+ },
+ {
+  "group": "nest",
+  "fn": "html",
+  "input": "<ul><li>a<li>b</ul>",
+  "output": "<ul><li>a<li>b</li></li></ul>"
+ },
+ {
+  "group": "nest",
+  "fn": "html",
+  "input": "<table><tr><td>a<td>b</table>",
+  "output": "<table><tr><td>a<td>b</td></td></tr></table>"
+ },
+ {
+  "group": "nest",
+  "fn": "html",
+  "input": "<p>a<p>b",
+  "output": "<p>a<p>b</p></p>"
+ }
+]

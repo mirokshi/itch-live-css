@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>t1b letters</title>
+<style>
+#wrapper .l-ib span{display:inline-block}
+#wrapper .l-flex{display:flex}
+#wrapper .l-rel span{position:relative;top:.1em}
+#wrapper .l-gen span{display:inline-block}
+#wrapper .l-gen span:nth-child(2)::before{content:"M";content:"M" / ""}
+#wrapper .l-gen span:nth-child(3)::before{content:"i";content:"i" / ""}
+#wrapper .l-gen span:nth-child(4)::before{content:"r";content:"r" / ""}
+#wrapper .l-gen span:nth-child(5)::before{content:"o";content:"o" / ""}
+#wrapper .custom-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+#wrapper .l-ibc span{display:inline-block}
+#wrapper .l-grid{display:inline-grid;grid-auto-flow:column}
+</style></head>
+<body><div id="wrapper">
+<h3 id="plain"><span>M</span><span>i</span><span>r</span><span>o</span></h3>
+<h3 id="ib" class="l-ib"><span>M</span><span>i</span><span>r</span><span>o</span></h3>
+<h3 id="flex" class="l-flex"><span>M</span><span>i</span><span>r</span><span>o</span></h3>
+<h3 id="grid" class="l-grid"><span>M</span><span>i</span><span>r</span><span>o</span></h3>
+<h3 id="rel" class="l-rel"><span>M</span><span>i</span><span>r</span><span>o</span></h3>
+<h3 id="gen" class="l-gen"><span class="custom-sr">Miro</span><span></span><span></span><span></span><span></span></h3>
+<h3 id="ibc" class="l-ibc"><span>Mi</span>ro <span>ks</span>hi</h3>
+</div></body></html>

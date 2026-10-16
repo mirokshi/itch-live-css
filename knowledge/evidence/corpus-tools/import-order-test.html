@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- simulates a jam page: theme rules and the user's CSS share ONE <style> -->
+<style id="jam_theme">:root{--itchio_ui_bg:#282828}.jam_page_wrap{color:#222}@import url("data:text/css,%23a%7Bcolor%3Argb(0%2C128%2C0)%7D");#c{color:rgb(9,9,9)}</style>
+<!-- simulates profile/project: user's CSS alone in style#custom_css, @import first -->
+<style id="custom_css">@import url("data:text/css,%23b%7Bcolor%3Argb(0%2C0%2C255)%7D");#d{color:rgb(7,7,7)}</style>
+<!-- @font-face after rules is fine -->
+<style id="ff">.z{color:red}@font-face{font-family:T;src:local(Arial)}#e{font-family:T}</style>
+</head><body><p id="a">a</p><p id="b">b</p><p id="c">c</p><p id="d">d</p><p id="e">e</p>
+<pre id="out"></pre>
+<script>
+window.addEventListener('load',()=>{const o={};for(const id of 'abcde'){const cs=getComputedStyle(document.getElementById(id));o[id]=cs.color+' / '+cs.fontFamily}
+o.jam_rules=[...document.getElementById('jam_theme').sheet.cssRules].map(r=>r.constructor.name);
+o.custom_rules=[...document.getElementById('custom_css').sheet.cssRules].map(r=>r.constructor.name);
+o.ua=navigator.userAgent;document.getElementById('out').textContent=JSON.stringify(o,null,1)})
+</script></body></html>

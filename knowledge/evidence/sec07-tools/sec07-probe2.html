@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>sec07 probe 2: patterns used by section 07 (retry)</title>
+<!--
+  Written for section 07 (techniques and browser support), second attempt, 2026-10-14.
+  Complements sec07-probe.html (T1-T22). Rows T23-T30.
+  Run: chrome --headless=new --user-data-dir=<tmp> --virtual-time-budget=2000 --dump-dom file:///.../sec07-probe2.html
+  Each row: id | expectation | observed | PASS/FAIL. Results land in <pre id="out">.
+-->
+<style>
+  body{margin:0;width:600px}
+  #wrapper div{display:block}
+  /* T23: per-letter :nth-child(n){--i} rules + a generic @supports sibling-index() override.
+     :nth-child(3) is deliberately wrong (7) so we can see who wins. */
+  #wrapper .t23 b{display:block;--i:0;width:calc(var(--i) * 10px + 1px)}
+  #wrapper .t23 b:nth-child(2){--i:1}
+  #wrapper .t23 b:nth-child(3){--i:7}
+  @supports (width: calc(sibling-index() * 1px)){#wrapper .t23 b{--i:calc(sibling-index() - 1)}}
+  /* T24: same, but the override carries :nth-child(n) so it ties on specificity and wins on order */
+  #wrapper .t24 b{display:block;--i:0;width:calc(var(--i) * 10px + 1px)}
+  #wrapper .t24 b:nth-child(2){--i:1}
+  #wrapper .t24 b:nth-child(3){--i:7}
+  @supports (width: calc(sibling-index() * 1px)){#wrapper .t24 b:nth-child(n){--i:calc(sibling-index() - 1)}}
+  /* T25: @starting-style nested in a style rule, element present in the static HTML */
+  #wrapper .t25{opacity:1;transition:opacity 2s linear; @starting-style{opacity:0}}
+  /* T25c: control without @starting-style */
+  #wrapper .t25c{opacity:1;transition:opacity 2s linear}
+  /* T26: @scope (#wrapper) vs a theme-like (0,2,0) rule, and nesting under #wrapper vs the same rule */
+  .user_page .t26a{width:45px}
+  @scope (#wrapper){ .t26a{width:44px} }
+  .user_page .t26b{width:45px}
+  #wrapper{ .t26b{width:46px} }
+  /* T27: light-dark() without and with color-scheme */
+  #wrapper .t27a{color:light-dark(rgb(1, 2, 3), rgb(4, 5, 6))}
+  #wrapper .t27b{color-scheme:light dark;color:light-dark(rgb(1, 2, 3), rgb(4, 5, 6))}
+  /* T28: style query on a token set on an ancestor three levels up (inheritance) */
+  #wrapper .t28{--custom-mode:neon}
+  @container style(--custom-mode: neon){#wrapper .t28 .deep{width:47px}}
+  /* T29: translate on display:inline vs inline-block spans */
+  #wrapper .t29 i{translate:20px 0}
+  #wrapper .t29 .ib{display:inline-block}
+  /* T30: unregistered --x holding sibling-index(), read by a child (evaluates at the child) */
+  #wrapper .t30 > p{margin:0;--x:sibling-index()}
+  #wrapper .t30 > p > s{display:block;width:calc(var(--x) * 10px)}
+</style>
+</head>
+<body>
+<div id="wrapper">
+  <div class="t23"><b></b><b></b><b></b><b></b></div>
+  <div class="t24"><b></b><b></b><b></b><b></b></div>
+  <div class="t25"></div><div class="t25c"></div>
+  <div class="user_page"><div class="t26a"></div><div class="t26b"></div></div>
+  <div class="t27a"></div><div class="t27b"></div>
+  <div class="t28"><div><div><div class="deep"></div></div></div></div>
+  <div class="t29"><span><i class="in">a</i></span> <span><i class="ib">b</i></span></div>
+  <div class="t30"><p></p><p></p><p><s></s><s></s></p></div>
+</div>
+<pre id="out"></pre>
+<script>
+const q = s => document.querySelector(s);
+const W = s => getComputedStyle(q(s)).width;
+const rows = [];
+function row(id, expect, got){ rows.push([id, expect, got, String(got) === String(expect) ? 'PASS' : 'FAIL'].join(' | ')); }
+const ws = s => [...document.querySelectorAll(s)].map(e => getComputedStyle(e).width).join(',');
+row('T23 generic @supports override vs :nth-child rules', '1px,11px,71px,31px', ws('.t23 b'));
+row('T24 override with :nth-child(n)', '1px,11px,21px,31px', ws('.t24 b'));
+const o25 = parseFloat(getComputedStyle(q('.t25')).opacity);
+const a25 = q('.t25').getAnimations().length;
+row('T25 nested @starting-style: transitions on first style [opacity ' + o25 + ']', '1', String(a25));
+row('T25c control: transitions', '0', String(q('.t25c').getAnimations().length));
+row('T26a @scope(#wrapper){.x} vs .user_page .x', '45px', W('.t26a'));
+row('T26b #wrapper{.x} vs .user_page .x', '46px', W('.t26b'));
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+row('T27a light-dark() without color-scheme', 'rgb(1, 2, 3)', getComputedStyle(q('.t27a')).color);
+row('T27b light-dark() with color-scheme:light dark [prefers dark=' + dark + ']', dark ? 'rgb(4, 5, 6)' : 'rgb(1, 2, 3)', getComputedStyle(q('.t27b')).color);
+row('T28 style query on inherited token (3 levels)', '47px', W('.t28 .deep'));
+const off = s => Math.round(q(s).getBoundingClientRect().left - q(s).parentElement.getBoundingClientRect().left);
+row('T29 translate on display:inline', '0', String(off('.t29 .in')));
+row('T29b translate on inline-block', '20', String(off('.t29 .ib')));
+row('T30 unregistered --x:sibling-index() read by children', '10px,20px', ws('.t30 > p > s'));
+row('UA', navigator.userAgent, navigator.userAgent);
+document.getElementById('out').textContent = rows.join('\n');
+</script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+/* Test C fixture: UTF-8 bytes, no BOM, no @charset, server sends no charset */
+#wrapper .c3::before { content: "¡Hola! → ✓ 안녕"; }

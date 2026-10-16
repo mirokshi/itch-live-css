@@ -1,0 +1,3 @@
+@charset "UTF-8";
+/* Test C fixture: UTF-8 with @charset */
+#wrapper .c5::before { content: "¡Hola! → ✓ 안녕"; }

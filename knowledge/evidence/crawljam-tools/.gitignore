@@ -1,0 +1,6 @@
+# third-party downloads and generated harnesses stay local (never commit itch HTML/CSS)
+raw/
+requests.log
+tests/jam.css
+tests/h_*.html
+tests/chrome-profile/

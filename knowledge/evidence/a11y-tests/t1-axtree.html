@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>t1 ax tree</title>
+<style>
+#wrapper .hide-dn{display:none}
+#wrapper .hide-vis{visibility:hidden}
+#wrapper .hide-op{opacity:0}
+#wrapper .hide-tr{color:transparent}
+#wrapper .hide-clip{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#wrapper .hide-zero{font-size:0}
+#wrapper .hide-indent{text-indent:-9999px;overflow:hidden}
+#wrapper .gen::before{content:"GEN-BEFORE "}
+#wrapper .gen-alt-empty::before{content:"GEN-SILENT ";content:"GEN-SILENT " / ""}
+#wrapper .gen-alt-text::before{content:"\2605  ";content:"\2605  " / "STAR-ALT "}
+#wrapper .arrow::after{content:" \2197"}
+#wrapper .letters span{display:inline-block}
+#wrapper .letters-rot span{display:inline-block;rotate:5deg}
+#wrapper .letters-block span{display:block;float:left}
+#wrapper .replace{font-size:0}
+#wrapper .replace::before{content:"REPLACED";font-size:16px}
+</style></head>
+<body><div id="wrapper">
+<h1 id="h-dn" class="hide-dn">H1 display none</h1>
+<h1 id="h-vis" class="hide-vis">H1 visibility hidden</h1>
+<h2 id="h-op" class="hide-op">H2 opacity zero</h2>
+<h2 id="h-tr" class="hide-tr">H2 transparent color</h2>
+<h2 id="h-clip" class="hide-clip">H2 clipped sr-only</h2>
+<h2 id="h-zero" class="hide-zero">H2 font-size zero</h2>
+<h2 id="h-indent" class="hide-indent">H2 text-indent</h2>
+<h2 id="h-gen" class="gen">H2 gen</h2>
+<h2 id="h-alt-empty" class="gen-alt-empty">H2 alt empty</h2>
+<h2 id="h-alt-text" class="gen-alt-text">H2 alt text</h2>
+<p><a id="a-arrow" class="arrow" href="#x">Link arrow</a></p>
+<h3 id="h-letters" class="letters"><span>M</span><span>i</span><span>r</span><span>o</span></h3>
+<h3 id="h-letters-rot" class="letters-rot"><span>M</span><span>i</span><span>r</span><span>o</span></h3>
+<h3 id="h-letters-block" class="letters-block"><span>M</span><span>i</span><span>r</span><span>o</span></h3>
+<h4 id="h-replace" class="replace">ORIGINAL</h4>
+</div></body></html>

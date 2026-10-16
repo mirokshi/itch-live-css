@@ -1,0 +1,15 @@
+# sec07-probe2.html, HeadlessChrome 155, run 2026-10-14 (retry)
+T24 override with :nth-child(n) | 1px,11px,21px,31px | 1px,11px,21px,31px | PASS
+T25 nested @starting-style: transitions on first style [opacity 0] | 1 | 1 | PASS
+T25c control: transitions | 0 | 0 | PASS
+T26a @scope(#wrapper){.x} vs .user_page .x | 45px | 45px | PASS
+T26b #wrapper{.x} vs .user_page .x | 46px | 46px | PASS
+T27a light-dark() without color-scheme | rgb(1, 2, 3) | rgb(1, 2, 3) | PASS
+T27b light-dark() with color-scheme:light dark [prefers dark=true] | rgb(4, 5, 6) | rgb(4, 5, 6) | PASS
+T28 style query on inherited token (3 levels) | 47px | 47px | PASS
+T29 translate on display:inline | 0 | 0 | PASS
+T29b translate on inline-block | 20 | 20 | PASS
+T30 unregistered --x:sibling-index() read by children | 10px,20px | 10px,20px | PASS
+UA | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36 | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36 | PASS</pre>
+# same with --enable-experimental-web-platform-features: identical rows
+(diff empty)

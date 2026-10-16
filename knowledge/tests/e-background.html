@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E · background shorthand vs longhands on #wrapper</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test E — the theme editor's panel image is set on .user_page_wrap (the same node as #wrapper).</b>
+Each iframe below is a tiny itch-like page: style#user_theme sets <code>.user_page_wrap{background-image:url(_lib/panel.svg);background-repeat:repeat;background-position:50% 0}</code>
+and style#custom_css applies one variant. We read the computed background of #wrapper.</p></div>
+<script>
+const THEME = '.user_page_wrap{background-image:url("_lib/panel.svg");background-repeat:repeat;background-position:50% 0}body{background-color:#0b1433}';
+const page = custom => '<!DOCTYPE html><html><head><meta charset="UTF-8"><style id="user_theme">' + THEME + '</style><style id="custom_css">' + custom +
+  '</style></head><body><div class="user_page_wrap" id="wrapper" style="height:120px"><div class="user_page">x</div></div></body></html>';
+const variants = {
+  E1: ['', 'no custom CSS (baseline)'],
+  E2: ['#wrapper{background:#123456}', 'background SHORTHAND with only a color'],
+  E3: ['#wrapper{background-color:#123456;background-repeat:no-repeat;background-size:cover;background-position:center;background-attachment:fixed}', 'longhands only'],
+  E4: ['#wrapper{background-image:none}', 'explicit background-image:none'],
+  E5: ['#wrapper{background-color:rgb(0 0 40 / .5);background-blend-mode:multiply}', 'tint via background-color + background-blend-mode'],
+  E6: ['.user_page_wrap{background:#123456}', 'shorthand with the SAME class selector (later sheet, same specificity)'],
+  E7: ['#wrapper{background:url("_lib/panel.svg") #123456}', 'shorthand that re-specifies the image itself']
+};
+T.run(async () => {
+  for (const [id, [css, what]] of Object.entries(variants)) {
+    const f = await T.frame(page(css), 220, 140);
+    const d = f.contentDocument;
+    const img = T.cs('#wrapper', 'background-image', null, d);
+    const rest = ['background-color', 'background-repeat', 'background-size', 'background-attachment', 'background-blend-mode'].map(p => p.replace('background-', '') + '=' + T.cs('#wrapper', p, null, d)).join('; ');
+    const kept = /panel\.svg/.test(img) ? 'image kept' : 'image removed';
+    const expected = { E1: 'image kept', E2: 'image removed', E3: 'image kept', E4: 'image removed', E5: 'image kept', E6: 'image removed', E7: 'image kept' }[id];
+    T.check(id, what + ' → ' + rest, kept, expected);
+  }
+});
+</script>
+</body>
+</html>

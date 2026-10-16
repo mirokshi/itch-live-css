@@ -1,0 +1,2 @@
+/* Verification fixture (served from :8091): a cross-origin sheet that declares a mask with a URL relative to itself. */
+#wrapper .v10 { width: 20px; height: 20px; background: #000; mask-image: url("mask.svg"); }

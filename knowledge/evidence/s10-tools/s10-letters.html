@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>s10 letters</title>
+<style>
+#wrapper .custom-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+#wrapper .custom-l{display:inline-block;animation:bob 2s ease-in-out infinite alternate}
+@keyframes bob{to{translate:0 -.1em}}
+#wrapper .custom-l:nth-child(2)::before{content:"M";content:"M" / ""}
+#wrapper .custom-l:nth-child(3)::before{content:"i";content:"i" / ""}
+#wrapper .custom-l:nth-child(4)::before{content:"r";content:"r" / ""}
+#wrapper .custom-l:nth-child(5)::before{content:"o";content:"o" / ""}
+#wrapper #h-noalt .custom-l:nth-child(n)::before{content:"x"}
+#wrapper .custom-w{display:inline-block}
+</style></head><body><div id="wrapper">
+<h1 id="h-letters">M i r o placeholder</h1>
+<h1 id="h-pattern"><span class="custom-sr">Miro</span><span class="custom-l"></span><span class="custom-l"></span><span class="custom-l"></span><span class="custom-l"></span></h1>
+<h1 id="h-noalt"><span class="custom-sr">Miro</span><span class="custom-l"></span><span class="custom-l"></span></h1>
+<h1 id="h-words"><span class="custom-w">Hello</span> <span class="custom-w">world</span></h1>
+</div></body></html>

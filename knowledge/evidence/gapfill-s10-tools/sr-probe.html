@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>sr probe</title>
+<!-- Screen-reader exposure probe (own code). One heading or paragraph per pattern the KB recommends or warns about.
+     Read with: CDP (Chrome), Playwright accessibility snapshots (Firefox, WebKit), and Windows UI Automation (uia-dump.ps1). -->
+<style>
+body{font:20px/1.5 sans-serif;background:#fff;color:#111;padding:16px}
+#wrapper .custom-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+#wrapper .custom-l{display:inline-block}
+#wrapper #p01 .custom-l:nth-child(2)::before{content:"M";content:"M" / ""}
+#wrapper #p01 .custom-l:nth-child(3)::before{content:"i";content:"i" / ""}
+#wrapper #p01 .custom-l:nth-child(4)::before{content:"r";content:"r" / ""}
+#wrapper #p01 .custom-l:nth-child(5)::before{content:"o";content:"o" / ""}
+#wrapper #p02 .custom-l::before{content:"x"}
+#wrapper .custom-w{display:inline-block}
+#wrapper .custom-ib span{display:inline-block}
+#wrapper .custom-star0::before{content:"\2605 "}
+#wrapper .custom-star1::before{content:"\2605 ";content:"\2605 " / ""}
+#wrapper .custom-star2::before{content:"\2605 ";content:"\2605 " / "Rated: "}
+#wrapper .custom-tr{color:transparent}
+#wrapper .custom-vh{visibility:hidden}
+#wrapper .custom-roll{display:inline-grid;grid-template-columns:auto 0;color:transparent;height:1.4em;overflow-y:clip}
+#wrapper .custom-roll::before{content:"Hola\A Ciao\A Hallo";content:"Hola\A Ciao\A Hallo" / "";white-space:pre;color:#111}
+#wrapper .custom-arrow0::after{content:" \2192"}
+#wrapper .custom-arrow1::after{content:" \2192";content:" \2192" / ""}
+#wrapper .spoiler{background:#111;color:#111;border-radius:3px}
+#wrapper .spoiler:focus{color:#fff}
+</style></head>
+<body><div id="wrapper">
+<h1 id="p01"><span class="custom-sr">Miro</span><span class="custom-l"></span><span class="custom-l"></span><span class="custom-l"></span><span class="custom-l"></span></h1>
+<h2 id="p02"><span class="custom-sr">Miro</span><span class="custom-l"></span><span class="custom-l"></span></h2>
+<h2 id="p03"><span class="custom-w">Hello</span> <span class="custom-w">world</span></h2>
+<h2 id="p04" class="custom-ib"><span>M</span><span>i</span><span>r</span><span>o</span></h2>
+<h2 id="p05"><span>M</span><span>i</span><span>r</span><span>o</span></h2>
+<h2 id="p06" class="custom-star0">Plain star</h2>
+<h2 id="p07" class="custom-star1">Silent star</h2>
+<h2 id="p08" class="custom-star2">Labelled star</h2>
+<h2 id="p09"><span class="custom-tr">Hi!</span> I make games</h2>
+<h2 id="p10"><span class="custom-vh">Hi!</span> I make games</h2>
+<h2 id="p11"><span class="custom-roll">Hi!,</span> I make games</h2>
+<p id="p12"><a class="custom-arrow0" href="#a">Next</a> and <a class="custom-arrow1" href="#b">More</a></p>
+<p id="p13">Before <span class="spoiler" tabindex="0">SECRET TEXT</span> after.</p>
+</div></body></html>

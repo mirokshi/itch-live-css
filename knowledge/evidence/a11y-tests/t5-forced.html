@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>t5 forced colors</title>
+<style>
+body{margin:0;background:#0b1433;color:#eef3ff;font:20px/1.4 system-ui,sans-serif}
+#wrapper{padding:16px}
+#wrapper .box{margin:10px 0;padding:10px;border:2px solid #ffc857}
+#wrapper .grad{background:linear-gradient(90deg,#f06,#48f);color:#fff}
+#wrapper .url{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='8' fill='%23f80'/%3E%3C/svg%3E");color:#fff}
+#wrapper .shadow{box-shadow:0 0 0 4px #ffc857;text-shadow:0 0 4px #f00}
+#wrapper .transp{color:transparent}
+#wrapper .gradtext{background:linear-gradient(90deg,#f06,#48f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+#wrapper .gradtext-safe{background:linear-gradient(90deg,#f06,#48f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+@media (forced-colors:active){#wrapper .gradtext-safe{-webkit-text-fill-color:currentColor;background:none}}
+#wrapper .optout{forced-color-adjust:none;background:linear-gradient(90deg,#f06,#48f);color:#fff}
+#wrapper .gen::before{content:"*";color:#ffc857}
+#wrapper .noborder-card{background:rgba(10,18,46,.5);box-shadow:0 10px 24px #000;border:0;padding:10px}
+#wrapper .transparent-border{border:2px solid transparent;padding:10px}
+#wrapper a{color:#ffc857}
+#wrapper .svgfill svg{fill:#ffc857}
+#wrapper .backdrop{backdrop-filter:blur(12px);background:rgba(10,18,46,.5)}
+</style></head>
+<body><div id="wrapper">
+<div class="box grad" id="grad">Gradient background</div>
+<div class="box url" id="url">URL image background</div>
+<div class="box shadow" id="shadow">Box shadow + text shadow</div>
+<div class="box"><span class="transp" id="transp">Transparent text</span></div>
+<div class="box"><span class="gradtext" id="gradtext">Gradient text (clip)</span></div>
+<div class="box"><span class="gradtext-safe" id="gradtextsafe">Gradient text with forced-colors fallback</span></div>
+<div class="box optout" id="optout">forced-color-adjust none</div>
+<div class="box gen" id="gen">Generated content</div>
+<div class="noborder-card" id="card">Card defined only by background+shadow</div>
+<div class="transparent-border" id="tborder">Card with transparent border</div>
+<p><a href="#x" id="link">A link</a></p>
+<div class="backdrop" id="backdrop">backdrop</div>
+</div></body></html>

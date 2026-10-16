@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style id="user_theme">.vs-theme{color:rgb(0, 0, 255)}</style>
+<style id="custom_css">@import url("imp.css");
+#wrapper .tie{color:rgb(255, 0, 0)}
+#wrapper .dbl{color:rgb(255, 0, 0)}
+#wrapper .typ{color:rgb(255, 0, 0)}
+</style>
+<style id="late">#wrapper .x{color:red}
+@import url("imp-late.css");</style>
+</head><body><div id="wrapper"><p class="tie">tie</p><p class="dbl">dbl</p><h1 class="typ">typ</h1><p class="vs-theme">theme</p><p class="late">late</p></div>
+<script>
+window.result=()=>{const c=s=>getComputedStyle(document.querySelector(s)).color;
+const late=[...document.getElementById('late').sheet.cssRules].map(r=>r.cssText.slice(0,40));
+return {tie_importedVsBox:c('.tie'),doubledClassImported:c('.dbl'),typeSelectorImported:c('.typ'),importedVsEarlierThemeStyle:c('.vs-theme'),importAfterRule:c('.late'),lateSheetRules:late};}
+</script></body></html>

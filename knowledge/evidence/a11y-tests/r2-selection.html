@@ -1,0 +1,7 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>sel</title><style>
+body{margin:0;background:#0b1433;color:#eef3ff;font:28px/1.4 sans-serif;padding:10px}
+#wrapper ::selection{background:#ffc857;color:#0b1433}
+#wrapper .hid{color:transparent}
+#wrapper .hid2{color:transparent}
+#wrapper .hid2::selection{color:transparent;background:transparent}
+</style></head><body><div id="wrapper"><p id="a">Row A <span class="hid">HIDDEN</span> end</p><p id="b">Row B <span class="hid2">HIDDEN</span> end</p></div></body></html>

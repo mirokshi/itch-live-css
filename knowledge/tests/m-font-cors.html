@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M2 · cross-origin fonts and masks need CORS (even from an imported sheet)</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="custom_css">
+  @import url("http://localhost:8091/knowledge/tests/m/font-x.css");
+  @font-face { font-family: "MSame"; src: url("m/fake.woff2") format("woff2"); }
+  @font-face { font-family: "MX"; src: url("http://localhost:8091/knowledge/tests/m/fake.woff2") format("woff2"); }
+  #wrapper .m-same { font-family: "MSame", serif; }
+  #wrapper .m-x { font-family: "MX", serif; }
+  #wrapper .m-imp { font-family: "MImp", serif; }
+  #wrapper .m-mask { width: 20px; height: 20px; background: #000; mask-image: url("http://localhost:8091/knowledge/tests/m/mask.svg"); }
+  #wrapper .m-bg { width: 20px; height: 20px; background-image: url("http://localhost:8091/knowledge/tests/f/sub/dot.svg"); }
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test M2 — font files and mask images are fetched in CORS mode; background images are not.</b>
+m/fake.woff2 is deliberately NOT a font, so every font ends in status "error" — the console tells WHY: "blocked by CORS policy" (never reached the
+decoder) vs "OTS parsing error" (fetched fine, failed to decode). python http.server sends no Access-Control-Allow-Origin header.
+After running, read the console and the network log. Font requests originate from the PAGE's origin even when the @font-face lives in a sheet
+imported from the font's own origin.</p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <p class="m-same">MSame same-origin</p><p class="m-x">MX cross-origin</p><p class="m-imp">MImp declared in cross-origin sheet, relative URL</p>
+      <div class="m-mask"></div><div class="m-bg"></div>
+    </div>
+  </div>
+</div>
+<script>
+T.run(async () => {
+  const st = async fam => { try { await document.fonts.load('16px "' + fam + '"'); } catch (e) {} const f = [...document.fonts].find(x => x.family.replace(/"/g, '') === fam); return f ? f.status : 'no FontFace'; };
+  for (const fam of ['MSame', 'MX', 'MImp']) T.info('M2 ' + fam, 'FontFace status (all "error": the file is not a font — see console for the reason)', await st(fam));
+  T.info('M2-mask', 'computed mask-image', T.cs('.m-mask', 'mask-image'));
+  T.info('M2-howto', 'next step', 'read_console_messages + read_network_requests on this tab');
+});
+</script>
+</body>
+</html>

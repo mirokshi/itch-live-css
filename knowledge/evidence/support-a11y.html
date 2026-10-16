@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Generated content a11y probe</title>
+<!-- Accessible-name probe for CSS generated content and hiding techniques.
+     Headings are used because they take their accessible name from their contents (a <p> has no name).
+     Read with support-tools/a11y-cdp.mjs (Chrome DevTools Protocol Accessibility.getPartialAXTree).
+     Written for this project; no third-party code. -->
+<style>
+  .plain::before    { content: "\2605 "; }                 /* star, no alt */
+  .alt-empty::before{ content: "\2605 " / ""; }            /* decorative: alt = empty */
+  .alt-text::before { content: "\2605 " / "Rated: "; }     /* alt replaces the star */
+  .fallback::before { content: "\2605 "; content: "\2605 " / ""; } /* cascade fallback pattern */
+  .transparent      { color: transparent; }
+  .vis-hidden       { visibility: hidden; }
+  .disp-none        { display: none; }
+  /* "roller" pattern: real text transparent and squeezed, generated list on top with empty alt */
+  .roller           { display: inline-grid; grid-template-columns: auto 0; color: transparent; height: 1.4em; overflow-y: clip; }
+  .roller::before   { content: "Hola\A Ciao\A Hallo" / ""; white-space: pre; color: black; }
+</style>
+</head>
+<body>
+  <h2 id="t-plain" class="plain">Hello</h2>
+  <h2 id="t-alt-empty" class="alt-empty">Hello</h2>
+  <h2 id="t-alt-text" class="alt-text">Hello</h2>
+  <h2 id="t-fallback" class="fallback">Hello</h2>
+  <h2 id="t-transparent"><span class="transparent">Hi!</span> I make games</h2>
+  <h2 id="t-vis-hidden"><span class="vis-hidden">Hi!</span> I make games</h2>
+  <h2 id="t-disp-none"><span class="disp-none">Hi!</span> I make games</h2>
+  <h2 id="t-roller"><span class="roller">Hi!</span>, I make games</h2>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>support verifier 2 probe</title>
+<style id="base">
+  body{margin:0;font:16px/1 sans-serif}
+  #root{position:relative;width:600px}
+  /* starting-style on first render (element present in the HTML) */
+  #ss1{opacity:1;transition:opacity 2s}
+  @starting-style{#ss1{opacity:0}}
+  /* interpolate-size inherited */
+  #isp{interpolate-size:allow-keywords}
+  #isc{height:0;overflow:clip;transition:height 2s}
+  #isc.open{height:auto}
+  /* light-dark with color-scheme inherited from ancestor */
+  #ldw{color-scheme:light dark}
+  #ldc{color:light-dark(rgb(1 1 1), rgb(2 2 2))}
+  /* attr % */
+  #atp{width:200px}
+  #atp>i{display:block;width:7px;width:attr(data-p %, 1%)}
+  /* text-box */
+  .tb{display:inline-block;font:40px/1 serif}
+  #tb2{text-box:trim-both cap alphabetic}
+  /* field-sizing */
+  #fs1,#fs2{font:16px/20px monospace;rows:2}
+  #fs2{field-sizing:content}
+  /* corner-shape */
+  #cs{border-radius:10px;corner-shape:squircle}
+  /* selector list with scroll-button + plain */
+  .sl1, .sl2::scroll-button(right){width:51px}
+  @supports selector(::scroll-marker){.sl3{width:52px}}
+  /* sibling-index ignores text nodes */
+  #sib>b{display:block;width:calc(sibling-index()*10px)}
+  /* animation-range reset */
+  @keyframes k{to{opacity:.5}}
+  #ar1{animation-range:entry 10% exit 90%;animation:k 1s}
+  #ar2{animation:k 1s;animation-range:entry 10% exit 90%}
+  /* containing block for fixed */
+  .cb{position:absolute;top:300px;left:0;width:40px;height:40px}
+  .cb>i{position:fixed;top:0;left:0;width:5px;height:5px}
+  #cb-filter{filter:blur(0)}
+  #cb-will{will-change:transform}
+  #cb-contain{contain:paint}
+  #cb-rotate{rotate:0deg}
+  #cb-persp{perspective:100px}
+  #cb-ct{container-type:inline-size}
+  #cb-op{opacity:.9}
+  #cb-bf{backdrop-filter:blur(2px)}
+  /* nesting + @scope & specificity check, own variant */
+  #sco .x2{width:61px}
+  @scope (#sco2){:scope .x2{width:62px}}
+</style>
+</head>
+<body>
+<div id="root">
+  <div id="ss1">first render</div>
+  <div id="isp"><div id="isc">x<br>y</div></div>
+  <div id="ldw"><div><span id="ldc">t</span></div></div>
+  <div id="atp"><i data-p="50"></i></div>
+  <span class="tb" id="tb1">Hxg</span> <span class="tb" id="tb2">Hxg</span>
+  <textarea id="fs1">1
+2
+3
+4
+5
+6
+7
+8</textarea>
+  <textarea id="fs2">1
+2
+3
+4
+5
+6
+7
+8</textarea>
+  <div id="cs"></div>
+  <div class="sl1" id="sl1"></div><div class="sl3" id="sl3"></div>
+  <div id="sib">text <b></b> more text <b id="sib2"></b></div>
+  <div id="ar1"></div><div id="ar2"></div>
+  <div class="cb" id="cb-filter"><i></i></div>
+  <div class="cb" id="cb-will"><i></i></div>
+  <div class="cb" id="cb-contain"><i></i></div>
+  <div class="cb" id="cb-rotate"><i></i></div>
+  <div class="cb" id="cb-persp"><i></i></div>
+  <div class="cb" id="cb-ct"><i></i></div>
+  <div class="cb" id="cb-op"><i></i></div>
+  <div class="cb" id="cb-bf"><i></i></div>
+  <button id="pbtn" popovertarget="pop">open</button><div id="pop" popover>hi</div>
+  <details id="det"><summary>s</summary>body</details>
+</div>
+<pre id="out"></pre>
+<script>
+const R={ua:navigator.userAgent,r:{}};
+const put=(k,v)=>R.r[k]=v;
+const cs=(id,p)=>getComputedStyle(document.getElementById(id)).getPropertyValue(p);
+try{
+  put('ss-first-render-anims', document.getElementById('ss1').getAnimations().length);
+  put('ss-first-render-opacity', cs('ss1','opacity'));
+  for (const c of ['--x: a ) b','--x: a ] b','--x: a } b','--x: this-is-not-css(((','--x: random(1px, 2px)','--x:','--x: ;','--x: !important','--x: a; b'])
+    put('supports '+c, (()=>{try{return CSS.supports(c)}catch(e){return 'throw'}})());
+  put('supports two-arg (--x, ")")', CSS.supports('--x', ')'));
+  const isc=document.getElementById('isc'); isc.offsetHeight; isc.classList.add('open'); put('interpolate-size inherited transitions', isc.getAnimations().length);
+  put('light-dark inherited color-scheme', cs('ldc','color')+' prefersDark='+matchMedia('(prefers-color-scheme: dark)').matches);
+  put('attr % width', getComputedStyle(document.querySelector('#atp>i')).width);
+  put('text-box heights (none / trim)', document.getElementById('tb1').getBoundingClientRect().height+' / '+document.getElementById('tb2').getBoundingClientRect().height);
+  put('field-sizing heights (fixed / content)', document.getElementById('fs1').getBoundingClientRect().height+' / '+document.getElementById('fs2').getBoundingClientRect().height);
+  put('corner-shape computed', cs('cs','corner-shape'));
+  put('selector list with ::scroll-button: .sl1 width', cs('sl1','width'));
+  put('@supports selector(::scroll-marker) .sl3 width', cs('sl3','width'));
+  put('sibling-index 2nd element child (text nodes between)', cs('sib2','width'));
+  put('animation-range before shorthand', cs('ar1','animation-range-start')+' | '+cs('ar1','animation-range-end'));
+  put('animation-range after shorthand', cs('ar2','animation-range-start')+' | '+cs('ar2','animation-range-end'));
+  put('animation-timeline after shorthand only (default)', cs('ar2','animation-timeline'));
+  for (const id of ['cb-filter','cb-will','cb-contain','cb-rotate','cb-persp','cb-ct','cb-op','cb-bf']){
+    const p=document.getElementById(id), c=p.querySelector('i');
+    put('fixed child top in '+id, Math.round(c.getBoundingClientRect().top)+' (parent '+Math.round(p.getBoundingClientRect().top)+')');
+  }
+  document.getElementById('pbtn').click();
+  put('declarative popover open after button click', document.getElementById('pop').matches(':popover-open'));
+  put('details-content supports', CSS.supports('selector(::details-content)'));
+  // random tests (only meaningful where random() exists)
+  const st=document.createElement('style');
+  st.textContent='.rk{width:random(--k,10px,500px);height:random(--k,10px,500px)} .re{width:random(--e element-scoped,10px,500px)} .ru{width:random(10px,500px);height:random(10px,500px)} .rn{width:random(--n,10px,500px)}';
+  document.head.appendChild(st);
+  const mk=(cls,n)=>{const a=[];for(let i=0;i<n;i++){const d=document.createElement('div');d.className=cls;d.style.position='absolute';document.getElementById('root').appendChild(d);a.push(d)}return a};
+  const rk=mk('rk',1)[0]; put('random named --k same element width/height', getComputedStyle(rk).width+' / '+getComputedStyle(rk).height);
+  put('random element-scoped 3 elements', mk('re',3).map(d=>getComputedStyle(d).width).join(' / '));
+  const ru=mk('ru',1)[0]; put('random unnamed width/height same element', getComputedStyle(ru).width+' / '+getComputedStyle(ru).height);
+  put('random named --n 3 elements', mk('rn',3).map(d=>getComputedStyle(d).width).join(' / '));
+  // view-transition nested parse
+  const s2=document.createElement('style'); s2.textContent='#wrapper{color:red;@view-transition{navigation:auto}}'; document.head.appendChild(s2);
+  const r0=s2.sheet.cssRules[0]; put('nested @view-transition', r0.constructor.name+'['+[...(r0.cssRules||[])].map(x=>x.constructor.name).join(',')+']');
+  // @scope & spec check: & in @scope
+  const s3=document.createElement('style'); s3.textContent='@scope (.q){& .w{color:red}}'; document.head.appendChild(s3);
+  put('@scope & selectorText', s3.sheet.cssRules[0].cssRules[0].selectorText);
+}catch(e){put('ERROR', String(e))}
+document.getElementById('out').textContent='V2_JSON='+JSON.stringify(R);
+</script>
+</body>
+</html>

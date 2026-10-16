@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I · overflow-y:clip vs clip-path on a tall rotated pseudo-element</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test I — a "roller" greeting (inline-grid span, 1-line window, rotated -6deg, ::before holding 30 lines) placed at the right end of a right-aligned line.</b>
+Each 375px-wide iframe is a mini page; we measure the document's horizontal scrollable overflow (scrollWidth vs clientWidth) for different ways
+of clipping the window, and whether #wrapper{overflow-x:hidden|clip} breaks position:sticky.</p></div>
+<script>
+const BS = String.fromCharCode(92); // a literal backslash, kept out of the source on purpose
+const lines = Array.from({ length: 30 }, (_, i) => 'Greeting ' + (i + 1)).join(BS + 'A ');
+const BASE = 'body{margin:0;font:16px/1.4 system-ui,sans-serif}#wrapper{padding:16px}' +
+  '.bio{text-align:right;margin:0}' +
+  '.roll{display:inline-grid;grid-template-columns:auto 0;height:1.4em;color:transparent;rotate:-6deg;vertical-align:bottom;font-size:1.2em}' +
+  '.roll::before{content:"' + lines + '";white-space:pre;text-align:right;color:#c90}';
+const page = (variant, extraBody) => '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>' + BASE + variant + '</style></head><body>' +
+  '<div class="user_page_wrap" id="wrapper"><div class="user_page">' + (extraBody || '') +
+  '<p class="bio">I am a developer, <span class="roll">Hi!</span></p></div></div></body></html>';
+const V = {
+  I0: ['', 'no clipping at all (baseline)'],
+  I1: ['.roll{overflow-y:clip}', '.roll{overflow-y:clip}'],
+  I2: ['.roll{clip-path:inset(0)}', '.roll{clip-path:inset(0)}'],
+  I1b: ['.roll{overflow:clip}', '.roll{overflow:clip} (both axes)'],
+  I3: ['.roll{overflow:hidden}', '.roll{overflow:hidden}'],
+  I4: ['.roll{clip-path:inset(0)}#wrapper{overflow-x:clip}', 'clip-path + safety net #wrapper{overflow-x:clip}'],
+  I5: ['.roll{clip-path:inset(0)}#wrapper{overflow-x:hidden}', 'clip-path + #wrapper{overflow-x:hidden}']
+};
+// I1: overflow-y:clip removes the rotated column's overflow, but the marker text left in the 0-wide grid column still overflows a few px
+// to the right when the roller sits at the very end of a line (it only clips the y axis). Measured as "small" (< 20px) vs "large".
+const EXPECT = { I0: 'large h-scroll', I1: 'small h-scroll', I1b: 'no h-scroll', I2: 'large h-scroll', I3: 'no h-scroll', I4: 'no h-scroll', I5: 'no h-scroll' };
+const kind = (sw, cw) => sw <= cw ? 'no h-scroll' : (sw - cw < 20 ? 'small h-scroll' : 'large h-scroll');
+T.run(async () => {
+  for (const [id, [css, what]] of Object.entries(V)) {
+    const f = await T.frame(page(css), 375, 260);
+    const se = f.contentDocument.scrollingElement;
+    const sw = se.scrollWidth, cw = se.clientWidth, sh = se.scrollHeight, ch = se.clientHeight;
+    const wo = T.cs('#wrapper', 'overflow-x', null, f.contentDocument) + '/' + T.cs('#wrapper', 'overflow-y', null, f.contentDocument);
+    const w = f.contentDocument.getElementById('wrapper');
+    T.check(id, what, kind(sw, cw), EXPECT[id]);
+    T.info(id + '-dims', 'document scrollWidth/clientWidth, scrollHeight/clientHeight; #wrapper overflow-x/y; #wrapper scrollHeight/clientHeight',
+      sw + '/' + cw + ', ' + sh + '/' + ch + '; ' + wo + '; ' + w.scrollHeight + '/' + w.clientHeight);
+  }
+  // overflow-x on #wrapper: computed overflow-y and position:sticky
+  const stickyBody = '<div class="stick" style="position:sticky;top:0;background:#ff0">sticky</div><div style="height:1200px">tall</div>';
+  for (const [id, css, exp] of [['I6', '#wrapper{overflow-x:clip}', 0], ['I7', '#wrapper{overflow-x:hidden}', 'not 0'], ['I8', '', 0]]) {
+    const f = await T.frame(page(css, stickyBody), 375, 260);
+    f.contentWindow.scrollTo(0, 300);
+    const top = Math.round(f.contentDocument.querySelector('.stick').getBoundingClientRect().top);
+    const oy = T.cs('#wrapper', 'overflow-y', null, f.contentDocument);
+    T.check(id, (css || 'no overflow on #wrapper') + ' → computed overflow-y=' + oy + '; sticky element top after scrolling 300px = ' + top,
+      top === 0 ? 'sticky works' : 'sticky broken', exp === 0 ? 'sticky works' : 'sticky broken');
+  }
+});
+</script>
+</body>
+</html>

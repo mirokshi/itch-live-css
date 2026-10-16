@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>localtests verification counter-tests</title>
+<!-- Adversarial counter-tests for the localtests facts (2026-10-14). Serve the repo root on :8090 and :8091 and open this page from :8090.
+     Same head order as itch (base link -> style#user_theme -> style#custom_css). All CSS below is written for this test. -->
+<link rel="stylesheet" href="../../tests/_lib/itch-base.css">
+<style id="user_theme">.user_page { color: rgb(1, 1, 1); }</style>
+<style id="custom_css">
+  @import url("http://localhost:8091/knowledge/evidence/localtests-verify-tools/x-mask.css");
+  /* V1: nested rule vs flat rule of the same selector, both orders: later wins both ways => equal specificity */
+  #wrapper { .v1a { color: rgb(3, 3, 3); } }
+  #wrapper .v1a { color: rgb(4, 4, 4); }
+  #wrapper .v1b { color: rgb(4, 4, 4); }
+  #wrapper { .v1b { color: rgb(3, 3, 3); } }
+  /* V2: invalid-at-computed-value-time var() after an earlier valid rule */
+  #wrapper .v2 { color: rgb(0, 128, 0); }
+  #wrapper .v2 { --v-c: 12px; color: var(--v-c); }
+  #wrapper .v2w { width: 50px; }
+  #wrapper .v2w { --v-c2: red; width: var(--v-c2); }
+  #wrapper .v2f { color: rgb(0, 128, 0); }
+  #wrapper .v2f { color: var(--v-nope, rgb(5, 5, 5)); }
+  /* V3: @starting-style (element inserted by script) and a control without it */
+  #wrapper .v3, #wrapper .v3c { width: 110px; transition: width 10s linear; }
+  @starting-style { #wrapper .v3 { width: 10px; } }
+  /* V4: random() functional */
+  #wrapper .v4 { width: 7px; width: random(10px, 10px); }
+  /* V5: unregistered custom property animated: discrete flip at 50% */
+  @keyframes v-raw { from { --v-raw: aaa; } to { --v-raw: bbb; } }
+  #wrapper .v5a { animation: v-raw 1s linear -0.49s paused; }
+  #wrapper .v5b { animation: v-raw 1s linear -0.51s paused; }
+  /* V6: parent ANIMATES registered properties; child reads them */
+  @property --v-ni { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+  @property --v-in { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
+  @keyframes v-ang { from { --v-ni: 0deg; --v-in: 0deg; } to { --v-ni: 360deg; --v-in: 360deg; } }
+  #wrapper .v6p { animation: v-ang 1s linear -0.5s paused; }
+  /* V7: Tailwind-like utility, with and without a layer, vs base `.user_page a` (0,1,1) */
+  .v7-unl { color: rgb(3, 3, 3); }
+  #wrapper .v7-id { color: rgb(3, 3, 3); }
+  @layer u { #wrapper#wrapper a.v7-lay { color: rgb(3, 3, 3); } }
+  @layer u { .v7-imp { color: rgb(3, 3, 3) !important; } }
+  /* V12: computed overflow pairs */
+  #wrapper .v12a { overflow-y: clip; }
+  #wrapper .v12b { overflow-y: hidden; }
+  #wrapper .v12c { overflow-x: clip; }
+  /* V18: sibling-index() fallback pattern and where it is evaluated */
+  #wrapper .v18 span:nth-child(2) { --i: 1; }
+  #wrapper .v18 span:nth-child(3) { --i: 2; }
+  @supports (width: calc(sibling-index() * 1px)) { #wrapper .v18 span { --i: calc(sibling-index() - 1); } }
+  #wrapper .v18 span { display: inline-block; width: calc(var(--i, 9) * 10px + 1px); }
+  #wrapper .v18 span:nth-child(3) { --i: 7; } /* a deliberately WRONG fallback: does @supports override it? */
+  #wrapper .v18b { --j: sibling-index(); }
+  #wrapper .v18b b { display: inline-block; width: calc(var(--j) * 10px); }
+  @property --v-kreg { syntax: '<integer>'; inherits: true; initial-value: 0; }
+  #wrapper .v18c { --v-kreg: sibling-index(); }
+  #wrapper .v18c b { display: inline-block; width: calc(var(--v-kreg) * 10px); }
+  /* V19: :is() and pseudo-elements / vendor pseudo-classes */
+  #wrapper :is(.v19::before) { content: "X"; }
+  #wrapper .v19c::before { content: "X"; }
+  #wrapper .v19q, #wrapper .v19q:-moz-focusring { color: rgb(0, 128, 0); }
+  #wrapper :is(.v19r, .v19r:-moz-focusring) { color: rgb(0, 128, 0); }
+  /* V8: SVG data URI in a CSS background, raw # vs %23 (checked by screenshot) */
+  #wrapper .v8 { display: inline-block; width: 60px; height: 60px; margin: 4px; outline: 1px solid #888; background-size: 60px 60px; }
+  #wrapper .v8raw { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4'><rect width='4' height='4' fill='#f00'/></svg>"); }
+  #wrapper .v8enc { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4'><rect width='4' height='4' fill='%23f00'/></svg>"); }
+</style>
+<!-- V14: @import after other at-rules (each its own sheet) -->
+<style>@font-face { font-family: "VZ"; src: local("Arial"); } @import url("imp-after-fontface.css");</style>
+<style>@property --vz { syntax: '*'; inherits: false; } @import url("imp-after-property.css");</style>
+<style>@keyframes vz { to { opacity: 1; } } @import url("imp-after-keyframes.css");</style>
+<style>@media screen { } @import url("imp-after-media.css");</style>
+<style>@import url("imp-after-control.css");</style>
+<script src="../../tests/_lib/harness.js"></script>
+</head>
+<body>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted" id="box">
+      <p class="v1a">v1a</p><p class="v1b">v1b</p>
+      <p class="v2">v2</p><div class="v2w">v2w</div><p class="v2f">v2f</p>
+      <div class="v4">v4</div><div class="v5a">v5a</div><div class="v5b">v5b</div>
+      <div class="v6p"><span class="v6c">child</span></div>
+      <p><a href="#" class="v7-unl">unl</a> <a href="#" class="v7-id">id</a> <a href="#" class="v7-lay">lay</a> <a href="#" class="v7-imp">imp</a></p>
+      <div class="v10"></div>
+      <div class="v12a">a</div><div class="v12b">b</div><div class="v12c">c</div>
+      <p class="v14-fontface">f</p><p class="v14-property">p</p><p class="v14-keyframes">k</p><p class="v14-media">m</p><p class="v14-control">c</p>
+      <div class="v18"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+      <div><i>x</i><i>y</i><span class="v18b"><b>z</b></span></div>
+      <div><i>x</i><i>y</i><span class="v18c"><b>z</b></span></div>
+      <p class="v19">v19</p><p class="v19c">v19c</p><p class="v19q">v19q</p><p class="v19r">v19r</p>
+      <div><span class="v8 v8raw"></span><span class="v8 v8enc"></span></div>
+    </div>
+  </div>
+</div>
+<div id="frames"></div>
+<script>
+T.run(async () => {
+  const c = s => T.cs(s, 'color');
+  T.check('V1a', 'nested first, flat later: later wins', c('.v1a'), 'rgb(4, 4, 4)');
+  T.check('V1b', 'flat first, nested later: later wins', c('.v1b'), 'rgb(3, 3, 3)');
+  T.check('V2', 'color: var(--c) with --c:12px after a valid green rule → inherited theme color', c('.v2'), 'rgb(1, 1, 1)');
+  T.info('V2w', 'width: var(--c2) with --c2:red after width:50px (non-inherited property → initial auto)', T.cs('.v2w', 'width'));
+  T.check('V2f', 'var(--nope, fallback) uses the fallback', c('.v2f'), 'rgb(5, 5, 5)');
+  for (const [cls, label] of [['v3', '@starting-style'], ['v3c', 'control (no @starting-style)']]) {
+    const el = document.createElement('div'); el.className = cls; el.textContent = cls; document.getElementById('box').appendChild(el);
+    const w = getComputedStyle(el).width;
+    T.info('V3-' + cls, label + ': width right after insertion / transitions', w + ' / ' + el.getAnimations().map(a => a.constructor.name + ':' + a.playState).join(','));
+  }
+  T.info('V4', 'width: 7px; width: random(10px, 10px) → (7px = random() unsupported)', T.cs('.v4', 'width'));
+  T.info('V4-supports', 'CSS.supports random variants', ['random(10px, 20px)', 'random(--x, 10px, 20px)', 'random(element-shared, 10px, 20px)', 'random(10px, 20px, by 1px)']
+    .map(v => v + '=' + CSS.supports('width', v)).join(' ; '));
+  T.info('V5', 'unregistered animated value at 49% / 51%', T.cs('.v5a', '--v-raw') + ' / ' + T.cs('.v5b', '--v-raw'));
+  T.info('V6', 'parent animating at 50%: parent --v-ni, child --v-ni (inherits:false), child --v-in (inherits:true)',
+    T.cs('.v6p', '--v-ni') + ' / ' + T.cs('.v6c', '--v-ni') + ' / ' + T.cs('.v6c', '--v-in'));
+  T.info('V7', 'link colors: unlayered .v7-unl / #wrapper .v7-id / @layer #wrapper#wrapper a.v7-lay / @layer !important (base .user_page a = rgb(0, 0, 238))',
+    ['.v7-unl', '.v7-id', '.v7-lay', '.v7-imp'].map(c).join(' / '));
+  T.info('V10', 'mask-image from cross-origin imported sheet (see console for CORS)', T.cs('.v10', 'mask-image'));
+  T.info('V12', 'computed overflow-x/overflow-y for overflow-y:clip | overflow-y:hidden | overflow-x:clip',
+    ['.v12a', '.v12b', '.v12c'].map(s => T.cs(s, 'overflow-x') + '/' + T.cs(s, 'overflow-y')).join(' | '));
+  T.info('V14', '@import after @font-face / @property / @keyframes / @media / control (rgb(2, 2, 2) = applied)',
+    ['fontface', 'property', 'keyframes', 'media', 'control'].map(n => n + '=' + c('.v14-' + n)).join(' ; '));
+  T.info('V18', 'span widths (index-1)*10+1: 1st 2nd 3rd(wrong fallback --i:7) 4th', Array.from(document.querySelectorAll('.v18 span')).map(s => getComputedStyle(s).width).join(' '));
+  T.info('V18b', 'span (3rd child) declares --j: sibling-index(); its first child <b> uses var(--j)*10px → 30px = declaration site, 10px = use site', T.cs('.v18b b', 'width') + ' ; --j on span=' + T.cs('.v18b', '--j') + ' ; on b=' + T.cs('.v18b b', '--j'));
+  T.info('V18c', 'same, but --v-kreg is REGISTERED as <integer> (inherits:true) → 30px = computed on the declaring span', T.cs('.v18c b', 'width') + ' ; --v-kreg on b=' + T.cs('.v18c b', '--v-kreg'));
+  T.info('V19', ':is(.x::before) content / plain .x::before content / list with :-moz-focusring / :is() with :-moz-focusring',
+    T.cs('.v19', 'content', '::before') + ' / ' + T.cs('.v19c', 'content', '::before') + ' / ' + c('.v19q') + ' / ' + c('.v19r'));
+  T.info('V8', 'computed background-image raw # (truncated?)', T.cs('.v8raw', 'background-image').slice(0, 160));
+  // V9: real #wrapper::before fixed z-index:-1 layer over an opaque #wrapper background (check by screenshot)
+  const V9 = { iso: 'position:relative;isolation:isolate', rel: 'position:relative', none: '', z0: 'position:relative;z-index:0' };
+  for (const [k, css] of Object.entries(V9)) {
+    await T.frame('<!DOCTYPE html><html><head><style>body{margin:0;background:#eee;font:12px sans-serif}#wrapper{background-color:rgb(0,0,255);height:70px;' + css +
+      '}#wrapper::before{content:"";position:fixed;inset:0;z-index:-1;background:rgb(255,0,0)}</style></head><body><div class="user_page_wrap" id="wrapper"><div class="user_page" style="color:#fff">' + k + '</div></div></body></html>', 110, 90);
+  }
+  T.info('V9', 'frames in order: iso, rel, none, z0 — red = ::before layer visible, blue = hidden behind #wrapper bg', 'see screenshot');
+});
+</script>
+</body>
+</html>

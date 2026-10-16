@@ -1,0 +1,3 @@
+/* Test A: imported BY imported-1.css. Marker rgb(6,6,6). */
+#wrapper .a6 { color: rgb(6, 6, 6); }
+#wrapper .a6n { color: rgb(6, 6, 6); }

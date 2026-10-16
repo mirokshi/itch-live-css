@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L · media features, reduced motion, viewport units, preview environment</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="custom_css">
+  @keyframes l-spin { to { rotate: 360deg; } }
+  #wrapper .l-anim { animation: l-spin 2s linear infinite; display: inline-block; }
+  @media (prefers-reduced-motion: reduce) { #wrapper .l-anim { animation: none; } }
+  #wrapper .l-hover { color: rgb(1, 1, 1); }
+  @media (hover: hover) and (pointer: fine) { #wrapper .l-hover { color: rgb(0, 128, 0); } }
+  #wrapper .l-vh { height: 100vh; } #wrapper .l-dvh { height: 100dvh; } #wrapper .l-svh { height: 100svh; } #wrapper .l-lvh { height: 100lvh; }
+  #wrapper .l-units { position: absolute; left: -10px; width: 1px; }
+  #wrapper .l-trans { transition: width 10s linear; width: 10px; }
+  #wrapper .l-trans.go { width: 110px; }
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test L — media features as seen by this browser.</b> prefers-reduced-motion cannot be emulated by the agent's resize_window tool
+(only width/height and prefers-color-scheme), so the reduced-motion branch needs a manual check: turn on the OS "reduce motion"/"show animations: off"
+setting and reload. Run once per viewport: desktop, resize_window preset "mobile", colorScheme "dark".</p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <p><span class="l-anim">↻</span> <span class="l-hover">hover-gated color</span></p>
+      <div class="l-units l-vh"></div><div class="l-units l-dvh"></div><div class="l-units l-svh"></div><div class="l-units l-lvh"></div>
+      <div class="l-trans">t</div>
+    </div>
+  </div>
+</div>
+<script>
+T.run(async () => {
+  const q = ['(prefers-reduced-motion: reduce)', '(prefers-color-scheme: dark)', '(hover: hover)', '(hover: none)', '(any-hover: hover)',
+    '(pointer: fine)', '(pointer: coarse)', '(any-pointer: coarse)', '(prefers-contrast: more)', '(forced-colors: active)',
+    '(prefers-reduced-transparency: reduce)', '(prefers-reduced-data: reduce)', '(inverted-colors: inverted)', '(scripting: enabled)',
+    '(orientation: portrait)', '(dynamic-range: high)', '(color-gamut: p3)', '(max-width: 767px)'];
+  for (const m of q) T.info('L ' + m, 'matchMedia(...).matches', String(matchMedia(m).matches));
+  T.info('L-viewport', 'innerWidth x innerHeight / devicePixelRatio / maxTouchPoints', innerWidth + 'x' + innerHeight + ' / ' + devicePixelRatio + ' / ' + navigator.maxTouchPoints);
+  T.info('L-units', '100vh / 100dvh / 100svh / 100lvh in px', ['l-vh', 'l-dvh', 'l-svh', 'l-lvh'].map(c => T.cs('.' + c, 'height')).join(' / '));
+  T.info('L-anim', 'computed animation-name of the reduced-motion-gated element', T.cs('.l-anim', 'animation-name'));
+  T.info('L-hover', 'color of the (hover:hover) and (pointer:fine)-gated element', T.cs('.l-hover', 'color'));
+  T.info('L-env-visibility', 'document.visibilityState / hasFocus()', document.visibilityState + ' / ' + document.hasFocus());
+  // Does requestAnimationFrame fire, and does the animation timeline advance? (The agent's browser pane may freeze both while hidden.)
+  const raf = await Promise.race([new Promise(r => requestAnimationFrame(() => r('fired'))), new Promise(r => setTimeout(() => r('did NOT fire within 1s'), 1000))]);
+  T.info('L-env-raf', 'requestAnimationFrame', raf);
+  const t0 = document.timeline.currentTime; await new Promise(r => setTimeout(r, 500)); const t1 = document.timeline.currentTime;
+  T.info('L-env-timeline', 'document.timeline.currentTime advance over a 500ms setTimeout', (t1 === null || t0 === null) ? 'null' : Math.round(t1 - t0) + 'ms');
+  const el = document.querySelector('.l-trans'); el.classList.add('go'); await new Promise(r => setTimeout(r, 1000));
+  T.info('L-env-transition', 'width 1s into a 10s linear 10→110px transition (≈20px if the timeline runs)', T.cs('.l-trans', 'width'));
+});
+</script>
+</body>
+</html>

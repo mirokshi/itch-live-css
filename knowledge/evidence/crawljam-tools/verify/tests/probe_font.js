@@ -1,0 +1,2 @@
+(function(){var o={};var h=document.querySelector('.jam_title_header');o.h1_ff=getComputedStyle(h).fontFamily;o.wrap_ff=getComputedStyle(document.getElementById('wrapper')).fontFamily;o.wrap_bgimg=getComputedStyle(document.getElementById('wrapper')).backgroundImage.slice(0,12);o.wrap_bgatt=getComputedStyle(document.getElementById('wrapper')).backgroundAttachment;
+o.fonts_check_baloo=document.fonts.check("16px 'Baloo 2'");document.getElementById('vout').textContent='VRESULT '+JSON.stringify(o);})();

@@ -1,0 +1,2 @@
+/* Test F fixture: imported by sub/imported.css with a relative @import URL. */
+#wrapper .f7 { background-image: url("dot.svg"); }

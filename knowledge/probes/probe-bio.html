@@ -1,0 +1,33 @@
+<p class="custom-probe-x00">[x00] PROBE-HTML-START set=bio kit=v1 2026-10-14 (temporary test content, safe to delete)</p>
+<p><span class="custom-probe-k01 Custom-a">[k01] Custom-a</span></p>
+<p><span class="custom-probe-k05 customer">[k05] customer</span></p>
+<p><span class="custom-probe-k07 custom-hover:x">[k07] custom-hover:x</span></p>
+<p><span class="custom-probe-k09 custom-w-[3px]">[k09] custom-w-[3px]</span></p>
+<p><span class="custom-probe-k11 custom-w-1/2">[k11] custom-w-1/2</span></p>
+<p><span class="custom-probe-k14 custom:flex">[k14] custom:flex</span></p>
+<p><span class="custom-probe-k16 -custom-f">[k16] -custom-f</span></p>
+<p><span class="custom-probe-k26 foo">[k26] foo</span></p>
+<p class="custom-probe-k31">[k31] all tokens invalid: <span class="foo bar">x</span></p>
+<p class="custom-probe-k34">[k34] hand-written spoiler: <span class="spoiler" tabindex="0">secret</span></p>
+<p><span class="custom-probe-a01" id="probe-a01">[a01] id</span></p>
+<p><span class="custom-probe-a02" data-probe="a02">[a02] data-*</span></p>
+<p><span class="custom-probe-a04" aria-hidden="true">[a04] aria-hidden</span></p>
+<p><span class="custom-probe-a05" role="note">[a05] role</span></p>
+<p><span class="custom-probe-a09" lang="es">[a09] lang</span></p>
+<div class="custom-probe-a12">[a12] popover + id: <div popover id="probe-pop">popover content</div></div>
+<h1 class="custom-probe-a20" aria-label="Probe heading a20">[a20] h1 aria-label</h1>
+<p><span class="custom-probe-s02" style="color: red !important">[s02] !important</span></p>
+<p><span class="custom-probe-s08" style="opacity: .5; background-image: url('https://example.com/probe-s08.png'); border-width: 2px; border-color: #ccc; border-style: dashed; min-width: 10px; padding-top: 4px">[s08] six never-seen list properties</span></p>
+<p><span class="custom-probe-s11" style="--i: 3; color: red">[s11] custom property + color</span></p>
+<p><span class="custom-probe-s18" style="margin:1px;height:2px;width:3px;font-size:4px;text-align:right;color:red;float:left;border-radius:5px">[s18] no-space list</span></p>
+<div class="custom-probe-t08">[t08] details name open: <details class="custom-t08d" title="t" style="color: red" name="probe-acc" open><summary class="custom-t08s" lang="es">summary A</summary>body A</details><details name="probe-acc"><summary>summary B</summary>body B</details></div>
+<div class="custom-probe-t21">[t21] link meta: <link rel="stylesheet" href="https://example.com/probe-t21.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><meta name="probe" content="t21"></div>
+<h1 class="custom-probe-t23"><span class="custom-sr">[t23] Name</span><span class="custom-l"></span><span class="custom-l"></span></h1>
+<div class="custom-probe-i01">[i01] youtube, all attributes: <iframe src="https://www.youtube.com/embed/aqz-KE-bpKQ" width="320" height="180" title="Probe i01" allow="autoplay; fullscreen" loading="lazy" sandbox="allow-scripts allow-same-origin" referrerpolicy="strict-origin-when-cross-origin" style="max-width: 100%" class="custom-i01x" name="probe-i01" frameborder="0" scrolling="no" allowfullscreen></iframe></div>
+<div class="custom-probe-i04">[i04] arbitrary https host: <iframe src="https://example.com/" width="320" height="180"></iframe></div>
+<p class="custom-probe-l01">[l01] rel=me off-site: <a href="https://mastodon.example/@probe" rel="me" target="_blank">link</a></p>
+<p class="custom-probe-l02">[l02] rel on itch link: <a href="https://itch.io/" rel="me author">link</a></p>
+<p class="custom-probe-l10">[l10] named anchor: <a name="probe-target">target</a></p>
+<p class="custom-probe-g07">[g07] img unquoted width: <img src="https://example.com/probe-g07.png" alt="g07" width=40%></p>
+<p class="custom-probe-e04">[e04] html comment: a<!-- probe comment e04 -->b</p>
+<p class="custom-probe-x99">[x99] PROBE-HTML-END</p>

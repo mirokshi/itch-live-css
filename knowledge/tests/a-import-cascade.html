@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A · @import vs inline vs theme cascade</title>
+<!-- Same head order as a real itch page: base stylesheet → style#user_theme → style#custom_css -->
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="user_theme">
+  /* Stand-in for the theme editor's output: unlayered, class selectors, and (like the real one) CSS nesting. */
+  .user_page { --a-var: rgb(1, 1, 1); }
+  .user_page .a3 { color: rgb(1, 1, 1); }
+  .user_page .a4 { color: rgb(1, 1, 1); }
+  .user_page .a9 { color: rgb(1, 1, 1); }
+  .user_page { .a12 { color: rgb(1, 1, 1); } }
+  .user_page .a13 { color: rgb(1, 1, 1); }
+</style>
+<style id="custom_css">
+  @import url("a/imported-1.css");
+  @import url("a/imported-2.css");
+  #wrapper .a1 { color: rgb(3, 3, 3); }
+  #wrapper .a2 { color: rgb(3, 3, 3); }
+  #wrapper#wrapper .a7 { color: rgb(3, 3, 3); }
+  #wrapper .a8 { color: rgb(3, 3, 3); }
+  #wrapper .a8b { color: rgb(3, 3, 3) !important; }
+  :where(#wrapper) .a9 { color: rgb(3, 3, 3); }
+  #wrapper#wrapper .a10 { color: rgb(3, 3, 3); }
+  #wrapper .user_page .a10 { color: rgb(4, 4, 4); }
+  #wrapper { --a-var: rgb(3, 3, 3); }
+  #wrapper .a11 { color: var(--a-var); }
+  #wrapper .a12 { color: rgb(3, 3, 3); }
+  #wrapper { .a13 { color: rgb(3, 3, 3); } }
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about">
+  <p><b>Test A — who wins cascade ties between an @import'ed sheet, the importing style#custom_css and style#user_theme.</b>
+  Marker colors: rgb(1,1,1)=user_theme · rgb(2,2,2)=a/imported-1.css · rgb(5,5,5)=a/imported-2.css · rgb(6,6,6)=a/nested.css (imported by imported-1) ·
+  rgb(3,3,3)/rgb(4,4,4)=inline custom_css · rgb(9,9,9)=style attribute.</p>
+</div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <p class="a1">a1</p>
+      <div class="a2">a2</div>
+      <p class="a3">a3</p>
+      <p class="a4">a4</p>
+      <p class="a5">a5</p>
+      <p class="a6">a6</p>
+      <p class="a6n">a6n</p>
+      <p class="a7">a7</p>
+      <p class="a8" style="color: rgb(9, 9, 9)">a8</p>
+      <p class="a8b" style="color: rgb(9, 9, 9)">a8b</p>
+      <p class="a9">a9</p>
+      <p class="a10">a10</p>
+      <p class="a11">a11</p>
+      <p class="a12">a12</p>
+      <p class="a13">a13</p>
+    </div>
+  </div>
+</div>
+<script>
+T.run(() => {
+  const M = { 'rgb(1, 1, 1)': 'user_theme', 'rgb(2, 2, 2)': 'imported-1', 'rgb(5, 5, 5)': 'imported-2', 'rgb(6, 6, 6)': 'nested-import',
+              'rgb(3, 3, 3)': 'inline', 'rgb(4, 4, 4)': 'inline-alt', 'rgb(9, 9, 9)': 'style-attr' };
+  const w = c => T.who(T.cs('.' + c, 'color'), M);
+  T.check('A1', 'tie (#wrapper .a1 in import AND inline): later in order wins', w('a1'), 'inline');
+  T.check('A2', 'import #wrapper div.a2 (1,1,1) vs inline #wrapper .a2 (1,1,0): specificity beats order', w('a2'), 'imported-1');
+  T.check('A3', 'tie .user_page .a3 in import vs earlier style#user_theme: import wins (it sits inside custom_css, after user_theme)', w('a3'), 'imported-1');
+  T.check('A4', 'import .a4 (0,1,0) vs user_theme .user_page .a4 (0,2,0)', w('a4'), 'user_theme');
+  T.check('A5', 'same rule in two sibling @imports: the second import wins', w('a5'), 'imported-2');
+  T.check('A6', 'nested @import (inside imported-1) is ordered BEFORE imported-1\'s own rules', w('a6'), 'imported-1');
+  T.check('A6n', 'nested @import applies at all', w('a6n'), 'nested-import');
+  T.check('A7', '!important in import beats higher-specificity normal inline rule', w('a7'), 'imported-1');
+  T.check('A8', 'style="" attribute beats #wrapper .a8 (normal)', w('a8'), 'style-attr');
+  T.check('A8b', '!important stylesheet rule beats style="" attribute', w('a8b'), 'inline');
+  T.check('A9', ':where(#wrapper) .a9 has (0,1,0) and loses to theme .user_page .a9 (0,2,0)', w('a9'), 'user_theme');
+  T.check('A10', '#wrapper#wrapper .a10 (2,1,0) beats later #wrapper .user_page .a10 (1,2,0)', w('a10'), 'inline');
+  T.check('A11', 'custom property on #wrapper is shadowed by the theme\'s own declaration on the child .user_page', w('a11'), 'user_theme');
+  T.check('A12', 'theme rule written with CSS nesting (.user_page { .a12 }) still loses to #wrapper .a12', w('a12'), 'inline');
+  T.check('A13', 'custom rule written nested (#wrapper { .a13 {} }) has the same (1,1,0) specificity and beats theme .user_page .a13', w('a13'), 'inline');
+  const imp = document.getElementById('custom_css').sheet.cssRules[0];
+  T.info('A-cssom', 'custom_css.sheet.cssRules[0] type / href / nested rule count', imp.constructor.name + ' ' + imp.href + ' ' + imp.styleSheet.cssRules.length);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSS feature probe</title>
+<!--
+  CSS feature probe for the "support" dimension of the itch.io custom-CSS knowledge base.
+  Open it in any browser (or run it headless with --dump-dom) and read the table / the JSON in #out.
+  Each row is either:
+    supports  -> CSS.supports(...) parse test (says "the parser accepts it", not "it works")
+    parse     -> a rule is inserted and we check which CSSRule subclass the browser built
+    fx        -> functional test: the feature is applied and a computed value / layout is checked
+  Written for this project (no third-party code). Re-run: see support.md.
+-->
+<style>
+  body { font: 13px/1.4 system-ui, sans-serif; margin: 16px; }
+  #root { position: relative; width: 600px; }
+  table { border-collapse: collapse; } td, th { border: 1px solid #999; padding: 2px 6px; text-align: left; }
+  .y { background: #c8f7c5; } .n { background: #f7c5c5; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<table id="tbl"><thead><tr><th>id</th><th>kind</th><th>test</th><th>ok</th><th>detail</th></tr></thead><tbody></tbody></table>
+<pre id="out"></pre>
+<script>
+const R = [];
+const push = (id, kind, test, ok, detail = '') => R.push({ id, kind, test, ok: !!ok, detail: String(detail) });
+
+function sup(id, cond) {
+  let ok = false;
+  try { ok = CSS.supports(cond); } catch (e) { ok = false; }
+  push(id, 'supports', cond, ok);
+  return ok;
+}
+function parse(id, text, ctor) {
+  const st = document.createElement('style');
+  st.textContent = text;
+  document.head.appendChild(st);
+  let names = [];
+  try { names = [...st.sheet.cssRules].map(r => r.constructor.name); } catch (e) { names = ['ERR ' + e.message]; }
+  const ok = ctor ? names.includes(ctor) : names.length > 0;
+  push(id, 'parse', text.replace(/\s+/g, ' ').slice(0, 90), ok, names.join(',') || '(dropped)');
+  st.remove();
+  return ok;
+}
+function fx(id, css, html, check) {
+  const st = document.createElement('style');
+  st.textContent = css;
+  document.head.appendChild(st);
+  const host = document.createElement('div');
+  host.innerHTML = html;
+  document.getElementById('root').appendChild(host);
+  let res;
+  try { res = check(host); } catch (e) { res = [false, 'ERR ' + e.message]; }
+  push(id, 'fx', css.replace(/\s+/g, ' ').slice(0, 90), res[0], res[1]);
+  host.remove();
+  st.remove();
+}
+const cs = (el, p, pseudo) => getComputedStyle(el, pseudo || null).getPropertyValue(p).trim();
+const q = (h, s) => h.querySelector(s);
+
+/* 1. random() / random-item() */
+sup('random', 'width: random(10px, 100px)');
+sup('random-step', 'width: random(0px, 100px, by 10px)');
+sup('random-shared-ident', 'width: random(--a, 10px, 100px)');
+sup('random-element-shared', 'width: random(element-shared, 10px, 100px)');
+sup('random-item-comma', 'color: random-item(--a, red, blue)');
+sup('random-item-semicolon', 'color: random-item(--a; red; blue)');
+fx('random-fx', '.rnd{width:random(10px,500px)}', '<div class="rnd"></div><div class="rnd"></div><div class="rnd"></div>', h => {
+  // unsupported -> declaration dropped -> width:auto = 600px (#root width)
+  const w = [...h.querySelectorAll('.rnd')].map(e => parseFloat(cs(e, 'width')));
+  const inRange = w.every(x => x >= 10 && x <= 500);
+  const distinct = new Set(w).size;
+  return [inRange, 'widths=' + w.map(x => x.toFixed(1)).join('/') + ' distinct=' + distinct];
+});
+fx('random-shared-fx', '.rns{width:random(--s, 10px, 500px)}', '<div class="rns"></div><div class="rns"></div>', h => {
+  const w = [...h.querySelectorAll('.rns')].map(e => parseFloat(cs(e, 'width')));
+  return [w.every(x => x >= 10 && x <= 500), 'widths=' + w.map(x => x.toFixed(1)).join('/') + ' (same --s ident)'];
+});
+
+/* 2. if() */
+sup('if-style', 'width: if(style(--x: 1): 10px; else: 20px)');
+sup('if-media', 'width: if(media(width > 1px): 10px; else: 20px)');
+sup('if-supports', 'width: if(supports(display: grid): 10px; else: 20px)');
+fx('if-fx', '.iff{--x:1;width:if(style(--x: 1): 31px; else: 9px)}', '<div class="iff"></div>', h => {
+  const w = cs(q(h, '.iff'), 'width'); return [w === '31px', w];
+});
+
+/* 3. container queries: size, style, name-only, scroll-state, units */
+fx('cq-size-fx', '.cq{container-type:inline-size;width:300px}@container (min-width:200px){.cq>i{display:block;width:44px}}', '<div class="cq"><i></i></div>', h => {
+  const w = cs(q(h, 'i'), 'width'); return [w === '44px', w];
+});
+fx('cq-units-fx', '.cqu{container-type:inline-size;width:300px}.cqu>i{display:block;width:10cqi}', '<div class="cqu"><i></i></div>', h => {
+  const w = cs(q(h, 'i'), 'width'); return [w === '30px', w];
+});
+fx('cq-style-fx', '.cs{--t:1}@container style(--t: 1){.cs>i{display:block;width:33px}}', '<div class="cs"><i></i></div>', h => {
+  const w = cs(q(h, 'i'), 'width'); return [w === '33px', w];
+});
+fx('cq-style-range-fx', '.csr{--n:7}@container style(--n > 5){.csr>i{display:block;width:34px}}', '<div class="csr"><i></i></div>', h => {
+  const w = cs(q(h, 'i'), 'width'); return [w === '34px', w];
+});
+fx('cq-style-std-prop-fx', '.csp{display:block}@container style(display: block){.csp>i{display:block;width:35px}}', '<div class="csp"><i></i></div>', h => {
+  const w = cs(q(h, 'i'), 'width'); return [w === '35px', w];
+});
+fx('cq-name-only-fx', '.cn{container-name:foo}@container foo{.cn>i{display:block;width:36px}}', '<div class="cn"><i></i></div>', h => {
+  const w = cs(q(h, 'i'), 'width'); return [w === '36px', w];
+});
+sup('cq-scroll-state-type', 'container-type: scroll-state');
+parse('cq-scroll-state-parse', '@container scroll-state(stuck: top){.x{color:red}}', 'CSSContainerRule');
+
+/* 4. @scope, nesting, :has(), @layer */
+fx('scope-fx', '@scope (.sa) to (.sb){p{width:11px}}', '<div class="sa"><p id="in"></p><div class="sb"><p id="out"></p></div></div>', h => {
+  const a = cs(q(h, '#in'), 'width'), b = cs(q(h, '#out'), 'width'); return [a === '11px' && b !== '11px', a + ' / ' + b];
+});
+fx('nesting-fx', '.ne{& .m{width:12px} p{width:13px} &:hover{color:red}}', '<div class="ne"><i class="m" style="display:block"></i><p></p></div>', h => {
+  const a = cs(q(h, '.m'), 'width'), b = cs(q(h, 'p'), 'width'); return [a === '12px' && b === '13px', a + ' / ' + b + ' (type-selector nested)'];
+});
+sup('has', 'selector(:has(a))');
+fx('has-fx', '.hs:has(> b){width:14px}', '<div class="hs"><b></b></div>', h => {
+  const w = cs(q(h, '.hs'), 'width'); return [w === '14px', w];
+});
+fx('layer-fx', '@layer base{.ly{width:15px}} .ly{width:16px}', '<div class="ly"></div>', h => {
+  const w = cs(q(h, '.ly'), 'width'); return [w === '16px', w + ' (unlayered wins)'];
+});
+fx('layer-important-fx', '@layer base{.li{width:17px!important}} .li{width:18px!important}', '<div class="li"></div>', h => {
+  const w = cs(q(h, '.li'), 'width'); return [w === '17px', w + ' (layered !important wins)'];
+});
+
+/* 5. @property, trig, typed arithmetic, round/mod, progress */
+fx('property-fx', '@property --pa{syntax:"<angle>";inherits:false;initial-value:30deg}.pa{width:calc(100px * sin(var(--pa)))}', '<div class="pa"></div>', h => {
+  const w = cs(q(h, '.pa'), 'width'); return [w === '50px', w + ' (registered initial-value used)'];
+});
+fx('property-animatable', '@property --pb{syntax:"<number>";inherits:false;initial-value:0}', '<div></div>', h => {
+  // registration check via CSSPropertyRule existence
+  const ok = typeof window.CSSPropertyRule === 'function'; return [ok, 'CSSPropertyRule=' + ok];
+});
+fx('trig-fx', '.tg{width:calc(100px * cos(60deg))}', '<div class="tg"></div>', h => {
+  const w = cs(q(h, '.tg'), 'width'); return [w === '50px', w];
+});
+fx('typed-division-fx', '.td{width:calc(10px * (40px / 10px))}', '<div class="td"></div>', h => {
+  const w = cs(q(h, '.td'), 'width'); return [w === '40px', w];
+});
+sup('typed-division', 'width: calc(10px * (40px / 10px))');
+sup('round-mod-rem', 'width: round(up, 12.3px, 5px)');
+sup('progress', 'opacity: progress(50px, 0px, 100px)');
+sup('abs-sign', 'width: calc(10px * sign(-3))');
+
+/* 6. sibling-index() / sibling-count() */
+fx('sibling-fx', '.sib>i{display:block;width:calc(sibling-index() * 10px);height:calc(sibling-count() * 1px)}', '<div class="sib"><i></i><i></i><i></i></div>', h => {
+  const e = h.querySelectorAll('i')[2]; const w = cs(e, 'width'), ht = cs(e, 'height');
+  return [w === '30px' && ht === '3px', w + ' / ' + ht];
+});
+
+/* 7. scroll-driven animations */
+sup('sda-scroll', 'animation-timeline: scroll()');
+sup('sda-view', 'animation-timeline: view()');
+sup('sda-range', 'animation-range: entry 0% cover 50%');
+sup('sda-timeline-scope', 'timeline-scope: --t');
+
+/* 8. view transitions */
+parse('vt-crossdoc-parse', '@view-transition{navigation:auto}', 'CSSViewTransitionRule');
+sup('vt-name', 'view-transition-name: hero');
+sup('vt-name-auto', 'view-transition-name: auto');
+sup('vt-name-match-element', 'view-transition-name: match-element');
+sup('vt-class', 'view-transition-class: card');
+sup('vt-pseudo', 'selector(::view-transition-old(root))');
+sup('vt-active', 'selector(:active-view-transition)');
+
+/* 9. anchor positioning */
+sup('anchor-name', 'anchor-name: --a');
+sup('position-anchor', 'position-anchor: --a');
+sup('position-area', 'position-area: top');
+sup('anchor-fn', 'top: anchor(bottom)');
+sup('anchor-size', 'width: anchor-size(width)');
+sup('position-try-fallbacks', 'position-try-fallbacks: flip-block');
+parse('position-try-parse', '@position-try --p{top:0}', 'CSSPositionTryRule');
+fx('anchor-fx', '.an{position:relative;height:200px}.an .a{position:absolute;top:50px;left:0;width:20px;height:20px;anchor-name:--pa1}.an .t{position:absolute;position-anchor:--pa1;top:anchor(bottom);left:anchor(right);width:5px;height:5px}', '<div class="an"><div class="a"></div><div class="t"></div></div>', h => {
+  const a = q(h, '.a').getBoundingClientRect(), t = q(h, '.t').getBoundingClientRect();
+  return [Math.round(t.top) === Math.round(a.bottom) && Math.round(t.left) === Math.round(a.right), 't.top-a.bottom=' + (t.top - a.bottom) + ' t.left-a.right=' + (t.left - a.right)];
+});
+
+/* 10. @starting-style, transition-behavior, interpolate-size, calc-size, details-content */
+parse('starting-style-parse', '@starting-style{.x{opacity:0}}', 'CSSStartingStyleRule');
+sup('transition-behavior', 'transition-behavior: allow-discrete');
+sup('interpolate-size', 'interpolate-size: allow-keywords');
+sup('calc-size', 'height: calc-size(auto, size)');
+sup('details-content', 'selector(::details-content)');
+sup('popover-open', 'selector(:popover-open)');
+
+/* 11. text */
+sup('text-wrap-balance', 'text-wrap: balance');
+sup('text-wrap-pretty', 'text-wrap: pretty');
+sup('text-wrap-style-pretty', 'text-wrap-style: pretty');
+sup('text-box', 'text-box: trim-both cap alphabetic');
+sup('content-alt', 'content: "x" / ""');
+fx('content-alt-fx', '.ca::before{content:"\\2605" / ""}', '<div class="ca"></div>', h => {
+  const c = cs(q(h, '.ca'), 'content', '::before'); return [/\/\s*""/.test(c), c];
+});
+fx('content-alt-counter-fx', '.cc::before{content:"A" / "alt " counter(x)}', '<div class="cc"></div>', h => {
+  const c = cs(q(h, '.cc'), 'content', '::before'); return [/\//.test(c), c];
+});
+
+/* 12. overflow, backdrop, transforms */
+sup('overflow-clip', 'overflow: clip');
+sup('overflow-y-clip', 'overflow-y: clip');
+sup('overflow-clip-margin', 'overflow-clip-margin: 10px');
+sup('backdrop-filter', 'backdrop-filter: blur(4px)');
+sup('webkit-backdrop-filter', '-webkit-backdrop-filter: blur(4px)');
+sup('translate', 'translate: 10px 5px');
+sup('rotate', 'rotate: 5deg');
+sup('scale', 'scale: 1.1');
+
+/* 13. colour */
+fx('color-mix-fx', '.cm{color:color-mix(in srgb, rgb(255 0 0) 50%, rgb(0 0 255))}', '<div class="cm"></div>', h => {
+  const c = cs(q(h, '.cm'), 'color'); return [/128|127/.test(c) || /0\.5/.test(c), c];
+});
+sup('color-mix-no-method', 'color: color-mix(red, blue)');
+sup('color-mix-variadic', 'color: color-mix(in srgb, red, blue, green)');
+fx('relative-color-fx', '.rc{color:rgb(from rgb(255 0 0) r g 255)}', '<div class="rc"></div>', h => {
+  const c = cs(q(h, '.rc'), 'color'); return [/255.*0.*255/.test(c) || /1 0 1/.test(c), c];
+});
+fx('light-dark-fx', '.ld{color-scheme:dark;color:light-dark(rgb(1 1 1), rgb(2 2 2))}', '<div class="ld"></div>', h => {
+  const c = cs(q(h, '.ld'), 'color'); return [/2, 2, 2|2 2 2/.test(c), c];
+});
+push('env-prefers-dark', 'env', 'matchMedia("(prefers-color-scheme: dark)")', matchMedia('(prefers-color-scheme: dark)').matches);
+fx('light-dark-color-scheme-light-dark-fx', '.ldo{color-scheme:light dark;color:light-dark(rgb(1 1 1), rgb(2 2 2))}', '<div class="ldo"></div>', h => {
+  const c = cs(q(h, '.ldo'), 'color'); return [true, c + ' (color-scheme: light dark -> follows the OS preference)'];
+});
+fx('light-dark-without-color-scheme-fx', '.ldn{color:light-dark(rgb(1 1 1), rgb(2 2 2))}', '<div class="ldn"></div>', h => {
+  const c = cs(q(h, '.ldn'), 'color'); return [/1, 1, 1|1 1 1/.test(c), c + ' (no color-scheme declared -> always the light value)'];
+});
+sup('light-dark-image','background-image: light-dark(url(a.png), url(b.png))');
+
+/* 14. attr() */
+fx('attr-typed-fx', '.at{width:attr(data-w type(<length>), 1px)}', '<div class="at" data-w="37px"></div>', h => {
+  const w = cs(q(h, '.at'), 'width'); return [w === '37px', w];
+});
+fx('attr-unit-fx', '.au{width:attr(data-w px, 1px)}', '<div class="au" data-w="38"></div>', h => {
+  const w = cs(q(h, '.au'), 'width'); return [w === '38px', w];
+});
+fx('attr-content-fx', '.ac::after{content:attr(data-t)}', '<div class="ac" data-t="hi"></div>', h => {
+  const c = cs(q(h, '.ac'), 'content', '::after'); return [c === '"hi"', c];
+});
+
+/* 15. @function, @mixin, @custom-media */
+fx('function-fx', '@function --dbl(--x){result:calc(var(--x) * 2)}.fn{width:--dbl(21px)}', '<div class="fn"></div>', h => {
+  const w = cs(q(h, '.fn'), 'width'); return [w === '42px', w];
+});
+parse('function-parse', '@function --dbl(--x <length>) returns <length>{result:calc(var(--x) * 2)}', 'CSSFunctionRule');
+parse('mixin-parse', '@mixin --m(){color:red}', '');
+parse('custom-media-parse', '@custom-media --narrow (max-width: 600px);', '');
+sup('supports-at-rule', 'at-rule(@scope)');
+
+/* 16. CSS carousels */
+sup('scroll-marker', 'selector(::scroll-marker)');
+sup('scroll-marker-group-pseudo', 'selector(::scroll-marker-group)');
+sup('scroll-button', 'selector(::scroll-button(right))');
+sup('scroll-marker-group-prop', 'scroll-marker-group: after');
+sup('target-current', 'selector(:target-current)');
+
+/* 17. misc */
+sup('field-sizing', 'field-sizing: content');
+sup('shape', 'clip-path: shape(from 0% 0%, line to 100% 0%, line to 50% 100%, close)');
+sup('corner-shape', 'corner-shape: squircle');
+sup('corner-shape-superellipse', 'corner-shape: superellipse(2)');
+sup('reading-flow', 'reading-flow: grid-rows');
+sup('grid-lanes', 'display: grid-lanes');
+sup('background-clip-text', 'background-clip: text');
+sup('webkit-background-clip-text', '-webkit-background-clip: text');
+sup('is-where', 'selector(:is(a):where(b))');
+parse('import-supports-parse', '@import url("data:text/css,") supports(display: grid);', 'CSSImportRule');
+parse('import-layer-parse', '@import url("data:text/css,") layer(ext);', 'CSSImportRule');
+
+/* 18. random() syntax variants (spec changed in 2025-2026) */
+sup('random-step-positional', 'width: random(0px, 100px, 10px)');
+sup('random-element-scoped-suffix', 'width: random(--s element-scoped, 10px, 100px)');
+sup('random-element-scoped-prefix', 'width: random(element-scoped --s, 10px, 100px)');
+sup('random-fixed', 'width: random(fixed 0.5, 10px, 100px)');
+sup('random-item-plain', 'color: random-item(red, blue)');
+fx('random-stable-on-restyle', '.rr{width:random(10px,500px)}.rr.big{height:5px}', '<div class="rr"></div>', h => {
+  const e = q(h, '.rr'); const a = cs(e, 'width'); e.classList.add('big'); const b = cs(e, 'width');
+  return [a === b && a !== '600px', a + ' -> ' + b + ' (after unrelated restyle)'];
+});
+
+/* 19. gotchas worth knowing */
+sup('gotcha-supports-custom-prop-always-true', '--x: random(1px, 2px)');
+sup('gotcha-supports-custom-prop-garbage', '--x: this-is-not-css(((');
+fx('gotcha-layer-beats-specificity', '@layer mine{#lyid .lyc{width:21px}} .lyc{width:22px}', '<div id="lyid"><div class="lyc"></div></div>', h => {
+  const w = cs(q(h, '.lyc'), 'width'); return [w === '22px', w + ' (unlayered .lyc beats layered #id .lyc)'];
+});
+fx('gotcha-property-inherits-false', '@property --pin{syntax:"<length>";inherits:false;initial-value:3px}.pp{--pin:40px}.pp>i{display:block;width:var(--pin)}', '<div class="pp"><i></i></div>', h => {
+  const w = cs(q(h, 'i'), 'width'); return [w === '3px', w + ' (child gets initial-value, not parent 40px)'];
+});
+fx('gotcha-property-typed-invalid', '@property --pt{syntax:"<length>";inherits:true;initial-value:4px}.pt{--pt:red;width:var(--pt)}', '<div class="pt"></div>', h => {
+  const w = cs(q(h, '.pt'), 'width'); return [w === '4px', w + ' (value not matching syntax -> initial-value)'];
+});
+fx('gotcha-fixed-inside-backdrop-filter', '.bf{position:absolute;top:120px;left:0;width:50px;height:50px;backdrop-filter:blur(2px)}.bf>i{position:fixed;top:0;left:0;width:5px;height:5px}', '<div class="bf"><i></i></div>', h => {
+  const p = q(h, '.bf').getBoundingClientRect(), c = q(h, 'i').getBoundingClientRect();
+  return [Math.round(c.top) === Math.round(p.top), 'fixed child top=' + Math.round(c.top) + ' parent top=' + Math.round(p.top) + ' (equal = backdrop-filter is its containing block)'];
+});
+fx('gotcha-fixed-inside-transform', '.tf{position:absolute;top:130px;left:0;width:50px;height:50px;transform:translateX(0)}.tf>i{position:fixed;top:0;left:0;width:5px;height:5px}', '<div class="tf"><i></i></div>', h => {
+  const p = q(h, '.tf').getBoundingClientRect(), c = q(h, 'i').getBoundingClientRect();
+  return [Math.round(c.top) === Math.round(p.top), 'fixed child top=' + Math.round(c.top) + ' parent top=' + Math.round(p.top)];
+});
+fx('gotcha-fixed-inside-individual-translate', '.it{position:absolute;top:140px;left:0;width:50px;height:50px;translate:0 0}.it>i{position:fixed;top:0;left:0;width:5px;height:5px}', '<div class="it"><i></i></div>', h => {
+  const p = q(h, '.it').getBoundingClientRect(), c = q(h, 'i').getBoundingClientRect();
+  return [Math.round(c.top) === Math.round(p.top), 'fixed child top=' + Math.round(c.top) + ' parent top=' + Math.round(p.top) + ' (translate:0 0 also creates containing block)'];
+});
+fx('gotcha-clip-path-keeps-scroll-overflow', '.sc{width:100px;overflow:auto}.sc .cp{width:100px;clip-path:inset(0)}.sc .cp>i{display:block;width:1000px;height:2px}', '<div class="sc"><div class="cp"><i></i></div></div>', h => {
+  const sw = q(h, '.sc').scrollWidth; return [sw > 900, 'scroller scrollWidth=' + sw + ' (clip-path only clips painting)'];
+});
+fx('gotcha-overflow-clip-removes-scroll-overflow', '.sd{width:100px;overflow:auto}.sd .oc{width:100px;overflow:clip}.sd .oc>i{display:block;width:1000px;height:2px}', '<div class="sd"><div class="oc"><i></i></div></div>', h => {
+  const sw = q(h, '.sd').scrollWidth; return [sw <= 100, 'scroller scrollWidth=' + sw + ' (overflow:clip removes it)'];
+});
+fx('gotcha-overflow-clip-not-scroll-container', '.ns{width:100px;height:20px;overflow:clip}.ns>i{display:block;height:200px}', '<div class="ns"><i></i></div>', h => {
+  const e = q(h, '.ns'); e.scrollTop = 50; return [e.scrollTop === 0, 'scrollTop after set=' + e.scrollTop + ' (hidden would allow 50)'];
+});
+fx('starting-style-fx', '.ss{opacity:1;transition:opacity 1s}@starting-style{.ss{opacity:0}}', '<div class="ss"></div>', h => {
+  const e = q(h, '.ss'); getComputedStyle(e).opacity; const n = e.getAnimations().length; return [n === 1, 'running transitions on insert=' + n];
+});
+fx('interpolate-size-fx', '.is{interpolate-size:allow-keywords;height:0;overflow:clip;transition:height 1s}.is.open{height:auto}', '<div class="is"><i style="display:block;height:40px"></i></div>', h => {
+  const e = q(h, '.is'); getComputedStyle(e).height; e.classList.add('open'); getComputedStyle(e).height; const n = e.getAnimations().length; return [n === 1, 'transitions 0->auto=' + n];
+});
+fx('no-interpolate-size-fx', '.ni{height:0;overflow:clip;transition:height 1s}.ni.open{height:auto}', '<div class="ni"><i style="display:block;height:40px"></i></div>', h => {
+  const e = q(h, '.ni'); getComputedStyle(e).height; e.classList.add('open'); getComputedStyle(e).height; const n = e.getAnimations().length; return [n === 0, 'transitions 0->auto without opt-in=' + n + ' (expected 0)'];
+});
+
+/* 20. error recovery (what an unsupported feature does to its neighbours) */
+fx('gotcha-invalid-selector-list-drops-rule', '.gl1, .gl2::-not-a-real-pseudo{width:24px}', '<div class="gl1"></div>', h => {
+  const w = cs(q(h, '.gl1'), 'width'); return [w !== '24px', w + ' (whole rule dropped because one selector is unknown)'];
+});
+fx('forgiving-is-keeps-rule', ':is(.gi1, .gi2:-not-a-real-pc){width:25px}', '<div class="gi1"></div>', h => {
+  const w = cs(q(h, '.gi1'), 'width'); return [w === '25px', w + ' (:is() forgives the unknown pseudo-class)'];
+});
+fx('unknown-at-rule-recovery', '@not-a-rule --x{color:red} .ua{width:26px}', '<div class="ua"></div>', h => {
+  const w = cs(q(h, '.ua'), 'width'); return [w === '26px', w + ' (unknown at-rule skipped, next rule kept)'];
+});
+fx('nested-unknown-rule-recovery', '.nu{width:27px; &::-not-a-real-pseudo{color:red} height:3px}', '<div class="nu"></div>', h => {
+  const e = q(h, '.nu'); const w = cs(e, 'width'), ht = cs(e, 'height'); return [w === '27px' && ht === '3px', w + ' / ' + ht + ' (invalid nested rule skipped, siblings kept)'];
+});
+fx('invalid-value-falls-back-to-previous', '.fb{width:28px;width:random(10px,20px)}', '<div class="fb"></div>', h => {
+  const w = parseFloat(cs(q(h, '.fb'), 'width')); return [w === 28 || (w >= 10 && w <= 20), w + 'px (28 = unsupported value dropped, earlier declaration wins)'];
+});
+fx('var-hides-invalid-value', '.vh{--r:random(10px,20px);width:28px;width:var(--r)}', '<div class="vh"></div>', h => {
+  const w = cs(q(h, '.vh'), 'width'); return [true, w + ' (if unsupported: invalid at computed-value time -> width:auto, NOT 28px)'];
+});
+
+/* 21. specificity of @scope and nesting (matters against itch's class-based theme) */
+fx('scope-root-adds-no-specificity', '@scope (#scid){.scx{width:41px}} .scy .scx{width:42px}', '<div id="scid"><div class="scy"><div class="scx"></div></div></div>', h => {
+  const w = cs(q(h, '.scx'), 'width'); return [w === '42px', w + ' (.scy .scx (0,2,0) beats @scope(#id){.scx} (0,1,0))'];
+});
+fx('scope-colon-scope-adds-specificity', '@scope (#scid2){:scope .scx{width:43px}} .scy .scx{width:44px}', '<div id="scid2"><div class="scy"><div class="scx"></div></div></div>', h => {
+  const w = cs(q(h, '.scx'), 'width'); return [w === '43px', w + ' (:scope .scx = (0,2,0) ties .scy .scx; tie broken by scope proximity: scoped beats unscoped although it comes first)'];
+});
+fx('scope-ampersand-specificity', '@scope (#scid3){& .scx{width:45px}} .scy .scx{width:46px}', '<div id="scid3"><div class="scy"><div class="scx"></div></div></div>', h => {
+  const w = cs(q(h, '.scx'), 'width'); return [w === '46px', w + ' (46 = & inside @scope adds no specificity, so & .scx (0,1,0) loses to .scy .scx (0,2,0); 45 would mean & carried #scid3)'];
+});
+fx('nesting-keeps-id-specificity', '#nid{.nx{width:47px}} .ny .nx{width:48px}', '<div id="nid"><div class="ny"><div class="nx"></div></div></div>', h => {
+  const w = cs(q(h, '.nx'), 'width'); return [w === '47px', w + ' (#nid{.nx} = #nid .nx (1,1,0) beats .ny .nx)'];
+});
+fx('animation-shorthand-resets-timeline', '@keyframes kf{to{opacity:.5}} .at1{animation-timeline:view();animation:kf 1s linear} .at2{animation:kf 1s linear;animation-timeline:view()}', '<div class="at1"></div><div class="at2"></div>', h => {
+  const a = cs(q(h, '.at1'), 'animation-timeline'), b = cs(q(h, '.at2'), 'animation-timeline');
+  return [a === 'auto' && b !== 'auto', 'timeline before shorthand=' + a + ' / after shorthand=' + b];
+});
+
+/* output */
+const tb = document.querySelector('#tbl tbody');
+for (const r of R) {
+  const tr = document.createElement('tr');
+  tr.className = r.ok ? 'y' : 'n';
+  for (const k of ['id', 'kind', 'test', 'ok', 'detail']) { const td = document.createElement('td'); td.textContent = String(r[k]); tr.appendChild(td); }
+  tb.appendChild(tr);
+}
+document.getElementById('out').textContent = 'PROBE_JSON=' + JSON.stringify({ ua: navigator.userAgent, results: R });
+</script>
+</body>
+</html>

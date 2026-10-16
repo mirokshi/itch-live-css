@@ -1,0 +1,2 @@
+﻿/* Test C fixture: UTF-8 with BOM */
+#wrapper .c4::before { content: "¡Hola! → ✓ 안녕"; }

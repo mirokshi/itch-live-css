@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>gapfill-02 motion guard</title>
+<!-- Own test page (2026-10-14). 6 infinite animations (as s10-motion.html) + two transitioned cards. -->
+<style>
+@keyframes custom-spin{to{rotate:360deg}}
+#wrapper{position:relative;animation:custom-spin 9s linear infinite}
+#wrapper::before{content:"";position:absolute;inset:0;z-index:-1;animation:custom-spin 7s linear infinite}
+#wrapper::after{content:"";position:absolute;inset:0;z-index:-1;animation:custom-spin 5s linear infinite}
+#wrapper .kid{animation:custom-spin 3s linear infinite}
+#wrapper .kid::before{content:"b";animation:custom-spin 2s linear infinite}
+#wrapper .kid::after{content:"a";animation:custom-spin 1s linear infinite}
+/* hover card: 400 ms transition with a 200 ms delay */
+#wrapper .hcard{width:200px;height:80px;background:#335;transition:transform .4s ease .2s}
+#wrapper .hcard:hover{transform:translateY(-8px)}
+/* class-toggled card: 400 ms, no delay */
+#wrapper .ccard{width:200px;height:80px;background:#353;transition:transform .4s ease}
+#wrapper .ccard.on{transform:translateY(-8px)}
+</style>
+<style id="guard"></style>
+</head><body style="margin:0;padding:40px">
+<div id="wrapper" class="user_page_wrap"><div class="user_page">
+<p class="kid">kid</p>
+<div class="hcard" id="hcard">hover card</div>
+<div class="ccard" id="ccard">class card</div>
+</div></div>
+</body></html>

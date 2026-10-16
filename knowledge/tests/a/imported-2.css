@@ -1,0 +1,2 @@
+/* Test A: second @import of style#custom_css. Marker rgb(5,5,5). */
+#wrapper .a5 { color: rgb(5, 5, 5); }

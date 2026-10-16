@@ -1,0 +1,3 @@
+(function(){function cs(s,p){var e=document.querySelector(s);return e?getComputedStyle(e).getPropertyValue(p):null;}
+var o={filter_active_border:cs('.jam_filter_picker .filter_item.active','border-bottom-color'),header_tab_active_border:cs('.header_tabs .header_tab.active','border-bottom-color'),header_row_border:cs('.grid_outer .header_row','border-bottom-color'),jam_header_border:cs('.jam_header_widget','border-bottom-color'),itch_footer_border:cs('.grid_outer .itch_footer','border-top-color'),community_activity_bg:cs('.header_tabs .community_activity','background-color')};
+document.getElementById('probe_out').textContent='RESULT '+JSON.stringify(o);})();

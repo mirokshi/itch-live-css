@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D · @layer custom CSS vs unlayered itch theme</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="user_theme">
+  /* Unlayered, like itch's theme output. */
+  .user_page .d1 { color: rgb(1, 1, 1); }
+  .user_page .d2 { color: rgb(1, 1, 1) !important; }
+  .user_page .d3 { color: rgb(1, 1, 1); }
+  .user_page .d4 { color: rgb(1, 1, 1); }
+  .user_page .d5 { color: rgb(1, 1, 1); }
+</style>
+<style id="custom_css">
+  /* Tailwind v4 style: a layer-order statement first (allowed before @import). */
+  @layer theme, base, components, utilities;
+  @import url("d/layered.css") layer(imp);
+  @import url("d/anon.css") layer;
+  @layer custom {
+    #wrapper .d1 { color: rgb(3, 3, 3); }
+    #wrapper .d2 { color: rgb(3, 3, 3) !important; }
+    #wrapper .d3 { color: rgb(3, 3, 3) !important; }
+  }
+  @layer utilities {
+    .text-marker { color: rgb(3, 3, 3); }
+  }
+  @layer base {
+    #wrapper h2.d6 { margin: 0; font-size: 7px; }
+  }
+  @layer low, high;
+  @layer high { #wrapper .d7 { color: rgb(4, 4, 4); } }
+  @layer low { #wrapper#wrapper .d7 { color: rgb(3, 3, 3); } }
+  #wrapper .d8 { color: rgb(4, 4, 4); }
+  @layer custom { #wrapper#wrapper .d8 { color: rgb(3, 3, 3); } }
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test D — cascade layers.</b> itch's own sheets are unlayered, so anything you put in @layer (including Tailwind v4 output, which
+wraps everything in @layer theme/base/components/utilities) loses to them for normal declarations regardless of specificity.
+rgb(1,1,1)=unlayered theme · rgb(2,2,2)=layered @import · rgb(3,3,3)/rgb(4,4,4)=custom_css.</p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <p class="d1">d1</p><p class="d2">d2</p><p class="d3">d3</p><p class="d4">d4</p><p class="d5">d5</p>
+      <p><a href="#" class="text-marker">d-utility link</a></p>
+      <h2 class="d6">d6 heading</h2>
+      <p class="d7">d7</p><p class="d8">d8</p>
+    </div>
+  </div>
+</div>
+<script>
+T.run(() => {
+  const M = { 'rgb(1, 1, 1)': 'theme(unlayered)', 'rgb(2, 2, 2)': 'layered-import', 'rgb(3, 3, 3)': 'custom-a', 'rgb(4, 4, 4)': 'custom-b', 'rgb(0, 0, 238)': 'itch-base(unlayered)' };
+  const w = s => T.who(T.cs(s, 'color'), M);
+  T.check('D1', 'layered #wrapper .d1 (1,1,0) vs unlayered .user_page .d1 (0,2,0)', w('.d1'), 'theme(unlayered)');
+  T.check('D2', 'layered !important vs unlayered !important: layered wins (important layers reverse)', w('.d2'), 'custom-a');
+  T.check('D3', 'layered !important vs unlayered normal', w('.d3'), 'custom-a');
+  T.check('D4', '@import url() layer(imp): rules become layered and lose', w('.d4'), 'theme(unlayered)');
+  T.check('D5', '@import url() layer (anonymous): same', w('.d5'), 'theme(unlayered)');
+  T.check('D-util', 'Tailwind-like @layer utilities { .text-marker } loses to unlayered itch-base .user_page a', w('.text-marker'), 'itch-base(unlayered)');
+  T.check('D6', 'layered rule still applies where nothing unlayered competes (font-size 7px)', T.cs('.d6', 'font-size'), '7px');
+  T.check('D7', 'between layers, later-declared layer wins over higher specificity in an earlier layer', w('.d7'), 'custom-b');
+  T.check('D8', 'unlayered custom rule beats a layered custom rule with higher specificity', w('.d8'), 'custom-b');
+  const s = document.getElementById('custom_css').sheet;
+  T.info('D-cssom', 'rule types in custom_css', Array.from(s.cssRules).map(r => r.constructor.name).join(', '));
+  T.info('D-support', 'CSSLayerBlockRule / CSSLayerStatementRule in window', ('CSSLayerBlockRule' in window) + ' / ' + ('CSSLayerStatementRule' in window));
+});
+</script>
+</body>
+</html>

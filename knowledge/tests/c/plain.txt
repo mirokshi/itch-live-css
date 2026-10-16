@@ -1,0 +1,2 @@
+/* Test C fixture: valid CSS served as text/plain (same origin) */
+#wrapper .c1 { color: rgb(2, 2, 2); }

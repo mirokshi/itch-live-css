@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C · MIME type and charset of imported CSS (standards mode, UTF-8 page)</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="user_theme">.user_page { color: rgb(1, 1, 1); }</style>
+<link rel="stylesheet" href="c/plain-link.txt">
+<style id="custom_css">
+  @import url("c/plain.txt");
+  @import url("http://localhost:8091/knowledge/tests/c/plain-x.txt");
+  @import url("c/noext");
+  @import url("c/utf8-nocharset.css");
+  @import url("c/utf8-bom.css");
+  @import url("c/utf8-atcharset.css");
+  @import url("c/escaped.css");
+  #wrapper .c9::before { content: "¡Hola! → ✓ 안녕"; }
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test C — does the browser accept CSS served with a non-CSS MIME type, and how is non-ASCII text in an imported sheet decoded?</b>
+python http.server serves .txt as text/plain, extensionless files as application/octet-stream and .css as "text/css" with NO charset parameter.
+rgb(2,2,2) = sheet applied · rgb(1,1,1) = sheet rejected. Sibling pages: c-quirks.html (no doctype) and c-win1252.html (windows-1252 page).</p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <p class="c1">c1</p><p class="c2">c2</p><p class="c7">c7</p><p class="c8">c8</p>
+      <p class="c3"></p><p class="c4"></p><p class="c5"></p><p class="c6"></p><p class="c9"></p>
+    </div>
+  </div>
+</div>
+<script>
+T.run(() => {
+  const M = { 'rgb(1, 1, 1)': 'rejected', 'rgb(2, 2, 2)': 'applied' };
+  const w = c => T.who(T.cs('.' + c, 'color'), M);
+  T.check('C1', '@import of same-origin text/plain file (standards mode)', w('c1'), 'rejected');
+  T.check('C2', '@import of cross-origin text/plain file', w('c2'), 'rejected');
+  T.check('C7', '<link rel=stylesheet> to same-origin text/plain file', w('c7'), 'rejected');
+  T.check('C8', '@import of file served as application/octet-stream', w('c8'), 'rejected');
+  const want = '"¡Hola! → ✓ 안녕"';
+  const c = k => T.cs('.' + k, 'content', '::before');
+  T.check('C3', 'UTF-8 sheet without BOM/@charset/HTTP charset, imported by a UTF-8 page: decoded as UTF-8', c('c3'), want);
+  T.check('C4', 'UTF-8 sheet with BOM', c('c4'), want);
+  T.check('C5', 'UTF-8 sheet with @charset "UTF-8"', c('c5'), want);
+  T.check('C6', 'ASCII-only sheet using \\hex escapes', c('c6'), want);
+  T.check('C9', 'non-ASCII written directly inside the inline style#custom_css', c('c9'), want);
+  T.info('C-charset', 'document.characterSet / compatMode', document.characterSet + ' / ' + document.compatMode);
+});
+</script>
+</body>
+</html>

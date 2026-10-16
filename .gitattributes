@@ -1,0 +1,5 @@
+# Keep every file byte for byte: several section files use CRLF on purpose,
+# and the probe kit and tests compare exact bytes.
+* -text
+
+llms-full.txt linguist-generated

@@ -1,0 +1,5 @@
+#wrapper .collection_row h2{color:rgb(0,99,0)}
+#wrapper .collection_row h2 a{color:rgb(255,0,8)}
+#wrapper .purchased_games h2 a{color:rgb(255,0,11) !important}
+#wrapper *{font-family:serif}
+#wrapper .game_thumb{background-color:rgb(255,0,12) !important}

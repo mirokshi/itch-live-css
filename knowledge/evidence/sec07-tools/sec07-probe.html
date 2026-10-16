@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>sec07 probe: fallback patterns for JS-free itch CSS</title>
+<!--
+  Written for section 07 (techniques and browser support), 2026-10-14.
+  Run: chrome --headless=new --user-data-dir=<tmp> --virtual-time-budget=2000 --dump-dom file:///.../sec07-probe.html
+  Each row: id | expectation | observed | PASS/FAIL. Results land in <pre id="out">.
+-->
+<style>
+  body{margin:0;width:600px}
+  #wrapper div, #wrapper span{display:block}
+  /* T1: one unknown pseudo-element in a selector list drops the whole rule */
+  #wrapper .t1a, #wrapper .t1b::-not-a-real-pseudo{width:24px}
+  /* T2: same, but the unknown selector in its own rule: the good rule survives */
+  #wrapper .t2a{width:25px}
+  #wrapper .t2b::-not-a-real-pseudo{width:25px}
+  /* T3: plain value first, modern value second (unsupported value dropped) */
+  #wrapper .t3{width:28px;width:random(10px,20px)}
+  /* T4: routing the modern value through a custom property defeats the fallback */
+  #wrapper .t4{--r:random(10px,20px);width:28px;width:var(--r)}
+  /* T5/T6: @supports positive and negative guards on a real property */
+  @supports (rotate: random(0deg, 1deg)){#wrapper .t5{width:30px}}
+  @supports not (rotate: random(0deg, 1deg)){#wrapper .t6{width:31px}}
+  /* T7: @supports on a custom property is not a feature test */
+  @supports (--x: random(0deg, 1deg)){#wrapper .t7{width:32px}}
+  /* T8: @supports selector() */
+  @supports selector(:has(a)){#wrapper .t8{width:33px}}
+  @supports selector(::scroll-marker){#wrapper .t8b{width:34px}}
+  /* T9: registered @property angle interpolates (paused at 50%) */
+  @property --t9a{syntax:"<angle>";inherits:false;initial-value:0deg}
+  @keyframes t9spin{to{--t9a:360deg}}
+  #wrapper .t9{animation:t9spin 2s linear -1s paused}
+  /* T10: same keyframes, unregistered property: discrete (flips at 50%) */
+  @keyframes t10spin{from{--t10u:0deg}to{--t10u:360deg}}
+  #wrapper .t10{animation:t10spin 2s linear -.5s paused}
+  /* T11: sin() driven by a registered angle */
+  #wrapper .t11{--t9a:90deg;width:calc(100px + 50px * sin(var(--t9a)))}
+  /* T12: individual translate composes with transform */
+  #wrapper .t12{width:10px;height:10px;transform:translateX(10px);translate:5px 0}
+  /* T13: sibling-index() with a constant fallback first */
+  #wrapper .t13 i{display:block;animation-delay:.2s;animation-delay:calc(sibling-index() * 60ms)}
+  /* T14: scroll-driven reveal guard */
+  @supports (animation-timeline: view()){#wrapper .t14{width:35px}}
+  /* T15: animation-timeline written BEFORE the shorthand is reset */
+  @keyframes t15{to{opacity:.5}}
+  #wrapper .t15a{animation-timeline:view();animation:t15 1s linear both}
+  #wrapper .t15b{animation:t15 1s linear both;animation-timeline:view()}
+  /* T16: @media + @supports nest, as used for motion enhancements */
+  @media (prefers-reduced-motion: no-preference){@supports (animation-timeline: view()){#wrapper .t16{width:36px}}}
+  /* T17: nested @supports inside a nested #wrapper rule */
+  #wrapper{ .t17{width:37px} @supports (anchor-name: --a){ .t17{width:38px} } }
+  /* T18: :is() forgives an unknown pseudo-class; a plain list does not */
+  #wrapper :is(.t18, .t18x:-not-a-real-pc){width:39px}
+  /* T19: hover-capable media guard (headless has no real pointer: just recorded) */
+  @media (hover:hover) and (pointer:fine){#wrapper .t19{width:40px}}
+  /* T20: content alt text with a plain fallback line first */
+  #wrapper .t20::before{content:"*";content:"*" / ""}
+  /* T21: random() integer step drives a roller offset (pick 1 of N lines); font-size 10px so 1.4em = 14px */
+  #wrapper .t21{font-size:10px;translate:0 0;translate:0 calc(random(0, 26, 1) * -1.4em)}
+  /* T22: random() negative animation-delay desyncs identical animations */
+  @keyframes t22{to{opacity:.2}}
+  #wrapper .t22 i{display:block;animation:t22 3s infinite alternate;animation-delay:0s;animation-delay:random(-3s, 0s)}
+</style>
+</head>
+<body>
+<div id="wrapper">
+  <div class="t1a"></div><div class="t2a"></div><div class="t3"></div><div class="t4"></div>
+  <div class="t5"></div><div class="t6"></div><div class="t7"></div><div class="t8"></div><div class="t8b"></div>
+  <div class="t9"></div><div class="t10"></div><div class="t11"></div><div class="t12"></div>
+  <div class="t13"><i></i><i></i><i></i></div>
+  <div class="t14"></div><div class="t15a"></div><div class="t15b"></div><div class="t16"></div><div class="t17"></div>
+  <div class="t18"></div><div class="t19"></div><div class="t20">x</div>
+  <div class="t21"></div><div class="t22"><i></i><i></i><i></i></div>
+</div>
+<pre id="out"></pre>
+<script>
+const W = c => getComputedStyle(document.querySelector('#wrapper .' + c)).width;
+const rows = [];
+function row(id, expect, got){ rows.push([id, expect, got, String(got) === String(expect) ? 'PASS' : 'FAIL'].join(' | ')); }
+row('T1 selector-list-drop', '600px', W('t1a'));
+row('T2 own-rule-survives', '25px', W('t2a'));
+row('T3 value-fallback', '28px', W('t3'));
+row('T4 var-trap (auto = full 600px)', '600px', W('t4'));
+row('T5 @supports(rotate:random()) applied?', '600px', W('t5'));
+row('T6 @supports not(...) applied?', '31px', W('t6'));
+row('T7 @supports(--x:random()) applied?', '32px', W('t7'));
+row('T8 @supports selector(:has(a))', '33px', W('t8'));
+row('T8b @supports selector(::scroll-marker)', '34px', W('t8b'));
+row('T9 registered angle at 50%', '180deg', getComputedStyle(document.querySelector('.t9')).getPropertyValue('--t9a').trim());
+row('T10 unregistered at 25%', '0deg', getComputedStyle(document.querySelector('.t10')).getPropertyValue('--t10u').trim());
+row('T11 sin(var(--angle))', '150px', W('t11'));
+const r12 = document.querySelector('.t12').getBoundingClientRect().left - document.querySelector('#wrapper').getBoundingClientRect().left;
+row('T12 translate+transform offset', '15', Math.round(r12));
+const d13 = [...document.querySelectorAll('.t13 i')].map(e => getComputedStyle(e).animationDelay).join(',');
+row('T13 sibling-index delays', '0.06s,0.12s,0.18s', d13);
+row('T14 @supports(animation-timeline:view())', '35px', W('t14'));
+row('T15a timeline before shorthand', 'auto', getComputedStyle(document.querySelector('.t15a')).animationTimeline);
+row('T15b timeline after shorthand', 'view()', getComputedStyle(document.querySelector('.t15b')).animationTimeline);
+row('T16 @media{@supports{}} nest', '36px', W('t16'));
+row('T17 nested @supports in #wrapper{}', '38px', W('t17'));
+row('T18 :is() forgiving', '39px', W('t18'));
+row('T19 (hover:hover) and (pointer:fine) [info]', matchMedia('(hover:hover) and (pointer:fine)').matches ? '40px' : '600px', W('t19'));
+row('T20 content alt-text computed', '"*" / ""', getComputedStyle(document.querySelector('.t20'), '::before').content);
+const t21 = getComputedStyle(document.querySelector('.t21')).translate;
+const y21 = parseFloat((t21.split(' ')[1]||'0'));
+row('T21 random step roller (multiple of -14px, 0..-364) [' + t21 + ']', 'true', String(Number.isInteger(Math.round(y21/-14*1000)/1000) && y21 <= 0 && y21 >= -364));
+const d22 = [...document.querySelectorAll('.t22 i')].map(e => getComputedStyle(e).animationDelay);
+row('T22 random delays [' + d22.join(',') + ']', 'true', String(d22.every(d => d === '0s') || new Set(d22).size === d22.length));
+row('UA', navigator.userAgent, navigator.userAgent);
+document.getElementById('out').textContent = rows.join('\n');
+</script>
+</body>
+</html>

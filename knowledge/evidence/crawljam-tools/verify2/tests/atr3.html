@@ -1,0 +1,12 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<style id="jam_theme">.jam_page_wrap{--itchio_link_color:#ff7a24}.view_jam_page .jam_filter_picker .divider{color:#666;}
+@container (min-width:1px){.q-cont{color:rgb(1,1,1)}}
+@property --qp{syntax:'<color>';inherits:true;initial-value:rgb(2,2,2)}
+.q-prop{color:var(--qp)}
+@scope (.view_jam_page){.q-scope{color:rgb(3,3,3)}}
+@font-feature-values Arial{@styleset{x:1}}
+@counter-style qc{system:cyclic;symbols:"*";}
+@page{margin:1cm}
+.q-end{color:rgb(4,4,4)}
+</style></head><body><div id="wrapper" class="jam_page_wrap" style="container-type:inline-size"><div class="view_jam_page"><i class="q-cont">a</i><i class="q-prop">b</i><i class="q-scope">c</i><i class="q-end">d</i></div></div>
+<pre id="v2out"></pre><script>setTimeout(function(){var o={};o.types=[].map.call(document.getElementById('jam_theme').sheet.cssRules,function(r){return r.constructor.name.replace('CSS','').replace('Rule','')});['q-cont','q-prop','q-scope','q-end'].forEach(function(k){o[k]=getComputedStyle(document.querySelector('.'+k)).color});document.getElementById('v2out').textContent='V2RESULT '+JSON.stringify(o)},400)</script></body></html>

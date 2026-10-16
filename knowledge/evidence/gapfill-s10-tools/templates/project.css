@@ -1,0 +1,33 @@
+/* itch.io PROJECT starter: also styles the project's devlog posts, devlog index and comments page. */
+#wrapper {
+  --ink: #eef3ff; --muted: #c3cfee; --accent: #ffc857;
+  --panel: rgba(12, 20, 48, .94); --line: rgba(238, 243, 255, .25);
+  --itchio_input_focus_color: var(--accent);
+  min-height: 100vh; background-color: #0b1433;
+  background-size: cover; background-position: center; background-attachment: fixed;
+}
+/* outline, not border: itch's JS can pin #inner_column to the embed's width (e.g. 1280px), and a border would add 2px */
+#wrapper #inner_column { background-color: var(--panel); color: var(--ink); outline: 1px solid var(--line); outline-offset: -1px; border-radius: 12px; }
+/* links and buttons: the theme writes literal colours, so variables alone don't reach them */
+#wrapper .inner_column a { color: var(--accent); }
+#wrapper .inner_column .button {
+  background-color: var(--accent); color: #1a1300; border-color: transparent; text-shadow: none; transition: background-color .15s;
+}
+@media (hover: hover) { #wrapper .inner_column .button:hover { background-color: #ffd77e; } }
+/* text blocks: description (main page), post body (devlogs) and comments */
+#wrapper .formatted_description, #wrapper .post_body { line-height: 1.6; }
+#wrapper .inner_column h2, #wrapper .inner_column h3 { color: var(--accent); }
+#wrapper .game_devlog_post_page section.post_header h1 { color: var(--ink); }
+#wrapper .game_comments_widget .community_post { border-top: 1px solid var(--line); }
+#wrapper .game_info_panel_widget, #wrapper .post_meta, #wrapper .footer { color: var(--muted); }
+/* keyboard focus on links, itch buttons and spoilers (itch gives spoilers no ring) */
+#wrapper a:focus-visible, #wrapper .button:focus-visible, #wrapper .spoiler:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+/* the banner link (.header) and the footer breadcrumbs sit in overflow:hidden boxes: draw their ring inside */
+#wrapper .header a:focus-visible, #wrapper .breadcrumbs a:focus-visible { outline-offset: -2px; }
+@media (prefers-reduced-motion: reduce) {
+  #wrapper, #wrapper::before, #wrapper::after, #wrapper *, #wrapper *::before, #wrapper *::after {
+    animation: none !important; transition: none !important;
+  }
+}

@@ -1,0 +1,1748 @@
+{
+ "kit": "itch-live-probe-kit v1 (2026-10-14)",
+ "ranAt": "2026-10-16T09:34:40.325Z",
+ "page": {
+  "pageName": "view_game",
+  "type": "project",
+  "urlShape": "<user>.itch.io/<seg>",
+  "browser": "Brave 155, Chromium 155",
+  "platform": "Windows",
+  "viewport": "2560x708",
+  "dpr": 1,
+  "prefersDark": true,
+  "prefersReducedMotion": false,
+  "ownerView": {
+   "editThemeBtn": 1,
+   "ownerTools": 1,
+   "gameHeaderWidget": 1,
+   "themeEditorColumns": 0,
+   "bodyThemeEditorOpen": false
+  }
+ },
+ "served": {
+  "status": 200,
+  "redirected": false,
+  "headers": {
+   "content-type": "text/html",
+   "cache-control": "no-store",
+   "x-cache-status": "BYPASS",
+   "content-security-policy": "frame-ancestors 'self' https://itch.io",
+   "vary": "accept-encoding"
+  },
+  "chars": 52961
+ },
+ "css": {
+  "blocks": [
+   {
+    "id": "custom_css",
+    "chars": 2752,
+    "bytes": 2768,
+    "cr": 52,
+    "lf": 52
+   }
+  ],
+  "found": true,
+  "block": "custom_css",
+  "stored": {
+   "chars": 2752,
+   "utf16": 2754,
+   "bytes": 2768,
+   "cr": 52,
+   "lf": 52
+  },
+  "sent": {
+   "chars": 2717,
+   "utf16": 2719,
+   "bytes": 2733,
+   "cr": 0,
+   "lf": 52
+  },
+  "endMarkerFound": true,
+  "styleElementClosedEarly": false,
+  "leadingBeforeStartMarker": "\"\"",
+  "trailingAfterEndMarker": "\"\"",
+  "identicalIgnoringLineEndings": false,
+  "firstDifference": {
+   "at": 2477,
+   "sent": "\" */#wrapper{--probe-c41:1}\\n/* </style> c42 */#wrapper{--probe-c42:1}\\n#wrapper{--probe-c43:\"",
+   "stored": "\" */#wrapper{--probe-c41:1}\\n/*  c42 */#wrapper{--probe-c42:1}\\n#wrapper{--probe-c43:\\\"\\\"}\\n#wra\""
+  },
+  "probes": {
+   "c00": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c01": {
+    "outcome": "survived"
+   },
+   "c02": {
+    "outcome": "survived",
+    "value": "1 | CSSLayerStatementRule",
+    "applied": true
+   },
+   "c03": {
+    "outcome": "survived",
+    "value": "CSSImportRule +requested",
+    "applied": true
+   },
+   "c04": {
+    "outcome": "survived",
+    "value": "CSSImportRule +requested",
+    "applied": true
+   },
+   "c05": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c06": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c07": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c08": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c09": {
+    "outcome": "survived",
+    "value": "FontFace unloaded",
+    "applied": true
+   },
+   "c10": {
+    "outcome": "survived",
+    "value": "FontFace unloaded",
+    "applied": true
+   },
+   "c11": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c12": {
+    "outcome": "survived",
+    "value": "7px",
+    "applied": true
+   },
+   "c13": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c14": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c15": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c16": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c17": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c18": {
+    "outcome": "survived",
+    "value": "CSSStartingStyleRule",
+    "applied": true
+   },
+   "c19": {
+    "outcome": "survived",
+    "value": "CSSViewTransitionRule",
+    "applied": true
+   },
+   "c20": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c21": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c22": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c23": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c24": {
+    "outcome": "survived",
+    "value": "\"a&b<i>c>d\"",
+    "applied": true
+   },
+   "c25": {
+    "outcome": "survived",
+    "value": "\"→é漢😀\"",
+    "applied": true
+   },
+   "c26": {
+    "outcome": "survived",
+    "value": "\"→\" \"</x>\"",
+    "applied": true
+   },
+   "c27": {
+    "outcome": "survived",
+    "value": "\"[c27]\" / \"\"",
+    "applied": true
+   },
+   "c28": {
+    "outcome": "survived",
+    "value": "0",
+    "applied": false
+   },
+   "c29": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c30": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c31": {
+    "outcome": "survived",
+    "value": "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>\")",
+    "applied": true
+   },
+   "c32": {
+    "outcome": "survived"
+   },
+   "c33": {
+    "outcome": "survived"
+   },
+   "c34": {
+    "outcome": "survived"
+   },
+   "c35": {
+    "outcome": "survived"
+   },
+   "c36": {
+    "outcome": "survived",
+    "value": "CSSCounterStyleRule",
+    "applied": true
+   },
+   "c37": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c38": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c39": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c40": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c41": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c42": {
+    "outcome": "rewritten",
+    "how": "</style> removed",
+    "near": "\"cript>c41</script> */#wrapper{--probe-c41:1}\\r\\n/*  c42 */#wrapper{--probe-c42:1}\\r\\n#wrapper{--probe-c43:\\\"\\\"}\\r\\n#wrapper{--pr\"",
+    "value": "1",
+    "applied": true
+   },
+   "c43": {
+    "outcome": "rewritten",
+    "how": "</style> removed",
+    "near": "\"  c42 */#wrapper{--probe-c42:1}\\r\\n#wrapper{--probe-c43:\\\"\\\"}\\r\\n#wrapper{--probe-c44:1}\\r\\n#wrapper :is(.formatted_description,\"",
+    "value": "\"\"",
+    "applied": false
+   },
+   "c44": {
+    "outcome": "survived",
+    "value": "1",
+    "applied": true
+   },
+   "c45": {
+    "outcome": "survived",
+    "value": "\"[c45] probe.css: end of sheet reached\"",
+    "applied": true
+   }
+  },
+  "cssom": {
+   "topLevelRules": 50,
+   "types": {
+    "CSSLayerStatementRule": 1,
+    "CSSImportRule": 6,
+    "CSSStyleRule": 27,
+    "CSSLayerBlockRule": 2,
+    "CSSFontFaceRule": 2,
+    "CSSPropertyRule": 3,
+    "CSSContainerRule": 2,
+    "CSSScopeRule": 1,
+    "CSSStartingStyleRule": 1,
+    "CSSViewTransitionRule": 1,
+    "CSSSupportsRule": 1,
+    "CSSMediaRule": 1,
+    "CSSFunctionRule": 1,
+    "CSSCounterStyleRule": 1
+   },
+   "imports": [
+    {
+     "href": "https://example.com/probe-c03.css",
+     "layer": null,
+     "supports": null,
+     "media": ""
+    },
+    {
+     "href": "http://example.com/probe-c04.css",
+     "layer": null,
+     "supports": null,
+     "media": ""
+    },
+    {
+     "href": "data:text/css,%23wrapper%7B--probe-c05%3A1%7D",
+     "layer": null,
+     "supports": null,
+     "media": ""
+    },
+    {
+     "href": "data:text/css,%23wrapper%7B--probe-c06%3A1%7D",
+     "layer": "probe-imp",
+     "supports": null,
+     "media": ""
+    },
+    {
+     "href": "data:text/css,%23wrapper%7B--probe-c07%3A1%7D",
+     "layer": null,
+     "supports": "display:grid",
+     "media": ""
+    },
+    {
+     "href": "data:text/css,%23wrapper%7B--probe-c08%3A1%7D",
+     "layer": null,
+     "supports": null,
+     "media": "screen"
+    }
+   ],
+   "probeRequests": [
+    {
+     "url": "https://example.com/probe-c03.css",
+     "initiator": "css",
+     "status": 0
+    },
+    {
+     "url": "http://example.com/probe-c04.css",
+     "initiator": "css",
+     "status": 0
+    },
+    {
+     "url": "http://example.com/probe-c10.woff2",
+     "initiator": "css",
+     "status": 0
+    },
+    {
+     "url": "https://example.com/probe-s08.png",
+     "initiator": "css",
+     "status": 0
+    }
+   ]
+  }
+ },
+ "html": {
+  "found": true,
+  "container": "div.formatted_description.user_formatted",
+  "set": "full",
+  "setFrom": "start marker",
+  "served": {
+   "containerInnerHTMLChars": 19364,
+   "rawCharsFromContainerTagToEndMarker": 19994,
+   "sentChars": 18092,
+   "crInContainer": 155
+  },
+  "probes": {
+   "x00": {
+    "label": "PROBE-HTML-START set=full kit=v1 2026-10-14 (temporary test …(+24)",
+    "outcome": "survived",
+    "details": [],
+    "raw": "<div class=\"formatted_description user_formatted\"><p class=\"custom-probe-x00\">[x00] PROBE-HTML-START set=full kit=v1 2026-10-14 (temporary test content, safe to delete)</p>\r\n<p><span class=\"custom-probe-k01\">[k01] Custom-a</span></p>\r\n<p><span class=\"custom-probe-k02\">[k02] CUSTOM-b</span></p>\r\n<p><span class=\"custom-probe-k03"
+   },
+   "k01": {
+    "label": "Custom-a",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: Custom-a"
+    ]
+   },
+   "k02": {
+    "label": "CUSTOM-b",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: CUSTOM-b"
+    ]
+   },
+   "k03": {
+    "label": "customc",
+    "outcome": "survived",
+    "details": []
+   },
+   "k04": {
+    "label": "custom_d",
+    "outcome": "survived",
+    "details": []
+   },
+   "k05": {
+    "label": "customer",
+    "outcome": "survived",
+    "details": []
+   },
+   "k06": {
+    "label": "custom- (bare prefix)",
+    "outcome": "survived",
+    "details": []
+   },
+   "k07": {
+    "label": "custom-hover:x",
+    "outcome": "survived",
+    "details": []
+   },
+   "k08": {
+    "label": "custom-md:flex",
+    "outcome": "survived",
+    "details": []
+   },
+   "k09": {
+    "label": "custom-w-[3px]",
+    "outcome": "survived",
+    "details": []
+   },
+   "k10": {
+    "label": "custom-mt-[-1rem]",
+    "outcome": "survived",
+    "details": []
+   },
+   "k11": {
+    "label": "custom-w-1/2",
+    "outcome": "survived",
+    "details": []
+   },
+   "k12": {
+    "label": "custom-bg-red-500/50",
+    "outcome": "survived",
+    "details": []
+   },
+   "k13": {
+    "label": "custom-d.e",
+    "outcome": "survived",
+    "details": []
+   },
+   "k14": {
+    "label": "custom:flex",
+    "outcome": "survived",
+    "details": []
+   },
+   "k15": {
+    "label": "custom:md:flex",
+    "outcome": "survived",
+    "details": []
+   },
+   "k16": {
+    "label": "-custom-f",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: -custom-f"
+    ]
+   },
+   "k17": {
+    "label": "md:custom-g",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: md:custom-g"
+    ]
+   },
+   "k18": {
+    "label": "!custom-h",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: !custom-h"
+    ]
+   },
+   "k19": {
+    "label": "xcustom-i",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: xcustom-i"
+    ]
+   },
+   "k20": {
+    "label": "custom-café",
+    "outcome": "survived",
+    "details": []
+   },
+   "k21": {
+    "label": "custom-Hero",
+    "outcome": "survived",
+    "details": []
+   },
+   "k22": {
+    "label": "text-left",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: text-left"
+    ]
+   },
+   "k23": {
+    "label": "text-right",
+    "outcome": "survived",
+    "details": []
+   },
+   "k24": {
+    "label": "text-center",
+    "outcome": "survived",
+    "details": []
+   },
+   "k25": {
+    "label": "text-justify",
+    "outcome": "survived",
+    "details": []
+   },
+   "k26": {
+    "label": "foo",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: foo"
+    ]
+   },
+   "k27": {
+    "label": "button",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: button"
+    ]
+   },
+   "k28": {
+    "label": "inner_column",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) class tokens dropped: inner_column"
+    ]
+   },
+   "k29": {
+    "label": "extra whitespace in class",
+    "outcome": "rewritten",
+    "details": [
+     "(wrapper) class re-serialised as \"custom-probe-k29 custom-ws\""
+    ],
+    "raw": "stom-probe-k27\">[k27] button</span></p>\r\n<p><span class=\"custom-probe-k28\">[k28] inner_column</span></p>\r\n<p><span class=\"custom-probe-k29 custom-ws\">[k29] extra whitespace in class</span></p>\r\n<p><span class=\"custom-probe-k30 custom-dup custom-dup\">[k30] duplicate token</span></p>\r\n<p class=\"custom-probe-k31\">[k31] all tokens invalid: <span>x</span></p>\r\n<p class=\"custom-probe-k32\">[k32] empty cl"
+   },
+   "k30": {
+    "label": "duplicate token",
+    "outcome": "survived",
+    "details": []
+   },
+   "k31": {
+    "label": "all tokens invalid",
+    "outcome": "stripped",
+    "details": [
+     "<span.foo.bar> @class dropped"
+    ]
+   },
+   "k32": {
+    "label": "empty class",
+    "outcome": "stripped",
+    "details": [
+     "<span> @class dropped"
+    ]
+   },
+   "k33": {
+    "label": "bare class",
+    "outcome": "stripped",
+    "details": [
+     "<span> @class dropped"
+    ]
+   },
+   "k34": {
+    "label": "hand-written spoiler",
+    "outcome": "survived",
+    "details": []
+   },
+   "a01": {
+    "label": "id",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @id dropped"
+    ]
+   },
+   "a02": {
+    "label": "data-*",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @data-probe dropped"
+    ]
+   },
+   "a03": {
+    "label": "aria-label",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @aria-label dropped"
+    ]
+   },
+   "a04": {
+    "label": "aria-hidden",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @aria-hidden dropped"
+    ]
+   },
+   "a05": {
+    "label": "role",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @role dropped"
+    ]
+   },
+   "a06": {
+    "label": "tabindex",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @tabindex dropped"
+    ]
+   },
+   "a07": {
+    "label": "hidden",
+    "outcome": "stripped",
+    "details": [
+     "<span> @hidden dropped"
+    ]
+   },
+   "a08": {
+    "label": "title",
+    "outcome": "survived",
+    "details": []
+   },
+   "a09": {
+    "label": "lang",
+    "outcome": "survived",
+    "details": []
+   },
+   "a10": {
+    "label": "dir",
+    "outcome": "survived",
+    "details": []
+   },
+   "a11": {
+    "label": "onclick",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @onclick dropped"
+    ]
+   },
+   "a12": {
+    "label": "popover + id",
+    "outcome": "stripped",
+    "details": [
+     "<div> @popover dropped",
+     "<div> @id dropped"
+    ]
+   },
+   "a13": {
+    "label": "button popovertarget",
+    "textSame": false,
+    "sentText": "[a13] button popovertarget: open",
+    "storedText": "[a13] button popovertarget: <button type=\"button\" popovertarget=\"probe-pop\">open</button>",
+    "outcome": "rewritten",
+    "details": [
+     "<button> escaped as visible text"
+    ],
+    "raw": "-probe-a11\">[a11] onclick</span></p>\r\n<div class=\"custom-probe-a12\">[a12] popover + id: <div>popover content</div></div>\r\n<p class=\"custom-probe-a13\">[a13] button popovertarget: &lt;button type=&quot;button&quot; popovertarget=&quot;probe-pop&quot;&gt;open&lt;/button&gt;</p>\r\n<p class=\"custom-probe-a14\">[a14] a popovertarget: <a>open</a></p>\r\n<p><span class=\"custom-probe-a15\">[a15] accesskey</span"
+   },
+   "a14": {
+    "label": "a popovertarget",
+    "outcome": "stripped",
+    "details": [
+     "<a> @popovertarget dropped"
+    ]
+   },
+   "a15": {
+    "label": "accesskey",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @accesskey dropped"
+    ]
+   },
+   "a16": {
+    "label": "contenteditable",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @contenteditable dropped"
+    ]
+   },
+   "a17": {
+    "label": "draggable",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @draggable dropped"
+    ]
+   },
+   "a18": {
+    "label": "translate",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @translate dropped"
+    ]
+   },
+   "a19": {
+    "label": "inert",
+    "outcome": "stripped",
+    "details": [
+     "<span> @inert dropped"
+    ]
+   },
+   "a20": {
+    "label": "h1 aria-label",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @aria-label dropped"
+    ]
+   },
+   "a21": {
+    "label": "p lang title dir",
+    "outcome": "survived",
+    "details": []
+   },
+   "s01": {
+    "label": "color (control)",
+    "outcome": "survived",
+    "details": []
+   },
+   "s02": {
+    "label": "!important",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @style dropped"
+    ]
+   },
+   "s03": {
+    "label": "font-size 1.5em",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: font-size:1.5em"
+    ]
+   },
+   "s04": {
+    "label": "150% + line-height",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: line-height:2"
+    ]
+   },
+   "s05": {
+    "label": "display float",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: display:flex; float:left"
+    ]
+   },
+   "s06": {
+    "label": "background url no-repeat",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: background:url('https://example.com/probe-s06.png') no-repeat"
+    ]
+   },
+   "s07": {
+    "label": "border-radius + slash rgb",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @style dropped"
+    ]
+   },
+   "s08": {
+    "label": "six never-seen list properties",
+    "outcome": "survived",
+    "details": []
+   },
+   "s09": {
+    "label": "border-radius",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: border-radius:4px"
+    ]
+   },
+   "s10": {
+    "label": "display",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: display:block"
+    ]
+   },
+   "s11": {
+    "label": "custom property + color",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: --i:3"
+    ]
+   },
+   "s12": {
+    "label": "custom property alone",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: --i:3"
+    ]
+   },
+   "s13": {
+    "label": "position top",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: position:relative; top:1px"
+    ]
+   },
+   "s14": {
+    "label": "font-family weight",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: font-family:serif; font-weight:700"
+    ]
+   },
+   "s15": {
+    "label": "transform",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: transform:rotate(5deg)"
+    ]
+   },
+   "s16": {
+    "label": "decimal percent",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @style dropped"
+    ]
+   },
+   "s17": {
+    "label": "trailing whitespace",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @style dropped"
+    ]
+   },
+   "s18": {
+    "label": "no-space list",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: float:left; border-radius:5px"
+    ]
+   },
+   "s19": {
+    "label": "gradient",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: background:linear-gradient(red, blue)"
+    ]
+   },
+   "s20": {
+    "label": "var() in color",
+    "outcome": "survived",
+    "details": []
+   },
+   "s21": {
+    "label": "uppercase property",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: COLOR:red"
+    ]
+   },
+   "s22": {
+    "label": "comment in style",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) @style dropped"
+    ]
+   },
+   "s23": {
+    "label": "8-digit hex",
+    "outcome": "survived",
+    "details": []
+   },
+   "s24": {
+    "label": "calc",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: width:calc(100% - 10px)"
+    ]
+   },
+   "s25": {
+    "label": "empty style",
+    "outcome": "survived",
+    "details": []
+   },
+   "s26": {
+    "label": "line-height letter-spacing",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: line-height:1.5; letter-spacing:2px"
+    ]
+   },
+   "s27": {
+    "label": "decoration shadows",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: text-decoration:underline; text-shadow:0 0 2px red; box-shadow:0 0 2px red"
+    ]
+   },
+   "s28": {
+    "label": "auto + 100%",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: height:auto"
+    ]
+   },
+   "s29": {
+    "label": "em values",
+    "outcome": "stripped",
+    "details": [
+     "(wrapper) style declarations dropped: padding:0.5em 1em"
+    ]
+   },
+   "s30": {
+    "label": "comma colour functions",
+    "outcome": "survived",
+    "details": []
+   },
+   "s31": {
+    "label": "LF inside style attribute",
+    "outcome": "stripped",
+    "details": [
+     "<span> @style dropped"
+    ]
+   },
+   "t01": {
+    "label": "b and i",
+    "outcome": "survived",
+    "details": []
+   },
+   "t02": {
+    "label": "edits",
+    "textSame": false,
+    "sentText": "[t02] edits: u s strike ins del",
+    "storedText": "[t02] edits: u s strike <ins>ins</ins> del",
+    "outcome": "rewritten",
+    "details": [
+     "<ins> escaped as visible text",
+     "<del.custom-t02d> @class dropped",
+     "<del.custom-t02d> @datetime dropped",
+     "<del.custom-t02d> @title dropped"
+    ],
+    "raw": " LF inside style attribute: <span>x</span></p>\r\n<p class=\"custom-probe-t01\">[t01] b and i: <b>bold</b> <i>italic</i></p>\r\n<p class=\"custom-probe-t02\">[t02] edits: <u class=\"custom-t02u\">u</u> <s>s</s> <strike>strike</strike> &lt;ins&gt;ins&lt;/ins&gt; <del>del</del></p>\r\n<p class=\"custom-probe-t03\">[t03] inline: <mark class=\"custom-t03m\">mark</mark> <small>small</small> <sub>sub</sub> <sup>sup</su"
+   },
+   "t03": {
+    "label": "inline",
+    "outcome": "survived",
+    "details": []
+   },
+   "t04": {
+    "label": "phrasing",
+    "textSame": false,
+    "sentText": "[t04] phrasing: abbr q cite dfn var samp time bdi bdo data",
+    "storedText": "[t04] phrasing: abbr q cite dfn var samp time <bdi>bdi</bdi> <bdo dir=\"rtl\">bdo</bdo> <data value=\"1\">data</data>",
+    "outcome": "rewritten",
+    "details": [
+     "<bdi> escaped as visible text",
+     "<bdo> escaped as visible text",
+     "<data> escaped as visible text"
+    ],
+    "raw": "<small>small</small> <sub>sub</sub> <sup>sup</sup> <kbd>kbd</kbd> <code class=\"language-css custom-t03c\">code</code></p>\r\n<p class=\"custom-probe-t04\">[t04] phrasing: <abbr title=\"abbr title\">abbr</abbr> <q cite=\"https://example.com/\">q</q> <cite>cite</cite> <dfn>dfn</dfn> <var>var</var> <samp>samp</samp> <time datetime=\"2026-10-14\">time</time> &lt;bdi&gt;bdi&lt;/bdi&gt; &lt;bdo dir=&quot;rtl&quot;"
+   },
+   "t05": {
+    "label": "blocks",
+    "outcome": "survived",
+    "details": []
+   },
+   "t06": {
+    "label": "h5 h6",
+    "outcome": "survived",
+    "details": []
+   },
+   "t07": {
+    "label": "lists",
+    "outcome": "stripped",
+    "details": [
+     "<ol.custom-t07o> @start dropped",
+     "<ol.custom-t07o> @reversed dropped",
+     "<ol.custom-t07o> @type dropped",
+     "<li> @value dropped"
+    ]
+   },
+   "t08": {
+    "label": "details name open",
+    "outcome": "stripped",
+    "details": [
+     "<details.custom-t08d> @class dropped",
+     "<details.custom-t08d> @title dropped",
+     "<details.custom-t08d> @style dropped",
+     "<details.custom-t08d> @name dropped",
+     "<details.custom-t08d> @open dropped",
+     "<summary.custom-t08s> @class dropped",
+     "<summary.custom-t08s> @lang dropped",
+     "<details> @name dropped"
+    ]
+   },
+   "t09": {
+    "label": "figure",
+    "outcome": "stripped",
+    "details": [
+     "<figure.custom-t09f> @class dropped",
+     "<figure.custom-t09f> @style dropped",
+     "<figcaption.custom-t09c> @class dropped",
+     "<figcaption.custom-t09c> @style dropped"
+    ]
+   },
+   "t10": {
+    "label": "legacy",
+    "textSame": false,
+    "sentText": "[t10] legacy: 漢(kan) font center",
+    "storedText": "[t10] legacy: 漢(kan) font <center>center</center>",
+    "outcome": "rewritten",
+    "details": [
+     "<center> escaped as visible text",
+     "<ruby.custom-t10r> @class dropped",
+     "<rt.custom-t10t> @class dropped",
+     "<font> @color dropped",
+     "<font> @face dropped",
+     "<font> @size dropped"
+    ],
+    "raw": "details></div>\r\n<div class=\"custom-probe-t09\">[t09] figure: <figure><figcaption>figcaption</figcaption></figure></div>\r\n<div class=\"custom-probe-t10\">[t10] legacy: <ruby>漢<rp>(</rp><rt>kan</rt><rp>)</rp></ruby> <font>font</font> &lt;center&gt;center&lt;/center&gt;</div>\r\n<p class=\"custom-probe-t11\">[t11] unknown: &lt;marquee&gt;marquee&lt;/marquee&gt; soft<wbr>break</wbr></p>\r\n<div class=\"custom-p"
+   },
+   "t11": {
+    "label": "unknown",
+    "textSame": false,
+    "sentText": "[t11] unknown: marquee softbreak",
+    "storedText": "[t11] unknown: <marquee>marquee</marquee> softbreak",
+    "outcome": "rewritten",
+    "details": [
+     "<marquee> escaped as visible text"
+    ],
+    "raw": "[t10] legacy: <ruby>漢<rp>(</rp><rt>kan</rt><rp>)</rp></ruby> <font>font</font> &lt;center&gt;center&lt;/center&gt;</div>\r\n<p class=\"custom-probe-t11\">[t11] unknown: &lt;marquee&gt;marquee&lt;/marquee&gt; soft<wbr>break</wbr></p>\r\n<div class=\"custom-probe-t12\">[t12] self-closed span: &lt;span class=&quot;custom-t12x&quot;/&gt;after</div>\r\n<div class=\"custom-probe-t13\">[t13] svg math: &lt;svg class="
+   },
+   "t12": {
+    "label": "self-closed span",
+    "textSame": false,
+    "sentText": "[t12] self-closed span: after",
+    "storedText": "[t12] self-closed span: <span class=\"custom-t12x\"/>after",
+    "outcome": "rewritten",
+    "details": [
+     "<span.custom-t12x> escaped as visible text"
+    ],
+    "raw": "&gt;</div>\r\n<p class=\"custom-probe-t11\">[t11] unknown: &lt;marquee&gt;marquee&lt;/marquee&gt; soft<wbr>break</wbr></p>\r\n<div class=\"custom-probe-t12\">[t12] self-closed span: &lt;span class=&quot;custom-t12x&quot;/&gt;after</div>\r\n<div class=\"custom-probe-t13\">[t13] svg math: &lt;svg class=&quot;custom-t13s&quot; width=&quot;12&quot; height=&quot;12&quot; viewBox=&quot;0 0 12 12&quot;&gt;&lt;circle"
+   },
+   "t13": {
+    "label": "svg math",
+    "textSame": false,
+    "sentText": "[t13] svg math:  x",
+    "storedText": "[t13] svg math: <svg class=\"custom-t13s\" width=\"12\" height=\"12\" viewBox=\"0 0 12 12\"><circle cx=\"6\" cy=\"6\" r=\"5\" fill=\"currentColor\"></circle></svg> <math><mi>x<…(+11)",
+    "outcome": "rewritten",
+    "details": [
+     "<svg.custom-t13s> escaped as visible text",
+     "<circle> escaped as visible text",
+     "<math> escaped as visible text",
+     "<mi> escaped as visible text"
+    ],
+    "raw": "wbr></p>\r\n<div class=\"custom-probe-t12\">[t12] self-closed span: &lt;span class=&quot;custom-t12x&quot;/&gt;after</div>\r\n<div class=\"custom-probe-t13\">[t13] svg math: &lt;svg class=&quot;custom-t13s&quot; width=&quot;12&quot; height=&quot;12&quot; viewBox=&quot;0 0 12 12&quot;&gt;&lt;circle cx=&quot;6&quot; cy=&quot;6&quot; r=&quot;5&quot; fill=&quot;currentColor&quot;&gt;&lt;/circle&gt;&lt;/svg&gt"
+   },
+   "t14": {
+    "label": "media",
+    "textSame": false,
+    "sentText": "[t14] media: ",
+    "storedText": "[t14] media: <source type=\"video/mp4\"><audio controls></audio>",
+    "outcome": "rewritten",
+    "details": [
+     "<source> escaped as visible text",
+     "<audio> escaped as visible text",
+     "<video.custom-t14v> @class dropped",
+     "<video.custom-t14v> @width dropped",
+     "<video.custom-t14v> @height dropped"
+    ],
+    "raw": "ot; fill=&quot;currentColor&quot;&gt;&lt;/circle&gt;&lt;/svg&gt; &lt;math&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt;</div>\r\n<div class=\"custom-probe-t14\">[t14] media: <video controls>&lt;source type=&quot;video/mp4&quot;&gt;</video>&lt;audio controls&gt;&lt;/audio&gt;</div>\r\n<div class=\"custom-probe-t15\">[t15] picture: &lt;picture&gt;&lt;source srcset=&quot;https://example.com/probe-t15.png&quot; type"
+   },
+   "t15": {
+    "label": "picture",
+    "textSame": false,
+    "sentText": "[t15] picture: ",
+    "storedText": "[t15] picture: <picture><source srcset=\"https://example.com/probe-t15.png\" type=\"image/png\"></picture>",
+    "outcome": "rewritten",
+    "details": [
+     "<picture> escaped as visible text",
+     "<source> escaped as visible text",
+     "<img> @loading added: \"lazy\""
+    ],
+    "raw": "14] media: <video controls>&lt;source type=&quot;video/mp4&quot;&gt;</video>&lt;audio controls&gt;&lt;/audio&gt;</div>\r\n<div class=\"custom-probe-t15\">[t15] picture: &lt;picture&gt;&lt;source srcset=&quot;https://example.com/probe-t15.png&quot; type=&quot;image/png&quot;&gt;<img src=\"https://example.com/probe-t15.png\" alt=\"t15\" width=\"40\" height=\"30\" loading=\"lazy\">&lt;/picture&gt;</div>\r\n<div clas"
+   },
+   "t16": {
+    "label": "widgets",
+    "textSame": false,
+    "sentText": "[t16] widgets:   ",
+    "storedText": "[t16] widgets: <canvas width=\"10\" height=\"10\"></canvas> <progress value=\"1\" max=\"2\"></progress> <meter value=\"0.5\"></meter>",
+    "outcome": "rewritten",
+    "details": [
+     "<canvas> escaped as visible text",
+     "<progress> escaped as visible text",
+     "<meter> escaped as visible text"
+    ],
+    "raw": "gt;<img src=\"https://example.com/probe-t15.png\" alt=\"t15\" width=\"40\" height=\"30\" loading=\"lazy\">&lt;/picture&gt;</div>\r\n<div class=\"custom-probe-t16\">[t16] widgets: &lt;canvas width=&quot;10&quot; height=&quot;10&quot;&gt;&lt;/canvas&gt; &lt;progress value=&quot;1&quot; max=&quot;2&quot;&gt;&lt;/progress&gt; &lt;meter value=&quot;0.5&quot;&gt;&lt;/meter&gt;</div>\r\n<div class=\"custom-probe-t17\">[t1"
+   },
+   "t17": {
+    "label": "table",
+    "textSame": false,
+    "sentText": "[t17] table: captionthtdtd2tfoot",
+    "storedText": "[t17] table: <caption>caption</caption><colgroup><col span=\"1\"></colgroup>thtdtd2tfoot",
+    "outcome": "rewritten",
+    "details": [
+     "<caption> escaped as visible text",
+     "<colgroup> escaped as visible text",
+     "<col> escaped as visible text",
+     "<table.custom-t17t> @border dropped",
+     "<table.custom-t17t> @cellpadding dropped",
+     "<th> @scope dropped",
+     "<td.custom-t17d> @align dropped"
+    ],
+    "raw": "ess value=&quot;1&quot; max=&quot;2&quot;&gt;&lt;/progress&gt; &lt;meter value=&quot;0.5&quot;&gt;&lt;/meter&gt;</div>\r\n<div class=\"custom-probe-t17\">[t17] table: <table class=\"custom-t17t\" width=\"200\" align=\"center\">&lt;caption&gt;caption&lt;/caption&gt;&lt;colgroup&gt;&lt;col span=&quot;1&quot;&gt;&lt;/colgroup&gt;<thead><tr><th colspan=\"2\">th</th></tr></thead><tbody><tr><td width=\"50\" colspan=\""
+   },
+   "t18": {
+    "label": "form controls",
+    "textSame": false,
+    "sentText": "[t18] form controls:  checkboxtoggled option textarea form",
+    "storedText": "[t18] form controls: <label class=\"custom-t18l\"><input type=\"checkbox\" class=\"custom-t18i\"> checkbox</label>toggled <select><option>option</option></select> <te…(+64)",
+    "outcome": "rewritten",
+    "details": [
+     "<label.custom-t18l> escaped as visible text",
+     "<input.custom-t18i> escaped as visible text",
+     "<select> escaped as visible text",
+     "<option> escaped as visible text",
+     "<textarea> escaped as visible text",
+     "<form.custom-t18f> escaped as visible text"
+    ],
+    "raw": "=\"custom-t17d\">td</td><td style=\"color: red\">td2</td></tr></tbody><tfoot><tr><td>tfoot</td></tr></tfoot></table></div>\r\n<div class=\"custom-probe-t18\">[t18] form controls: &lt;label class=&quot;custom-t18l&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;custom-t18i&quot;&gt; checkbox&lt;/label&gt;<span class=\"custom-t18s\">toggled</span> &lt;select&gt;&lt;option&gt;option&lt;/option&gt;&lt;"
+   },
+   "t19": {
+    "label": "sectioning",
+    "textSame": false,
+    "sentText": "[t19] sectioning: sectionarticlenavheaderfootermainaside",
+    "storedText": "[t19] sectioning: <section>section</section><article>article</article><nav>nav</nav><header>header</header><footer>footer</footer><main>main</main><aside>aside<…(+7)",
+    "outcome": "rewritten",
+    "details": [
+     "<section> escaped as visible text",
+     "<article> escaped as visible text",
+     "<nav> escaped as visible text",
+     "<header> escaped as visible text",
+     "<footer> escaped as visible text",
+     "<main> escaped as visible text",
+     "<aside> escaped as visible text"
+    ],
+    "raw": "select&gt; &lt;textarea&gt;textarea&lt;/textarea&gt; &lt;form class=&quot;custom-t18f&quot;&gt;form&lt;/form&gt;</div>\r\n<div class=\"custom-probe-t19\">[t19] sectioning: &lt;section&gt;section&lt;/section&gt;&lt;article&gt;article&lt;/article&gt;&lt;nav&gt;nav&lt;/nav&gt;&lt;header&gt;header&lt;/header&gt;&lt;footer&gt;footer&lt;/footer&gt;&lt;main&gt;main&lt;/main&gt;&lt;aside&gt;aside&lt;/aside&gt"
+   },
+   "t20": {
+    "label": "style script",
+    "textSame": false,
+    "sentText": "[t20] style script: #wrapper{--probe-t20:1}/*t20*/",
+    "storedText": "[t20] style script: <style>#wrapper{--probe-t20:1}</style><script>/*t20*/</script>",
+    "outcome": "rewritten",
+    "details": [
+     "<style> escaped as visible text",
+     "<script> escaped as visible text"
+    ],
+    "raw": "r&lt;/header&gt;&lt;footer&gt;footer&lt;/footer&gt;&lt;main&gt;main&lt;/main&gt;&lt;aside&gt;aside&lt;/aside&gt;</div>\r\n<div class=\"custom-probe-t20\">[t20] style script: &lt;style&gt;#wrapper{--probe-t20:1}&lt;/style&gt;&lt;script&gt;/*t20*/&lt;/script&gt;</div>\r\n<div class=\"custom-probe-t21\">[t21] link meta: &lt;link rel=&quot;stylesheet&quot; href=&quot;https://example.com/probe-t21.css&quot;&gt"
+   },
+   "t21": {
+    "label": "link meta",
+    "textSame": false,
+    "sentText": "[t21] link meta: ",
+    "storedText": "[t21] link meta: <link rel=\"stylesheet\" href=\"https://example.com/probe-t21.css\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><meta name=…(+22)",
+    "outcome": "rewritten",
+    "details": [
+     "<link> escaped as visible text",
+     "<link> escaped as visible text",
+     "<meta> escaped as visible text"
+    ],
+    "raw": "-t20\">[t20] style script: &lt;style&gt;#wrapper{--probe-t20:1}&lt;/style&gt;&lt;script&gt;/*t20*/&lt;/script&gt;</div>\r\n<div class=\"custom-probe-t21\">[t21] link meta: &lt;link rel=&quot;stylesheet&quot; href=&quot;https://example.com/probe-t21.css&quot;&gt;&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;&lt;meta name=&quot;probe&quot; content=&quot;t21"
+   },
+   "t22": {
+    "label": "embedded",
+    "textSame": false,
+    "sentText": "[t22] embedded: dialogslot",
+    "storedText": "[t22] embedded: <object></object><embed type=\"text/plain\"><dialog open>dialog</dialog><template>template</template><slot>slot</slot>",
+    "outcome": "rewritten",
+    "details": [
+     "<object> escaped as visible text",
+     "<embed> escaped as visible text",
+     "<dialog> escaped as visible text",
+     "<template> escaped as visible text",
+     "<slot> escaped as visible text"
+    ],
+    "raw": "&quot;https://fonts.gstatic.com&quot; crossorigin&gt;&lt;meta name=&quot;probe&quot; content=&quot;t21&quot;&gt;</div>\r\n<div class=\"custom-probe-t22\">[t22] embedded: &lt;object&gt;&lt;/object&gt;&lt;embed type=&quot;text/plain&quot;&gt;&lt;dialog open&gt;dialog&lt;/dialog&gt;&lt;template&gt;template&lt;/template&gt;&lt;slot&gt;slot&lt;/slot&gt;</div>\r\n<h1 class=\"custom-probe-t23\"><span class=\"cust"
+   },
+   "t23": {
+    "label": "Name",
+    "outcome": "survived",
+    "details": []
+   },
+   "t24": {
+    "label": "empty elements",
+    "outcome": "survived",
+    "details": []
+   },
+   "i01": {
+    "label": "youtube, all attributes",
+    "outcome": "rewritten",
+    "details": [
+     "<iframe.custom-i01x> replaced by click-to-activate placeholder button.embed_preload.youtube_preload",
+     "<iframe.custom-i01x> (inside data-embed_code) @title dropped",
+     "<iframe.custom-i01x> (inside data-embed_code) @allow dropped",
+     "<iframe.custom-i01x> (inside data-embed_code) @loading dropped",
+     "<iframe.custom-i01x> (inside data-embed_code) @sandbox dropped",
+     "<iframe.custom-i01x> (inside data-embed_code) @referrerpolicy dropped",
+     "<iframe.custom-i01x> (inside data-embed_code) @class dropped",
+     "<iframe.custom-i01x> (inside data-embed_code) @name dropped"
+    ],
+    "raw": "-t24\">[t24] empty elements: <span class=\"custom-t24e\"></span><div class=\"custom-t24f\"></div><span></span><p></p></div>\r\n<div class=\"custom-probe-i01\">[i01] youtube, all attributes: <button itchio aria-label=\"Click to activate YouTube embed\" type=\"button\" class=\"embed_preload youtube_preload\" data-embed_code=\"&lt;iframe src=&quot;https://www.youtube.com/embed/aqz-KE-bpKQ&quot; width=&quot;320&quot;"
+   },
+   "i02": {
+    "label": "youtube-nocookie",
+    "textSame": false,
+    "sentText": "[i02] youtube-nocookie: ",
+    "storedText": "[i02] youtube-nocookie: https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ",
+    "outcome": "rewritten",
+    "details": [
+     "<iframe> replaced by click-to-activate placeholder button.embed_preload.other_embed"
+    ],
+    "raw": "ound: url(https://i.ytimg.com/vi/aqz-KE-bpKQ/hqdefault.jpg) 50% 50% no-repeat; background-size: cover\"></button></div>\r\n<div class=\"custom-probe-i02\">[i02] youtube-nocookie: <button itchio aria-label=\"Click to activate iframe embed\" type=\"button\" class=\"embed_preload other_embed\" title=\"https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ\" data-embed_code=\"&lt;iframe src=&quot;https://www.youtube-no"
+   },
+   "i03": {
+    "label": "vimeo",
+    "textSame": false,
+    "sentText": "[i03] vimeo: ",
+    "storedText": "[i03] vimeo: https://player.vimeo.com/video/76979871",
+    "outcome": "rewritten",
+    "details": [
+     "<iframe> replaced by click-to-activate placeholder button.embed_preload.other_embed"
+    ],
+    "raw": "t: 168px; width: 300px\"><div class=\"embed_url\">https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ</div></button></div>\r\n<div class=\"custom-probe-i03\">[i03] vimeo: <button itchio aria-label=\"Click to activate iframe embed\" type=\"button\" class=\"embed_preload other_embed\" title=\"https://player.vimeo.com/video/N\" data-embed_code=\"&lt;iframe src=&quot;https://player.vimeo.com/video/N&quot"
+   },
+   "i04": {
+    "label": "arbitrary https host",
+    "textSame": false,
+    "sentText": "[i04] arbitrary https host: ",
+    "storedText": "[i04] arbitrary https host: https://example.com/",
+    "outcome": "rewritten",
+    "details": [
+     "<iframe> replaced by click-to-activate placeholder button.embed_preload.other_embed"
+    ],
+    "raw": "tyle=\"height: 168px; width: 300px\"><div class=\"embed_url\">https://player.vimeo.com/video/N</div></button></div>\r\n<div class=\"custom-probe-i04\">[i04] arbitrary https host: <button itchio aria-label=\"Click to activate iframe embed\" type=\"button\" class=\"embed_preload other_embed\" title=\"https://example.com/\" data-embed_code=\"&lt;iframe src=&quot;https://example.com/&quot; width=&quot;320&quot;"
+   },
+   "i05": {
+    "label": "github pages host",
+    "textSame": false,
+    "sentText": "[i05] github pages host: ",
+    "storedText": "[i05] github pages host: https://pages.github.com/",
+    "outcome": "rewritten",
+    "details": [
+     "<iframe> replaced by click-to-activate placeholder button.embed_preload.other_embed"
+    ],
+    "raw": ";&lt;/iframe&gt;\" style=\"height: 168px; width: 300px\"><div class=\"embed_url\">https://example.com/</div></button></div>\r\n<div class=\"custom-probe-i05\">[i05] github pages host: <button itchio aria-label=\"Click to activate iframe embed\" type=\"button\" class=\"embed_preload other_embed\" title=\"https://pages.github.com/\" data-embed_code=\"&lt;iframe src=&quot;https://pages.github.com/&quot; width=&quot;32"
+   },
+   "i06": {
+    "label": "http host",
+    "textSame": false,
+    "sentText": "[i06] http host: ",
+    "storedText": "[i06] http host: http://example.com/",
+    "outcome": "rewritten",
+    "details": [
+     "<iframe> replaced by click-to-activate placeholder button.embed_preload.other_embed"
+    ],
+    "raw": "/iframe&gt;\" style=\"height: 168px; width: 300px\"><div class=\"embed_url\">https://pages.github.com/</div></button></div>\r\n<div class=\"custom-probe-i06\">[i06] http host: <button itchio aria-label=\"Click to activate iframe embed\" type=\"button\" class=\"embed_preload other_embed\" title=\"http://example.com/\" data-embed_code=\"&lt;iframe src=&quot;http://example.com/&quot; width=&quot;320&quot; height=&quot"
+   },
+   "i07": {
+    "label": "protocol-relative",
+    "textSame": false,
+    "sentText": "[i07] protocol-relative: ",
+    "storedText": "[i07] protocol-relative: //example.org/",
+    "outcome": "rewritten",
+    "details": [
+     "<iframe> replaced by click-to-activate placeholder button.embed_preload.other_embed"
+    ],
+    "raw": "t;&lt;/iframe&gt;\" style=\"height: 168px; width: 300px\"><div class=\"embed_url\">http://example.com/</div></button></div>\r\n<div class=\"custom-probe-i07\">[i07] protocol-relative: <button itchio aria-label=\"Click to activate iframe embed\" type=\"button\" class=\"embed_preload other_embed\" title=\"//example.org/\" data-embed_code=\"&lt;iframe src=&quot;//example.org/&quot; width=&quot;320&quot; height=&quot;1"
+   },
+   "i08": {
+    "label": "srcdoc only",
+    "outcome": "stripped",
+    "details": [
+     "<iframe> @srcdoc dropped"
+    ]
+   },
+   "i09": {
+    "label": "data src",
+    "outcome": "stripped",
+    "details": [
+     "<iframe> @src dropped"
+    ]
+   },
+   "i10": {
+    "label": "codepen host",
+    "textSame": false,
+    "sentText": "[i10] codepen host: ",
+    "storedText": "[i10] codepen host: https://codepen.io/",
+    "outcome": "rewritten",
+    "details": [
+     "<iframe> replaced by click-to-activate placeholder button.embed_preload.other_embed"
+    ],
+    "raw": "ht=\"60\"></iframe></div>\r\n<div class=\"custom-probe-i09\">[i09] data src: <iframe width=\"320\" height=\"60\"></iframe></div>\r\n<div class=\"custom-probe-i10\">[i10] codepen host: <button itchio aria-label=\"Click to activate iframe embed\" type=\"button\" class=\"embed_preload other_embed\" title=\"https://codepen.io/\" data-embed_code=\"&lt;iframe src=&quot;https://codepen.io/&quot; width=&quot;320&quot; height=&q"
+   },
+   "l01": {
+    "label": "rel=me off-site",
+    "outcome": "rewritten",
+    "details": [
+     "<a> @rel changed: \"me\" -> \"nofollow noopener\"",
+     "<a> @referrerpolicy added: \"origin\""
+    ],
+    "raw": "&gt;&lt;/iframe&gt;\" style=\"height: 168px; width: 300px\"><div class=\"embed_url\">https://codepen.io/</div></button></div>\r\n<p class=\"custom-probe-l01\">[l01] rel=me off-site: <a href=\"https://mastodon.example/@probe\" target=\"_blank\" referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l02\">[l02] rel on itch link: <a href=\"https://itch.io/\">link</a></p>\r\n<p class=\"cust"
+   },
+   "l02": {
+    "label": "rel on itch link",
+    "outcome": "stripped",
+    "details": [
+     "<a> @rel dropped"
+    ]
+   },
+   "l03": {
+    "label": "fragment href",
+    "outcome": "rewritten",
+    "details": [
+     "<a> @referrerpolicy added: \"origin\"",
+     "<a> @rel added: \"nofollow noopener\"",
+     "<a> @href dropped"
+    ],
+    "raw": "llow noopener\">link</a></p>\r\n<p class=\"custom-probe-l02\">[l02] rel on itch link: <a href=\"https://itch.io/\">link</a></p>\r\n<p class=\"custom-probe-l03\">[l03] fragment href: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l04\">[l04] relative href: <a>link</a></p>\r\n<p class=\"custom-probe-l05\">[l05] javascript href: <a referrerpolicy=\"origin\" rel=\"nofollow noopen"
+   },
+   "l04": {
+    "label": "relative href",
+    "outcome": "stripped",
+    "details": [
+     "<a> @href dropped"
+    ]
+   },
+   "l05": {
+    "label": "javascript href",
+    "outcome": "rewritten",
+    "details": [
+     "<a> @referrerpolicy added: \"origin\"",
+     "<a> @rel added: \"nofollow noopener\"",
+     "<a> @href dropped"
+    ],
+    "raw": "erpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l04\">[l04] relative href: <a>link</a></p>\r\n<p class=\"custom-probe-l05\">[l05] javascript href: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l06\">[l06] tel href: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l07\">[l07] uppercase scheme: <"
+   },
+   "l06": {
+    "label": "tel href",
+    "outcome": "rewritten",
+    "details": [
+     "<a> @referrerpolicy added: \"origin\"",
+     "<a> @rel added: \"nofollow noopener\"",
+     "<a> @href dropped"
+    ],
+    "raw": "</p>\r\n<p class=\"custom-probe-l05\">[l05] javascript href: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l06\">[l06] tel href: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l07\">[l07] uppercase scheme: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l08\">[l08] leading space: <a "
+   },
+   "l07": {
+    "label": "uppercase scheme",
+    "outcome": "rewritten",
+    "details": [
+     "<a> @referrerpolicy added: \"origin\"",
+     "<a> @rel added: \"nofollow noopener\"",
+     "<a> @href dropped"
+    ],
+    "raw": "ink</a></p>\r\n<p class=\"custom-probe-l06\">[l06] tel href: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l07\">[l07] uppercase scheme: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l08\">[l08] leading space: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l09\">[l09] mailto: <a hr"
+   },
+   "l08": {
+    "label": "leading space",
+    "outcome": "rewritten",
+    "details": [
+     "<a> @referrerpolicy added: \"origin\"",
+     "<a> @rel added: \"nofollow noopener\"",
+     "<a> @href dropped"
+    ],
+    "raw": "/p>\r\n<p class=\"custom-probe-l07\">[l07] uppercase scheme: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l08\">[l08] leading space: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l09\">[l09] mailto: <a href=\"mailto:probe@example.com\" referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l1"
+   },
+   "l09": {
+    "label": "mailto",
+    "outcome": "rewritten",
+    "details": [
+     "<a> @referrerpolicy added: \"origin\"",
+     "<a> @rel added: \"nofollow noopener\""
+    ],
+    "raw": "a></p>\r\n<p class=\"custom-probe-l08\">[l08] leading space: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l09\">[l09] mailto: <a href=\"mailto:probe@example.com\" referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l10\">[l10] named anchor: <a name=\"probe-target\">target</a></p>\r\n<p class=\"custom-probe-l11\">[l11] data href: <a refe"
+   },
+   "l10": {
+    "label": "named anchor",
+    "outcome": "survived",
+    "details": []
+   },
+   "l11": {
+    "label": "data href",
+    "outcome": "rewritten",
+    "details": [
+     "<a> @referrerpolicy added: \"origin\"",
+     "<a> @rel added: \"nofollow noopener\"",
+     "<a> @href dropped"
+    ],
+    "raw": "=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l10\">[l10] named anchor: <a name=\"probe-target\">target</a></p>\r\n<p class=\"custom-probe-l11\">[l11] data href: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l12\">[l12] ampersands: <a href=\"https://example.com/?a=1&b=2&amp;c=3\" referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"cus"
+   },
+   "l12": {
+    "label": "ampersands",
+    "outcome": "rewritten",
+    "details": [
+     "<a> @referrerpolicy added: \"origin\"",
+     "<a> @rel added: \"nofollow noopener\""
+    ],
+    "raw": "et</a></p>\r\n<p class=\"custom-probe-l11\">[l11] data href: <a referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l12\">[l12] ampersands: <a href=\"https://example.com/?a=1&b=2&amp;c=3\" referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l13\">[l13] link attributes: <a href=\"https://example.com/\" target=\"probe-frame\" referrerpolicy=\"orig"
+   },
+   "l13": {
+    "label": "link attributes",
+    "outcome": "rewritten",
+    "details": [
+     "<a> @referrerpolicy changed: \"no-referrer\" -> \"origin\"",
+     "<a> @rel changed: \"noreferrer\" -> \"nofollow noopener\"",
+     "<a> @hreflang dropped",
+     "<a> @download dropped",
+     "<a> @type dropped",
+     "<a> @ping dropped"
+    ],
+    "raw": " ampersands: <a href=\"https://example.com/?a=1&b=2&amp;c=3\" referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-l13\">[l13] link attributes: <a href=\"https://example.com/\" target=\"probe-frame\" referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-g01\">[g01] img control: <img src=\"https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_"
+   },
+   "g01": {
+    "label": "img control",
+    "outcome": "rewritten",
+    "details": [
+     "<img> @loading added: \"lazy\""
+    ],
+    "raw": "ibutes: <a href=\"https://example.com/\" target=\"probe-frame\" referrerpolicy=\"origin\" rel=\"nofollow noopener\">link</a></p>\r\n<p class=\"custom-probe-g01\">[g01] img control: <img src=\"https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png\" alt=\"g01\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g02\">[g02] img no alt: <img src=\"https://example.com/p"
+   },
+   "g02": {
+    "label": "img no alt",
+    "outcome": "rewritten",
+    "details": [
+     "<img> @loading added: \"lazy\""
+    ],
+    "raw": "ia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png\" alt=\"g01\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g02\">[g02] img no alt: <img src=\"https://example.com/probe-g02.png\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g03\">[g03] img empty alt: <img src=\"https://example.com/probe-g03.png\" alt=\"\" width=\"40\" height=\"30\" loading=\"lazy\"></p>"
+   },
+   "g03": {
+    "label": "img empty alt",
+    "outcome": "rewritten",
+    "details": [
+     "<img> @loading added: \"lazy\""
+    ],
+    "raw": "tom-probe-g02\">[g02] img no alt: <img src=\"https://example.com/probe-g02.png\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g03\">[g03] img empty alt: <img src=\"https://example.com/probe-g03.png\" alt=\"\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g04\">[g04] img attributes: <img src=\"https://example.com/probe-g04.png\" alt=\"g04\" class=\"custom-g04x\" style=\"b"
+   },
+   "g04": {
+    "label": "img attributes",
+    "outcome": "rewritten",
+    "details": [
+     "<img.custom-g04x> @loading changed: \"eager\" -> \"lazy\"",
+     "<img.custom-g04x> @srcset dropped",
+     "<img.custom-g04x> @sizes dropped",
+     "<img.custom-g04x> @decoding dropped",
+     "<img.custom-g04x> @fetchpriority dropped",
+     "<img.custom-g04x> @crossorigin dropped",
+     "<img.custom-g04x> @referrerpolicy dropped"
+    ],
+    "raw": "g03\">[g03] img empty alt: <img src=\"https://example.com/probe-g03.png\" alt=\"\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g04\">[g04] img attributes: <img src=\"https://example.com/probe-g04.png\" alt=\"g04\" class=\"custom-g04x\" style=\"border: 1px solid red\" title=\"t g04\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g05\">[g05] img http: <img src=\"http://exam"
+   },
+   "g05": {
+    "label": "img http",
+    "outcome": "rewritten",
+    "details": [
+     "<img> @loading added: \"lazy\""
+    ],
+    "raw": "ng\" alt=\"g04\" class=\"custom-g04x\" style=\"border: 1px solid red\" title=\"t g04\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g05\">[g05] img http: <img src=\"http://example.com/probe-g05.png\" alt=\"g05\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g06\">[g06] img data uri: </p>\r\n<p class=\"custom-probe-g07\">[g07] img unquoted width: &lt;img src=&quot;<a href=\"h"
+   },
+   "g06": {
+    "label": "img data uri",
+    "outcome": "stripped",
+    "details": [
+     "<img> removed"
+    ]
+   },
+   "g07": {
+    "label": "img unquoted width",
+    "textSame": false,
+    "sentText": "[g07] img unquoted width: ",
+    "storedText": "[g07] img unquoted width: <img src=\"https://example.com/probe-g07.png\" alt=\"g07\" width=40%>",
+    "outcome": "rewritten",
+    "details": [
+     "<img> escaped as visible text",
+     "extra elements in the stored markup: a"
+    ],
+    "raw": "robe-g05.png\" alt=\"g05\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g06\">[g06] img data uri: </p>\r\n<p class=\"custom-probe-g07\">[g07] img unquoted width: &lt;img src=&quot;<a href=\"https://example.com/probe-g07.png\" referrerpolicy=\"origin\" rel=\"nofollow noopener\">https://example.com/probe-g07.png</a>&quot; alt=&quot;g07&quot; width=40%&gt;</p>\r\n<p class=\"custom-probe-g08\">[g0"
+   },
+   "g08": {
+    "label": "img self-closed",
+    "outcome": "rewritten",
+    "details": [
+     "<img> @loading added: \"lazy\""
+    ],
+    "raw": "olicy=\"origin\" rel=\"nofollow noopener\">https://example.com/probe-g07.png</a>&quot; alt=&quot;g07&quot; width=40%&gt;</p>\r\n<p class=\"custom-probe-g08\">[g08] img self-closed: <img src=\"https://example.com/probe-g08.png\" alt=\"g08\" width=\"40\" height=\"30\"  loading=\"lazy\"/></p>\r\n<p class=\"custom-probe-g09\">[g09] img relative: <img alt=\"g09\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-pr"
+   },
+   "g09": {
+    "label": "img relative",
+    "outcome": "rewritten",
+    "details": [
+     "<img> @loading added: \"lazy\"",
+     "<img> @src dropped"
+    ],
+    "raw": "08] img self-closed: <img src=\"https://example.com/probe-g08.png\" alt=\"g08\" width=\"40\" height=\"30\"  loading=\"lazy\"/></p>\r\n<p class=\"custom-probe-g09\">[g09] img relative: <img alt=\"g09\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g10\">[g10] img protocol-relative: <img src=\"//example.com/probe-g10.png\" alt=\"g10\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-prob"
+   },
+   "g10": {
+    "label": "img protocol-relative",
+    "outcome": "rewritten",
+    "details": [
+     "<img> @loading added: \"lazy\""
+    ],
+    "raw": "=\"lazy\"/></p>\r\n<p class=\"custom-probe-g09\">[g09] img relative: <img alt=\"g09\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-g10\">[g10] img protocol-relative: <img src=\"//example.com/probe-g10.png\" alt=\"g10\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-e01\">[e01] entities: &amp; &lt; &gt; &quot; &#39; &copy; &copy2026 &#x2192; &hellip; &nbsp;|</p>\r\n<p clas"
+   },
+   "e01": {
+    "label": "entities",
+    "outcome": "survived",
+    "details": [],
+    "raw": "[g10] img protocol-relative: <img src=\"//example.com/probe-g10.png\" alt=\"g10\" width=\"40\" height=\"30\" loading=\"lazy\"></p>\r\n<p class=\"custom-probe-e01\">[e01] entities: &amp; &lt; &gt; &quot; &#39; &copy; &copy2026 &#x2192; &hellip; &nbsp;|</p>\r\n<p class=\"custom-probe-e02\">[e02] raw ampersand and less-than: R&D a &amp; b &notanentity; 1&lt;2 3&gt;2</p>\r\n<p class=\"custom-probe-e03\">[e03] unicode: → é "
+   },
+   "e02": {
+    "label": "raw ampersand and less-than",
+    "outcome": "survived",
+    "details": [],
+    "raw": "\n<p class=\"custom-probe-e01\">[e01] entities: &amp; &lt; &gt; &quot; &#39; &copy; &copy2026 &#x2192; &hellip; &nbsp;|</p>\r\n<p class=\"custom-probe-e02\">[e02] raw ampersand and less-than: R&D a &amp; b &notanentity; 1&lt;2 3&gt;2</p>\r\n<p class=\"custom-probe-e03\">[e03] unicode: → é 漢字 😀 👩‍💻 עברית é</p>\r\n<p class=\"custom-probe-e04\">[e04] html comment: a&lt;!-- probe comment e04 --&gt;b</p>\r\n<div cla"
+   },
+   "e03": {
+    "label": "unicode",
+    "outcome": "survived",
+    "details": [],
+    "raw": "nbsp;|</p>\r\n<p class=\"custom-probe-e02\">[e02] raw ampersand and less-than: R&D a &amp; b &notanentity; 1&lt;2 3&gt;2</p>\r\n<p class=\"custom-probe-e03\">[e03] unicode: → é 漢字 😀 👩‍💻 עברית é</p>\r\n<p class=\"custom-probe-e04\">[e04] html comment: a&lt;!-- probe comment e04 --&gt;b</p>\r\n<div class=\"custom-probe-e05\">[e05] empty paragraphs:<p></p><p><br></p><p>&nbsp;</p></div>\r\n<div class=\"custom-probe-e"
+   },
+   "e04": {
+    "label": "html comment",
+    "textSame": false,
+    "sentText": "[e04] html comment: ab",
+    "storedText": "[e04] html comment: a<!-- probe comment e04 -->b",
+    "outcome": "rewritten",
+    "details": [
+     "HTML comment escaped as visible text"
+    ],
+    "raw": "n: R&D a &amp; b &notanentity; 1&lt;2 3&gt;2</p>\r\n<p class=\"custom-probe-e03\">[e03] unicode: → é 漢字 😀 👩‍💻 עברית é</p>\r\n<p class=\"custom-probe-e04\">[e04] html comment: a&lt;!-- probe comment e04 --&gt;b</p>\r\n<div class=\"custom-probe-e05\">[e05] empty paragraphs:<p></p><p><br></p><p>&nbsp;</p></div>\r\n<div class=\"custom-probe-e06\">[e06] multi-line tag: &lt;span\r\nclass=&quot;custom-e06x&quot;&gt;ins"
+   },
+   "e05": {
+    "label": "empty paragraphs:",
+    "outcome": "survived",
+    "details": [],
+    "raw": "e: → é 漢字 😀 👩‍💻 עברית é</p>\r\n<p class=\"custom-probe-e04\">[e04] html comment: a&lt;!-- probe comment e04 --&gt;b</p>\r\n<div class=\"custom-probe-e05\">[e05] empty paragraphs:<p></p><p><br></p><p>&nbsp;</p></div>\r\n<div class=\"custom-probe-e06\">[e06] multi-line tag: &lt;span\r\nclass=&quot;custom-e06x&quot;&gt;inside&lt;/span&gt;</div>\r\n<div class=\"custom-probe-e09\">[e09] upper-case tag and attribute: "
+   },
+   "e06": {
+    "label": "multi-line tag",
+    "textSame": false,
+    "sentText": "[e06] multi-line tag: inside",
+    "storedText": "[e06] multi-line tag: <span\nclass=\"custom-e06x\">inside</span>",
+    "outcome": "rewritten",
+    "details": [
+     "<span.custom-e06x> escaped as visible text"
+    ],
+    "raw": "be comment e04 --&gt;b</p>\r\n<div class=\"custom-probe-e05\">[e05] empty paragraphs:<p></p><p><br></p><p>&nbsp;</p></div>\r\n<div class=\"custom-probe-e06\">[e06] multi-line tag: &lt;span\r\nclass=&quot;custom-e06x&quot;&gt;inside&lt;/span&gt;</div>\r\n<div class=\"custom-probe-e09\">[e09] upper-case tag and attribute: <SPAN CLASS=\"custom-e09x\">inside</SPAN></div>\r\n<div class=\"custom-probe-e10\">[e10] quoting: "
+   },
+   "e09": {
+    "label": "upper-case tag and attribute",
+    "outcome": "survived",
+    "details": [],
+    "raw": "iv class=\"custom-probe-e06\">[e06] multi-line tag: &lt;span\r\nclass=&quot;custom-e06x&quot;&gt;inside&lt;/span&gt;</div>\r\n<div class=\"custom-probe-e09\">[e09] upper-case tag and attribute: <SPAN CLASS=\"custom-e09x\">inside</SPAN></div>\r\n<div class=\"custom-probe-e10\">[e10] quoting: <span class=\"custom-e10a\">single</span> <span class=\"custom-e10b\">unquoted</span></div>\r\n<p class=\"custom-probe-e07\">[e07]"
+   },
+   "e10": {
+    "label": "quoting",
+    "outcome": "survived",
+    "details": [],
+    "raw": "/div>\r\n<div class=\"custom-probe-e09\">[e09] upper-case tag and attribute: <SPAN CLASS=\"custom-e09x\">inside</SPAN></div>\r\n<div class=\"custom-probe-e10\">[e10] quoting: <span class=\"custom-e10a\">single</span> <span class=\"custom-e10b\">unquoted</span></div>\r\n<p class=\"custom-probe-e07\">[e07] raw less-than before an allowed tag name: a < b > d</b></p>\r\n<p class=\"custom-probe-e08\">[e08] raw less-than bef"
+   },
+   "e07": {
+    "label": "raw less-than before an allowed tag name",
+    "textSame": false,
+    "sentText": "[e07] raw less-than before an allowed tag name: a < b and c > d",
+    "storedText": "[e07] raw less-than before an allowed tag name: a < b > d",
+    "outcome": "rewritten",
+    "details": [
+     "text changed"
+    ],
+    "raw": "custom-probe-e10\">[e10] quoting: <span class=\"custom-e10a\">single</span> <span class=\"custom-e10b\">unquoted</span></div>\r\n<p class=\"custom-probe-e07\">[e07] raw less-than before an allowed tag name: a < b > d</b></p>\r\n<p class=\"custom-probe-e08\">[e08] raw less-than before div: x < div > y</div></p>\r\n<p class=\"custom-probe-x99\">[x99] PROBE-HTML-END</p></div><div class=\"more_information_toggle\"><div "
+   },
+   "e08": {
+    "label": "raw less-than before div",
+    "outcome": "rewritten",
+    "details": [
+     "content after this probe ended up outside the description container: an injected end tag closed it (see raw)"
+    ],
+    "raw": "0b\">unquoted</span></div>\r\n<p class=\"custom-probe-e07\">[e07] raw less-than before an allowed tag name: a < b > d</b></p>\r\n<p class=\"custom-probe-e08\">[e08] raw less-than before div: x < div > y</div></p>\r\n<p class=\"custom-probe-x99\">[x99] PROBE-HTML-END</p></div><div class=\"more_information_toggle\"><div class=\"toggle_row\"><a class=\"toggle_info_btn\" href=\"javascript:void(0)\">More information<svg cl"
+   },
+   "x99": {
+    "label": "PROBE-HTML-END",
+    "outsideContainer": true,
+    "outcome": "survived",
+    "details": [],
+    "raw": "n allowed tag name: a < b > d</b></p>\r\n<p class=\"custom-probe-e08\">[e08] raw less-than before div: x < div > y</div></p>\r\n<p class=\"custom-probe-x99\">[x99] PROBE-HTML-END</p></div><div class=\"more_information_toggle\"><div class=\"toggle_row\"><a class=\"toggle_info_btn\" href=\"javascript:void(0)\">More information<svg class=\"svgicon icon_down_tick\" width=\"12\" version=\"1.1\" aria-hidden viewBox=\"0 0 37 2",
+    "insideContainer": false
+   }
+  },
+  "probesOutsideContainer": [
+   "x99"
+  ],
+  "live": {
+   "target_aName_l10": "matches :target",
+   "target_id_a01": "element absent",
+   "detailsExclusive_t08": "0 details[name] element(s) survived",
+   "spoiler_k34": {
+    "textFill": "rgba(0, 0, 0, 0)",
+    "background": "rgb(34, 34, 34)",
+    "color": "rgb(34, 34, 34)",
+    "tabindex": "0"
+   },
+   "styleTagVar_t20": "(not set)",
+   "linkStylesheetRequested_t21": false,
+   "liveContainer": {
+    "iframes": 2,
+    "placeholders": 8,
+    "emptyLetterSpans_t23": 2,
+    "popoverAttr_a12": 0,
+    "inputs_t18": 0
+   }
+  }
+ },
+ "cap": null,
+ "theme": {
+  "id": "game_theme",
+  "chars": 4649,
+  "cr": 0,
+  "lf": 0,
+  "backgroundDeclarations": [
+   "background-color:#eeeeee",
+   "background-color:rgba(255, 255, 255, 1)",
+   "background:#fa5c5c",
+   "background:#fa5c5c",
+   "background-color:#fa5c5c",
+   "background-color:#d8d8d8",
+   "background-color:#fa5c5c !important",
+   "background:#e5e5e5",
+   "background-color:rgba(255, 255, 255, 0.85)",
+   "background-color:#fa5c5c",
+   "background:rgba(229, 229, 229, 1)",
+   "background:rgba(255, 255, 255, 1)",
+   "background:linear-gradient(to bottom,transparent,#ffffff 50%,#ffffff)",
+   "background:rgba(34, 34, 34, 0.05)",
+   "background-color:#fa5c5c",
+   "background:transparent",
+   "background:rgba(255, 255, 255, 1)",
+   "background-color:#fa5c5c !important",
+   "background:rgba(255, 255, 255, 1)",
+   "background-color:#e5e5e5"
+  ],
+  "fontLinks": [],
+  "classes": {
+   "body": "has_site_header locale_en game_layout_widget layout_widget responsive no_theme_toggle",
+   "wrapper": "div#wrapper.main.wrapper.game_page_wrapper",
+   "userPage": null,
+   "innerColumn": "div#inner_column.inner_column.size_large.family_lato",
+   "header": "div#header.header"
+  }
+ },
+ "dom": {
+  "htmlLang": "en",
+  "htmlClass": "",
+  "bodyClassLive": "has_site_header locale_en game_layout_widget layout_widget responsive no_theme_toggle",
+  "bodyClassServed": "has_site_header locale_en game_layout_widget layout_widget responsive no_theme_toggle",
+  "bodyChildren": [
+   "div#game_header_N.small_logo.game_header_widget.header_widget.base_widget.gray",
+   "div.game_page_apperance_columns",
+   "script",
+   "script#loading_lightbox_tpl",
+   "script"
+  ],
+  "wrapperChain": [
+   "div#wrapper.main.wrapper.game_page_wrapper",
+   "div#maincontent.game_page_primary_column",
+   "div.game_page_apperance_columns",
+   "body.has_site_header.locale_en.game_layout_widget.layout_widget.responsive.no_theme_toggle"
+  ],
+  "inlineStyle": {
+   "wrapper": null,
+   "innerColumn": "min-height: 618px;"
+  },
+  "sheetsServed": [
+   "link static.itch.io",
+   "link static.itch.io",
+   "style#game_theme",
+   "style#custom_css"
+  ],
+  "sheetsLive": [
+   "link static.itch.io",
+   "link static.itch.io",
+   "style#game_theme",
+   "style#custom_css"
+  ],
+  "afterCustomCssLive": [],
+  "counts": {
+   "h1": 4,
+   "h1Visible": 4,
+   "gameCell": 0,
+   "gameCellTools": 0,
+   "userTools": 0,
+   "userToolsHidden": 0,
+   "headerWidget": 1,
+   "siteHeader": 1,
+   "darkTheme": 0,
+   "purchasedGames": 0,
+   "collectionRow": 0,
+   "servedInlineDisplayNoneInWrapper": 0
+  },
+  "ownerConfig": {
+   "imageSizeLimit": "3145728",
+   "canUseCssFlag": true
+  }
+ },
+ "warnings": [],
+ "summary": {
+  "css": {
+   "survived": 44,
+   "rewritten": 2
+  },
+  "html": {
+   "survived": 45,
+   "stripped": 62,
+   "rewritten": 48
+  },
+  "cssNotApplied": [
+   "c28",
+   "c43"
+  ]
+ }
+}

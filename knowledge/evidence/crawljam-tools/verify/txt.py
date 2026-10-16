@@ -1,0 +1,12 @@
+# usage: python -I txt.py page.html  -> plain text (for reading docs/forum posts saved by fetch.sh)
+import sys,re,html
+sys.stdout.reconfigure(encoding='utf-8')
+h=open(sys.argv[1],encoding='utf8').read()
+h=re.sub(r'<(script|style)\b.*?</\1>','',h,flags=re.S)
+h=re.sub(r'<br\s*/?>','\n',h)
+h=re.sub(r'</(p|div|li|h\d|pre|tr|section)>','\n',h)
+h=re.sub(r'<li[^>]*>','\n- ',h)
+h=re.sub(r'<code>','`',h); h=re.sub(r'</code>','`',h)
+t=html.unescape(re.sub(r'<[^>]+>','',h))
+t=re.sub(r'\n\s*\n+','\n',t)
+print(t)

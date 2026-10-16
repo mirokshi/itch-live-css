@@ -1,0 +1,1 @@
+@layer custom-a,custom-b;@import"imp.css";@layer custom-b{#wrapper .p-layer{color:#0000c8}}@layer custom-a{#wrapper .p-layer{color:#c80000}}#wrapper .p-tie{color:green}

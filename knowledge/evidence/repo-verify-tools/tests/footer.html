@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="itch/user.css">
+<style id="custom_css"></style></head><body>
+<div class="user_page_wrap" id="wrapper"><div class="user_page page_widget base_widget mode_grid">
+<div class="inner_column profile_content"><div id="last" style="height:300px;background:#ccc">content</div></div></div>
+<div class="footer"><div class="footer_inner"><a href="#">itch.io</a> · <a href="#">Community profile</a></div></div></div>
+<script>
+function m(css){document.getElementById('custom_css').textContent=css;const w=document.getElementById('wrapper').getBoundingClientRect(),f=document.querySelector('.footer').getBoundingClientRect(),l=document.getElementById('last').getBoundingClientRect();return {css,wrapperH:w.height,footerTop:f.top,footerH:f.height,lastBottom:l.bottom,gapLastToFooter:f.top-l.bottom};}
+window.result=()=>[m(''),m('#wrapper .footer{margin-top:48px}'),m('#wrapper{padding-bottom:0}'),m('#wrapper{padding-bottom:100px}'),m('#wrapper .footer{margin-bottom:20px}'),
+ (()=>{document.getElementById('custom_css').textContent='';const cs=getComputedStyle(document.getElementById('wrapper'));const fs=getComputedStyle(document.querySelector('.footer'));return {wrapperDisplay:cs.display,wrapperPos:cs.position,wrapperPB:cs.paddingBottom,footerPos:fs.position,footerBottom:fs.bottom,footerTop:fs.top}})()];
+</script></body></html>

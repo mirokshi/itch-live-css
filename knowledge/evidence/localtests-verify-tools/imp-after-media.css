@@ -1,0 +1,2 @@
+/* Verification fixture: @import placed after @media */
+#wrapper .v14-media { color: rgb(2, 2, 2); }

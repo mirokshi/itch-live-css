@@ -1,0 +1,2 @@
+/* Test C fixture: pure ASCII, non-ASCII written as CSS escapes */
+#wrapper .c6::before { content: "\A1 Hola! \2192  \2713  \C548\B155"; }

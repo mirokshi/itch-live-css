@@ -1,0 +1,13 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://static.itch.io/user.css?1791981660">
+<style id="custom_css">@keyframes bounce{from{opacity:.25}to{opacity:.25}}</style>
+</head><body>
+<div id="wrapper"><div class="animate_bounce" id="inside">in</div></div>
+<div class="animate_bounce" id="outside">out</div>
+<div class="animate_drop_down" id="ctrl">ctrl</div>
+<section id="results"></section>
+<script>
+const kf = id => { const a = document.getElementById(id).getAnimations(); return a.length ? a[0].animationName + ' ' + JSON.stringify(a[0].effect.getKeyframes().map(k => Object.keys(k).filter(x => !['offset','computedOffset','easing','composite'].includes(x)).map(x => x + '=' + k[x]).join(';'))) : 'none'; };
+const rows = [['K1 inside #wrapper', kf('inside')], ['K2 outside #wrapper', kf('outside')], ['K3 control (drop_down, not redefined)', kf('ctrl')]];
+document.getElementById('results').innerHTML = '<table>' + rows.map(r => '<tr class="r-INFO"><td>' + r[0] + '</td><td>INFO</td><td>-</td><td>-</td><td>' + r[1].replace(/</g,'&lt;') + '</td></tr>').join('') + '</table>';
+</script></body></html>

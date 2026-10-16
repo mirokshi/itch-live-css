@@ -1,0 +1,2 @@
+/* Verification fixture: @import placed after @control */
+#wrapper .v14-control { color: rgb(2, 2, 2); }

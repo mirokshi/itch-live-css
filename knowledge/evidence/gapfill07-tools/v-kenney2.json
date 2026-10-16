@@ -1,0 +1,3 @@
+{"V0_none":"",
+ "V10_phone_1col":"@media (max-width:500px){#wrapper .mode_grid .user_game_grid{grid-template-columns:1fr}}",
+ "V11_fr_plus_gap":"#wrapper .mode_grid .user_game_grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));column-gap:40px}"}

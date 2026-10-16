@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>G · @property and @keyframes across imported / inline sheets</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="custom_css">
+  @import url("http://localhost:8091/knowledge/tests/g/x.css");
+  /* All animations are paused with a negative delay, so values are deterministic even when the timeline is frozen. */
+  @property --g-twice { syntax: '<angle>'; inherits: false; initial-value: 2deg; }
+  @property --g-bad { syntax: '<length>'; inherits: false; } /* invalid: no initial-value for a non-universal syntax */
+  @keyframes g-from-inline { from { width: 20px; } to { width: 220px; } }
+  @keyframes g-dup { from { height: 30px; } to { height: 30px; } }
+  @keyframes g-angle-anim { from { --g-angle: 0deg; } to { --g-angle: 360deg; } }
+  @keyframes g-raw-anim { from { --g-raw: 0deg; } to { --g-raw: 360deg; } }
+  @keyframes g-lay { from { min-height: 50px; } to { min-height: 50px; } }
+  @layer L { @keyframes g-lay { from { min-height: 60px; } to { min-height: 60px; } } }
+  #wrapper .g1 { --g-angle: 45deg; }
+  #wrapper .g2 { animation: g-angle-anim 1s linear -0.5s paused; }
+  #wrapper .g2r { animation: g-raw-anim 1s linear -0.25s paused; }
+  #wrapper .g3 { animation: g-from-import 1s linear -0.5s paused; }
+  #wrapper .g5 { animation: g-dup 1s linear paused; }
+  #wrapper .g6p { --g-angle: 90deg; --g-inh: 90deg; }
+  #wrapper .g8 { animation: g-lay 1s linear paused; }
+  #wrapper .g10 { width: 5px !important; animation: g-from-import 1s linear -0.5s paused; }
+  #wrapper .g9 { width: calc(100px + 50px * sin(var(--g-angle))); --g-angle: 90deg; }
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test G — @property registered in a cross-origin imported sheet; @keyframes shared between imported and inline sheets; duplicate names.</b></p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <div class="g0">g0</div><div class="g1">g1</div><div class="g2">g2</div><div class="g2r">g2r</div>
+      <div class="g3">g3</div><div class="g4">g4</div><div class="g5">g5</div>
+      <div class="g6p"><span class="g6c">g6 child</span></div>
+      <div class="g8">g8</div><div class="g9">g9</div><div class="g10">g10</div>
+    </div>
+  </div>
+</div>
+<script>
+T.run(() => {
+  const v = (s, p) => T.cs(s, p);
+  T.check('G0', '@property --g-angle from the cross-origin import: unset element reports the registered initial-value', v('.g0', '--g-angle'), '0deg');
+  T.check('G1', 'registered property computes to a typed value', v('.g1', '--g-angle'), '45deg');
+  T.check('G2', 'registered <angle> interpolates in @keyframes (50% of 0→360deg)', v('.g2', '--g-angle'), '180deg');
+  T.info('G2r', 'UNREGISTERED custom property in @keyframes at 25% (discrete: flips at 50%)', v('.g2r', '--g-raw'));
+  T.check('G3', 'inline rule uses @keyframes defined in the imported sheet (width at 50% of 10→110px)', v('.g3', 'width'), '60px');
+  T.check('G4', 'imported-sheet rule uses @keyframes defined in the inline sheet (width at 50% of 20→220px)', v('.g4', 'width'), '120px');
+  T.check('G5', 'same @keyframes name in import and inline: the later (inline) one wins', v('.g5', 'height'), '30px');
+  T.check('G6-noninherit', 'inherits:false property set on parent is NOT seen by the child (child gets initial-value)', v('.g6c', '--g-angle'), '0deg');
+  T.check('G6-inherit', 'inherits:true property set on parent IS seen by the child', v('.g6c', '--g-inh'), '90deg');
+  T.check('G7', '@property for the same name in import (1deg) and inline (2deg): last one wins', v('.g0', '--g-twice'), '2deg');
+  T.check('G7b', 'invalid @property (no initial-value) is ignored → property stays unregistered (empty when unset)', v('.g0', '--g-bad'), '');
+  T.info('G8', '@keyframes g-lay: unlayered (50px) vs later one inside @layer L (60px) → min-height', v('.g8', 'min-height'));
+  T.check('G9', 'trig function with a registered angle: calc(100px + 50px*sin(90deg))', v('.g9', 'width'), '150px');
+  T.check('G10', 'an !important declaration beats a running CSS animation on the same property', v('.g10', 'width'), '5px');
+  const anims = document.querySelector('.g3').getAnimations().map(a => a.animationName + ':' + a.playState);
+  T.info('G-anims', '.g3 getAnimations()', anims.join(','));
+  T.info('G-support', 'CSSPropertyRule / CSS.registerProperty', ('CSSPropertyRule' in window) + ' / ' + (typeof CSS.registerProperty));
+});
+</script>
+</body>
+</html>

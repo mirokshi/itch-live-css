@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>s10 motion</title>
+<style>
+@keyframes spin{to{rotate:360deg}}
+@keyframes fadein{from{opacity:0;translate:0 12px}}
+@keyframes fadein-bad{to{opacity:1}}
+#wrapper{position:relative;animation:spin 9s linear infinite}
+#wrapper::before{content:"";position:absolute;inset:0;z-index:-1;animation:spin 7s linear infinite}
+#wrapper::after{content:"";position:absolute;inset:0;z-index:-1;animation:spin 5s linear infinite}
+#wrapper .kid{animation:spin 3s linear infinite}
+#wrapper .kid::before{content:"b";animation:spin 2s linear infinite}
+#wrapper .kid::after{content:"a";animation:spin 1s linear infinite}
+/* entrance: good = base state visible, keyframes start hidden */
+#wrapper .enter-good{animation:fadein .6s ease-out both}
+/* entrance: bad = base state hidden, animation fills forwards to visible */
+#wrapper .enter-bad{opacity:0;animation:fadein-bad .6s ease-out forwards}
+#wrapper .card{transition:transform .3s}
+</style>
+<style id="guard"></style>
+</head><body>
+<div id="wrapper" class="user_page_wrap"><div class="user_page">
+<p class="kid">kid</p>
+<p class="enter-good">good entrance</p>
+<p class="enter-bad">bad entrance</p>
+<div class="card">card</div>
+</div></div>
+</body></html>

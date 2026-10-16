@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>s10 hover focus</title>
+<style>
+body{margin:0;background:#0b1433;color:#eef3ff;font:16px/1.4 system-ui,sans-serif}
+#wrapper{padding:40px}
+/* itch-like card structure (own stand-in rules) */
+#wrapper .game_grid_widget{display:grid;grid-template-columns:repeat(2,240px);gap:30px}
+#wrapper .game_cell{background:rgba(10,18,46,.5);border-radius:18px;padding:12px}
+#wrapper .game_title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#wrapper .game_title a{color:#ffc857}
+/* hover effects: ungated (cell A) vs gated with (hover:hover) (cell B) */
+#wrapper #cellA:hover{transform:translate(-4px,-4px)}
+@media (hover:hover){#wrapper #cellB:hover{transform:translate(-4px,-4px)}}
+</style>
+<style id="extra"></style>
+</head><body>
+<div id="wrapper" class="user_page_wrap"><div class="user_page">
+<div class="game_grid_widget">
+ <div class="game_cell" id="cellA"><div class="game_cell_data"><div class="game_title"><a href="#a" id="linkA">Game title A</a></div></div></div>
+ <div class="game_cell" id="cellB"><div class="game_cell_data"><div class="game_title"><a href="#b" id="linkB">Game title B</a></div></div></div>
+</div>
+</div></div>
+</body></html>

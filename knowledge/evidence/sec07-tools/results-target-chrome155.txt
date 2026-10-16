@@ -1,0 +1,22 @@
+# sec07-target.html, HeadlessChrome 155, run 2026-10-14 (retry)
+== #custom-tab2
+p2 display=none width=auto
+a[name=custom-tab2] matches :target = false
+span#ctl-id matches :target = false
+:target element = none
+[after 300ms] hash=#custom-tab2
+p2 display=block width=41px
+a[name=custom-tab2] matches :target = true
+span#ctl-id matches :target = false
+:target element = &lt;a name="custom-tab2"&gt;&lt;/a&gt;
+
+== #ctl-id
+p2 display=none width=auto
+a[name=custom-tab2] matches :target = false
+span#ctl-id matches :target = false
+:target element = none
+[after 300ms] hash=#ctl-id
+p2 display=none width=auto
+a[name=custom-tab2] matches :target = false
+span#ctl-id matches :target = true
+:target element = &lt;span id="ctl-id"&gt;&lt;/span&gt;

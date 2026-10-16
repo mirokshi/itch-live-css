@@ -1,0 +1,53 @@
+request counts (0 = never requested):
+  m_late               0
+  o_sup_false          0
+  o_print              1
+  o_rm                 1
+  o_wide               1
+  sc                   1
+  w2                   1
+  v_after_layer_stmt   1
+  v_after_charset      1
+  v_after_fontface     0
+  v_in_media           0
+  v_in_supports        0
+  v_dup                1
+  v_string             1
+  bf                   1
+  rl                   3
+page loads: bf1 1 rl1 3
+arrival w2 - w1: 802 ms
+arrival p1 - w1: 1 ms
+arrival ps - s1: -1 ms
+font FA: port=8722 mode=cors origin=A site=cross-site referer=A/
+font FB: port=8722 mode=cors origin=A site=cross-site referer=A/
+font FC: port=8722 mode=cors origin=A site=cross-site referer=A/
+font FS: port=8721 mode=cors origin=A site=same-origin referer=A/pages/font.html
+font FD: port=8722 mode=cors origin=A site=cross-site referer=B/css?n=f_imp1&extra=%40font-face%7Bfont-family%3AFD%3Bsrc%3Aurl%28%2Ffont%3Facao%3Dnone%26k%3DFD%29%7D
+font FE: port=8722 mode=cors origin=A site=cross-site referer=B/css?n=f_imp2&extra=%40font-face%7Bfont-family%3AFE%3Bsrc%3Aurl%28%2Ffont%3Facao%3D%2A%26k%3DFE%29%7D
+referer r1: host=127.0.0.1:8722 mode=no-cors site=cross-site origin=None referer=A/pages/ref.html?visit=42
+referer r2: host=127.0.0.1:8722 mode=no-cors site=cross-site origin=None referer=B/css?n=r1&imp=http%3A%2F%2F127.0.0.1%3A8722%2Fcss%3Fn%3Dr2&extra=%23x%7Bbackground%3Aurl%28%2Fimg%3Fk%3Dr1img%29%7D%20%40font-face%7Bfont-family%3ARF%3Bsrc%3Aurl%28%2Ffont%3Facao%3D%2A%26k%3Dr1font%29%7D
+referer r3: host=127.0.0.1:8722 mode=no-cors site=cross-site origin=None referer=A/pages/ref.html?visit=42
+referer r4: host=127.0.0.1:8722 mode=no-cors site=cross-site origin=None referer=B/css?n=r3&imp=http%3A%2F%2F127.0.0.1%3A8722%2Fcss%3Fn%3Dr4&rp=no-referrer-when-downgrade
+referer r1img: host=127.0.0.1:8722 mode=no-cors site=cross-site origin=None referer=B/css?n=r1&imp=http%3A%2F%2F127.0.0.1%3A8722%2Fcss%3Fn%3Dr2&extra=%23x%7Bbackground%3Aurl%28%2Fimg%3Fk%3Dr1img%29%7D%20%40font-face%7Bfont-family%3ARF%3Bsrc%3Aurl%28%2Ffont%3Facao%3D%2A%26k%3Dr1font%29%7D
+referer r1font: host=127.0.0.1:8722 mode=cors site=cross-site origin=A referer=B/css?n=r1&imp=http%3A%2F%2F127.0.0.1%3A8722%2Fcss%3Fn%3Dr2&extra=%23x%7Bbackground%3Aurl%28%2Fimg%3Fk%3Dr1img%29%7D%20%40font-face%7Bfont-family%3ARF%3Bsrc%3Aurl%28%2Ffont%3Facao%3D%2A%26k%3Dr1font%29%7D
+referer inline_img: host=127.0.0.1:8722 mode=no-cors site=cross-site origin=None referer=A/
+referer x1: host=127.0.0.1:8722 mode=no-cors site=cross-site origin=None referer=A/pages/ref2.html?visit=7
+referer x2: host=localhost:8722 mode=no-cors site=same-site origin=None referer=B/css?n=x1&imp=http%3A%2F%2Flocalhost%3A8722%2Fcss%3Fn%3Dx2&extra=%23x%7Bbackground%3Aurl%28http%3A%2F%2Flocalhost%3A8722%2Fimg%3Fk%3Dx1img%29%7D%20%40font-face%7Bfont-family%3AXF%3Bsrc%3Aurl%28http%3A%2F%2Flocalhost%3A8722%2Ffont%3Facao%3D%2A%26k%3Dx1font%29%7D
+referer x1img: host=localhost:8722 mode=no-cors site=same-site origin=None referer=B/
+referer x1font: host=localhost:8722 mode=cors site=same-site origin=A referer=B/
+all headers of the cross-site stylesheet request r1:
+  Host: 127.0.0.1:8722
+  Connection: keep-alive
+  sec-ch-ua-platform: "Windows"
+  User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36
+  sec-ch-ua: "Google Chrome";v="155", "Chromium";v="155", "Not(A:Brand";v="24"
+  sec-ch-ua-mobile: ?0
+  Accept: text/css,*/*;q=0.1
+  Sec-Fetch-Site: cross-site
+  Sec-Fetch-Mode: no-cors
+  Sec-Fetch-Dest: style
+  Sec-Fetch-Storage-Access: active
+  Referer: A/pages/ref.html?visit=42
+  Accept-Encoding: gzip, deflate, br, zstd
+  Accept-Language: es-ES,es;q=0.9

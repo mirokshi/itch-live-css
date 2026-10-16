@@ -1,0 +1,487 @@
+{
+ "spec": [
+  {
+   "in": "<div>hello</div>",
+   "expect": "<div>hello</div>",
+   "got": {
+    "out": "<div>hello</div>"
+   },
+   "pass": true
+  },
+  {
+   "in": "<span/>x",
+   "expect": "&lt;span/&gt;x",
+   "got": {
+    "out": "&lt;span/&gt;x"
+   },
+   "pass": true
+  },
+  {
+   "in": "<b>x</i></b></b>",
+   "expect": "<b>x&lt;/i&gt;</b>&lt;/b&gt;",
+   "got": {
+    "out": "<b>x&lt;/i&gt;</b>&lt;/b&gt;"
+   },
+   "pass": true
+  },
+  {
+   "in": "<div><span>open",
+   "expect": "<div><span>open</span></div>",
+   "got": {
+    "out": "<div><span>open</span></div>"
+   },
+   "pass": true
+  },
+  {
+   "in": "<a href=\"http://leafo.net\" onclick=\"x\">a</a>",
+   "expect": "<a href=\"http://leafo.net\" rel=\"nofollow\">a</a>",
+   "got": {
+    "out": "<a href=\"http://leafo.net\" rel=\"nofollow\">a</a>"
+   },
+   "pass": true
+  },
+  {
+   "in": "it's \"q\"",
+   "expect": "it&#x27;s &quot;q&quot;",
+   "got": {
+    "out": "it&#x27;s &quot;q&quot;"
+   },
+   "pass": true
+  },
+  {
+   "in": "<br/>",
+   "expect": "<br/>",
+   "got": {
+    "out": "<br/>"
+   },
+   "pass": true
+  }
+ ],
+ "default": {
+  "<div class=\"custom-x\">a</div>": {
+   "out": "<div>a</div>"
+  },
+  "<div id=\"x\" data-y=\"1\" tabindex=\"0\" onclick=\"alert(1)\" role=\"note\" aria-hidden=\"true\">a</div>": {
+   "out": "<div>a</div>"
+  },
+  "<a href=\"#top\">t</a>": {
+   "out": "<a rel=\"nofollow\">t</a>"
+  },
+  "<a href=\"/rel\">t</a>": {
+   "out": "<a rel=\"nofollow\">t</a>"
+  },
+  "<a href=\"HTTPS://x.com\">t</a>": {
+   "out": "<a rel=\"nofollow\">t</a>"
+  },
+  "<a href=\"tel:123\">t</a>": {
+   "out": "<a rel=\"nofollow\">t</a>"
+  },
+  "<a href=\"javascript:alert(1)\">t</a>": {
+   "out": "<a rel=\"nofollow\">t</a>"
+  },
+  "<a href=\" https://x.com\">t</a>": {
+   "out": "<a rel=\"nofollow\">t</a>"
+  },
+  "<a href=\"mailto:a@b.c\">t</a>": {
+   "out": "<a href=\"mailto:a@b.c\" rel=\"nofollow\">t</a>"
+  },
+  "<a href=\"//x.com\">t</a>": {
+   "out": "<a href=\"//x.com\" rel=\"nofollow\">t</a>"
+  },
+  "<a rel=\"me\" href=\"https://m.social/@x\">m</a>": {
+   "out": "<a href=\"https://m.social/@x\" rel=\"nofollow\">m</a>"
+  },
+  "<a name=\"sec\"></a>": {
+   "out": "<a name=\"sec\" rel=\"nofollow\"></a>"
+  },
+  "<a href=\"https://x.com\" target=\"_blank\">t</a>": {
+   "out": "<a href=\"https://x.com\" rel=\"nofollow\">t</a>"
+  },
+  "<img src=\"https://x.com/a.png\" width=100%>": {
+   "out": "&lt;img src=&quot;https://x.com/a.png&quot; width=100%&gt;"
+  },
+  "<img src=\"https://x.com/a.png\" width=100>": {
+   "out": "<img src=\"https://x.com/a.png\" width=100>"
+  },
+  "<a href=https://x.com>t</a>": {
+   "out": "&lt;a href=https://x.com&gt;t&lt;/a&gt;"
+  },
+  "<div @click=\"x\">a</div>": {
+   "out": "&lt;div @click=&quot;x&quot;&gt;a&lt;/div&gt;"
+  },
+  "<div x-on:click=\"x\">a</div>": {
+   "out": "<div>a</div>"
+  },
+  "<div\r\n title=\"x\">a</div>": {
+   "out": "&lt;div\r\n title=&quot;x&quot;&gt;a&lt;/div&gt;"
+  },
+  "<div\n title=\"x\">a</div>": {
+   "out": "<div\n title=\"x\">a</div>"
+  },
+  "<span/>after": {
+   "out": "&lt;span/&gt;after"
+  },
+  "<div/>after": {
+   "out": "&lt;div/&gt;after"
+  },
+  "<br/>a": {
+   "out": "<br/>a"
+  },
+  "<hr/>a": {
+   "out": "<hr/>a"
+  },
+  "<img src=\"https://x.com/a.png\"/>a": {
+   "out": "<img src=\"https://x.com/a.png\"/>a"
+  },
+  "a<wbr>b": {
+   "out": "a&lt;wbr&gt;b"
+  },
+  "<marquee>x</marquee>": {
+   "out": "&lt;marquee&gt;x&lt;/marquee&gt;"
+  },
+  "<svg><circle r=\"1\"/></svg>": {
+   "out": "&lt;svg&gt;&lt;circle r=&quot;1&quot;/&gt;&lt;/svg&gt;"
+  },
+  "<details open><summary>s</summary>t</details>": {
+   "out": "&lt;details open&gt;&lt;summary&gt;s&lt;/summary&gt;t&lt;/details&gt;"
+  },
+  "a<!-- note -->b": {
+   "out": "a&lt;!-- note --&gt;b"
+  },
+  "a < b and c > d": {
+   "out": "a < b > d</b>"
+  },
+  "x < div > y": {
+   "out": "x < div > y</div>"
+  },
+  "R&D and a & b &amp; &nbsp &#39 &#x27;": {
+   "out": "R&D and a &amp; b &amp; &nbsp &#39 &#x27;"
+  },
+  "<img src=\"data:image/png;base64,AAA\">": {
+   "out": "<img>"
+  },
+  "<img src=\"/rel.png\">": {
+   "out": "<img>"
+  },
+  "<a href=\"https://x.com/?a=1&b=2\">q</a>": {
+   "out": "<a href=\"https://x.com/?a=1&b=2\" rel=\"nofollow\">q</a>"
+  },
+  "<table width=\"100\" border=\"1\" cellpadding=\"2\" align=\"center\"><tr><td width=\"5\" colspan=\"2\" rowspan=\"1\" align=\"left\">x</td></tr></table>": {
+   "out": "<table width=\"100\"><tr><td width=\"5\" colspan=\"2\" rowspan=\"1\">x</td></tr></table>"
+  },
+  "<span lang=\"es\" dir=\"rtl\" title=\"t\">x</span>": {
+   "out": "<span lang=\"es\" dir=\"rtl\" title=\"t\">x</span>"
+  },
+  "<b>b</b><i>i</i><strike>s</strike>": {
+   "out": "<b>b</b><i>i</i><strike>s</strike>"
+  },
+  "<font color=\"red\">x</font>": {
+   "out": "&lt;font color=&quot;red&quot;&gt;x&lt;/font&gt;"
+  },
+  "<p title=\"it's\">x</p>": {
+   "out": "<p title=\"it's\">x</p>"
+  },
+  "<p title='a\"b'>x</p>": {
+   "out": "<p title='a\"b'>x</p>"
+  },
+  "<p title=\"a<b>\">x</p>": {
+   "out": "<p title=\"a&lt;b&gt;\">x</p>"
+  }
+ },
+ "itchlike": {
+  "<div class=\"custom-x\">a</div>": {
+   "out": "<div>a</div>"
+  },
+  "<div id=\"x\" data-y=\"1\" tabindex=\"0\" onclick=\"alert(1)\" role=\"note\" aria-hidden=\"true\">a</div>": {
+   "out": "<div>a</div>"
+  },
+  "<a href=\"#top\">t</a>": {
+   "out": "<a rel=\"nofollow noopener\">t</a>"
+  },
+  "<a href=\"/rel\">t</a>": {
+   "out": "<a rel=\"nofollow noopener\">t</a>"
+  },
+  "<a href=\"HTTPS://x.com\">t</a>": {
+   "out": "<a rel=\"nofollow noopener\">t</a>"
+  },
+  "<a href=\"tel:123\">t</a>": {
+   "out": "<a rel=\"nofollow noopener\">t</a>"
+  },
+  "<a href=\"javascript:alert(1)\">t</a>": {
+   "out": "<a rel=\"nofollow noopener\">t</a>"
+  },
+  "<a href=\" https://x.com\">t</a>": {
+   "out": "<a rel=\"nofollow noopener\">t</a>"
+  },
+  "<a href=\"mailto:a@b.c\">t</a>": {
+   "out": "<a href=\"mailto:a@b.c\" rel=\"nofollow noopener\">t</a>"
+  },
+  "<a href=\"//x.com\">t</a>": {
+   "out": "<a href=\"//x.com\" rel=\"nofollow noopener\">t</a>"
+  },
+  "<a rel=\"me\" href=\"https://m.social/@x\">m</a>": {
+   "out": "<a href=\"https://m.social/@x\" rel=\"nofollow noopener\">m</a>"
+  },
+  "<a name=\"sec\"></a>": {
+   "out": "<a name=\"sec\" rel=\"nofollow noopener\"></a>"
+  },
+  "<a href=\"https://x.com\" target=\"_blank\">t</a>": {
+   "out": "<a href=\"https://x.com\" target=\"_blank\" rel=\"nofollow noopener\">t</a>"
+  },
+  "<img src=\"https://x.com/a.png\" width=100%>": {
+   "out": "&lt;img src=&quot;https://x.com/a.png&quot; width=100%&gt;"
+  },
+  "<img src=\"https://x.com/a.png\" width=100>": {
+   "out": "<img src=\"https://x.com/a.png\" width=100 loading=\"lazy\">"
+  },
+  "<a href=https://x.com>t</a>": {
+   "out": "&lt;a href=https://x.com&gt;t&lt;/a&gt;"
+  },
+  "<div @click=\"x\">a</div>": {
+   "out": "&lt;div @click=&quot;x&quot;&gt;a&lt;/div&gt;"
+  },
+  "<div x-on:click=\"x\">a</div>": {
+   "out": "<div>a</div>"
+  },
+  "<div\r\n title=\"x\">a</div>": {
+   "out": "&lt;div\r\n title=&quot;x&quot;&gt;a&lt;/div&gt;"
+  },
+  "<div\n title=\"x\">a</div>": {
+   "out": "<div\n title=\"x\">a</div>"
+  },
+  "<span/>after": {
+   "out": "&lt;span/&gt;after"
+  },
+  "<div/>after": {
+   "out": "&lt;div/&gt;after"
+  },
+  "<br/>a": {
+   "out": "<br/>a"
+  },
+  "<hr/>a": {
+   "out": "<hr/>a"
+  },
+  "<img src=\"https://x.com/a.png\"/>a": {
+   "out": "<img src=\"https://x.com/a.png\" loading=\"lazy\"/>a"
+  },
+  "a<wbr>b": {
+   "out": "a&lt;wbr&gt;b"
+  },
+  "<marquee>x</marquee>": {
+   "out": "&lt;marquee&gt;x&lt;/marquee&gt;"
+  },
+  "<svg><circle r=\"1\"/></svg>": {
+   "out": "&lt;svg&gt;&lt;circle r=&quot;1&quot;/&gt;&lt;/svg&gt;"
+  },
+  "<details open><summary>s</summary>t</details>": {
+   "out": "&lt;details open&gt;&lt;summary&gt;s&lt;/summary&gt;t&lt;/details&gt;"
+  },
+  "a<!-- note -->b": {
+   "out": "a&lt;!-- note --&gt;b"
+  },
+  "a < b and c > d": {
+   "out": "a < b > d</b>"
+  },
+  "x < div > y": {
+   "out": "x < div > y</div>"
+  },
+  "R&D and a & b &amp; &nbsp &#39 &#x27;": {
+   "out": "R&D and a &amp; b &amp; &nbsp &#39 &#x27;"
+  },
+  "<img src=\"data:image/png;base64,AAA\">": {
+   "out": "<img loading=\"lazy\">"
+  },
+  "<img src=\"/rel.png\">": {
+   "out": "<img loading=\"lazy\">"
+  },
+  "<a href=\"https://x.com/?a=1&b=2\">q</a>": {
+   "out": "<a href=\"https://x.com/?a=1&b=2\" rel=\"nofollow noopener\">q</a>"
+  },
+  "<table width=\"100\" border=\"1\" cellpadding=\"2\" align=\"center\"><tr><td width=\"5\" colspan=\"2\" rowspan=\"1\" align=\"left\">x</td></tr></table>": {
+   "out": "<table width=\"100\"><tr><td width=\"5\" colspan=\"2\" rowspan=\"1\">x</td></tr></table>"
+  },
+  "<span lang=\"es\" dir=\"rtl\" title=\"t\">x</span>": {
+   "out": "<span lang=\"es\" dir=\"rtl\" title=\"t\">x</span>"
+  },
+  "<b>b</b><i>i</i><strike>s</strike>": {
+   "out": "<b>b</b><i>i</i><strike>s</strike>"
+  },
+  "<font color=\"red\">x</font>": {
+   "out": "&lt;font color=&quot;red&quot;&gt;x&lt;/font&gt;"
+  },
+  "<p title=\"it's\">x</p>": {
+   "out": "<p title=\"it's\">x</p>"
+  },
+  "<p title='a\"b'>x</p>": {
+   "out": "<p title='a\"b'>x</p>"
+  },
+  "<p title=\"a<b>\">x</p>": {
+   "out": "<p title=\"a&lt;b&gt;\">x</p>"
+  }
+ },
+ "style": {
+  "color:red": {
+   "out": "color:red"
+  },
+  "color: red": {
+   "out": "color: red"
+  },
+  "color: red ": {
+   "out": null,
+   "err": "failed to parse"
+  },
+  "color: red; ": {
+   "out": null,
+   "err": "failed to parse"
+  },
+  "color:red;": {
+   "out": "color:red"
+  },
+  "color:red;;": {
+   "out": null,
+   "err": "failed to parse"
+  },
+  "color: red !important": {
+   "out": null,
+   "err": "failed to parse"
+  },
+  "display:flex;color:red": {
+   "out": "color:red"
+  },
+  "font-size: 1.5em": {
+   "out": ""
+  },
+  "font-size: 150%": {
+   "out": "font-size: 150%"
+  },
+  "font-size: large": {
+   "out": "font-size: large"
+  },
+  "font-size: -10px": {
+   "out": "font-size: -10px"
+  },
+  "font-size: auto": {
+   "out": "font-size: auto"
+  },
+  "margin: 0.5em 1em": {
+   "out": "margin: 0.5em 1em"
+  },
+  "width: 10.5px": {
+   "out": ""
+  },
+  "width: calc(100% - 10px)": {
+   "out": ""
+  },
+  "width: -10px": {
+   "out": ""
+  },
+  "width: auto": {
+   "out": ""
+  },
+  "height:auto": {
+   "out": ""
+  },
+  "padding:auto": {
+   "out": ""
+  },
+  "margin-top: -10px": {
+   "out": "margin-top: -10px"
+  },
+  "color: var(--itchio_link_color)": {
+   "out": "color: var(--itchio_link_color)"
+  },
+  "color: hsl(120deg, 50%, 50%)": {
+   "out": "color: hsl(120deg, 50%, 50%)"
+  },
+  "color: rgb(1 2 3 / 50%)": {
+   "out": null,
+   "err": "failed to parse"
+  },
+  "color: rgba(0,0,0,.5)": {
+   "out": "color: rgba(0,0,0,.5)"
+  },
+  "color:#11223344": {
+   "out": "color:#11223344"
+  },
+  "background: url('https://x.com/a.png')": {
+   "out": "background: url('https://x.com/a.png')"
+  },
+  "background: url('https://x.com/a.png') no-repeat": {
+   "out": ""
+  },
+  "background: url(https://x.com/a.png)": {
+   "out": null,
+   "err": "failed to parse"
+  },
+  "background: url(x)": {
+   "out": ""
+  },
+  "background: linear-gradient(red, blue)": {
+   "out": ""
+  },
+  "border: none": {
+   "out": ""
+  },
+  "border: 2px dashed": {
+   "out": ""
+  },
+  "border:0": {
+   "out": "border:0"
+  },
+  "border:1px solid #ccc": {
+   "out": "border:1px solid #ccc"
+  },
+  "border: 2px dashed rgb(1,2,3)": {
+   "out": "border: 2px dashed rgb(1,2,3)"
+  },
+  "COLOR: red": {
+   "out": ""
+  },
+  "color: red /* c */": {
+   "out": null,
+   "err": "failed to parse"
+  },
+  "color: red;\r\nwidth: 10px": {
+   "out": null,
+   "err": "failed to parse"
+  },
+  "color: red;\nwidth: 10px": {
+   "out": "color: red; width: 10px"
+  },
+  "  color: red": {
+   "out": "color: red"
+  },
+  "width: 50.5%": {
+   "out": null,
+   "err": "failed to parse"
+  },
+  "opacity: .5": {
+   "out": "opacity: .5"
+  },
+  "opacity: 0.5": {
+   "out": "opacity: 0.5"
+  },
+  "line-height:2;letter-spacing:1px;font-family:serif;font-weight:bold;border-radius:4px;position:absolute;float:left;transform:none": {
+   "out": ""
+  },
+  "text-align:center": {
+   "out": "text-align:center"
+  },
+  "max-width:100%": {
+   "out": "max-width:100%"
+  },
+  "behavior: url(x.htc)": {
+   "out": null,
+   "err": "failed to parse"
+  },
+  "behavior:url(x)": {
+   "out": ""
+  },
+  "": {
+   "out": ""
+  },
+  "   ": {
+   "out": ""
+  }
+ }
+}

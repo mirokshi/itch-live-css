@@ -1,0 +1,14 @@
+sz_game-46 https://creator-79.itch.io/game-46
+sz_game-54 https://creator-88.itch.io/game-54
+sz_jam_gamelike010 https://itch.io/jam/gamelike-jam-010
+sz_jam_20sec2026 https://itch.io/jam/20-second-game-jam-2026
+nb_cm_game-14 https://creator-50.itch.io/game-14/comments
+nb_cm_game-70 https://creator-97.itch.io/game-70/comments
+nb_cm_game-46 https://creator-79.itch.io/game-46/comments
+nb_cm_game-44 https://creator-77.itch.io/game-44/comments
+nb_cm_curator https://creator-74.itch.io/game-41/comments
+nb_dp_game-46 https://creator-79.itch.io/game-46/devlog/<id>/<post>
+nb_dp_curator https://creator-74.itch.io/game-41/devlog/<id>/<post>
+nb_di_game-14 https://creator-50.itch.io/game-14/devlog
+nb_di_game-44 https://creator-77.itch.io/game-44/devlog
+nb_pj_curator https://creator-74.itch.io/game-41

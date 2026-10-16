@@ -1,0 +1,1 @@
+#wrapper{isolation:isolate}#wrapper::after{content:"";position:fixed;inset:0;z-index:5000;background:rgba(255,0,0,.01)}

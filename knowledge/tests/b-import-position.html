@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B · @import placement, conditions, cross-origin</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="user_theme">.user_page { color: rgb(1, 1, 1); }</style>
+<!-- Each <style> below is its own sheet, so "@import must come first" applies per element.
+     Every imported file paints its target rgb(2,2,2); rgb(1,1,1) means "not applied" (inherited theme color). -->
+<style id="b1">#wrapper .b1-own { color: rgb(3, 3, 3); } @import url("b/late.css");</style>
+<style id="b2">@layer x; @import url("b/after-layer.css");</style>
+<style id="b3">@foo-unknown; @import url("b/after-unknown.css");</style>
+<style id="b4">#wrapper .b4-x::-moz-selection { color: red; } @import url("b/after-invalid.css");</style>
+<style id="b5">@charset "utf-8"; @import url("b/after-charset.css");</style>
+<style id="b6">@import url("http://localhost:8091/knowledge/tests/b/xorigin.css");</style>
+<style id="b7">@import url("b/print.css") print; @import url("b/supports-yes.css") supports(display: grid); @import url("b/supports-no.css") supports(display: nonsense-value); @import url("b/media-yes.css") screen and (min-width: 1px);</style>
+<style id="b9">@import url("b/does-not-exist.css"); #wrapper .b9 { color: rgb(3, 3, 3); }</style>
+<style id="b10">@media screen { @import url("b/in-media.css"); }</style>
+<style id="b11">@import url("b/first.css"); @layer y; @import url("b/after-layer-between.css");</style>
+<style id="b12">#wrapper { .b12-x { color: red; } } @import url("b/after-nesting.css");</style>
+<style id="b13">@import "b/no-url-fn.css";</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test B — where an @import may appear, conditional imports, a 404 import, and a cross-origin import (port 8091).</b>
+rgb(2,2,2) = the imported file applied · rgb(1,1,1) = not applied (inherited theme color) · rgb(3,3,3) = inline rule.</p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <p class="b1">b1</p><p class="b1-own">b1-own</p><p class="b2">b2</p><p class="b3">b3</p><p class="b4">b4</p><p class="b5">b5</p>
+      <p class="b6">b6</p><p class="b7p">b7p</p><p class="b7y">b7y</p><p class="b7n">b7n</p><p class="b7m">b7m</p><p class="b9">b9</p>
+      <p class="b10">b10</p><p class="b11a">b11a</p><p class="b11b">b11b</p><p class="b12">b12</p><p class="b13">b13</p>
+    </div>
+  </div>
+</div>
+<script>
+T.run(() => {
+  const M = { 'rgb(1, 1, 1)': 'not-applied', 'rgb(2, 2, 2)': 'applied', 'rgb(3, 3, 3)': 'inline' };
+  const w = c => T.who(T.cs('.' + c, 'color'), M);
+  const imports = id => Array.from(document.getElementById(id).sheet.cssRules).filter(r => r instanceof CSSImportRule).length;
+  T.check('B1', '@import AFTER a style rule is dropped', w('b1'), 'not-applied');
+  T.check('B1-own', '...but the style rule before it still applies', w('b1-own'), 'inline');
+  T.info('B1-cssom', 'CSSImportRule count in that sheet', imports('b1'));
+  T.check('B2', '@layer statement before @import is allowed', w('b2'), 'applied');
+  T.check('B3', 'unknown at-rule (@foo-unknown;) before @import', w('b3'), 'applied');
+  T.check('B4', 'style rule with an invalid selector (::-moz-selection) before @import', w('b4'), 'applied');
+  T.check('B5', '@charset before @import inside an inline <style>', w('b5'), 'applied');
+  T.check('B6', 'cross-origin @import (8091) applies', w('b6'), 'applied');
+  let err = 'no error';
+  const xr = document.getElementById('b6').sheet.cssRules[0];
+  try { xr.styleSheet.cssRules; } catch (e) { err = e.name; }
+  T.check('B6-cssom', 'reading cssRules of the cross-origin imported sheet throws', err, 'SecurityError');
+  T.info('B6-href', 'CSSImportRule.href and styleSheet.href stay readable', xr.href + ' | ' + xr.styleSheet.href);
+  T.check('B7-print', '@import ... print is not applied on screen', w('b7p'), 'not-applied');
+  T.check('B7-supports-yes', '@import ... supports(display: grid) applies', w('b7y'), 'applied');
+  T.check('B7-supports-no', '@import ... supports(display: nonsense-value) is skipped', w('b7n'), 'not-applied');
+  T.check('B7-media', '@import ... screen and (min-width: 1px) applies', w('b7m'), 'applied');
+  const b7 = Array.from(document.getElementById('b7').sheet.cssRules).map(r => r.cssText);
+  T.info('B7-cssom', 'serialized conditional imports', b7.join(' || '));
+  T.check('B9', 'an @import that 404s is ignored silently; the rest of the sheet applies', w('b9'), 'inline');
+  T.check('B10', '@import inside @media {} is invalid', w('b10'), 'not-applied');
+  T.check('B11a', 'first @import applies', w('b11a'), 'applied');
+  T.info('B11b', '@import placed AFTER an @layer statement that follows another @import', w('b11b'));
+  T.check('B12', '@import after a nested style rule is dropped', w('b12'), 'not-applied');
+  T.check('B13', '@import "file.css" (string form, no url()) works', w('b13'), 'applied');
+});
+</script>
+</body>
+</html>

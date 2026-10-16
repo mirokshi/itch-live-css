@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<style id="jam_theme" type="text/css">:root{--itchio_ui_bg:#282828;}.jam_page_wrap{color:#222;--itchio_link_color:#ff7a24;}.view_jam_page .jam_filter_picker .divider{color:#666;}@import url("data:text/css,.p-imp{color:rgb(1,2,3)}");
+@charset "utf-8";
+@namespace svg url(http://www.w3.org/2000/svg);
+@font-face{font-family:ProbeFont;src:local(Arial);}
+@layer probe{.p-layer{color:rgb(4,5,6)}}
+@layer stmt;
+@media (min-width:1px){.p-media{color:rgb(7,7,7)}}
+@supports (display:grid){.p-sup{color:rgb(8,8,8)}}
+@container (min-width:1px){.p-cont{color:rgb(9,9,9)}}
+@keyframes k{from{opacity:0}to{opacity:1}}
+@property --pp{syntax:'<color>';inherits:true;initial-value:rgb(11,11,11)}
+.p-prop{color:var(--pp)}
+@scope (.view_jam_page){.p-scope{color:rgb(12,12,12)}}
+.p-after{color:rgb(13,13,13)}
+.view_jam_page .p-lose{color:rgb(14,14,14)}
+@layer probe{.view_jam_page .p-lose{color:rgb(15,15,15)!important}}
+</style>
+<style>.view_jam_page .p-lose2{color:rgb(20,20,20)}</style>
+<style id="jam_theme2">@layer x{#wrapper .p-lose2{color:rgb(21,21,21)}}</style>
+</head><body>
+<div class="jam_page_wrap" id="wrapper" style="container-type:inline-size"><div class="view_jam_page"><span class="p-imp">a</span><span class="p-layer">b</span><span class="p-media">c</span><span class="p-sup">d</span><span class="p-cont">e</span><span class="p-prop">f</span><span class="p-scope">g</span><span class="p-after">h</span><span class="p-lose">i</span><span class="p-lose2">j</span></div></div>
+<pre id="out"></pre>
+<script>
+setTimeout(function(){
+ var o={ua:navigator.userAgent.match(/Chrome\/[\d.]+/)[0]};
+ var s=document.getElementById('jam_theme').sheet;
+ o.types=[].map.call(s.cssRules,function(r){return r.constructor.name;});
+ ['p-imp','p-layer','p-media','p-sup','p-cont','p-prop','p-scope','p-after','p-lose','p-lose2'].forEach(function(k){o[k]=getComputedStyle(document.querySelector('.'+k)).color;});
+ document.getElementById('out').textContent='VRESULT '+JSON.stringify(o);
+},500);
+</script></body></html>

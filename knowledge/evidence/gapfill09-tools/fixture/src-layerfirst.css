@@ -1,0 +1,6 @@
+/* Variant: @layer statement before @import (allowed by css-cascade-5) */
+@layer custom-a, custom-b;
+@import url("imp.css");
+@layer custom-b { #wrapper .p-layer { color: rgb(0, 0, 200); } }
+@layer custom-a { #wrapper .p-layer { color: rgb(200, 0, 0); } }
+#wrapper .p-tie { color: rgb(0, 128, 0); }

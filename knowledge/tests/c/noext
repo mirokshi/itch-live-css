@@ -1,0 +1,2 @@
+/* Test C fixture: valid CSS with no file extension (application/octet-stream) */
+#wrapper .c8 { color: rgb(2, 2, 2); }

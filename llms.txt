@@ -1,0 +1,33 @@
+# itch-live-css
+
+> A public knowledge base for AI assistants and developers on writing custom CSS (and the description HTML it styles) for itch.io profile, project/game, devlog and jam pages: what itch does with your CSS, where it applies, which selectors are stable, what the policies forbid, and how to stay accessible. Every claim carries a confidence tag and a fact id that leads to its evidence. Last verified 2026-10-14, with live probes on 2026-10-16.
+
+- Start with `knowledge/itch-custom-css.md` (~78,000 characters). It holds the rules an AI must never break, copy-exact CSS blocks, and a condensed guide that links to the detailed section files. Load a section file only when you need its detail; together they are ~860 KB.
+- Confidence tags: verified, verified (live render), verified (script-free harness), documented, observed, community, library model, inferred, unverified. Don't upgrade a tag without a new direct check.
+- Most checks were made logged out. Facts that need an itch account (size caps, the sanitizer as itch runs it, what a save does to CSS) were settled on 2026-10-16 with the live probe kit in `knowledge/probes/` on a draft project and the profile; results are in `knowledge/evidence/live-probes/`. Devlog and jam fields are still open.
+- Browser results are Chromium unless noted. Screen-reader speech and Firefox/Safari layout are untested; only accessibility trees were spot-checked in Firefox 142 and WebKit 26.
+
+## Docs
+
+- [itch.io Custom CSS: knowledge base for AI assistants](knowledge/itch-custom-css.md): the main file. Rules, copy-exact blocks (reduced motion, focus, background, decorative layer), one condensed section per topic, open questions and the evidence index
+- [llms-full.txt](llms-full.txt): the main file plus all ten section files in one text file (very large; load only if your context allows)
+
+## Sections
+
+- [01 How it works](knowledge/sections/01-how-it-works.md): getting CSS access, where the editor is, size caps and measuring them, what a save does to your text, injection order, which pages get the CSS
+- [02 Rules and policy](knowledge/sections/02-rules-and-policy.md): rules enforced by software versus by staff, `#wrapper` scoping, built-in UI and footer protection, no tracking or impersonation, accessibility duties, sanctions
+- [03 Page anatomy](knowledge/sections/03-page-anatomy.md): DOM trees and stable selectors for profile, project, devlog, comments and jam pages; URL forms; breakpoints; logged-in and owner views
+- [04 Theme editor and itch's CSS](knowledge/sections/04-theme-editor-and-itch-css.md): what the theme editor generates, where `--itchio_*` variables live, the background image, itch's base stylesheets, `!important` inventory, maximized HTML5 games, the canonical focus block
+- [05 HTML in descriptions](knowledge/sections/05-html-in-descriptions.md): the bio and description sanitizer: surviving tags, attributes and classes, inline `style` limits, links, images, iframes, parser edge cases
+- [06 Cascade and specificity](knowledge/sections/06-cascade-and-specificity.md): what your rules compete with, specificity tools, `!important`, `@import` placement and order, `@layer` pitfalls, custom properties, runtime styles, global keyframes
+- [07 Techniques and browser support](knowledge/sections/07-techniques-and-support.md): JS-free effects, fallbacks and `@supports`, motion, hover and focus, generated content, layout building blocks, per-visit randomness, performance, a support matrix
+- [08 External CSS](knowledge/sections/08-external-css.md): `@import` rules, host requirements, caching, render blocking and failure, web fonts, privacy, dynamic per-visit CSS services, CSS frameworks
+- [09 Gotchas](knowledge/sections/09-gotchas.md): symptom, cause and fix for the failures seen in practice, from scope and cascade to the size cap, the sanitizer and accessibility
+- [10 Testing and accessibility](knowledge/sections/10-testing-and-a11y.md): the pre-ship checklist, logged-out and viewport testing, reduced motion, forced colours, contrast, keyboard focus, headings, screen-reader exposure, local harnesses, starter templates
+
+## Optional
+
+- [Live probe kit](knowledge/probes/README.md): payloads and a read-back script the account owner runs on a draft page to settle account-only questions; runs 1, 2 and 4 were done on 2026-10-16
+- [Evidence logs](knowledge/evidence/): one log per research dimension plus gap-fill passes, with the scripts used; fact-id prefixes are mapped in the main file's appendix
+- [Local test pages](knowledge/tests/index.html): self-checking browser tests for `@import`, MIME types, layers, backgrounds, `url()` resolution, keyframes, generated content, overflow, support and accessibility
+- [Starter templates](knowledge/evidence/gapfill-s10-tools/templates/): minimal profile, project and jam stylesheets, tested on live renders

@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<style id="jam_theme">.jam_page_wrap{--itchio_link_color:#ff7a24}.view_jam_page .jam_filter_picker .divider{color:#666;}@import url("data:text/css,.q-imp{color:rgb(1,1,1)}");
+@charset "utf-8";
+@namespace x url(http://www.w3.org/1999/xhtml);
+@font-face{font-family:QF;src:local(Arial)}
+@layer L{.q-layer{color:rgb(2,2,2)}}
+@layer S;
+@media screen{.q-media{color:rgb(3,3,3)}}
+@supports (color:red){.q-sup{color:rgb(4,4,4)}}
+@keyframes qk{to{opacity:.5}}
+.q-after{color:rgb(5,5,5)}
+.view_jam_page .q-tie{color:rgb(6,6,6)}
+@layer L{#wrapper .q-tie{color:rgb(7,7,7)}}
+.view_jam_page .q-imp2{color:rgb(8,8,8)}
+@layer L{.q-imp2{color:rgb(9,9,9)!important}}
+</style>
+<style id="ctl">@import url("data:text/css,.q-top{color:rgb(10,10,10)}");</style>
+</head><body><div id="wrapper" class="jam_page_wrap"><div class="view_jam_page">
+<i class="q-imp">a</i><i class="q-layer">b</i><i class="q-media">c</i><i class="q-sup">d</i><i class="q-after">e</i><i class="q-tie">f</i><i class="q-imp2">g</i><i class="q-top">h</i></div></div>
+<pre id="v2out"></pre><script>setTimeout(function(){var o={};var s=document.getElementById('jam_theme').sheet;o.types=[].map.call(s.cssRules,function(r){return r.constructor.name.replace('CSS','').replace('Rule','')});
+['q-imp','q-layer','q-media','q-sup','q-after','q-tie','q-imp2','q-top'].forEach(function(k){o[k]=getComputedStyle(document.querySelector('.'+k)).color});
+o.ctl=[].map.call(document.getElementById('ctl').sheet.cssRules,function(r){return r.constructor.name});o.ua=navigator.userAgent.match(/Chrome\/[\d.]+/)[0];
+document.getElementById('v2out').textContent='V2RESULT '+JSON.stringify(o)},400)</script></body></html>

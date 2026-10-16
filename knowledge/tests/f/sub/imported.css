@@ -1,0 +1,5 @@
+/* Test F fixture (same origin): relative url() here resolve against THIS file's URL. */
+@import url("deeper/deep.css");
+#wrapper .f2 { background-image: url("dot.svg"); }
+#wrapper { --f-img: url("dot.svg"); --f-reg: url("dot.svg"); }
+#wrapper .f5 { background-image: var(--f-img2); }

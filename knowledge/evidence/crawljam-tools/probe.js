@@ -1,0 +1,30 @@
+(function(){
+ function cs(sel,prop,pseudo){var e=document.querySelector(sel);if(!e)return null;return getComputedStyle(e,pseudo||null).getPropertyValue(prop);}
+ var o={};
+ o.wrapper_bg_image=cs('#wrapper','background-image');
+ o.wrapper_bg_color=cs('#wrapper','background-color');
+ o.wrapper_color=cs('#wrapper','color');
+ o.wrapper_link_var=cs('#wrapper','--itchio_link_color');
+ o.root_link_var=getComputedStyle(document.documentElement).getPropertyValue('--itchio_link_color');
+ o.content_link_color=cs('.jam_content a','color');
+ o.host_link_color=cs('.jam_host_header a','color');
+ o.site_header_link_color=cs('.header_widget .header_buttons a','color');
+ o.site_header_bg=cs('.header_widget .primary_header','background-color');
+ o.site_header_bgimg=cs('.header_widget .primary_header','background-image');
+ o.join_btn_bg=cs('.jam_submitter_widget .button','background-color');
+ o.jam_body_bg=cs('.jam_body','background-color');
+ o.jam_body_radius=cs('.jam_body','border-top-left-radius');
+ o.submitter_radius=cs('.jam_submitter_widget','border-top-left-radius');
+ o.game_text_color=cs('.game_cell .game_text','color');
+ o.game_title_color=cs('.game_cell .game_title a','color');
+ o.body_bg=cs('body','background-color');
+ o.site_logo_img_maxw=cs('.header_widget img','max-width');
+ o.wrapper_display=cs('#wrapper','display');
+ o.jam_body_maxw=cs('.jam_body','max-width');
+ o.jam_body_margin=cs('.jam_body','margin-top');
+ o.title_font_size=cs('.jam_title_header','font-size');
+ o.stats_display=cs('.stats_container','display');
+ o.vw=window.innerWidth;
+ var s=document.getElementById('jam_theme').sheet; o.jam_theme_rules=s.cssRules.length; o.jam_theme_imports=[].filter.call(s.cssRules,function(r){return r.constructor.name==='CSSImportRule'}).length;
+ document.getElementById('probe_out').textContent='RESULT '+JSON.stringify(o);
+})();

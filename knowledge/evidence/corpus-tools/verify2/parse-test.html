@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- verifier pass 2 test page. Each <style> mimics one itch layout. -->
+<!-- 1. jam-like: theme rules, then host CSS starting with @import -->
+<style id="s1">:root{--itchio_ui_bg:#282828}.view_jam_page .jam_filter_picker .divider{color:#111}@import url("data:text/css,%23t1%7Bcolor%3Argb(0%2C128%2C0)%7D");#t1b{color:rgb(1,2,3)} </style>
+<!-- 2. profile/project-like: comment then @import first -->
+<style id="s2">/* header comment */
+@import url("data:text/css,%23t2%7Bcolor%3Argb(0%2C0%2C255)%7D");#t2b{color:rgb(4,5,6)}</style>
+<!-- 3. @import after @font-face -->
+<style id="s3">@font-face{font-family:Q;src:local(Arial)}@import url("data:text/css,%23t3%7Bcolor%3Argb(255%2C0%2C0)%7D");#t3b{font-family:Q}</style>
+<!-- 4. @import after @layer statement (allowed by spec) -->
+<style id="s4">@layer base;@import url("data:text/css,%23t4%7Bcolor%3Argb(0%2C99%2C0)%7D");</style>
+<!-- 5. pre-escaped child combinator vs raw > -->
+<style id="s5">#p5 &gt; #k5{color:rgb(10,10,10)}#p6 > #k6{color:rgb(20,20,20)}</style>
+<!-- 6. nesting with &> and range media -->
+<style id="s6">#p7{&>#k7{color:rgb(30,30,30)}}@media (width>=1px){#k8{color:rgb(40,40,40)}}</style>
+<!-- 7. @font-face after style rules -->
+<style id="s7">.z{color:red}@font-face{font-family:T7;src:local(Arial)}#t7{font-family:T7}</style>
+</head><body>
+<p id="t1">t1</p><p id="t1b">t1b</p><p id="t2">t2</p><p id="t2b">t2b</p><p id="t3">t3</p><p id="t3b">t3b</p><p id="t4">t4</p>
+<div id="p5"><p id="k5">k5</p></div><div id="p6"><p id="k6">k6</p></div><div id="p7"><p id="k7">k7</p></div><p id="k8">k8</p><p id="t7">t7</p>
+<pre id="out"></pre>
+<script>
+addEventListener('load', () => setTimeout(() => {
+  const o = {};
+  for (const id of ['t1','t1b','t2','t2b','t3','t3b','t4','k5','k6','k7','k8','t7']) { const c = getComputedStyle(document.getElementById(id)); o[id] = c.color + ' | ' + c.fontFamily; }
+  for (const s of document.querySelectorAll('style')) o['rules_' + s.id] = [...s.sheet.cssRules].map(r => r.constructor.name + (r.selectorText ? '(' + r.selectorText + ')' : ''));
+  o.ua = navigator.userAgent;
+  document.getElementById('out').textContent = JSON.stringify(o, null, 1);
+}, 300));
+</script></body></html>

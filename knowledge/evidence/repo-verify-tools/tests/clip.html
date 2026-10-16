@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><style>
+body{margin:0;font:20px sans-serif}
+#wrapper{padding:0 16px}
+#wrapper h2{text-align:center}
+#wrapper .m{display:inline-grid;grid-template-columns:auto 0;height:1.4em;line-height:1.4;white-space:nowrap;color:transparent;rotate:-6deg}
+#wrapper .m::before{content:"Greeting0!\a Greeting1!\a Greeting2!\a Greeting3!\a Greeting4!\a Greeting5!\a Greeting6!\a Greeting7!\a Greeting8!\a Greeting9!\a Greeting10!\a Greeting11!\a Greeting12!\a Greeting13!\a Greeting14!\a Greeting15!\a Greeting16!\a Greeting17!\a Greeting18!\a Greeting19!\a Greeting20!\a Greeting21!\a Greeting22!\a Greeting23!\a Greeting24!\a Greeting25!\a Greeting26!\a Greeting27!\a Greeting28!\a Greeting29!";white-space:pre;text-align:right;color:#000}
+#wrapper.clippath .m{clip-path:inset(0)}
+#wrapper.oclip .m{overflow-y:clip}
+#wrapper.ohidden .m{overflow:hidden}
+</style></head><body><div id="wrapper"><h2><span class="m">Hi!</span>, I am an application developer and an enthusiastic video game developer.</h2></div>
+<script>
+window.result=()=>{const w=document.getElementById('wrapper'),d=document.documentElement,out={};
+for(const c of ['none','clippath','oclip','ohidden']){w.className=c;out[c]={scrollW:d.scrollWidth,clientW:d.clientWidth,scrollH:d.scrollHeight,overflowX:d.scrollWidth>d.clientWidth};}
+return out;};
+</script></body></html>

@@ -1,0 +1,2 @@
+/* Verification fixture: @import placed after @property */
+#wrapper .v14-property { color: rgb(2, 2, 2); }

@@ -1,0 +1,34 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- T1 jam-like: theme rules then user CSS with @import (data: and relative file) in ONE sheet -->
+<style id="t1">:root{--x:1}.jam_page_wrap{color:#222}@import url("data:text/css,%23a1%7Bcolor%3Argb(0%2C128%2C0)%7D");@import url("imp.css");#c1{color:rgb(9,9,9)}</style>
+<!-- T2 profile/project-like: @import first in its own sheet -->
+<style id="t2">@import url("data:text/css,%23a2%7Bcolor%3Argb(0%2C0%2C255)%7D");@import url("imp2.css");#c2{color:rgb(7,7,7)}</style>
+<!-- T3 @import preceded only by a comment and whitespace -->
+<style id="t3">
+/* header comment */
+@import url("data:text/css,%23a3%7Bcolor%3Argb(1%2C2%2C3)%7D");#c3{color:rgb(4,5,6)}</style>
+<!-- T4 @import after an @font-face (an at-rule that is not @charset/@layer) -->
+<style id="t4">@font-face{font-family:Q;src:local(Arial)}@import url("data:text/css,%23a4%7Bcolor%3Argb(11%2C12%2C13)%7D");#c4{color:rgb(14,15,16)}</style>
+<!-- T5 @font-face after style rules -->
+<style id="t5">.z{color:red}@font-face{font-family:T5;src:local(Arial)}#e5{font-family:T5}</style>
+<!-- T6 pre-escaped child combinator -->
+<style id="t6">#p6 &gt; #k6{color:rgb(200,0,0)}#p6>#k7{color:rgb(0,200,0)}</style>
+<!-- T7 a literal </style inside a CSS comment ends the element early -->
+<style id="t7">/* </style><b id="leak">LEAKED</b> */ #c7{color:rgb(1,1,1)}</style>
+</head><body>
+<p id="a1">a1</p><p id="c1">c1</p><p id="i1">i1</p>
+<p id="a2">a2</p><p id="c2">c2</p><p id="i2">i2</p>
+<p id="a3">a3</p><p id="c3">c3</p><p id="a4">a4</p><p id="c4">c4</p><p id="e5">e5</p>
+<div id="p6"><span id="k6">k6</span><span id="k7">k7</span></div><p id="c7">c7</p>
+<pre id="out"></pre>
+<script>
+window.addEventListener('load', () => {
+  const o = {};
+  for (const id of ['a1','c1','i1','a2','c2','i2','a3','c3','a4','c4','k6','k7','c7']) o[id] = getComputedStyle(document.getElementById(id)).color;
+  o.e5 = getComputedStyle(document.getElementById('e5')).fontFamily;
+  for (const s of ['t1','t2','t3','t4','t5','t6','t7']) { const el = document.getElementById(s); o[s+'_rules'] = el ? [...el.sheet.cssRules].map(r => r.constructor.name) : null; }
+  o.leak = !!document.getElementById('leak');
+  o.ua = navigator.userAgent;
+  document.getElementById('out').textContent = 'RESULT ' + JSON.stringify(o);
+});
+</script></body></html>

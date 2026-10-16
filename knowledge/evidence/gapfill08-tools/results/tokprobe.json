@@ -1,0 +1,108 @@
+{
+ "parser": {
+  "custom-flex": "<p class=\"custom-flex\">x</p>",
+  "custom_flex": "<p class=\"custom_flex\">x</p>",
+  "customflex": "<p class=\"customflex\">x</p>",
+  "-custom-mt-4": "<p class=\"-custom-mt-4\">x</p>",
+  "custom-w-1/2": "<p class=\"custom-w-1/2\">x</p>",
+  "custom-w-[37px]": "<p class=\"custom-w-[37px]\">x</p>",
+  "md:custom-flex": "<p class=\"md:custom-flex\">x</p>",
+  "hover:custom-text-red-500": "<p class=\"hover:custom-text-red-500\">x</p>",
+  "custom-bg-red-500/50": "<p class=\"custom-bg-red-500/50\">x</p>",
+  "custom:flex": "<p class=\"custom:flex\">x</p>",
+  "custom:md:flex": "<p class=\"custom:md:flex\">x</p>",
+  "custom:-mt-4": "<p class=\"custom:-mt-4\">x</p>",
+  "custom:w-[37px]": "<p class=\"custom:w-[37px]\">x</p>",
+  "custom:w-1/2": "<p class=\"custom:w-1/2\">x</p>",
+  "!custom-flex": "<p class=\"!custom-flex\">x</p>",
+  "custom-btn": "<p class=\"custom-btn\">x</p>",
+  "custom-text-center": "<p class=\"custom-text-center\">x</p>"
+ },
+ "filters": {
+  "custom-flex": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": true,
+   "prefix \"custom-\" or \"custom_\"": true
+  },
+  "custom_flex": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": true,
+   "prefix \"custom-\" or \"custom_\"": true
+  },
+  "customflex": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": true,
+   "prefix \"custom-\" or \"custom_\"": false
+  },
+  "-custom-mt-4": {
+   "prefix \"custom\"": false,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": false
+  },
+  "custom-w-1/2": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": true
+  },
+  "custom-w-[37px]": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": true
+  },
+  "md:custom-flex": {
+   "prefix \"custom\"": false,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": false
+  },
+  "hover:custom-text-red-500": {
+   "prefix \"custom\"": false,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": false
+  },
+  "custom-bg-red-500/50": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": true
+  },
+  "custom:flex": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": false
+  },
+  "custom:md:flex": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": false
+  },
+  "custom:-mt-4": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": false
+  },
+  "custom:w-[37px]": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": false
+  },
+  "custom:w-1/2": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": false
+  },
+  "!custom-flex": {
+   "prefix \"custom\"": false,
+   "regex ^custom[%w_-]*$": false,
+   "prefix \"custom-\" or \"custom_\"": false
+  },
+  "custom-btn": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": true,
+   "prefix \"custom-\" or \"custom_\"": true
+  },
+  "custom-text-center": {
+   "prefix \"custom\"": true,
+   "regex ^custom[%w_-]*$": true,
+   "prefix \"custom-\" or \"custom_\"": true
+  }
+ }
+}

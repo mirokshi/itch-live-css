@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<!-- Simulates itch jam overview: generated theme rules + custom CSS appended in ONE style#jam_theme -->
+<style id="jam_theme" type="text/css">:root{--itchio_ui_bg:#282828;}body{background-color:#000;}.jam_page_wrap{color:#222;--itchio_link_color:#ff7a24;--itchio_button_color:#ff7a24;}.view_jam_page .jam_filter_picker .divider{color:#666;}@import url("data:text/css,.probe-late{color:rgb(1,2,3)}");
+@charset "utf-8";
+@font-face{font-family:ProbeFont;src:local(Arial);}
+@layer probe{.probe-layer{color:rgb(4,5,6)}}
+#wrapper{--itchio_link_color:#00ff00;}
+#wrapper .probe-var{color:var(--itchio_link_color);}
+.probe-after{color:rgb(7,8,9)}
+</style>
+<!-- Control: same import at the very top of its own sheet (like profile/project style#custom_css) -->
+<style id="control">@import url("data:text/css,.probe-top{color:rgb(10,11,12)}");</style>
+</head><body>
+<div class="jam_page_wrap" id="wrapper"><div class="view_jam_page"><span class="probe-late">a</span><span class="probe-top">b</span><span class="probe-layer">c</span><span class="probe-var">d</span><span class="probe-after">e</span></div></div>
+<pre id="out"></pre>
+<script>
+setTimeout(function(){
+ var o={};
+ var s=document.getElementById('jam_theme').sheet;
+ o.jam_theme_rule_types=[].map.call(s.cssRules,function(r){return r.constructor.name;});
+ o.jam_theme_has_import=[].some.call(s.cssRules,function(r){return r.constructor.name==='CSSImportRule';});
+ var c=document.getElementById('control').sheet;
+ o.control_rule_types=[].map.call(c.cssRules,function(r){return r.constructor.name;});
+ ['probe-late','probe-top','probe-layer','probe-var','probe-after'].forEach(function(k){o[k]=getComputedStyle(document.querySelector('.'+k)).color;});
+ o.wrapper_link_var=getComputedStyle(document.getElementById('wrapper')).getPropertyValue('--itchio_link_color');
+ o.ua=navigator.userAgent;
+ document.getElementById('out').textContent='RESULT '+JSON.stringify(o);
+},500);
+</script></body></html>

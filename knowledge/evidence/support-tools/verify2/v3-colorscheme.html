@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>color-scheme form controls</title>
+<style>
+  #dark{color-scheme:dark}
+  #ld{color-scheme:light dark}
+</style>
+</head>
+<body>
+<div id="none"><div><textarea id="t0">a</textarea><input id="i0"></div></div>
+<div id="dark"><div><textarea id="t1">a</textarea><input id="i1"></div></div>
+<div id="ld"><div><textarea id="t2">a</textarea><input id="i2"></div></div>
+<pre id="out"></pre>
+<script>
+const g=(id,p)=>getComputedStyle(document.getElementById(id))[p];
+const r={ua:navigator.userAgent,prefersDark:matchMedia('(prefers-color-scheme: dark)').matches,
+  none:[g('t0','backgroundColor'),g('t0','color'),g('i0','backgroundColor')],
+  dark:[g('t1','backgroundColor'),g('t1','color'),g('i1','backgroundColor')],
+  lightDark:[g('t2','backgroundColor'),g('t2','color'),g('i2','backgroundColor')],
+  childScheme:getComputedStyle(document.getElementById('t1')).colorScheme};
+document.getElementById('out').textContent='V3_JSON='+JSON.stringify(r);
+</script>
+</body>
+</html>

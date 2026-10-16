@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H · content: strings, var(), alt text, counters, attr()</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="custom_css">
+  #wrapper { --h-msg: "Hola"; --h-raw: Hola; --h-num: 3; }
+  #wrapper .h1::before { content: var(--h-msg); }
+  #wrapper .h2::before { content: var(--h-raw); }
+  #wrapper .h3::before { content: "★" / ""; }
+  #wrapper .h4::before { content: "★" / "star"; }
+  #wrapper .h5 { counter-reset: h; list-style: none; padding: 0; }
+  #wrapper .h5 li { counter-increment: h; }
+  #wrapper .h5 li::before { content: counter(h) ". "; }
+  #wrapper .h6::before { content: attr(data-h); }
+  #wrapper .h7::before { content: var(--h-msg) " world"; }
+  #wrapper .h8 { width: attr(data-w type(<length>), 10px); }
+  #wrapper .h9::before { content: counter(h, upper-roman); counter-reset: h var(--h-num); }
+  #wrapper .h10::after { content: "x"; display: block; }
+  #wrapper .h11::before { content: "Hi" / var(--h-msg); }
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test H — generated content.</b> Computed `content` of pseudo-elements; generated text is not in the DOM, so JS can only read the
+computed value (and accessibility tools that read the DOM cannot see it — see k-a11y.html).</p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <p class="h1">-h1</p><p class="h2">-h2</p><p class="h3">-h3</p><p class="h4">-h4</p>
+      <ol class="h5"><li>one</li><li>two</li><li>three</li></ol>
+      <p class="h6" data-h="from-attr">-h6</p><p class="h7">-h7</p>
+      <div class="h8" data-w="123px">h8</div><p class="h9">-h9</p><p class="h10">h10</p><p class="h11">-h11</p>
+    </div>
+  </div>
+</div>
+<script>
+T.run(() => {
+  const c = (s, p) => T.cs(s, 'content', p || '::before');
+  T.check('H1', 'content: var(--msg) with a quoted string custom property', c('.h1'), '"Hola"');
+  T.check('H2', 'content: var(--raw) with an UNQUOTED ident: invalid at computed-value time → initial (normal), which computes to none on ::before', c('.h2'), 'none');
+  T.check('H3', 'content with empty alt text: "★" / ""', c('.h3'), '"★" / ""');
+  T.check('H4', 'content with alt text "★" / "star"', c('.h4'), '"★" / "star"');
+  T.check('H5', 'counter() in ::before (computed keeps the function)', c('.h5 li'), 'counter(h) ". "');
+  T.check('H6', 'content: attr(data-h) — computed value already holds the attribute text', c('.h6'), '"from-attr"');
+  T.check('H7', 'content: var(--msg) " world" — adjacent strings are merged in the computed value', c('.h7'), '"Hola world"');
+  T.check('H8', 'typed attr(): width: attr(data-w type(<length>), 10px)', T.cs('.h8', 'width'), '123px');
+  T.info('H9', 'counter-reset with var() + upper-roman', c('.h9') + ' | counter-reset=' + T.cs('.h9', 'counter-reset', '::before'));
+  T.check('H11', 'alt text can come from var()', c('.h11'), '"Hi" / "Hola"');
+  T.info('H-supports', 'CSS.supports content alt / attr type()',
+    CSS.supports('content', '"a" / ""') + ' / ' + CSS.supports('width', 'attr(data-w type(<length>))'));
+  // innerText / textContent never include generated content:
+  T.check('H-dom', 'element.innerText excludes ::before text', document.querySelector('.h1').innerText, '-h1');
+});
+</script>
+</body>
+</html>

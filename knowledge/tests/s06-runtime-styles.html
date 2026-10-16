@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S06 · styles injected by itch JS after custom CSS</title>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test S06 — itch's JS (bundle.min.js GameGridSizer.resize_cells) appends &lt;style itchio-grid-sizer&gt; to the END of &lt;head&gt;,
+after the custom CSS. Each case runs in its own srcdoc document. The sizer CSS here is my own minimal imitation of the shape found in the source:
+profile = <code>.mode_grid .user_game_grid{…}</code> (0,2,0); jam overview = <code>#&lt;generated id&gt;{…}</code> (1,0,0) on <code>.browse_game_grid</code>.</b>
+Sizer value = 3 columns of 100px; custom value = 2 columns of 50px.</p></div>
+<script>
+// Build one mini document: custom CSS in style#custom_css (last in served <head>), then a script appends the sizer <style> like itch's JS does.
+function doc(customCss, kind) {
+  const profile = kind === 'profile';
+  const body = profile
+    ? '<div class="user_page_wrap" id="wrapper"><div class="user_page mode_grid"><div class="user_game_grid game_grid_widget" id="g"><div class="game_cell">a</div><div class="game_cell">b</div></div></div></div>'
+    : '<div class="jam_page_wrap" id="wrapper"><div class="view_jam_page"><div class="game_grid_widget browse_game_grid" id="g"><div class="game_cell">a</div><div class="game_cell">b</div></div></div></div>';
+  const sizerSel = profile ? '.mode_grid .user_game_grid' : '#grid_gen_1';
+  const inject =
+    (profile ? '' : 'document.getElementById("g").id = "grid_gen_1";') +
+    'var s = document.createElement("style"); s.setAttribute("itchio-grid-sizer", "");' +
+    's.textContent = "' + sizerSel + ' { --itchio_grid_gap: 20px; --itchio_grid_cell_width: 100px; --itchio_grid_cell_columns: 3; grid-template-columns: repeat(3, 100px); }";' +
+    'document.head.appendChild(s);';
+  return '<!DOCTYPE html><html><head><style>.game_grid_widget{display:grid}</style>' +
+    '<style id="custom_css">' + customCss + '</style></head><body>' + body +
+    '<script>' + inject + '<\/script></body></html>';
+}
+T.run(async () => {
+  const cols = async (css, kind, sel, prop) => {
+    const f = await T.frame(doc(css, kind), 600, 120);
+    return T.cs(sel || '.game_grid_widget', prop || 'grid-template-columns', null, f.contentDocument);
+  };
+  const lastHead = async () => {
+    const f = await T.frame(doc('', 'profile'), 600, 120);
+    const h = f.contentDocument.head.lastElementChild;
+    return h.tagName + (h.hasAttribute('itchio-grid-sizer') ? '[itchio-grid-sizer]' : '#' + h.id);
+  };
+  T.check('S1', 'last element of <head> after the sizer script ran', await lastHead(), 'STYLE[itchio-grid-sizer]');
+  T.check('S2', 'profile: custom .mode_grid .user_game_grid (0,2,0) ties the later sizer and LOSES',
+    await cols('.mode_grid .user_game_grid{grid-template-columns:repeat(2,50px)}', 'profile'), '100px 100px 100px');
+  T.check('S3', 'profile: custom #wrapper .mode_grid .user_game_grid (1,2,0) WINS',
+    await cols('#wrapper .mode_grid .user_game_grid{grid-template-columns:repeat(2,50px)}', 'profile'), '50px 50px');
+  T.check('S4', 'profile: custom rule can read the sizer variable var(--itchio_grid_cell_width)',
+    await cols('#wrapper .game_cell{width:var(--itchio_grid_cell_width,1px)}', 'profile', '.game_cell', 'width'), '100px');
+  T.check('S5', 'jam: custom .view_jam_page .browse_game_grid (0,2,0) LOSES to the injected #id rule (1,0,0)',
+    await cols('.view_jam_page .browse_game_grid{grid-template-columns:repeat(2,50px)}', 'jam'), '100px 100px 100px');
+  T.check('S6', 'jam: custom #wrapper .browse_game_grid (1,1,0) WINS over #id (1,0,0)',
+    await cols('#wrapper .browse_game_grid{grid-template-columns:repeat(2,50px)}', 'jam'), '50px 50px');
+  T.check('S7', 'jam: bare #wrapper-less !important also wins (for reference)',
+    await cols('.browse_game_grid{grid-template-columns:repeat(2,50px)!important}', 'jam'), '50px 50px');
+});
+</script>
+</body>
+</html>

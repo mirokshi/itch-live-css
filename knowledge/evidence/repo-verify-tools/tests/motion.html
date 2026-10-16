@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@keyframes spin{to{rotate:360deg}}
+#wrapper{position:relative;isolation:isolate}
+#wrapper::before,#wrapper::after{content:"";position:fixed;inset:0;z-index:-1;animation:spin 3s infinite}
+#wrapper .kid::before,#wrapper .kid::after{content:"x";display:inline-block;animation:spin 3s infinite}
+#wrapper .kid{display:inline-block;animation:spin 3s infinite}
+@media (prefers-reduced-motion:reduce){#wrapper *,#wrapper *::before{animation:none!important;transition-duration:.01ms!important;transition-delay:0s!important}}
+/* animation list replacement */
+@keyframes a1{to{opacity:.5}} @keyframes a2{to{translate:10px}}
+#wrapper .list{animation:a1 2s infinite,a2 2s infinite}
+#wrapper .list.later{animation:a1 2s infinite}
+/* registered property passed down */
+@property --breath{syntax:"<angle>";inherits:true;initial-value:0deg}
+@keyframes breath{to{--breath:360deg}}
+#wrapper h1.t{animation:breath 4s linear infinite}
+#wrapper .t span{font-weight:calc(550 + 150*sin(var(--breath) + 90deg))}
+</style></head><body><div id="wrapper"><span class="kid">k</span><p class="list later">l</p><h1 class="t"><span>A</span></h1></div>
+<script>
+window.result=()=>{const w=document.getElementById('wrapper'),k=document.querySelector('.kid');
+const an=(el,p)=>getComputedStyle(el,p).animationName;
+const r={reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,
+ wrapperBefore:an(w,'::before'),wrapperAfter:an(w,'::after'),kid:an(k),kidBefore:an(k,'::before'),kidAfter:an(k,'::after')};
+const l=document.querySelector('.list');r.listAnimations=l.getAnimations().map(a=>a.animationName);
+const h=document.querySelector('h1.t'),sp=h.querySelector('span');const anims=h.getAnimations();
+const fw=[];if(anims.length){const a=anims[0];a.pause();for(const t of [0,1000,2000,3000]){a.currentTime=t;fw.push(getComputedStyle(sp).fontWeight);} }
+r.h1Anims=anims.map(a=>a.animationName);r.spanAnims=sp.getAnimations().length;r.spanFontWeightsAt0_1_2_3s=fw;return r;};
+</script></body></html>

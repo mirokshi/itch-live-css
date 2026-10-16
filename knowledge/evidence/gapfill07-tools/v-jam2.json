@@ -1,0 +1,3 @@
+{"V0_none":"",
+ "V12_jam_cols_gap":"#wrapper .browse_game_grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));column-gap:40px}",
+ "V13_jam_cols_only":"#wrapper .browse_game_grid{grid-template-columns:repeat(3,1fr)}"}

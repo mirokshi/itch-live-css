@@ -1,0 +1,24 @@
+<!doctype html>
+<!-- Gap-fill 07 (2026-10-14): infinite vs finite idle motion. Own synthetic harness, no itch assets.
+     style#variant receives the CSS under test (driver: finite-motion.mjs). -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>finite motion harness</title>
+<style>
+body{margin:0;background:#0b1433;color:#eef3ff;font:16px/1.4 system-ui,sans-serif}
+#wrapper{position:relative;isolation:isolate;min-height:100vh;padding:40px}
+#wrapper::before,#wrapper::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle at 20% 30%,#fff 1px,transparent 2px) 0 0/90px 90px}
+#wrapper::after{background-size:130px 130px}
+.custom-title{font-size:48px;font-weight:400;white-space:nowrap}
+.custom-title span{--i:0}
+.custom-title span:nth-child(2){--i:1}.custom-title span:nth-child(3){--i:2}.custom-title span:nth-child(4){--i:3}
+.custom-title span:nth-child(5){--i:4}.custom-title span:nth-child(6){--i:5}.custom-title span:nth-child(7){--i:6}
+.custom-title span:nth-child(8){--i:7}
+</style>
+<style id="variant"></style>
+</head><body>
+<div id="wrapper"><div class="user_page">
+  <h1 class="custom-title" id="title"><span>S</span><span>t</span><span>a</span><span>r</span><span>f</span><span>a</span><span>l</span><span>l</span></h1>
+  <p id="far">Some text far from the title, used to move the pointer away.</p>
+</div></div>
+</body></html>

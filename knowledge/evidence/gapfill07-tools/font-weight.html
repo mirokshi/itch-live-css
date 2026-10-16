@@ -1,0 +1,24 @@
+<!doctype html>
+<!-- Gap-fill 07 (2026-10-14): which Syne face renders when the theme <link> (CSS API v1, 400/700 + italics)
+     and a custom-CSS css2 @import (wght 400..800) declare the same family.
+     ?mode=both|v1|css2  &w=<static font-weight>  or  &a=<seconds into a paused 4 s 400->800 animation>
+     (driver: font-weight.mjs) -->
+<html lang="en"><head><meta charset="utf-8"><title>font weight harness</title>
+<script>
+  const q = new URLSearchParams(location.search), mode = q.get('mode') || 'both';
+  // same order as a profile: theme link first, custom CSS style last in <head>
+  if (mode === 'both' || mode === 'v1')
+    document.write('<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Syne%3A400%2C400italic%2C700%2C700italic">');
+  document.write('<style id="custom_css">' + (mode === 'both' || mode === 'css2'
+    ? '@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400..800&display=swap");' : '') + '</style>');
+</script>
+<style>
+body{margin:0;padding:20px;background:#fff;color:#000}
+#probe{font-family:Syne,monospace;font-size:48px;white-space:nowrap;display:inline-block}
+@keyframes custom-w{from{font-weight:400}to{font-weight:800}}
+</style></head><body>
+<div><span id="probe">Mirokshi Weight</span></div>
+<script>const pr = document.getElementById('probe');
+  if (q.get('a')) pr.style.animation = 'custom-w 4s linear -' + q.get('a') + 's paused';
+  else pr.style.fontWeight = q.get('w') || '400';</script>
+</body></html>

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>s04 focus3x</title>
+<!-- s04 gap-fill retry: s10-itchfocus.html extended with a profile collection row (h2 link + carousel card) and a
+     jam-style grid card with its hover-only cell tools. Synthetic, original markup that copies only itch's class
+     names. The runner (focus3x.mjs) links one itch bundle BEFORE #fix (itch's head order) and sets #wrapper's class
+     to the page type's wrapper class (user_page_wrap / main wrapper / jam_page_wrap). -->
+<style>body{margin:0;background:#0b1433;color:#eef3ff;font:16px/1.4 sans-serif}#wrapper{padding:30px}
+.game_thumb{display:block;width:200px;height:120px;background:#345}</style>
+<style id="fix"></style>
+</head><body class="responsive">
+<div id="wrapper"><div class="user_page inner_column view_jam_page">
+ <div class="formatted_description user_formatted jam_content user_profile formatted">
+  <p><a href="#l" id="lnk">A description link</a></p>
+  <p>Spoiler: <span class="spoiler" tabindex="0" id="sp">secret text</span></p>
+ </div>
+ <p><a class="button" href="#b" id="btn">Download</a> <a class="button disabled" href="#d" id="dis">Disabled</a></p>
+ <div class="collection_row">
+  <h2><a href="#c" id="coll">A collection</a></h2>
+  <div class="carousel_wrapper"><div class="game_grid_widget game_list">
+   <div class="game_cell"><a class="game_thumb" href="#ct" id="cthumb"></a>
+    <div class="game_cell_data"><div class="game_title"><a class="title game_link" href="#cg" id="ccard">Collection game</a></div></div></div>
+  </div></div>
+ </div>
+ <div class="grid_outer" id="entries"><div class="game_grid_widget browse_game_grid">
+  <div class="game_cell"><div class="game_cell_tools"><a class="action_btn" href="#t" id="tools">Add to collection</a></div>
+   <a class="game_thumb" href="#jt" id="jthumb"></a>
+   <div class="game_cell_data"><div class="game_title"><a class="title game_link" href="#jg" id="jcard">Jam entry</a></div></div></div>
+ </div></div>
+</div></div>
+</body></html>

@@ -1,0 +1,211 @@
+{
+ "html": {
+  "h1-letter-split": {
+   "in": "<h1 class=\"custom-title\"><span class=\"custom-sr\">Miro</span><span class=\"custom-l\"></span><span class=\"custom-l\"></span></h1>",
+   "H1": "<h1 class=\"custom-title\"><span class=\"custom-sr\">Miro</span><span class=\"custom-l\"></span><span class=\"custom-l\"></span></h1>",
+   "H2": "<h1 class=\"custom-title\"><span class=\"custom-sr\">Miro</span><span class=\"custom-l\"></span><span class=\"custom-l\"></span></h1>"
+  },
+  "empty-span-custom": {
+   "in": "<span class=\"custom-l\"></span>",
+   "H1": "<span class=\"custom-l\"></span>",
+   "H2": "<span class=\"custom-l\"></span>"
+  },
+  "empty-span-bare": {
+   "in": "<span></span>",
+   "H1": "<span></span>",
+   "H2": "<span></span>"
+  },
+  "span-nbsp": {
+   "in": "<span class=\"custom-l\">&nbsp;</span>",
+   "H1": "<span class=\"custom-l\">&nbsp;</span>",
+   "H2": "<span class=\"custom-l\">&nbsp;</span>"
+  },
+  "class-Custom-x": {
+   "in": "<span class=\"Custom-x\">a</span>",
+   "H1": "<span>a</span>",
+   "H2": "<span>a</span>"
+  },
+  "class-CUSTOM-x": {
+   "in": "<span class=\"CUSTOM-x\">a</span>",
+   "H1": "<span>a</span>",
+   "H2": "<span>a</span>"
+  },
+  "class-custom-Ab_C": {
+   "in": "<span class=\"custom-Ab_C\">a</span>",
+   "H1": "<span class=\"custom-Ab_C\">a</span>",
+   "H2": "<span class=\"custom-Ab_C\">a</span>"
+  },
+  "class-empty": {
+   "in": "<span class=\"\">a</span>",
+   "H1": "<span>a</span>",
+   "H2": "<span>a</span>"
+  },
+  "class-space": {
+   "in": "<span class=\" \">a</span>",
+   "H1": "<span>a</span>",
+   "H2": "<span>a</span>"
+  },
+  "class-bare-attr": {
+   "in": "<span class>a</span>",
+   "H1": "<span>a</span>",
+   "H2": "<span>a</span>"
+  },
+  "class-colon": {
+   "in": "<span class=\"custom-md:flex\">a</span>",
+   "H1": "<span class=\"custom-md:flex\">a</span>",
+   "H2": "<span>a</span>"
+  },
+  "class-slash": {
+   "in": "<span class=\"custom-w-1/2\">a</span>",
+   "H1": "<span class=\"custom-w-1/2\">a</span>",
+   "H2": "<span>a</span>"
+  },
+  "class-brackets": {
+   "in": "<span class=\"custom-[x]\">a</span>",
+   "H1": "<span class=\"custom-[x]\">a</span>",
+   "H2": "<span>a</span>"
+  },
+  "class-dot": {
+   "in": "<span class=\"custom-a.b\">a</span>",
+   "H1": "<span class=\"custom-a.b\">a</span>",
+   "H2": "<span>a</span>"
+  },
+  "class-leading-dash": {
+   "in": "<span class=\"-custom-x\">a</span>",
+   "H1": "<span>a</span>",
+   "H2": "<span>a</span>"
+  },
+  "class-prefix-variant": {
+   "in": "<span class=\"md:custom-x\">a</span>",
+   "H1": "<span>a</span>",
+   "H2": "<span>a</span>"
+  },
+  "class-bem": {
+   "in": "<span class=\"custom-card__title--big\">a</span>",
+   "H1": "<span class=\"custom-card__title--big\">a</span>",
+   "H2": "<span class=\"custom-card__title--big\">a</span>"
+  },
+  "class-customx": {
+   "in": "<span class=\"customx custom_y\">a</span>",
+   "H1": "<span class=\"customx custom_y\">a</span>",
+   "H2": "<span class=\"customx custom_y\">a</span>"
+  },
+  "class-mixed": {
+   "in": "<span class=\"foo custom-x  bar text-center\">a</span>",
+   "H1": "<span class=\"custom-x text-center\">a</span>",
+   "H2": "<span class=\"custom-x text-center\">a</span>"
+  },
+  "class-uppercase-attr-name": {
+   "in": "<span CLASS=\"custom-x\">a</span>",
+   "H1": "<span CLASS=\"custom-x\">a</span>",
+   "H2": "<span CLASS=\"custom-x\">a</span>"
+  },
+  "details-attrs": {
+   "in": "<details class=\"custom-d\" style=\"color: red\" title=\"t\" open><summary class=\"custom-s\">s</summary>t</details>",
+   "H1": "<details><summary>s</summary>t</details>",
+   "H2": "<details><summary>s</summary>t</details>"
+  },
+  "figure-attrs": {
+   "in": "<figure class=\"custom-f\" style=\"margin: 0\"><img src=\"https://x.example/a.png\" alt=\"a\"><figcaption class=\"custom-c\">c</figcaption></figure>",
+   "H1": "<figure><img src=\"https://x.example/a.png\" alt=\"a\" loading=\"lazy\"><figcaption>c</figcaption></figure>",
+   "H2": "<figure><img src=\"https://x.example/a.png\" alt=\"a\" loading=\"lazy\"><figcaption>c</figcaption></figure>"
+  },
+  "popover": {
+   "in": "<div class=\"custom-p\" popover id=\"p\">x</div><a popovertarget=\"p\" class=\"custom-b\">t</a><span popover=\"auto\">y</span>",
+   "H1": "<div class=\"custom-p\">x</div><a class=\"custom-b\">t</a><span>y</span>",
+   "H2": "<div class=\"custom-p\">x</div><a class=\"custom-b\">t</a><span>y</span>"
+  },
+  "aria-role": {
+   "in": "<span class=\"custom-x\" aria-label=\"x\" aria-hidden=\"true\" role=\"img\" tabindex=\"0\" id=\"k\" data-x=\"1\">x</span>",
+   "H1": "<span class=\"custom-x\">x</span>",
+   "H2": "<span class=\"custom-x\">x</span>"
+  },
+  "style-var-nospace": {
+   "in": "<span style=\"--i:3\">a</span>",
+   "H1": "<span style=\"\">a</span>",
+   "H2": "<span style=\"\">a</span>"
+  },
+  "style-var-space": {
+   "in": "<span style=\"--i: 3\">a</span>",
+   "H1": "<span style=\"\">a</span>",
+   "H2": "<span style=\"\">a</span>"
+  },
+  "style-var-then-color": {
+   "in": "<span style=\"--i:3;color:red\">a</span>",
+   "H1": "<span style=\"color:red\">a</span>",
+   "H2": "<span style=\"color:red\">a</span>"
+  },
+  "style-color-then-var": {
+   "in": "<span style=\"color: red; --i: 3\">a</span>",
+   "H1": "<span style=\"color: red\">a</span>",
+   "H2": "<span style=\"color: red\">a</span>"
+  },
+  "iframe-youtube-default": {
+   "in": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/x\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen class=\"custom-v\" style=\"width: 100%\" loading=\"lazy\" sandbox=\"allow-scripts\"></iframe>",
+   "H1": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/x\" frameborder=\"0\" allowfullscreen style=\"width: 100%\"></iframe>",
+   "H2": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/x\" frameborder=\"0\" allowfullscreen style=\"width: 100%\"></iframe>"
+  }
+ },
+ "style27": {
+  "margin": "margin: 0 auto",
+  "margin-top": "margin-top: 4px",
+  "margin-right": "margin-right: 4px",
+  "margin-bottom": "margin-bottom: 4px",
+  "margin-left": "margin-left: 4px",
+  "padding": "padding: 4px 8px",
+  "padding-top": "padding-top: 4px",
+  "padding-right": "padding-right: 4px",
+  "padding-bottom": "padding-bottom: 4px",
+  "padding-left": "padding-left: 4px",
+  "font-size": "font-size: 120%",
+  "text-align": "text-align: center",
+  "color": "color: #ffc857",
+  "background-color": "background-color: #0b1433",
+  "background": "background: #0b1433",
+  "background-image": "background-image: url('https://x.example/a.png')",
+  "opacity": "opacity: .5",
+  "border": "border: 1px solid #ccc",
+  "border-width": "border-width: 2px",
+  "border-color": "border-color: #ccc",
+  "border-style": "border-style: dashed",
+  "width": "width: 100%",
+  "height": "height: 40px",
+  "min-width": "min-width: 40px",
+  "max-width": "max-width: 320px",
+  "min-height": "min-height: 40px",
+  "max-height": "max-height: 320px"
+ },
+ "negative": {
+  "border-radius": "",
+  "display": "",
+  "font-weight": "",
+  "line-height": "",
+  "transform": "",
+  "position": "",
+  "font-family": ""
+ },
+ "fixed_point": {
+  "style_values": {
+   "project:unchanged": 104,
+   "comment:unchanged": 11,
+   "jam:unchanged": 77,
+   "profile:unchanged": 15
+  },
+  "props_altered_by_library": {}
+ },
+ "class_tokens": {
+  "hypothesis_fit": {
+   "profile:H1=y,H2=y": 98,
+   "project:H1=y,H2=y": 495,
+   "jam:H1=y,H2=y": 581,
+   "devlog:H1=y,H2=y": 30
+  },
+  "class_value_whitespace": {
+   "profile:normalised": 128,
+   "project:normalised": 1007,
+   "comment:normalised": 29,
+   "jam:normalised": 1101,
+   "devlog:normalised": 28
+  }
+ }
+}

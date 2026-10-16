@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>support verifier probe</title>
+<!-- Verifier's own probe (written for this verification, no third-party code).
+     Static elements below are present in the HTML so @starting-style is tested on first render. -->
+<style>
+  #root { position: relative; width: 600px; }
+  #ss-static { opacity: 1; transition: opacity 2s; }
+  @starting-style { #ss-static { opacity: 0; } }
+  #ss-static-nested { opacity: 1; transition: opacity 2s; @starting-style { opacity: 0; } }
+</style>
+</head>
+<body>
+<div id="ss-static">static</div>
+<div id="ss-static-nested">static nested</div>
+<div id="root"></div>
+<pre id="out"></pre>
+<script>
+const R = [];
+const push = (id, ok, detail = '') => R.push({ id, ok: !!ok, detail: String(detail) });
+const cs = (el, p, ps) => getComputedStyle(el, ps || null).getPropertyValue(p).trim();
+function fx(id, css, html, check) {
+  const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+  const host = document.createElement('div'); host.innerHTML = html; document.getElementById('root').appendChild(host);
+  let r; try { r = check(host); } catch (e) { r = [false, 'ERR ' + e.message]; }
+  push(id, r[0], r[1]); host.remove(); st.remove();
+}
+function rules(id, text) {
+  const st = document.createElement('style'); st.textContent = text; document.head.appendChild(st);
+  const walk = rs => [...rs].map(r => r.constructor.name + (r.cssRules ? '[' + walk(r.cssRules).join(',') + ']' : ''));
+  let names; try { names = walk(st.sheet.cssRules); } catch (e) { names = ['ERR']; }
+  push(id, true, names.join(',') || '(dropped)'); st.remove();
+}
+const sup = (id, a, b) => { let ok; try { ok = b === undefined ? CSS.supports(a) : CSS.supports(a, b); } catch (e) { ok = 'ERR'; } push(id, ok === true, String(ok)); };
+
+/* A. @starting-style on first render (elements in the HTML, not inserted later) */
+{
+  const a = document.getElementById('ss-static'), b = document.getElementById('ss-static-nested');
+  getComputedStyle(a).opacity; getComputedStyle(b).opacity;
+  push('starting-style-first-render', a.getAnimations().length === 1, 'animations=' + a.getAnimations().length + ' opacity=' + cs(a, 'opacity'));
+  push('starting-style-nested-first-render', b.getAnimations().length === 1, 'animations=' + b.getAnimations().length);
+}
+
+/* B. custom-property @supports: not literally always true */
+sup('supports-custom-prop-balanced-garbage', '--x: this-is-not-css(((');
+sup('supports-custom-prop-unmatched-close-paren', '--x: a ) b');
+sup('supports-custom-prop-unmatched-close-brace', '--x: a } b');
+sup('supports-custom-prop-2arg-close-paren', '--x', ')');
+sup('supports-custom-prop-empty', '--x:');
+sup('supports-guard-random-rotate', 'rotate: random(0deg, 1deg)');
+
+/* C. random(): named value shared across properties? (flag build only) */
+fx('random-name-across-properties', '.rp{width:random(--k,10px,500px);height:random(--k,10px,500px)}', '<div class="rp"></div>', h => {
+  const e = h.querySelector('.rp'); const w = cs(e, 'width'), ht = cs(e, 'height'); return [w === ht && w !== 'auto' && w !== '600px', w + ' / ' + ht];
+});
+fx('random-unnamed-across-properties', '.ru{width:random(10px,500px);height:random(10px,500px)}', '<div class="ru"></div>', h => {
+  const e = h.querySelector('.ru'); const w = cs(e, 'width'), ht = cs(e, 'height'); return [w !== ht, w + ' / ' + ht + ' (different = unnamed is per property)'];
+});
+fx('random-name-element-scoped', '.re{width:random(--k element-scoped,10px,500px)}', '<div class="re"></div><div class="re"></div><div class="re"></div>', h => {
+  const w = [...h.querySelectorAll('.re')].map(e => cs(e, 'width')); return [new Set(w).size > 1, w.join(' / ')];
+});
+
+/* D. containing block for position:fixed (more triggers) */
+const fixedTest = (id, decl) => fx(id, '.fc{position:absolute;top:150px;left:0;width:50px;height:50px;' + decl + '}.fc>i{position:fixed;top:0;left:0;width:5px;height:5px}', '<div class="fc"><i></i></div>', h => {
+  const p = h.querySelector('.fc').getBoundingClientRect(), c = h.querySelector('i').getBoundingClientRect();
+  return [Math.round(c.top) === Math.round(p.top), 'child top=' + Math.round(c.top) + ' parent top=' + Math.round(p.top) + ' (equal = parent is containing block)'];
+});
+fixedTest('fixed-cb-filter', 'filter:blur(0)');
+fixedTest('fixed-cb-container-type-inline-size', 'container-type:inline-size');
+fixedTest('fixed-cb-will-change-transform', 'will-change:transform');
+fixedTest('fixed-cb-contain-paint', 'contain:paint');
+fixedTest('fixed-cb-rotate-0deg', 'rotate:0deg');
+fixedTest('fixed-cb-control-none', 'opacity:.9');
+
+/* E. view transitions: where may @view-transition live? */
+rules('vt-inside-media', '@media (prefers-reduced-motion: no-preference){@view-transition{navigation:auto}}');
+rules('vt-nested-in-style-rule', '#w{color:red;@view-transition{navigation:auto}}');
+rules('vt-inside-supports', '@supports (view-transition-name: a){@view-transition{navigation:auto}}');
+fx('vt-pseudo-under-wrapper-is-valid-selector', '#w ::view-transition-old(root){color:red}', '<div></div>', h => [true, document.styleSheets.length]);
+sup('vt-pseudo-selector-root', 'selector(::view-transition-group(*))');
+
+/* F. interpolate-size inherits */
+fx('interpolate-size-inherits', '.ip{interpolate-size:allow-keywords}', '<div class="ip"><i></i></div>', h => {
+  const v = cs(h.querySelector('i'), 'interpolate-size'); return [v === 'allow-keywords', v];
+});
+
+/* G. @scope: & behaves as :where(:scope) -> zero specificity; :scope adds (0,1,0) */
+fx('scope-where-scope-equivalent', '@scope (#s1){:where(:scope) .x{width:51px}} .y .x{width:52px}', '<div id="s1"><div class="y"><div class="x"></div></div></div>', h => {
+  const w = cs(h.querySelector('.x'), 'width'); return [w === '52px', w];
+});
+
+/* H. color-scheme inherits so #wrapper{color-scheme} reaches light-dark() in descendants */
+fx('color-scheme-inherits', '.csw{color-scheme:dark}.csw i{color:light-dark(rgb(1 1 1), rgb(2 2 2))}', '<div class="csw"><i></i></div>', h => {
+  const c = cs(h.querySelector('i'), 'color'); return [/2, 2, 2/.test(c), c];
+});
+
+/* I. animation shorthand reset: also with animation-range */
+fx('animation-shorthand-resets-range', '@keyframes kf2{to{opacity:.5}} .ar1{animation-range:entry 0% cover 30%;animation:kf2 1s linear} .ar2{animation:kf2 1s linear;animation-range:entry 0% cover 30%}', '<div class="ar1"></div><div class="ar2"></div>', h => {
+  const a = cs(h.querySelector('.ar1'), 'animation-range'), b = cs(h.querySelector('.ar2'), 'animation-range'); return [a === 'normal' && b !== 'normal', 'before shorthand=' + a + ' / after=' + b];
+});
+
+/* J. sibling-index in a nested context ignores text nodes / counts elements only */
+fx('sibling-index-elements-only', '.sx>i{display:block;width:calc(sibling-index() * 10px)}', '<div class="sx">t<b></b>t<i></i></div>', h => {
+  const w = cs(h.querySelector('i'), 'width'); return [w === '20px', w + ' (2nd element child, text nodes ignored)'];
+});
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const a = document.getElementById('ss-static');
+    push('starting-style-first-render-after-load', true, 'animations after load+100ms=' + a.getAnimations().length + ' opacity=' + cs(a, 'opacity'));
+    document.getElementById('out').textContent = 'PROBE_JSON=' + JSON.stringify({ ua: navigator.userAgent, results: R });
+  }, 100);
+});
+</script>
+</body>
+</html>

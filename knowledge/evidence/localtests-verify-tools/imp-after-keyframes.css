@@ -1,0 +1,2 @@
+/* Verification fixture: @import placed after @keyframes */
+#wrapper .v14-keyframes { color: rgb(2, 2, 2); }

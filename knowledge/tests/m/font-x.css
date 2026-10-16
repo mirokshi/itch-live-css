@@ -1,0 +1,2 @@
+/* Test M2 fixture, imported CROSS-ORIGIN from :8091: a third-party sheet declaring a font with a URL relative to itself. */
+@font-face { font-family: "MImp"; src: url("fake-imp.woff2") format("woff2"); }

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>v1 verifier extras</title>
+<style>
+@keyframes spin{to{rotate:1turn}}
+#wrapper::before{content:"";animation:spin 1s infinite}
+#wrapper::after{content:"";animation:spin 1s infinite}
+@media (prefers-reduced-motion:reduce){#wrapper *,#wrapper *::before,#wrapper *::after{animation:none!important}}
+#wrapper .tl{color:transparent}
+#wrapper .tl::before{content:"LABEL "}
+#wrapper .tl-alt{color:transparent}
+#wrapper .tl-alt::before{content:"LABEL ";content:"LABEL " / ""}
+#wrapper .noalt span{display:inline-block}
+#wrapper .noalt span:nth-child(2)::before{content:"M"}
+#wrapper .noalt span:nth-child(3)::before{content:"i"}
+#wrapper .custom-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+#wrapper .inl span{translate:0 20px}
+#wrapper .ib span{display:inline-block;translate:0 20px}
+#wrapper .wsp span{display:inline-block}
+#wrapper .anim span{display:inline-block;animation:spin 2s infinite}
+</style></head>
+<body><div id="wrapper">
+<h2 id="tl" class="tl">ORIGINAL</h2>
+<h2 id="tlalt" class="tl-alt">ORIGINAL</h2>
+<h3 id="noalt" class="noalt"><span class="custom-sr">Mi</span><span></span><span></span></h3>
+<h3 id="inl" class="inl"><span>A</span><span>B</span></h3>
+<h3 id="ib" class="ib"><span>A</span><span>B</span></h3>
+<h3 id="anim" class="anim"><span>A</span><span>B</span></h3>
+<p id="ref">ref</p>
+</div></body></html>

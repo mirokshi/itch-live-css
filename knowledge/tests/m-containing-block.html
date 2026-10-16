@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M1 · what traps position:fixed, and z-index:-1 layers inside #wrapper</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test M1 — (a) which ancestor properties turn position:fixed into "fixed to the ancestor"</b> (a full-screen fixed backdrop or star field
+then scrolls away / gets cropped); <b>(b) where a position:fixed; z-index:-1 layer paints</b> relative to #wrapper's own background, with and
+without a stacking context on #wrapper (document.elementsFromPoint gives the paint order, topmost first).</p></div>
+<script>
+const anc = css => '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{margin:0}.spacer{height:200px}.anc{' + css + '}' +
+  '.fix{position:fixed;top:0;left:0;width:10px;height:10px;background:red}</style></head><body><div class="spacer"></div>' +
+  '<div class="anc"><div class="fix"></div>content</div></body></html>';
+const CB = [
+  ['none (control)', '', false], ['transform: translateZ(0)', 'transform:translateZ(0)', true], ['transform: none', 'transform:none', false],
+  ['rotate: 0deg (individual transform)', 'rotate:0deg', true], ['translate: 0 (individual transform)', 'translate:0', true],
+  ['scale: 1', 'scale:1', true], ['filter: blur(0)', 'filter:blur(0)', true], ['backdrop-filter: blur(1px)', 'backdrop-filter:blur(1px)', true],
+  ['will-change: transform', 'will-change:transform', true], ['will-change: opacity', 'will-change:opacity', false],
+  ['perspective: 100px', 'perspective:100px', true], ['contain: paint', 'contain:paint', true], ['contain: layout', 'contain:layout', true],
+  ['container-type: inline-size', 'container-type:inline-size', false], ['content-visibility: auto', 'content-visibility:auto', true],
+  ['isolation: isolate', 'isolation:isolate', false], ['opacity: 0.99', 'opacity:.99', false], ['mix-blend-mode: multiply', 'mix-blend-mode:multiply', false],
+  ['clip-path: inset(0)', 'clip-path:inset(0)', false], ['overflow: clip', 'overflow:clip', false], ['mask-image: linear-gradient(#000,#000)', 'mask-image:linear-gradient(#000,#000)', false],
+  ['animation holding a transform (fill-mode both, paused)', 'animation:m-rise 1s both paused}@keyframes m-rise{from{transform:translateY(4px)}to{transform:none}', true]
+];
+const STACK = [
+  ['S1', '#wrapper{position:relative;isolation:isolate}', 'layer above #wrapper background'],
+  ['S2', '#wrapper{position:relative}', 'layer below #wrapper background'],
+  ['S3', '#wrapper{isolation:isolate}', 'layer above #wrapper background'],
+  ['S4', '#wrapper{position:relative;z-index:0}', 'layer above #wrapper background']
+];
+const stackPage = css => '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{margin:0;background:#eee}#wrapper{background-color:rgb(0,0,255);height:200px}' +
+  '.layer{position:fixed;inset:0;z-index:-1;background:rgb(255,0,0)}' + css + '</style></head><body><div class="user_page_wrap" id="wrapper"><div class="layer"></div>' +
+  '<div class="user_page">text</div></div></body></html>';
+T.run(async () => {
+  for (const [name, css, trapsExpected] of CB) {
+    const f = await T.frame(anc(css), 200, 120);
+    const top = Math.round(f.contentDocument.querySelector('.fix').getBoundingClientRect().top);
+    T.check('CB ' + name, 'fixed child top=' + top + 'px (0 = viewport; 200 = trapped by ancestor)', top === 0 ? 'viewport' : 'trapped', trapsExpected ? 'trapped' : 'viewport');
+  }
+  const sz = await T.frame(anc('container-type:size'), 200, 120);
+  T.check('CT-size', 'container-type:size on an auto-height block collapses it (size containment) → height', Math.round(sz.contentDocument.querySelector('.anc').getBoundingClientRect().height) + 'px', '0px');
+  const isz = await T.frame(anc('container-type:inline-size'), 200, 120);
+  T.info('CT-inline-size', 'container-type:inline-size keeps auto height (block size from content) → height', Math.round(isz.contentDocument.querySelector('.anc').getBoundingClientRect().height) + 'px');
+  for (const [id, css, expected] of STACK) {
+    const f = await T.frame(stackPage(css), 200, 120);
+    const d = f.contentDocument;
+    const order = d.elementsFromPoint(150, 100).map(e => e.id ? '#' + e.id : (e.className ? '.' + e.className : e.tagName.toLowerCase()));
+    const iLayer = order.indexOf('.layer'), iWrap = order.indexOf('#wrapper');
+    T.check(id, css + ' → paint order (top first): ' + order.join(' > '), iLayer < iWrap ? 'layer above #wrapper background' : 'layer below #wrapper background', expected);
+  }
+});
+</script>
+</body>
+</html>

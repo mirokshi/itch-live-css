@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N · @scope (#wrapper) does not give rules the #wrapper specificity</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="user_theme">
+  .user_page .n1, .user_page .n2, .user_page .n3, .user_page .n4, .user_page .n5 { color: rgb(1, 1, 1); }
+</style>
+<style id="custom_css">
+  @scope (#wrapper) {
+    .n1 { color: rgb(3, 3, 3); }
+    :scope .n2 { color: rgb(3, 3, 3); }
+    & .n3 { color: rgb(3, 3, 3); }
+    :scope .n5 { color: rgb(3, 3, 3); }
+  }
+  #wrapper .n4 { color: rgb(3, 3, 3); }
+  .user_page .n5 { color: rgb(4, 4, 4); } /* unscoped, same (0,2,0), LATER in order */
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test N — using @scope (#wrapper) { … } instead of prefixing every selector with #wrapper.</b>
+The scope root's selector does NOT add to the specificity of the rules inside (in Chromium 152 not even an explicit &amp;), so they can lose to
+itch's theme. Theme rule: .user_page .nX (0,2,0) = rgb(1,1,1). Custom = rgb(3,3,3); a later unscoped custom rule = rgb(4,4,4).</p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <p class="n1">n1</p><p class="n2">n2</p><p class="n3">n3</p><p class="n4">n4</p><p class="n5">n5</p>
+    </div>
+  </div>
+</div>
+<script>
+T.run(() => {
+  const M = { 'rgb(1, 1, 1)': 'theme', 'rgb(3, 3, 3)': 'custom', 'rgb(4, 4, 4)': 'later-unscoped' };
+  const w = c => T.who(T.cs('.' + c, 'color'), M);
+  T.check('N1', '@scope (#wrapper) { .n1 } has specificity (0,1,0): loses to the theme', w('n1'), 'theme');
+  T.check('N2', '@scope (#wrapper) { :scope .n2 } has (0,2,0): ties the theme, wins by scope proximity', w('n2'), 'custom');
+  T.check('N3', '@scope (#wrapper) { & .n3 }: & adds NO specificity here (acts like :where(:scope)), so (0,1,0) loses', w('n3'), 'theme');
+  T.check('N4', 'plain #wrapper .n4 (1,1,0) for comparison', w('n4'), 'custom');
+  T.check('N5', 'scoped :scope .n5 vs a LATER unscoped .user_page .n5 of equal specificity: scope proximity beats order of appearance', w('n5'), 'custom');
+});
+</script>
+</body>
+</html>

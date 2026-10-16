@@ -1,0 +1,55 @@
+request counts (0 = never requested):
+  m_late               0
+  o_sup_false          0
+  o_print              1
+  o_rm                 1
+  o_wide               1
+  sc                   1
+  w2                   1
+  v_after_layer_stmt   1
+  v_after_charset      1
+  v_after_fontface     0
+  v_in_media           0
+  v_in_supports        0
+  v_dup                1
+  v_string             1
+  bf                   1
+  rl                   3
+page loads: bf1 1 rl1 3
+arrival w2 - w1: 802 ms
+arrival p1 - w1: 0 ms
+arrival ps - s1: 0 ms
+font FA: port=8752 mode=cors origin=http://localhost:8751 site=cross-site referer=http://localhost:8751/
+font FB: port=8752 mode=cors origin=http://localhost:8751 site=cross-site referer=http://localhost:8751/
+font FC: port=8752 mode=cors origin=http://localhost:8751 site=cross-site referer=http://localhost:8751/
+font FS: port=8751 mode=cors origin=http://localhost:8751 site=same-origin referer=http://localhost:8751/pages/font.html
+font FD: port=8752 mode=cors origin=http://localhost:8751 site=cross-site referer=http://127.0.0.1:8752/css?n=f_imp1&extra=%40font-face%7Bfont-family%3AFD%3Bsrc%3Aurl%28%2Ffont%3Facao%3Dnone%26k%3DFD%29%7D
+font FE: port=8752 mode=cors origin=http://localhost:8751 site=cross-site referer=http://127.0.0.1:8752/css?n=f_imp2&extra=%40font-face%7Bfont-family%3AFE%3Bsrc%3Aurl%28%2Ffont%3Facao%3D%2A%26k%3DFE%29%7D
+referer r1: host=127.0.0.1:8752 mode=no-cors site=cross-site origin=None referer=http://localhost:8751/pages/ref.html?visit=42
+referer r2: host=127.0.0.1:8752 mode=no-cors site=cross-site origin=None referer=http://127.0.0.1:8752/css?n=r1&imp=http%3A%2F%2F127.0.0.1%3A8752%2Fcss%3Fn%3Dr2&extra=%23x%7Bbackground%3Aurl%28%2Fimg%3Fk%3Dr1img%29%7D%20%40font-face%7Bfont-family%3ARF%3Bsrc%3Aurl%28%2Ffont%3Facao%3D%2A%26k%3Dr1font%29%7D
+referer r3: host=127.0.0.1:8752 mode=no-cors site=cross-site origin=None referer=http://localhost:8751/pages/ref.html?visit=42
+referer r4: host=127.0.0.1:8752 mode=no-cors site=cross-site origin=None referer=http://127.0.0.1:8752/css?n=r3&imp=http%3A%2F%2F127.0.0.1%3A8752%2Fcss%3Fn%3Dr4&rp=no-referrer-when-downgrade
+referer r1img: host=127.0.0.1:8752 mode=no-cors site=cross-site origin=None referer=http://127.0.0.1:8752/css?n=r1&imp=http%3A%2F%2F127.0.0.1%3A8752%2Fcss%3Fn%3Dr2&extra=%23x%7Bbackground%3Aurl%28%2Fimg%3Fk%3Dr1img%29%7D%20%40font-face%7Bfont-family%3ARF%3Bsrc%3Aurl%28%2Ffont%3Facao%3D%2A%26k%3Dr1font%29%7D
+referer r1font: host=127.0.0.1:8752 mode=cors site=cross-site origin=http://localhost:8751 referer=http://127.0.0.1:8752/css?n=r1&imp=http%3A%2F%2F127.0.0.1%3A8752%2Fcss%3Fn%3Dr2&extra=%23x%7Bbackground%3Aurl%28%2Fimg%3Fk%3Dr1img%29%7D%20%40font-face%7Bfont-family%3ARF%3Bsrc%3Aurl%28%2Ffont%3Facao%3D%2A%26k%3Dr1font%29%7D
+referer inline_img: host=127.0.0.1:8752 mode=no-cors site=cross-site origin=None referer=http://localhost:8751/
+referer x1: host=127.0.0.1:8752 mode=no-cors site=cross-site origin=None referer=http://localhost:8751/pages/ref2.html?visit=7
+referer x2: host=localhost:8752 mode=no-cors site=same-site origin=None referer=http://127.0.0.1:8752/css?n=x1&imp=http%3A%2F%2Flocalhost%3A8752%2Fcss%3Fn%3Dx2&extra=%23x%7Bbackground%3Aurl%28http%3A%2F%2Flocalhost%3A8752%2Fimg%3Fk%3Dx1img%29%7D%20%40font-face%7Bfont-family%3AXF%3Bsrc%3Aurl%28http%3A%2F%2Flocalhost%3A8752%2Ffont%3Facao%3D%2A%26k%3Dx1font%29%7D
+referer x1img: host=localhost:8752 mode=no-cors site=same-site origin=None referer=http://127.0.0.1:8752/
+referer x1font: host=localhost:8752 mode=cors site=same-site origin=http://localhost:8751 referer=http://127.0.0.1:8752/
+all headers of the cross-site stylesheet request r1:
+  Host: 127.0.0.1:8752
+  Connection: keep-alive
+  sec-ch-ua-platform: "Windows"
+  User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36
+  sec-ch-ua: "Google Chrome";v="155", "Chromium";v="155", "Not(A:Brand";v="24"
+  sec-ch-ua-mobile: ?0
+  Accept: text/css,*/*;q=0.1
+  Sec-Fetch-Site: cross-site
+  Sec-Fetch-Mode: no-cors
+  Sec-Fetch-Dest: style
+  Sec-Fetch-Storage-Access: active
+  Referer: http://localhost:8751/pages/ref.html?visit=42
+  Accept-Encoding: gzip, deflate, br, zstd
+  Accept-Language: es-ES,es;q=0.9
+sock-8753: 1791983428717 conn from ('127.0.0.1', 62032) first-bytes=b''
+sock-8754: 1791983430574 conn from ('127.0.0.1', 59384) first-bytes=b''

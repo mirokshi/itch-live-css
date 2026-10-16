@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
+#wrapper .custom-hello{display:inline-block;rotate:-6deg}
+#wrapper .roll{display:inline-grid;grid-template-columns:auto 0;height:1.4em;line-height:1.4;overflow-y:clip;white-space:nowrap;color:transparent}
+#wrapper .roll::before{white-space:pre;text-align:right;color:gold}
+#wrapper .alt-empty::before{content:"\a1 Hola!\a Ciao!\a Szia!";content:"\a1 Hola!\a Ciao!\a Szia!" / ""}
+#wrapper .no-alt::before{content:"\a1 Hola!\a Ciao!\a Szia!"}
+#wrapper .alt-text::before{content:"\a1 Hola!\a Ciao!" / "Hello"}
+#wrapper .vis-hidden{visibility:hidden}
+#wrapper .vis-hidden::before{visibility:visible;content:"Ciao!" / ""}
+</style></head><body><div id="wrapper">
+<h2 id="h-plain"><span class="custom-hello">Hi!</span>, I am a developer.</h2>
+<h2 id="h-alt-empty"><span class="custom-hello roll alt-empty">Hi!</span>, I am a developer.</h2>
+<h2 id="h-no-alt"><span class="custom-hello roll no-alt">Hi!</span>, I am a developer.</h2>
+<h2 id="h-alt-text"><span class="custom-hello roll alt-text">Hi!</span>, I am a developer.</h2>
+<h2 id="h-vis-hidden"><span class="custom-hello roll vis-hidden">Hi!</span>, I am a developer.</h2>
+</div></body></html>

@@ -1,0 +1,9 @@
+@import url("data:text/css,%23wrapper%20.user_links%7Boutline:3px%20solid%20rgb(9,9,9)%7D%23wrapper%20.user_profile%7Bcolor:rgb(1,1,1)%7D");
+#wrapper .game_title a{color:rgb(255,0,0)}
+.game_grid_widget .game_cell .game_text{color:rgb(0,128,0)}
+.game_genre{color:rgb(0,0,255)}
+#wrapper .collection_row h2 a{color:rgb(255,0,0)}
+#wrapper .purchased_games h2 a{color:rgb(255,0,0)!important}
+#wrapper{--itchio_link_color:rgb(255,0,0);--itchio_input_focus_color:rgb(255,200,87);--itchio_grid_gap:30px}
+#wrapper .user_page{--itchio_gray_back:rgb(7,7,7)}
+#wrapper .user_profile{color:rgb(2,2,2)}

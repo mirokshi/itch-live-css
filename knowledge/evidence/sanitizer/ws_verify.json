@@ -1,0 +1,520 @@
+[
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<b>x</i></b></b>",
+  "output": "<b>x&lt;/i&gt;</b>&lt;/b&gt;",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<!-- comment -->Hello",
+  "output": "&lt;!-- comment --&gt;Hello",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<div />",
+  "output": "&lt;div /&gt;",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<br />",
+  "output": "<br />",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "html",
+  "input": "<IMG SRC=javascript:alert('XSS')>",
+  "output": "&lt;IMG SRC=javascript:alert(&#x27;XSS&#x27;)&gt;",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "margin: 10px; fake-property: 100; margin: 10px",
+  "output": "margin: 10px; margin: 10px",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "background: url(http://example.com/image.png)",
+  "output": "<nil failed to parse>",
+  "pass": true
+ },
+ {
+  "group": "spec",
+  "fn": "style",
+  "input": "margin-left: 50px;",
+  "output": "margin-left: 50px",
+  "pass": true
+ },
+ {
+  "group": "attr",
+  "fn": "html",
+  "input": "<div class=\"custom-x\" id=\"a\" data-y=\"1\" aria-hidden=\"true\" role=\"note\" tabindex=\"0\" onclick=\"x()\" hidden>t</div>",
+  "output": "<div>t</div>"
+ },
+ {
+  "group": "attr",
+  "fn": "itch",
+  "input": "<span class=\"custom-a custom_b customc Custom-d text-center foo\">x</span>",
+  "output": "<span class=\"custom-a custom_b customc text-center\">x</span>"
+ },
+ {
+  "group": "attr",
+  "fn": "itch",
+  "input": "<details open><summary>s</summary>b</details>",
+  "output": "<details><summary>s</summary>b</details>"
+ },
+ {
+  "group": "attr",
+  "fn": "html",
+  "input": "<h2 title=\"t\" lang=\"es\" dir=\"rtl\" style=\"color:red\">x</h2>",
+  "output": "<h2 title=\"t\" lang=\"es\" dir=\"rtl\">x</h2>"
+ },
+ {
+  "group": "attr",
+  "fn": "html",
+  "input": "<table border=\"1\" cellpadding=\"2\" align=\"center\" width=\"50%\"><tr><td colspan=\"2\" rowspan=\"1\" width=\"5\" align=\"left\">x</td></tr></table>",
+  "output": "<table width=\"50%\"><tr><td colspan=\"2\" rowspan=\"1\" width=\"5\">x</td></tr></table>"
+ },
+ {
+  "group": "attr",
+  "fn": "html",
+  "input": "<img src=\"https://a.example/i.png\" alt=\"a\" title=\"t\" width=\"10\" height=\"2\" align=\"left\" loading=\"eager\" srcset=\"x 2x\" class=\"custom-i\">",
+  "output": "<img src=\"https://a.example/i.png\" alt=\"a\" title=\"t\" width=\"10\" height=\"2\" align=\"left\">"
+ },
+ {
+  "group": "href",
+  "fn": "itch",
+  "input": "<a href=\"#x\">1</a><a href=\"/p\">2</a><a href=\"tel:1\">3</a><a href=\"javascript:x\">4</a><a href=\"HTTPS://A.EXAMPLE\">5</a><a href=\" https://a.example\">6</a>",
+  "output": "<a rel=\"nofollow noopener\">1</a><a rel=\"nofollow noopener\">2</a><a rel=\"nofollow noopener\">3</a><a rel=\"nofollow noopener\">4</a><a rel=\"nofollow noopener\">5</a><a rel=\"nofollow noopener\">6</a>"
+ },
+ {
+  "group": "href",
+  "fn": "itch",
+  "input": "<a href=\"mailto:a@b.c\">7</a><a href=\"//a.example\">8</a><a href=\"http://a.example\">9</a><a href=\"https://x.itch.io/g#s\">10</a>",
+  "output": "<a href=\"mailto:a@b.c\" rel=\"nofollow noopener\">7</a><a href=\"//a.example\" rel=\"nofollow noopener\">8</a><a href=\"http://a.example\" rel=\"nofollow noopener\">9</a><a href=\"https://x.itch.io/g#s\">10</a>"
+ },
+ {
+  "group": "href",
+  "fn": "itch",
+  "input": "<a href=\"https://mastodon.example/@a\" rel=\"me\" target=\"_blank\">m</a><a href=\"https://x.itch.io\" rel=\"author\">i</a>",
+  "output": "<a href=\"https://mastodon.example/@a\" target=\"_blank\" rel=\"nofollow noopener\">m</a><a href=\"https://x.itch.io\">i</a>"
+ },
+ {
+  "group": "href",
+  "fn": "itch",
+  "input": "<a href=\"https://a.example/?a=1&b=2&amp;c=3\">q</a>",
+  "output": "<a href=\"https://a.example/?a=1&b=2&amp;c=3\" rel=\"nofollow noopener\">q</a>"
+ },
+ {
+  "group": "img",
+  "fn": "html",
+  "input": "<img src=\"data:image/png;base64,AAAA\" alt=\"d\">",
+  "output": "<img alt=\"d\">"
+ },
+ {
+  "group": "img",
+  "fn": "html",
+  "input": "<img src=\"/rel.png\" alt=\"r\"><img src=\"//cdn.example/x.png\">",
+  "output": "<img alt=\"r\"><img src=\"//cdn.example/x.png\">"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<img src=\"https://a.example/c.png\" width=100%>",
+  "output": "&lt;img src=&quot;https://a.example/c.png&quot; width=100%&gt;"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<a href=https://a.example>x</a>",
+  "output": "&lt;a href=https://a.example&gt;x&lt;/a&gt;"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<img width=100 height=2.5>",
+  "output": "<img width=100 height=2.5>"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<div @click=\"x\">a</div>",
+  "output": "&lt;div @click=&quot;x&quot;&gt;a&lt;/div&gt;"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<div x-on:click=\"x\" v-bind:a=\"b\">a</div>",
+  "output": "<div>a</div>"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<div\r\n title=\"x\">a</div>",
+  "output": "&lt;div\r\n title=&quot;x&quot;&gt;a&lt;/div&gt;"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<div\n\ttitle=\"x\">a</div>",
+  "output": "<div\n\ttitle=\"x\">a</div>"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<span/>after",
+  "output": "&lt;span/&gt;after"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<span class=\"x\"/>after",
+  "output": "&lt;span class=&quot;x&quot;/&gt;after"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<img src=\"https://a.example/c.png\"/>z<hr/><br/>",
+  "output": "<img src=\"https://a.example/c.png\"/>z<hr/><br/>"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<div><span>open",
+  "output": "<div><span>open</span></div>"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "a < b and c > d",
+  "output": "a < b > d</b>"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "x < div > y",
+  "output": "x < div > y</div>"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "1 <2 and 3> 0",
+  "output": "1 &lt;2 and 3&gt; 0"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "a<!-- note -->b",
+  "output": "a&lt;!-- note --&gt;b"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<p>A<marquee>B</marquee>C<wbr>D<svg><circle r=\"1\"/></svg>E</p>",
+  "output": "<p>A&lt;marquee&gt;B&lt;/marquee&gt;C&lt;wbr&gt;D&lt;svg&gt;&lt;circle r=&quot;1&quot;/&gt;&lt;/svg&gt;E</p>"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<font color=\"red\">f</font><center>c</center><video src=\"https://a/v.mp4\"></video><section>s</section>",
+  "output": "&lt;font color=&quot;red&quot;&gt;f&lt;/font&gt;&lt;center&gt;c&lt;/center&gt;&lt;video src=&quot;https://a/v.mp4&quot;&gt;&lt;/video&gt;&lt;section&gt;s&lt;/section&gt;"
+ },
+ {
+  "group": "parse",
+  "fn": "html",
+  "input": "<P><B>upper</B></P>",
+  "output": "<P><B>upper</B></P>"
+ },
+ {
+  "group": "text",
+  "fn": "html",
+  "input": "it's \"q\" Tom & Jerry R&D AT&T &nbsp &copy; &#39; &#x27; 5 > 3",
+  "output": "it&#x27;s &quot;q&quot; Tom &amp; Jerry R&D AT&T &nbsp &copy; &#39; &#x27; 5 &gt; 3"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: red",
+  "output": "color: red"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: red;",
+  "output": "color: red"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: red; ",
+  "output": "<nil failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: red ",
+  "output": "<nil failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": " color: red",
+  "output": "color: red"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color:red;width:10px",
+  "output": "color:red; width:10px"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: red;\r\nwidth: 10px",
+  "output": "<nil failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: red;\nwidth: 10px",
+  "output": "color: red; width: 10px"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: red !important",
+  "output": "<nil failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color:red;;width:10px",
+  "output": "<nil failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color:red; /* c */ width:10px",
+  "output": "<nil failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: rgb(1 2 3 / 50%)",
+  "output": "<nil failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: rgb(1, 2, 3)",
+  "output": "color: rgb(1, 2, 3)"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: rgba(0,0,0,.5)",
+  "output": "color: rgba(0,0,0,.5)"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: var(--itchio_link_color)",
+  "output": "color: var(--itchio_link_color)"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: #11223344",
+  "output": "color: #11223344"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "font-size: 1.5em",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "font-size: 150%",
+  "output": "font-size: 150%"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "font-size: large",
+  "output": "font-size: large"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "width: 50.5%",
+  "output": "<nil failed to parse>"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "width: 10.5px",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "width: -10px",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "width: auto",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "width: calc(100% - 10px)",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "max-width: 100%",
+  "output": "max-width: 100%"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "opacity: 0.5",
+  "output": "opacity: 0.5"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "opacity: .5",
+  "output": "opacity: .5"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "margin: 0.5em 1em",
+  "output": "margin: 0.5em 1em"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "margin-top: -10px",
+  "output": "margin-top: -10px"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "margin: 0 auto",
+  "output": "margin: 0 auto"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "padding: auto",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "padding: 1.5em",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "background: url('https://a.example/a.png')",
+  "output": "background: url('https://a.example/a.png')"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "background: url('https://a.example/a.png') no-repeat",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "background: linear-gradient(red, blue)",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "background-image: linear-gradient(red, blue)",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "border: none",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "border: 0",
+  "output": "border: 0"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "border: 2px dashed",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "border: 1px solid #ccc",
+  "output": "border: 1px solid #ccc"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "COLOR: red",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "display:flex;float:left;color:red",
+  "output": "color:red"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "line-height: 2; letter-spacing: 1px; font-family: serif; font-weight: bold; border-radius: 4px; position: absolute; transform: rotate(1deg); text-decoration: underline",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "behavior:url(x)",
+  "output": ""
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "color: red; background-color: blue",
+  "output": "color: red; background-color: blue"
+ },
+ {
+  "group": "style",
+  "fn": "style",
+  "input": "",
+  "output": ""
+ }
+]

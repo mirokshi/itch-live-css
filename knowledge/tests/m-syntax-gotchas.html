@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M3 · syntax mistakes that silently drop rules (hand edits, minifiers)</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="user_theme">.user_page { color: rgb(1, 1, 1); } .user_page .g { width: 1px; }</style>
+<!-- Each <style> is a separate sheet so one mistake cannot leak into the next test. rgb(0,128,0) / width 50px = the rule applied. -->
+<style>#wrapper .s-calc-nospace { width: calc(40px+10px); }</style>
+<style>#wrapper .s-calc-space { width: calc(40px + 10px); }</style>
+<style>#wrapper .s-calc-zero { width: calc(50px - 0); }</style>
+<style>#wrapper .s-calc-0px { width: calc(50px - 0px); }</style>
+<style>@media (min-width: 1px) and(max-width: 99999px) { #wrapper .s-media-and { color: rgb(0, 128, 0); } }</style>
+<style>@media (min-width:1px) and (max-width:99999px) { #wrapper .s-media-ok { color: rgb(0, 128, 0); } }</style>
+<style>// a JS-style comment
+#wrapper .s-slashes { color: rgb(0, 128, 0); }
+#wrapper .s-slashes-next { color: rgb(0, 128, 0); }</style>
+<style>} #wrapper .s-stray { color: rgb(0, 128, 0); } #wrapper .s-stray-next { color: rgb(0, 128, 0); }</style>
+<style>#wrapper .s-unclosed { color: rgb(0, 128, 0);
+#wrapper .s-unclosed-next { color: rgb(0, 128, 0); }</style>
+<style>#wrapper .s-nosemi { color: rgb(0, 128, 0) font-weight: 700; }</style>
+<style>#wrapper .s-imp-space { color: rgb(0, 128, 0) ! important; } #wrapper .s-imp-space { color: rgb(200, 0, 0); }</style>
+<style>#wrapper .s-curly::before { content: “curly”; } #wrapper .s-curly { color: rgb(0, 128, 0); }</style>
+<style>#wrapper .s-eof { color: rgb(0, 128, 0)</style>
+<style>#wrapper .s-vendor-list, #wrapper .x::-webkit-scrollbar-thumb { color: rgb(0, 128, 0); }</style>
+<style>#wrapper .s-vendor-moz, #wrapper .x::-moz-range-thumb { color: rgb(0, 128, 0); }</style>
+<style>#wrapper .s-cdo { color: rgb(0, 128, 0); } <!-- --> #wrapper .s-cdo-next { color: rgb(0, 128, 0); }</style>
+<style>#wrapper .s-var-fallback { color: var(--nope); }</style>
+<style>#wrapper .s-var-invalid { --c: 12px; color: var(--c); }</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test M3 — syntax mistakes and minifier outputs that silently drop declarations or whole rules.</b> Nothing is logged to the console
+for any of these; the only symptom is a missing style.</p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted">
+      <div class="s-calc-nospace">a</div><div class="s-calc-space">b</div><div class="s-calc-zero">c</div><div class="s-calc-0px">d</div>
+      <p class="s-media-and">e</p><p class="s-media-ok">f</p><p class="s-slashes">g</p><p class="s-slashes-next">h</p>
+      <p class="s-stray">i</p><p class="s-stray-next">j</p><p class="s-unclosed">k</p><p class="s-unclosed-next">l</p>
+      <p class="s-nosemi">m</p><p class="s-imp-space">n</p><p class="s-curly">o</p><p class="s-eof">p</p>
+      <p class="s-vendor-list">q</p><p class="s-vendor-moz">r</p><p class="s-cdo">s</p><p class="s-cdo-next">t</p>
+      <p class="s-var-fallback">u</p><p class="s-var-invalid">v</p>
+    </div>
+  </div>
+</div>
+<script>
+T.run(async () => {
+  const G = 'rgb(0, 128, 0)';
+  const col = c => T.cs('.' + c, 'color') === G ? 'applied' : 'dropped';
+  const wid = c => T.cs('.' + c, 'width') === '50px' ? 'applied' : 'dropped (' + T.cs('.' + c, 'width') + ')';
+  T.check('M3-calc-nospace', 'calc(40px+10px) — no spaces around +', wid('s-calc-nospace').split(' ')[0], 'dropped');
+  T.check('M3-calc-space', 'calc(40px + 10px)', wid('s-calc-space'), 'applied');
+  T.check('M3-calc-zero', 'calc(50px - 0) — unitless 0 (what some minifiers emit for 0px)', wid('s-calc-zero').split(' ')[0], 'dropped');
+  T.check('M3-calc-0px', 'calc(50px - 0px)', wid('s-calc-0px'), 'applied');
+  T.check('M3-media-and', '@media (...) and(...) — no space after "and" (minifier bug)', col('s-media-and'), 'dropped');
+  T.check('M3-media-ok', '@media (min-width:1px) and (max-width:...)', col('s-media-ok'), 'applied');
+  T.check('M3-slashes', '"// comment" line: swallowed into the next selector, that rule is dropped', col('s-slashes'), 'dropped');
+  T.check('M3-slashes-next', '...the rule after it survives', col('s-slashes-next'), 'applied');
+  T.check('M3-stray', 'stray "}" at top level drops the NEXT rule', col('s-stray'), 'dropped');
+  T.check('M3-stray-next', '...and only that one', col('s-stray-next'), 'applied');
+  T.check('M3-unclosed', 'missing "}" — the rule itself still applies', col('s-unclosed'), 'applied');
+  T.check('M3-unclosed-next', 'missing "}" — the following rule becomes a NESTED rule (.s-unclosed #wrapper .s-unclosed-next) and stops matching', col('s-unclosed-next'), 'dropped');
+  T.check('M3-nosemi', 'missing ";" between declarations drops the declaration', col('s-nosemi'), 'dropped');
+  T.check('M3-imp-space', '"! important" with a space is valid and still wins', col('s-imp-space'), 'applied');
+  T.check('M3-curly', 'typographic quotes “…” in content drop only that declaration (other rule applies; content stays none)', col('s-curly') + ' / ' + T.cs('.s-curly', 'content', '::before'), 'applied / none');
+  T.check('M3-eof', 'unclosed block at end of sheet is auto-closed', col('s-eof'), 'applied');
+  T.check('M3-vendor-webkit', 'selector list + ::-webkit-scrollbar-thumb (known in Chromium) → applies in Chromium (would drop in Firefox)', col('s-vendor-list'), 'applied');
+  T.check('M3-vendor-moz', 'selector list + ::-moz-range-thumb (unknown in Chromium) → whole rule dropped', col('s-vendor-moz'), 'dropped');
+  T.check('M3-cdo', 'HTML comment tokens <!-- --> between rules are ignored', col('s-cdo') + '/' + col('s-cdo-next'), 'applied/applied');
+  T.check('M3-var-undefined', 'var(--undefined) without fallback → property becomes unset (inherits theme color)', T.cs('.s-var-fallback', 'color'), 'rgb(1, 1, 1)');
+  // SVG data URI: an unescaped # starts the URL fragment, truncating the SVG (tested with <img>, which uses the same URL parser + decoder as CSS url()).
+  const raw = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4'><rect width='4' height='4' fill='#f00'/></svg>";
+  const enc = raw.replace('#', '%23');
+  const load = src => new Promise(r => { const i = new Image(); i.onload = () => r('loads (' + i.naturalWidth + 'px)'); i.onerror = () => r('fails'); i.src = src; });
+  T.check('M3-svg-hash', 'SVG data URI with a raw # (fill=#f00)', await load(raw), 'fails');
+  T.check('M3-svg-hash-enc', 'same SVG with # written as %23', await load(enc), 'loads (4px)');
+  T.check('M3-var-invalid', 'var() resolving to a wrong type (12px for color) → unset, NOT the previous cascaded value', T.cs('.s-var-invalid', 'color'), 'rgb(1, 1, 1)');
+});
+</script>
+</body>
+</html>

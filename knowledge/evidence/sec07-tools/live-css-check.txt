@@ -1,0 +1,8 @@
+# Per-visit service check for section 07 (retry run), 2026-10-14 ~15:45 local
+# Target: the repo owner's own Vercel service (not itch.io). Bodies kept in the scratchpad only.
+# for i in 1 2 3; do curl -s --compressed -A "<Chrome 155 UA>" -D h$i.txt -o live$i.css https://itch-io-custom-css-custom-css.vercel.app/live.css; sleep 1.2; done
+req1: HTTP/1.1 200 OK | Cache-Control: no-store | Content-Type: text/css; charset=utf-8 | 14822 B | md5 0fb64ce442ea... | non-ASCII bytes 0
+req2: HTTP/1.1 200 OK | Cache-Control: no-store | Content-Type: text/css; charset=utf-8 | 14840 B | md5 430ec5c48369... | non-ASCII bytes 0
+req3: HTTP/1.1 200 OK | Cache-Control: no-store | Content-Type: text/css; charset=utf-8 | 14839 B | md5 2fb17e5c0dca... | non-ASCII bytes 0
+keyframes: breath hello roll twinkle | @property --breath | 3 data:image/svg+xml URIs
+own reduced-motion rule: @media (prefers-reduced-motion:reduce){#wrapper::after,#wrapper .user_page::before{animation:none}}

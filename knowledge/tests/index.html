@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>itch custom-CSS local tests · run all</title>
+<style>
+  body { font: 14px/1.4 system-ui, sans-serif; margin: 16px; color: #111; background: #fff; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 24px; }
+  td, th { border: 1px solid #ccc; padding: 2px 6px; text-align: left; vertical-align: top; word-break: break-word; }
+  .PASS { color: #060; font-weight: 700; } .FAIL { color: #b00; font-weight: 700; } .INFO { color: #555; }
+  iframe { width: 1000px; height: 700px; border: 1px dashed #999; display: block; margin: 4px 0; }
+  #frames { position: absolute; left: -12000px; top: 0; }
+</style>
+</head>
+<body>
+<h1>itch custom-CSS local tests</h1>
+<p>Serve the repo root on <code>http://localhost:8090</code> and the same folder on <code>http://localhost:8091</code> (second origin, used to emulate a third-party
+<code>@import</code>), e.g. <code>python -m http.server 8090</code> and <code>python -m http.server 8091</code>. Open this page from 8090.
+Each test page also runs standalone and prints its own table. Add <code>?only=a-,b-</code> to run a subset.</p>
+<p id="ua"></p>
+<div id="summary"></div>
+<div id="frames"></div>
+<script>
+const TESTS = [
+  'a-import-cascade.html', 'b-import-position.html', 'c-mime-charset.html', 'c-quirks.html', 'c-win1252.html',
+  'd-layers.html', 'e-background.html', 'f-relative-url.html', 'g-property-keyframes.html', 'h-content.html',
+  'i-overflow-clip.html', 'j-support.html', 'k-a11y.html', 'l-media.html', 'm-containing-block.html',
+  'm-font-cors.html', 'm-syntax-gotchas.html', 'n-scope-specificity.html'
+];
+const only = new URLSearchParams(location.search).get('only');
+const list = only ? TESTS.filter(t => only.split(',').some(p => t.startsWith(p))) : TESTS;
+document.getElementById('ua').textContent = navigator.userAgent;
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+(async () => {
+  window.__all = {};
+  for (const t of list) {
+    const f = document.createElement('iframe');
+    document.getElementById('frames').appendChild(f);
+    await new Promise(r => { f.onload = r; f.src = t + '?run=' + Date.now(); });
+    for (let i = 0; i < 100 && !(f.contentWindow && f.contentWindow.__done); i++) await new Promise(r => setTimeout(r, 100));
+    const res = (f.contentWindow && f.contentWindow.__results) || [{ id: '-', status: 'FAIL', what: 'timed out', expected: '', actual: '' }];
+    window.__all[t] = res;
+    const p = res.filter(r => r.status === 'PASS').length, x = res.filter(r => r.status === 'FAIL').length;
+    document.getElementById('summary').insertAdjacentHTML('beforeend',
+      '<h2><a href="' + t + '">' + t + '</a> — ' + p + ' PASS · ' + x + ' FAIL · ' + (res.length - p - x) + ' INFO</h2><table>' +
+      res.map(r => '<tr><td>' + esc(r.id) + '</td><td class="' + r.status + '">' + r.status + '</td><td>' + esc(r.what) + '</td><td>' + esc(r.expected) + '</td><td>' + esc(r.actual) + '</td></tr>').join('') + '</table>');
+  }
+  window.__allDone = true;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K · hiding techniques vs DOM text APIs and the agent's read_page/find tools</title>
+<link rel="stylesheet" href="_lib/itch-base.css">
+<style id="custom_css">
+  #wrapper .k-none { display: none; }
+  #wrapper .k-vis { visibility: hidden; }
+  #wrapper .k-transparent { color: transparent; }
+  #wrapper .k-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  #wrapper .k-opacity { opacity: 0; }
+  #wrapper .k-fs0 { font-size: 0; }
+  #wrapper .k-offscreen { position: absolute; left: -9999px; }
+  #wrapper .k-cv { content-visibility: hidden; }
+  #wrapper .k-before::before { content: "GOLF-generated "; }
+  #wrapper .k-alt::before { content: "INDIA-generated " / "JULIET-alt"; }
+  #wrapper .k-roller { display: inline-grid; grid-template-columns: auto 0; color: transparent; }
+  #wrapper .k-roller::before { content: "PAPA-roller-visible" / ""; color: rgb(0, 0, 0); }
+</style>
+<script src="_lib/harness.js"></script>
+</head>
+<body>
+<div class="about"><p><b>Test K — how each hiding technique shows up in DOM text APIs.</b> Words are unique markers (ALPHA…PAPA). After loading, run the
+agent tools read_page / find / get_page_text on this page and record which markers they report; a real screen reader must be checked manually
+(see evidence log). Note: this page's own title and about-box are outside #wrapper.</p></div>
+<div class="user_page_wrap" id="wrapper">
+  <div class="user_page">
+    <div class="user_profile formatted" id="k-box">
+      <p><span class="k-none">ALPHA-display-none</span></p>
+      <p><span class="k-vis">BRAVO-visibility-hidden</span></p>
+      <p><span class="k-transparent">CHARLIE-color-transparent</span></p>
+      <p><span class="k-sr">DELTA-visually-hidden</span></p>
+      <p><span class="k-opacity">ECHO-opacity-0</span></p>
+      <p><span class="k-fs0">FOXTROT-font-size-0</span></p>
+      <p><span class="k-before">HOTEL-host-text</span></p>
+      <p><span class="k-alt">KILO-host-text</span></p>
+      <p><span aria-hidden="true">LIMA-aria-hidden</span></p>
+      <p><span hidden>MIKE-hidden-attribute</span></p>
+      <p><span class="k-offscreen">NOVEMBER-offscreen</span></p>
+      <p><span class="k-cv">OSCAR-content-visibility-hidden</span></p>
+      <p><span class="k-roller">QUEBEC-roller-marker</span>, rest of sentence</p>
+    </div>
+  </div>
+</div>
+<script>
+T.run(() => {
+  const box = document.getElementById('k-box');
+  const it = box.innerText;
+  const words = ['ALPHA', 'BRAVO', 'CHARLIE', 'DELTA', 'ECHO', 'FOXTROT', 'GOLF', 'HOTEL', 'INDIA', 'JULIET', 'KILO', 'LIMA', 'MIKE', 'NOVEMBER', 'OSCAR', 'PAPA', 'QUEBEC'];
+  T.info('K-innerText', 'markers present in innerText (rendered text)', words.filter(w => it.includes(w)).join(' '));
+  T.info('K-textContent', 'markers present in textContent', words.filter(w => box.textContent.includes(w)).join(' '));
+  const cv = {};
+  document.querySelectorAll('#k-box span').forEach(s => {
+    const w = s.textContent.split('-')[0];
+    cv[w] = s.checkVisibility() + '/' + s.checkVisibility({ opacityProperty: true, visibilityProperty: true, contentVisibilityAuto: true });
+  });
+  T.info('K-checkVisibility', 'checkVisibility() plain / with opacity+visibility options', JSON.stringify(cv));
+  // Selection/copy behaviour of color:transparent text: it is still selectable and copied.
+  const r = document.createRange(); r.selectNodeContents(document.querySelector('.k-transparent'));
+  const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  T.info('K-copy', 'color:transparent text is selectable (getSelection().toString())', sel.toString());
+  sel.removeAllRanges();
+});
+</script>
+</body>
+</html>

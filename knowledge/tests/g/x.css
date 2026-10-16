@@ -1,0 +1,7 @@
+/* Test G fixture, imported CROSS-ORIGIN from :8091 (like a third-party CSS service). */
+@property --g-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@property --g-inh { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
+@property --g-twice { syntax: '<angle>'; inherits: false; initial-value: 1deg; }
+@keyframes g-from-import { from { width: 10px; } to { width: 110px; } }
+@keyframes g-dup { from { height: 10px; } to { height: 10px; } }
+#wrapper .g4 { animation: g-from-inline 1s linear -0.5s paused; }

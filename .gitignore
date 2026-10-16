@@ -1,0 +1,20 @@
+# Local-only artefacts that must never be published.
+# Raw itch.io downloads and third-party pages stay outside this repo; the tools here regenerate them.
+raw/
+requests.log
+# Throw-away browser profiles created by the headless test runners (history, cookies, caches)
+**/tests/prof/
+**/chrome-prof*/
+**/chrome-profile/
+# Python / Node build caches
+__pycache__/
+*.pyc
+node_modules/
+# Secrets, just in case
+.env*
+*.pem
+*.key
+
+# Local working notes and machine-specific settings
+HANDOFF.md
+.claude/settings.local.json
