@@ -6,13 +6,13 @@ Guidance for Claude Code in this repository.
 
 **itch-live-css**: knowledge and tooling for customizing itch.io pages (profile, project/game, devlog, jam) with custom CSS, for creators who code and for those who don't. Planned layers (full plan in `ROADMAP.md`, in Spanish):
 
-1. An AI-ready **knowledge base** on itch custom CSS (`knowledge/`). **Done** 2026-10-14; waiting for the live probes.
+1. An AI-ready **knowledge base** on itch custom CSS (`knowledge/`). **Done** 2026-10-14; checked with live probes on 2026-10-16 (devlog and jam fields still open).
 2. An open-source **engine** (npm): config → CSS, plugins with option schemas, a validator whose rules map to the knowledge base's R1–R24, two outputs (pasted / served).
 3. A public **hosted service** that serves per-visit CSS through `@import` (profile and project only; `@import` never loads on jams).
 4. A **web configurator**: forms generated from plugin schemas, mock previews per page type, exports per page type.
 5. **Framework adapters** (Tailwind v3.4, Bootstrap's CSS, Animate.css) and **AI integration** (llms.txt, an MCP server, a bring-your-own-key assistant in the configurator).
 
-**Status (2026-10-16): phase 0.** Live probe Runs 1 (draft project), 2 (profile) and 4 (size caps, without the jam part) are done; their results are in `knowledge/evidence/live-probes/` and the knowledge base is retagged. Nothing is published A local git repo exists (branch `main`, created 2026-10-16) with no commits and no remote yet: commit or push only when the owner asks. The current next step and the open tasks are in `HANDOFF.md` (local, git-ignored). Read it first when it exists.
+**Status (2026-10-16): phase 0.** Live probe Runs 1 (draft project), 2 (profile) and 4 (size caps, without the jam part) are done; their results are in `knowledge/evidence/live-probes/` and the knowledge base is retagged. Nothing is published. A local git repo exists (branch `main`, first commit 2026-10-16) with no remote yet: commit or push only when the owner asks. The current next step and the open tasks are in `HANDOFF.md` (local, git-ignored). Read it first when it exists.
 
 ## Origin: the owner's private repo
 
