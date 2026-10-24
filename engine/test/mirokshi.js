@@ -46,3 +46,6 @@ export const games = [
   { id: 1862929, views: 920, downloads: 312, published: Date.parse('2023-01-15T10:00:00Z') }, // call-of-the-ranger
   { id: 2540459, views: 45, downloads: 3, published: now - 20 * DAY }, // testapi
 ];
+
+// what `node bin/cli.js dev test/mirokshi.js` serves with, like the prototype's dev.js --mock
+export const data = { games };

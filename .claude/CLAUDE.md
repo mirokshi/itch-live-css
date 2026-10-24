@@ -47,14 +47,14 @@ knowledge/
 engine/                      phase 1, started 2026-10-24: render() (served) and paste() (pasted) from a config, seeded rng,
                              plugins/ (title, greeting, cards, ascii: the owner's 4 effects, ported 1:1 from the private repo),
                              importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R4, R7–R12, R14–R16, R18, R23 so far),
-                             CLI bin/cli.js measure|validate; tests: cd engine && npm test
+                             CLI bin/cli.js measure|validate|dev (dev: preview_start {name:"engine-dev"}, 3000); tests: cd engine && npm test
 web/                         the Vercel web app, started 2026-10-24 (local only): public/ (form + profile mock preview),
                              api/ (preview, configs with secret edit key, css = /c/<id>.css), profile paste = @import +
                              a fixed copy of the plugins that fit 5,120 bytes inside @layer custom-fallback (so the
                              served, unlayered CSS always wins over it; checked in the preview), lib/store.js = Upstash
                              Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a local JSON
                              file (web/.data/, git-ignored); dev server: preview_start {name:"web"} (3001); tests: cd web && npm test
-.claude/launch.json          preview servers: knowledge-tests (8090), knowledge-tests-xorigin (8091) and web (3001)
+.claude/launch.json          preview servers: knowledge-tests (8090), knowledge-tests-xorigin (8091), web (3001) and engine-dev (3000)
 ```
 
 ## Knowledge-base conventions
