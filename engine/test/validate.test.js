@@ -73,6 +73,31 @@ test('R11: no class names that ad blockers hide', () => {
   assert.deepEqual(rules('#wrapper .custom-card,#wrapper [class*=custom-]{}'), []);
 });
 
+test('R3: variables on #wrapper or below; a profile sets itch\'s on #wrapper .user_page', () => {
+  assert.deepEqual(rules(':root{--gold:#ffc857}'), ['R3']);
+  assert.deepEqual(rules('html{--a:1}html{color:red}'), ['R3', 'R2']); // without variables it's plain R2
+  assert.deepEqual(validate('#wrapper{--itchio_link_color:red}', 'profile').map((p) => `${p.rule} ${p.level}`), ['R3 warning']);
+  assert.deepEqual(rules('#wrapper .user_page{--itchio_link_color:red}#wrapper{--gold:#ffc857}', 'profile'), []);
+  assert.deepEqual(rules('#wrapper{--itchio_link_color:red}', 'project'), []);
+});
+
+test('R12: no numbered ids', () => {
+  assert.deepEqual(rules('#wrapper #user_123 a,#wrapper{& #view_game_456{}}'), ['R12', 'R12']);
+  assert.deepEqual(rules('#wrapper #inner_column,#wrapper [style*="#ff0000"],#wrapper h1:nth-child(2){}'), []);
+});
+
+test('R14: no outline:none!important, no !important on an animated property', () => {
+  const levels = (css) => validate(css, 'project').map((p) => `${p.rule} ${p.level}`);
+  assert.deepEqual(levels('#wrapper a:focus{outline:none !important}'), ['R14 error']);
+  assert.deepEqual(levels('#wrapper a:focus{outline:0!important}#wrapper a{outline:none}'), ['R14 error']);
+  assert.deepEqual(levels('@keyframes custom-x{to{opacity:0;animation-timing-function:ease}}#wrapper a{opacity:1!important}'), ['R14 warning']);
+  assert.deepEqual(
+    levels('@keyframes custom-x{to{opacity:0}}#wrapper a{animation-timing-function:ease!important}' +
+      '@media (prefers-reduced-motion:reduce){#wrapper *{opacity:1!important;animation:none!important}}'),
+    [],
+  );
+});
+
 test('R7: the cap applies to pasted CSS only', () => {
   const big = `#wrapper{--x:"${'a'.repeat(5120)}"}`;
   assert.deepEqual(validate(big, 'profile').map((p) => [p.rule, p.level]), [['R7', 'error']]);

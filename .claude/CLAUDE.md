@@ -47,7 +47,7 @@ knowledge/
                              (Claude Code Workflow scripts, parameterised by args), open-questions.json (237 questions)
 engine/                      phase 1, started 2026-10-24: render() (served) and paste() (pasted) from a config, seeded rng,
                              plugins/ (title, greeting, cards, ascii: the owner's 4 effects, ported 1:1 from the private repo),
-                             importLine() and measure() (src/output.js), validate() (src/validate.js: R2, R7–R11, R15, R16, R23 so far),
+                             importLine() and measure() (src/output.js), validate() (src/validate.js: R2, R3, R7–R12, R14–R16, R23 so far),
                              CLI bin/cli.js measure|validate; tests: cd engine && npm test
 .claude/launch.json          preview servers: knowledge-tests (8090) and knowledge-tests-xorigin (8091)
 ```

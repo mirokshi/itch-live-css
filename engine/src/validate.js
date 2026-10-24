@@ -1,6 +1,7 @@
 // Validator: checks CSS against the knowledge base's rules (knowledge/itch-custom-css.md §0, R1–R24).
 // Each problem carries its rule id, so the reason and the evidence are one lookup away.
-// So far the cheap ones: R2, R7, R8, R9, R10, R11 (only its ad-block part, ROADMAP H8), R15, R16, R23.
+// So far the cheap ones: R2, R3, R7–R10, R11 (only its ad-block part, ROADMAP H8), R12, R14 (outline
+// and animated properties), R15, R16, R23.
 
 import { measure } from './output.js';
 
@@ -73,6 +74,31 @@ function* styleRules(nodes) {
   }
 }
 
+// every style rule, nested ones too, with whether it sits in @media (prefers-reduced-motion:reduce)
+function* allRules(nodes, reduced = false) {
+  for (const node of nodes) {
+    if (!node.block) continue;
+    if (!node.prelude.startsWith('@')) {
+      yield { node, reduced };
+      yield* allRules(node.block, reduced);
+    } else if (GROUPS.has(atName(node))) {
+      yield* allRules(node.block, reduced || /prefers-reduced-motion\s*:\s*reduce/i.test(node.prelude));
+    }
+  }
+}
+
+// a rule's own declarations → [{ prop, value, important }] (custom property names keep their case)
+const declarations = (node) =>
+  node.block.flatMap(({ prelude, block }) => {
+    const k = prelude.indexOf(':');
+    if (block || k < 0) return [];
+    const prop = prelude.slice(0, k).trim();
+    const value = prelude.slice(k + 1).trim();
+    return [{ prop: prop.startsWith('--') ? prop : prop.toLowerCase(), value, important: /!\s*important$/i.test(value) }];
+  });
+
+const KEYFRAMES = /^@(?:-webkit-)?keyframes\s+(\S+)/i;
+
 // a, b:is(c, d) → ['a', 'b:is(c, d)']
 function selectors(prelude) {
   const out = [];
@@ -130,11 +156,16 @@ export function validate(css, page, { served = false } = {}) {
     add('R8', 'error', 'remove every <style> and </style>: itch deletes </style> (any case), which changes the CSS around it');
   }
 
-  // R2
+  // R2, and R3 where the unscoped rule sets variables
   for (const rule of styleRules(top)) {
+    const vars = declarations(rule).filter((d) => d.prop.startsWith('--'));
     for (const sel of selectors(rule.prelude)) {
-      if (!/^(body\.frame_maximized\s+)?#wrapper(?![\w-])/.test(sel)) {
+      if (vars.length && /^(:root|html)(?![\w-])/.test(sel)) {
+        add('R3', 'error', `"${short(sel)}" sets variables: set them on #wrapper or below (on :root they recoloured itch's jam header)`);
+      } else if (!/^(body\.frame_maximized\s+)?#wrapper(?![\w-])/.test(sel)) {
         add('R2', 'error', `"${short(sel)}" must start with #wrapper: itch serves your CSS page-wide`);
+      } else if (page === 'profile' && sel === '#wrapper' && vars.some((d) => d.prop.startsWith('--itchio_'))) {
+        add('R3', 'warning', "itch declares a profile's --itchio_ variables on .user_page, which beats #wrapper: set them on #wrapper .user_page");
       }
     }
   }
@@ -171,22 +202,43 @@ export function validate(css, page, { served = false } = {}) {
     }
   }
 
-  const relative = new Set();
+  // R11, R12 and R14, over every style rule
+  const animated = new Set();
+  for (const node of walk(top)) {
+    if (node.block && KEYFRAMES.test(node.prelude)) {
+      for (const frame of node.block) if (frame.block) for (const d of declarations(frame)) animated.add(d.prop);
+    }
+  }
+  animated.delete('animation-timing-function');
   const adBlocked = new Set();
+  const numbered = new Set();
+  const frozen = new Set();
+  for (const { node, reduced } of allRules(top)) {
+    // R11: ad-block filter lists hide these class names from visitors who use them
+    for (const m of node.prelude.matchAll(/\.(custom-(?:ad|social|share|cookie)[\w-]*)/g)) adBlocked.add(m[1]);
+    const bare = node.prelude.replace(/\[[^\]]*\]|"[^"]*"|'[^']*'/g, '');
+    for (const m of bare.matchAll(/#(-?[A-Za-z_][\w-]*\d[\w-]*)/g)) numbered.add(m[1]);
+    for (const { prop, value, important } of declarations(node)) {
+      if (!important) continue;
+      if ((prop === 'outline' || prop === 'outline-style') && /^(none|0)\b/i.test(value)) {
+        add('R14', 'error', `${prop}:${short(value)} hides the focus ring for keyboard users; restyle it instead (B2)`);
+      }
+      // in a reduced-motion block, freezing the motion is the point
+      if (animated.has(prop) && !reduced) frozen.add(prop);
+    }
+  }
+
+  const relative = new Set();
   for (const node of walk(top)) {
     const at = atName(node);
     if (at === 'import' && !top.includes(node)) add('R9', 'error', `${short(node.prelude)} sits inside a block, where @import is invalid`);
     // R23 (imports are R10's)
     if (at !== 'import') for (const url of urls(node.prelude)) if (!absolute(url)) relative.add(url);
-    // R11: ad-block filter lists hide these class names from visitors who use them
-    if (node.block && !node.prelude.startsWith('@')) {
-      for (const m of node.prelude.matchAll(/\.(custom-(?:ad|social|share|cookie)[\w-]*)/g)) adBlocked.add(m[1]);
-    }
     if (at === 'layer' && node.block) {
       add('R15', 'warning', `${short(node.prelude)}: layered rules always lose to itch's unlayered ones`);
     }
     // R16
-    const name = /^@(?:-webkit-)?keyframes\s+(\S+)/i.exec(node.prelude)?.[1].replace(/^["']|["']$/g, '');
+    const name = KEYFRAMES.exec(node.prelude)?.[1].replace(/^["']|["']$/g, '');
     if (name && node.block && !name.startsWith('custom-')) {
       add('R16', 'error', `@keyframes ${name} needs the custom- prefix: if itch uses the same name, yours replaces its animation page-wide`);
     }
@@ -196,6 +248,14 @@ export function validate(css, page, { served = false } = {}) {
   }
   for (const name of adBlocked) {
     add('R11', 'warning', `.${name}: ad blockers hide classes starting custom-ad, custom-social, custom-share or custom-cookie`);
+  }
+  for (const id of numbered) {
+    add('R12', 'error', `#${id}: numbered ids change from page to page; use a stable one (#wrapper, #inner_column, #profile_header…) or a class`);
+  }
+  // shortcut: matched by property name across the sheet, not by element, so it can flag an
+  // !important on an element that never runs the animation; hence a warning
+  for (const prop of frozen) {
+    add('R14', 'warning', `${prop} !important: your @keyframes animate ${prop}, and !important beats animations, so it can freeze them`);
   }
   return problems;
 }
