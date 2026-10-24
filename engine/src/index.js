@@ -4,16 +4,24 @@ import { greeting } from './plugins/greeting.js';
 import { title } from './plugins/title.js';
 import { rng } from './random.js';
 
+export { importLine, measure } from './output.js';
+
 export const plugins = { title, greeting, cards, ascii };
 
 // config: { plugins: [{ use: 'title', options: {...} }, ...] }
 // seed: anything; the same seed gives the same CSS. Omit it for a fresh result each call.
 // data: outside inputs fetched by the caller, e.g. { games } for cards. now: ms, for date checks.
-export function render(config, { seed = crypto.randomUUID(), data = {}, now = Date.now() } = {}) {
+function rules(config, { seed = crypto.randomUUID(), data = {}, now = Date.now() } = {}) {
   const r = rng(seed);
-  const rules = config.plugins.flatMap(({ use, options = {} }) => {
+  return config.plugins.flatMap(({ use, options = {} }) => {
     if (!Object.hasOwn(plugins, use)) throw new Error(`unknown plugin "${use}"`);
     return plugins[use](options, r, { data, now });
   });
-  return rules.join('\n') + '\n';
 }
+
+// Served output: what the service answers to the @import, one rule per line.
+export const render = (config, options) => rules(config, options).join('\n') + '\n';
+
+// Pasted output: one line for itch's CSS field. Plugins already write minified rules, so joining
+// them is the minifying. Pass a seed to get the same paste twice.
+export const paste = (config, options) => rules(config, options).join('');
