@@ -48,28 +48,48 @@
   </section>
 
   <div class="stage">
-    <!-- What itch's theme editor sets on the page. Only changes the mock, never the served CSS;
-         the image stays in this browser. -->
-    <div class="stage-bar">
-      <span class="bar-title">Tema de itch (solo vista previa):</span>
-      <fieldset>
-        <legend>Diseño</legend>
-        <label><input type="radio" name="layout" value="grid" checked> Grid</label>
-        <label><input type="radio" name="layout" value="column"> Sidebar</label>
-      </fieldset>
-      <label>Fondo <input type="color" name="theme_bg" value="#ffffff"></label>
-      <label class="file-btn">Imagen de fondo…<input type="file" name="theme_bg_image" accept="image/*" class="visually-hidden"></label>
-      <select name="theme_bg_mode" aria-label="Cómo se pinta la imagen de fondo" hidden>
-        <option value="repeat">Mosaico</option>
-        <option value="cover">Cubrir</option>
-      </select>
-      <button type="button" id="bg-clear" class="ghost small" hidden>Quitar imagen</button>
-      <label>Texto <input type="color" name="theme_text" value="#222222"></label>
-      <label>Enlaces <input type="color" name="theme_link" value="#ff2449"></label>
+    <!-- A look-alike of itch's theme editor. Only changes the mock, never the served CSS; images
+         stay in this browser. Field names: theme_* and layout. -->
+    <aside id="theme" class="itch-theme" aria-label="Tema de itch">
+      <div class="theme-head">
+        <p>Simula el editor de temas de itch: solo cambia la vista previa.</p>
+        <button type="button" id="theme-close" class="theme-x" aria-label="Ocultar el tema de itch">&lsaquo;</button>
+      </div>
+
+      <h3>Color</h3>
+      <div class="trow"><span>BG</span><span class="hex"><input name="theme_bg_hex" value="#ffffff" maxlength="7" spellcheck="false" aria-label="BG en hex"><input type="color" name="theme_bg" value="#ffffff" aria-label="BG"></span></div>
+      <div class="trow"><span>Text</span><span class="hex"><input name="theme_text_hex" value="#222222" maxlength="7" spellcheck="false" aria-label="Text en hex"><input type="color" name="theme_text" value="#222222" aria-label="Text"></span></div>
+      <div class="trow"><span>Link</span><span class="hex"><input name="theme_link_hex" value="#ff2449" maxlength="7" spellcheck="false" aria-label="Link en hex"><input type="color" name="theme_link" value="#ff2449" aria-label="Link"></span></div>
+
+      <h3>Text</h3>
+      <div class="trow"><label for="t-font">Font</label><select id="t-font" name="theme_font"></select></div>
+      <div class="trow"><label for="t-size">Size</label><input type="range" id="t-size" name="theme_size" min="80" max="150" step="5" value="100"></div>
+
+      <h3>Images</h3>
+      <div class="trow"><span>Banner</span><label class="itch-btn">Upload<input type="file" name="theme_banner" accept="image/*" class="visually-hidden"></label></div>
+      <button type="button" id="banner-clear" class="itch-btn-outline" hidden>Remove banner</button>
+      <div class="tcol">
+        <span>Background</span>
+        <label class="bg-box" id="bg-box"><span class="itch-btn">Upload</span><input type="file" name="theme_bg_image" accept="image/*" class="visually-hidden"></label>
+      </div>
+      <div id="bg-options" hidden>
+        <div class="trow"><label for="t-repeat">Repeat</label><select id="t-repeat" name="theme_repeat"><option value="no-repeat">None</option><option value="repeat" selected>Repeat</option><option value="repeat-x">Repeat X</option></select></div>
+        <div class="trow"><label for="t-align">Align</label><select id="t-align" name="theme_align"><option value="0 0">Left</option><option value="50% 0" selected>Center</option><option value="100% 0">Right</option></select></div>
+        <div class="trow"><label for="t-fixed">Fixed</label><input type="checkbox" id="t-fixed" name="theme_fixed"></div>
+        <button type="button" id="bg-clear" class="itch-btn-outline">Remove image</button>
+      </div>
+
+      <h3>My projects</h3>
+      <div class="trow"><label for="t-layout">Layout</label><select id="t-layout" name="layout"><option value="grid">Grid</option><option value="column">Sidebar</option></select></div>
+      <div class="trow"><label for="t-radius">B. Radius</label><input type="range" id="t-radius" name="theme_radius" min="0" max="30" value="0"></div>
+    </aside>
+
+    <div class="stage-main">
+      <button type="button" id="theme-open" class="theme-open" hidden>Tema de itch &rsaquo;</button>
+      <!-- no allow-scripts: nothing pasted into the preview can run; allow-same-origin lets this page fill it -->
+      <iframe id="preview" src="preview.html" title="Vista previa del perfil" sandbox="allow-same-origin"></iframe>
+      <div class="loading" aria-hidden="true"><span class="spinner"></span> Generando la vista previa…</div>
     </div>
-    <!-- no allow-scripts: nothing pasted into the preview can run; allow-same-origin lets this page fill it -->
-    <iframe id="preview" src="preview.html" title="Vista previa del perfil" sandbox="allow-same-origin"></iframe>
-    <div class="loading" aria-hidden="true"><span class="spinner"></span> Generando la vista previa…</div>
   </div>
 
   <aside id="ideas" class="panel" hidden>

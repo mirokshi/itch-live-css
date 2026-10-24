@@ -114,52 +114,106 @@ function itchSanitize(html) {
 const doc = () => frame.contentDocument;
 let effectsBio = '';
 
-// What itch's theme editor sets (knowledge base §3, §4), into the mock only:
-// · layout: exactly one of .mode_grid / .mode_column on .user_page;
-// · background on #wrapper; text colour on .user_page, which game cards dim to 75 % and 50 %;
-//   link colour on links (a literal colour, not only --itchio_link_color).
-// All values come from colour inputs (#rrggbb) or a data: URL read here, so they're safe in CSS.
-let bgImage = '';
+// What itch's profile theme editor writes into style#user_theme (knowledge base §4.3), into the
+// mock only: BG on body; Text, font, size and the 4 variables on .user_page; the background image on
+// .user_page_wrap (= #wrapper); Link on links and card titles; card text at 75 % / 50 % of Text;
+// B. Radius on card covers. Layout and banner are classes on .user_page. Every value comes from a
+// colour/hex input checked below, a fixed <select>, a number range or a data: URL read here.
+const FONT_CHOICES = ['Lato', 'Roboto', 'Open Sans', 'Montserrat', 'Nunito', 'Merriweather', 'Playfair Display', 'Press Start 2P', 'VT323', 'Space Mono'];
+form.elements.theme_font.innerHTML = FONT_CHOICES.map((f) => `<option>${f}</option>`).join('');
+
+const images = { bg: '', banner: '' };
+const HEX = /^#[0-9a-f]{6}$/i;
+
 function applyTheme() {
   const el = form.elements;
+  const d = doc();
+  const page = d.querySelector('.user_page');
   const column = el.layout.value === 'column';
-  const page = doc().querySelector('.user_page');
   page.classList.toggle('mode_grid', !column);
   page.classList.toggle('mode_column', column);
+  page.classList.toggle('has_banner', !!images.banner);
+  d.querySelector('.profile_banner').src = images.banner || '';
 
-  const text = el.theme_text.value;
-  const link = el.theme_link.value;
-  const image = !bgImage
-    ? ''
-    : `background-image:url("${bgImage}");` +
-      (el.theme_bg_mode.value === 'cover' ? 'background-size:cover;background-position:center;background-attachment:fixed' : 'background-repeat:repeat');
-  doc().getElementById('user_theme').textContent = [
-    `#wrapper{background-color:${el.theme_bg.value};${image}}`,
-    `.user_page{color:${text};--itchio_link_color:${link}}`,
+  const font = el.theme_font.value;
+  d.getElementById('theme_font').href =
+    `https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=${font.replaceAll(' ', '+')}:ital,wght@0,400;0,700;1,400&display=swap`;
+
+  const [bg, text, link] = ['bg', 'text', 'link'].map((k) => el[`theme_${k}`].value);
+  const radius = `${Number(el.theme_radius.value)}px`;
+  const image = images.bg
+    ? `background-image:url("${images.bg}");background-repeat:${el.theme_repeat.value};background-position:${el.theme_align.value};` +
+      (el.theme_fixed.checked ? 'background-attachment:fixed' : '')
+    : '';
+  d.getElementById('user_theme').textContent = [
+    `body{background-color:${bg}}`,
+    `.user_page{--itchio_font_family:"${font}";--itchio_link_color:${link};--itchio_border_radius:${radius};` +
+      `color:${text};font-size:${Number(el.theme_size.value)}%;font-family:"${font}",Lato,sans-serif}`,
+    `.user_page_wrap{${image}}`,
     `.user_page a,.footer a{color:${link}}`,
-    `.game_title a{color:${text}}`,
-    `.game_text{color:color-mix(in srgb,${text} 75%,transparent)}`,
-    `.game_genre{color:color-mix(in srgb,${text} 50%,transparent)}`,
+    `.game_grid_widget .game_cell .game_thumb{border-radius:${radius}}`,
+    `.game_grid_widget .game_cell .game_title a.title{color:${link}}`,
+    `.game_grid_widget .game_cell .game_text{color:color-mix(in srgb,${text} 75%,transparent)}`,
+    `.game_grid_widget .game_cell .game_genre{color:color-mix(in srgb,${text} 50%,transparent)}`,
   ].join('');
 }
 
-const bgFile = form.elements.theme_bg_image;
-const bgClear = document.getElementById('bg-clear');
-function setBgImage(url) {
-  bgImage = url;
-  bgClear.hidden = form.elements.theme_bg_mode.hidden = !url;
-  applyTheme();
+// each colour has a hex text box and a swatch, kept in step like itch's
+for (const k of ['bg', 'text', 'link']) {
+  const hex = form.elements[`theme_${k}_hex`];
+  const swatch = form.elements[`theme_${k}`];
+  hex.addEventListener('input', () => HEX.test(hex.value) && (swatch.value = hex.value.toLowerCase()));
+  hex.addEventListener('change', () => (hex.value = swatch.value)); // a half-typed value goes back
+  swatch.addEventListener('input', () => (hex.value = swatch.value));
 }
-bgFile.addEventListener('change', () => {
-  const file = bgFile.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => setBgImage(reader.result);
-  reader.readAsDataURL(file);
+
+// image uploads: read in the browser as data: URLs, never sent anywhere
+function readImage(input, key, onSet) {
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      images[key] = reader.result;
+      onSet(true);
+      applyTheme();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+const bgBox = document.getElementById('bg-box');
+const showBg = (on) => {
+  document.getElementById('bg-options').hidden = !on;
+  bgBox.style.backgroundImage = on ? `url("${images.bg}")` : '';
+  bgBox.classList.toggle('has-image', on);
+};
+const showBanner = (on) => (document.getElementById('banner-clear').hidden = !on);
+readImage(form.elements.theme_bg_image, 'bg', showBg);
+readImage(form.elements.theme_banner, 'banner', showBanner);
+document.getElementById('bg-clear').addEventListener('click', () => {
+  images.bg = '';
+  form.elements.theme_bg_image.value = '';
+  showBg(false);
+  applyTheme();
 });
-bgClear.addEventListener('click', () => {
-  bgFile.value = '';
-  setBgImage('');
+document.getElementById('banner-clear').addEventListener('click', () => {
+  images.banner = '';
+  form.elements.theme_banner.value = '';
+  showBanner(false);
+  applyTheme();
+});
+
+// the panel folds away to give the preview the whole width
+const themePanel = document.getElementById('theme');
+const themeOpen = document.getElementById('theme-open');
+document.getElementById('theme-close').addEventListener('click', () => {
+  themePanel.hidden = true;
+  themeOpen.hidden = false;
+  themeOpen.focus();
+});
+themeOpen.addEventListener('click', () => {
+  themePanel.hidden = false;
+  themeOpen.hidden = true;
 });
 
 function applyUser() {

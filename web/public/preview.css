@@ -1,45 +1,59 @@
-/* Mock of a profile with itch's default light theme, written from scratch (not itch's CSS). Sizes
-   and layout follow knowledge/sections/03: .user_page 14px, bio 16px with 2em h1, a grid of
-   minmax(250px,1fr) cards with a 25px × 10px gap, the footer outside .user_page. It also gives what
-   the effects expect: a flex-column .game_cell_data and a positioned .game_thumb, as on itch. */
-body { margin: 0; color: #222; font-family: Lato, system-ui, sans-serif; font-size: 12px; background: #fff; }
-#wrapper { position: relative; min-height: 100vh; padding-bottom: 50px; box-sizing: border-box; }
-.user_page { font-size: 14px; color: #222; }
+/* Mock of a profile with itch's default light theme, written from scratch (not itch's CSS). The
+   layout follows what itch's user.css does, read on 2026-10-24 from two live profiles (one Grid,
+   one Sidebar) and knowledge/sections/03–04:
+   · both layouts have the same HTML; only .user_page.mode_grid / .mode_column changes;
+   · Grid: .columns is a plain block, so links and bio sit ABOVE a full-width card grid;
+   · Sidebar: the bio column takes the width and the cards go in one 315px column to its right.
+   It also gives what the effects expect: a flex-column .game_cell_data and a positioned .game_thumb. */
+body { margin: 0; color: #222; font-family: Lato, system-ui, sans-serif; font-size: 14px; background: #fff; }
+#wrapper { display: flow-root; position: relative; min-height: 100vh; padding-bottom: 50px; box-sizing: border-box; }
+.user_page { color: #222; } /* size, font and colours: style#user_theme */
 .user_page a { color: #ff2449; }
 .inner_column { max-width: 960px; margin: 0 auto; padding: 0 20px; }
-#profile_header h1 { margin: 0; padding: 30px 0 20px; font-size: 32px; font-weight: 700; }
-.columns { display: flex; gap: 40px; }
-.profile_column { flex: 0 0 280px; }
-.game_column { flex: 1; min-width: 0; }
-.user_links { margin-bottom: 16px; color: #666; }
+.user_page .header { margin-bottom: 20px; }
+.user_page .header .image_header { display: none; text-align: center; }
+.user_page .header .image_header img { display: block; max-width: 100%; max-height: 1024px; margin: 0 auto; }
+.user_page.has_banner .header .image_header { display: block; }
+.user_page.has_banner .header .text_header { display: none; }
+.user_page .text_header > h1 { margin: 40px 0 5px; font-size: 2.4285714286em; }
+.user_page .profile_content { margin-bottom: 20px; }
+.user_page .user_links { margin-bottom: 20px; font-size: 1.1428571429em; }
 .user_profile.formatted { font-size: 1.1428571429em; }
 .user_profile.formatted h1 { margin: 0 0 12px; font-size: 2em; line-height: 1.2; }
+.user_profile.formatted h2 { font-size: 1.5em; }
 .user_profile.formatted p { margin: 0 0 20px; line-height: 1.5; }
-.game_grid_widget { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px 10px; align-items: start; }
-.game_cell { display: flex; flex-direction: column; border-radius: 4px; }
-.game_thumb { position: relative; display: block; aspect-ratio: 315 / 250; border-radius: 4px; background: #e8e8e8; }
-.game_cell_data { display: flex; flex-direction: column; padding-top: 8px; }
-.game_title a { color: #222; font-weight: 700; font-size: 16px; text-decoration: none; }
+
+/* the card grid (Grid layout, and the base for Sidebar) */
+.game_grid_widget { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px 10px; align-items: start; font-size: 16px; }
+.user_page .game_grid_widget { font-size: 1.1428571429em; }
+.game_cell { min-width: 0; }
+.game_thumb { position: relative; box-sizing: border-box; overflow: hidden; aspect-ratio: 315 / 250; background: rgba(0, 0, 0, .1); box-shadow: 0 0 2px rgba(0, 0, 0, .15); }
+.game_thumb .thumb_link { display: block; height: 100%; }
+.game_cell_data { display: flex; flex-direction: column; gap: 5px; margin-top: .75em; }
+.game_title { font-size: 1em; }
+.game_title a.title { color: inherit; font-weight: 700; text-decoration: none; }
+.game_text, .game_genre { font-size: .875em; }
 .game_text { color: rgba(34, 34, 34, .75); }
-.game_genre { color: rgba(34, 34, 34, .5); font-size: 13px; }
-.footer { position: absolute; bottom: 0; left: 0; right: 0; padding: 14px 20px; text-align: center; }
-.footer a { color: #ff2449; margin: 0 6px; }
-
+.game_genre { color: rgba(34, 34, 34, .5); }
 @media (max-width: 650px) {
-  .columns { flex-direction: column; gap: 0; }
-  .profile_column { flex-basis: auto; }
+  .game_grid_widget { font-size: 14px; }
+  .game_cell_data { gap: 2px; }
 }
 
-/* "Sidebar" in the theme editor (.mode_column), from knowledge/sections/04: the profile column
-   takes the width, games go in one 315px column 40px to its right, both sticky at top:10px; at
-   ≤800px the columns stack and the games become a horizontal strip. */
-.mode_column .columns { gap: 0; min-height: 400px; align-items: flex-start; }
-.mode_column .profile_column { flex: 1; position: sticky; top: 10px; }
-.mode_column .game_column { flex: 0 0 315px; margin-left: 40px; position: sticky; top: 10px; }
-.mode_column .user_game_grid { grid-template-columns: 315px; }
+/* Sidebar (.mode_column) */
+.mode_column .columns { display: flex; align-items: flex-start; min-height: 400px; }
+.mode_column .columns > * { position: sticky; top: 10px; }
+.mode_column .profile_column { flex: 1; min-width: 0; }
+.mode_column .game_column { width: 315px; margin-left: 40px; }
+.mode_column .user_game_grid .game_cell { width: 315px; margin-bottom: 20px; padding-bottom: 10px; }
 @media (max-width: 800px) {
-  .mode_column .columns { flex-direction: column; }
-  .mode_column .profile_column, .mode_column .game_column { position: static; flex: none; width: 100%; margin-left: 0; }
-  .mode_column .user_game_grid { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 8px; }
-  .mode_column .user_game_grid .game_cell { flex: 0 0 250px; }
+  .mode_column .columns { display: block; }
+  .mode_column .columns > * { position: static; }
+  .mode_column .game_column, .mode_column .profile_column { width: 100%; margin: 0; }
+  .mode_column .user_game_grid { display: flex; overflow-x: auto; margin: 0 -20px; padding: 5px 20px; }
+  .mode_column .user_game_grid .game_cell { flex: none; max-width: calc(100vw - 80px); margin-bottom: 10px; }
 }
+
+.footer { position: absolute; bottom: 0; left: 0; right: 0; border-top: 1px solid #dadada; font-size: 12px; }
+.footer .footer_inner { max-width: 960px; margin: 0 auto; padding: 10px 20px; }
+.footer a { color: #ff2449; margin-right: 10px; }

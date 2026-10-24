@@ -9,6 +9,7 @@
      style#user_theme (the theme editor's choices, before the custom CSS as on itch), style#live
      (the effects, as the @import would bring them) and style#custom_css (the user's CSS). -->
 <link rel="stylesheet" href="preview.css">
+<link rel="stylesheet" id="theme_font">
 <style id="user_theme"></style>
 <style id="live"></style>
 <style id="custom_css"></style>
@@ -17,6 +18,7 @@
 <div id="wrapper" class="user_page_wrap">
   <div class="user_page page_widget base_widget mode_grid">
     <div id="profile_header" class="header">
+      <div class="image_header"><img class="profile_banner" alt=""></div>
       <div class="inner_column text_header"><h1>username</h1></div>
     </div>
     <div class="inner_column profile_content">
@@ -30,7 +32,7 @@
         <div class="column game_column">
           <div class="game_grid_widget base_widget user_game_grid">
             <div class="game_cell" data-game_id="1">
-              <a class="game_thumb" href="#"></a>
+              <div class="game_thumb"><a class="thumb_link game_link" href="#" tabindex="-1"></a></div>
               <div class="game_cell_data">
                 <div class="game_title"><a class="title game_link" href="#">First Game</a></div>
                 <div class="game_text">A short description of the game.</div>
@@ -38,7 +40,7 @@
               </div>
             </div>
             <div class="game_cell" data-game_id="2">
-              <a class="game_thumb" href="#"></a>
+              <div class="game_thumb"><a class="thumb_link game_link" href="#" tabindex="-1"></a></div>
               <div class="game_cell_data">
                 <div class="game_title"><a class="title game_link" href="#">Second Game</a></div>
                 <div class="game_text">Another game, made for a jam.</div>
@@ -46,7 +48,7 @@
               </div>
             </div>
             <div class="game_cell" data-game_id="3">
-              <a class="game_thumb" href="#"></a>
+              <div class="game_thumb"><a class="thumb_link game_link" href="#" tabindex="-1"></a></div>
               <div class="game_cell_data">
                 <div class="game_title"><a class="title game_link" href="#">Third Game</a></div>
                 <div class="game_text">A small prototype.</div>
