@@ -7,6 +7,8 @@
 //   fonts  { key: 'declarations' }  e.g. { s: 'font-family:"Syne",sans-serif;font-style:normal' }
 //   bag    [key, ...]               one entry per letter, in the wanted proportion
 
+import { n } from '../css.js';
+
 // h1.custom-title (one element more than a pasted .custom-title rule) so it wins even if the
 // pasted CSS animates the title: imported rules lose specificity ties (knowledge base §6).
 export function title({ fonts, bag }, { rand, shuffle }) {
@@ -35,6 +37,3 @@ export function title({ fonts, bag }, { rand, shuffle }) {
     ),
   ];
 }
-
-// Short CSS number: at most 2 decimals, no trailing zeros.
-const n = (x) => +x.toFixed(2);

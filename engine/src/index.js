@@ -1,7 +1,8 @@
+import { greeting } from './plugins/greeting.js';
 import { title } from './plugins/title.js';
 import { rng } from './random.js';
 
-export const plugins = { title };
+export const plugins = { title, greeting };
 
 // config: { plugins: [{ use: 'title', options: {...} }, ...] }
 // seed: anything; the same seed gives the same CSS. Omit it for a fresh result each call.

@@ -1,0 +1,16 @@
+@property --breath{syntax:"<angle>";inherits:true;initial-value:0deg}
+@keyframes custom-breath{to{--breath:360deg}}
+#wrapper h1.custom-title{animation:custom-breath 5.62s linear infinite}
+#wrapper .custom-title span:nth-child(1){font-family:"Edu AU VIC WA NT Hand",cursive;font-style:normal;font-size:.85em;font-weight:calc(550 + 150*sin(var(--breath) + 24deg))}
+#wrapper .custom-title span:nth-child(2){font-family:"Syne",sans-serif;font-style:normal;font-size:1em;font-weight:calc(550 + 150*sin(var(--breath) + 149deg))}
+#wrapper .custom-title span:nth-child(3){font-family:"Playfair Display",serif;font-style:italic;font-size:1em;font-weight:calc(550 + 150*sin(var(--breath) + 202deg))}
+#wrapper .custom-title span:nth-child(4){font-family:"Syne",sans-serif;font-style:normal;font-size:1em;font-weight:calc(550 + 150*sin(var(--breath) + 15deg))}
+#wrapper .custom-title span:nth-child(5){font-family:"Playfair Display",serif;font-style:italic;font-size:1em;font-weight:calc(550 + 150*sin(var(--breath) + 355deg))}
+#wrapper .custom-title span:nth-child(6){font-family:"Syne",sans-serif;font-style:normal;font-size:1em;font-weight:calc(550 + 150*sin(var(--breath) + 345deg))}
+#wrapper .custom-title span:nth-child(7){font-family:"Edu AU VIC WA NT Hand",cursive;font-style:normal;font-size:.85em;font-weight:calc(550 + 150*sin(var(--breath) + 141deg))}
+#wrapper .custom-title span:nth-child(8){font-family:"Playfair Display",serif;font-style:italic;font-size:1em;font-weight:calc(550 + 150*sin(var(--breath) + 282deg))}
+#wrapper .custom-hello.custom-hello{display:inline-grid;grid-template-columns:auto 0;height:1.4em;line-height:1.4;overflow-y:clip;white-space:nowrap;color:transparent;animation:custom-hello-in .7s .5s cubic-bezier(.34,1.56,.64,1) both}
+#wrapper .custom-hello::selection{color:transparent;background:transparent}
+#wrapper .custom-hello::before{content:"\a1 Hola!\a \928 \92e \938 \94d \924 \947 \a \c548 \b155 \d558 \c138 \c694 \a \41f \440 \438 \432 \435 \442 !\a Bonjour\202f !\a Hallo!\a \645 \631 \62d \628 \627 \a Ol\e1 !\a \3053 \3093 \306b \3061 \306f \a \4f60 \597d \a \a1 Hola!";content:"\a1 Hola!\a \928 \92e \938 \94d \924 \947 \a \c548 \b155 \d558 \c138 \c694 \a \41f \440 \438 \432 \435 \442 !\a Bonjour\202f !\a Hallo!\a \645 \631 \62d \628 \627 \a Ol\e1 !\a \3053 \3093 \306b \3061 \306f \a \4f60 \597d \a \a1 Hola!" / "";white-space:pre;text-align:right;color:var(--gold);animation:custom-hello-roll 29.5s ease-in-out infinite}
+@keyframes custom-hello-in{from{opacity:0;scale:.5;rotate:-24deg}}
+@keyframes custom-hello-roll{0%{translate:0 0}8.47%{translate:0 0em}10%{translate:0 -1.4em}18.47%{translate:0 -1.4em}20%{translate:0 -2.8em}28.47%{translate:0 -2.8em}30%{translate:0 -4.2em}38.47%{translate:0 -4.2em}40%{translate:0 -5.6em}48.47%{translate:0 -5.6em}50%{translate:0 -7em}58.47%{translate:0 -7em}60%{translate:0 -8.4em}68.47%{translate:0 -8.4em}70%{translate:0 -9.8em}78.47%{translate:0 -9.8em}80%{translate:0 -11.2em}88.47%{translate:0 -11.2em}90%{translate:0 -12.6em}98.47%{translate:0 -12.6em}100%{translate:0 -14em}}

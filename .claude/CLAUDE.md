@@ -46,7 +46,7 @@ knowledge/
   method/                    how the knowledge base was built: research-workflow.js and finish-workflow.js
                              (Claude Code Workflow scripts, parameterised by args), open-questions.json (237 questions)
 engine/                      phase 1, started 2026-10-24: render(config, {seed}) → CSS, seeded rng, plugins/
-                             (title only so far, ported 1:1 from the private repo); tests: cd engine && npm test
+                             (title and greeting so far, ported 1:1 from the private repo); tests: cd engine && npm test
 .claude/launch.json          preview servers: knowledge-tests (8090) and knowledge-tests-xorigin (8091)
 ```
 

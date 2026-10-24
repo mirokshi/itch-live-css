@@ -1,4 +1,4 @@
-// The owner's profile title (mirokshi.itch.io), as the private repo's lib/title.js has it.
+// The owner's profile (mirokshi.itch.io), as the private repo's lib/title.js and lib/greeting.js have it.
 export const config = {
   plugins: [
     {
@@ -11,6 +11,25 @@ export const config = {
         },
         // 3 Syne, 2 Edu Hand, 3 Playfair: one per letter of "Mirokshi"
         bag: ['s', 's', 's', 'h', 'h', 'p', 'p', 'p'],
+      },
+    },
+    {
+      use: 'greeting',
+      options: {
+        first: '¡Hola!',
+        // the 10 most spoken languages minus English (the bio sentence and the marker already are)
+        others: [
+          '你好',
+          'नमस्ते',
+          'مرحبا',
+          'Bonjour' + String.fromCharCode(0x202f) + '!', // narrow no-break space before "!"
+          'Olá!',
+          'Привет!',
+          'こんにちは',
+          'Hallo!',
+          '안녕하세요',
+        ],
+        color: 'var(--gold)', // defined in the owner's pasted CSS
       },
     },
   ],
