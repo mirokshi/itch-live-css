@@ -1,7 +1,7 @@
 // Validator: checks CSS against the knowledge base's rules (knowledge/itch-custom-css.md §0, R1–R24).
 // Each problem carries its rule id, so the reason and the evidence are one lookup away.
-// So far the cheap ones: R2, R3, R7–R10, R11 (only its ad-block part, ROADMAP H8), R12, R14 (outline
-// and animated properties), R15, R16, R23.
+// So far the cheap ones: R2–R4, R7–R10, R11 (only its ad-block part, ROADMAP H8), R12, R14 (outline
+// and animated properties), R15, R16, R18, R23.
 
 import { measure } from './output.js';
 
@@ -75,14 +75,19 @@ function* styleRules(nodes) {
 }
 
 // every style rule, nested ones too, with whether it sits in @media (prefers-reduced-motion:reduce)
-function* allRules(nodes, reduced = false) {
+// and in @media (hover:hover)
+function* allRules(nodes, reduced = false, hover = false) {
   for (const node of nodes) {
     if (!node.block) continue;
     if (!node.prelude.startsWith('@')) {
-      yield { node, reduced };
-      yield* allRules(node.block, reduced);
+      yield { node, reduced, hover };
+      yield* allRules(node.block, reduced, hover);
     } else if (GROUPS.has(atName(node))) {
-      yield* allRules(node.block, reduced || /prefers-reduced-motion\s*:\s*reduce/i.test(node.prelude));
+      yield* allRules(
+        node.block,
+        reduced || /prefers-reduced-motion\s*:\s*reduce/i.test(node.prelude),
+        hover || /^@media\b.*\(\s*(any-)?hover\s*(:\s*hover\s*)?\)/i.test(node.prelude),
+      );
     }
   }
 }
@@ -167,6 +172,12 @@ export function validate(css, page, { served = false } = {}) {
       } else if (page === 'profile' && sel === '#wrapper' && vars.some((d) => d.prop.startsWith('--itchio_'))) {
         add('R3', 'warning', "itch declares a profile's --itchio_ variables on .user_page, which beats #wrapper: set them on #wrapper .user_page");
       }
+      // R4: the #wrapper box itself (classes and states allowed; descendants and pseudo-elements are other boxes)
+      const outer = sel.replace(/\([^()]*\)/g, '()').replace(/\([^()]*\)/g, '()');
+      if (/^(body\.frame_maximized\s+)?#wrapper[^\s>+~]*$/.test(outer) && !/::|:(before|after|first-line|first-letter)\b/i.test(outer) &&
+        declarations(rule).some((d) => d.prop === 'background')) {
+        add('R4', 'error', `"${short(sel)}" uses the background shorthand, which wipes the creator's background image: use background-* longhands (B3)`);
+      }
     }
   }
 
@@ -213,7 +224,18 @@ export function validate(css, page, { served = false } = {}) {
   const adBlocked = new Set();
   const numbered = new Set();
   const frozen = new Set();
-  for (const { node, reduced } of allRules(top)) {
+  const ungated = new Set();
+  const hovers = new Set();
+  const seen = new Set();
+  for (const { node, reduced, hover } of allRules(top)) {
+    for (const sel of selectors(node.prelude)) {
+      const s = sel.replace(/\s+/g, ' ');
+      seen.add(s);
+      if (/:hover\b/.test(s)) {
+        hovers.add(s);
+        if (!hover) ungated.add(s);
+      }
+    }
     // R11: ad-block filter lists hide these class names from visitors who use them
     for (const m of node.prelude.matchAll(/\.(custom-(?:ad|social|share|cookie)[\w-]*)/g)) adBlocked.add(m[1]);
     const bare = node.prelude.replace(/\[[^\]]*\]|"[^"]*"|'[^']*'/g, '');
@@ -256,6 +278,16 @@ export function validate(css, page, { served = false } = {}) {
   // !important on an element that never runs the animation; hence a warning
   for (const prop of frozen) {
     add('R14', 'warning', `${prop} !important: your @keyframes animate ${prop}, and !important beats animations, so it can freeze them`);
+  }
+  // R18: on touch screens a tap leaves :hover stuck; keyboard users need the same effect on focus
+  for (const s of ungated) {
+    add('R18', 'warning', `"${short(s)}": put hover effects inside @media (hover:hover)`);
+  }
+  for (const s of hovers) {
+    const twins = [':focus', ':focus-visible', ':focus-within'].map((f) => s.replace(/:hover\b/g, f));
+    if (!/:focus/.test(s) && !twins.some((t) => seen.has(t))) {
+      add('R18', 'warning', `"${short(s)}" has no focus twin: give it the same effect on :focus-visible`);
+    }
   }
   return problems;
 }
