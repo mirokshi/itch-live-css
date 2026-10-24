@@ -52,7 +52,7 @@ knowledge/
   tests/                    18 self-checking local browser tests
   probes/                   live probe kit for account owners (payloads, read-back script, cap procedure)
   method/                   how the knowledge base was built (workflow scripts, the original open questions)
-engine/                     the engine (in progress): config → CSS, pasted or served, and a size check; npm test inside it
+engine/                     the engine (in progress): config → CSS, pasted or served, a size check and a validator; npm test inside it
 ROADMAP.md                  product plan (Spanish)
 ```
 

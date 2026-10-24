@@ -5,6 +5,7 @@ import { title } from './plugins/title.js';
 import { rng } from './random.js';
 
 export { importLine, measure } from './output.js';
+export { validate } from './validate.js';
 
 export const plugins = { title, greeting, cards, ascii };
 
