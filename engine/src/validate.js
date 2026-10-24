@@ -1,6 +1,6 @@
 // Validator: checks CSS against the knowledge base's rules (knowledge/itch-custom-css.md §0, R1–R24).
 // Each problem carries its rule id, so the reason and the evidence are one lookup away.
-// So far the cheap ones: R2, R7, R8, R9, R15, R16.
+// So far the cheap ones: R2, R7, R8, R9, R10, R11 (only its ad-block part, ROADMAP H8), R15, R16, R23.
 
 import { measure } from './output.js';
 
@@ -93,6 +93,25 @@ function selectors(prelude) {
 
 const short = (s) => (s.length > 80 ? `${s.slice(0, 77)}...` : s);
 
+// the values of every url(...) in a prelude, quoted or not
+const urls = (text) =>
+  [...text.matchAll(/url\(\s*(?:"([^"]*)"|'([^']*)'|([^)'"\s]*))\s*\)/gi)].map((m) => m[1] ?? m[2] ?? m[3]);
+
+// @import url("x") / @import "x" → x
+function importUrl(prelude) {
+  const rest = prelude.replace(/^@import\s*/i, '');
+  return /^url\(/i.test(rest) ? urls(rest)[0] : /^(["'])(.*?)\1/.exec(rest)?.[2];
+}
+
+const absolute = (url) => /^(https:\/\/|data:)/i.test(url);
+
+// jsDelivr caches a tag or full SHA for a year, but a branch, a short SHA or no ref only for up to
+// 12 h (CDN) and 7 days (browser), so visitors see different versions (knowledge base §8)
+function unpinned(url) {
+  const m = /^https:\/\/cdn\.jsdelivr\.net\/(?:gh\/[^/]+\/[^/@]+|npm\/(?:@[^/]+\/)?[^/@]+)(?:@([^/]*))?/i.exec(url);
+  return !!m && (!m[1] || /^(main|master|latest)$/i.test(m[1]) || /^[0-9a-f]{7,39}$/i.test(m[1]));
+}
+
 // page: profile | project | jam. served: the CSS comes through @import, so the size cap doesn't apply.
 // → [{ rule: 'R2', level: 'error' | 'warning', message }]
 export function validate(css, page, { served = false } = {}) {
@@ -135,6 +154,15 @@ export function validate(css, page, { served = false } = {}) {
       if (/\blayer\b/i.test(node.prelude.replace(/"[^"]*"|'[^']*'|url\([^)]*\)/gi, ''))) {
         add('R15', 'warning', `${what}: imported into a layer, its rules always lose to itch's`);
       }
+      // R10
+      const url = importUrl(node.prelude) ?? '';
+      if (!absolute(url)) {
+        add('R10', 'error', `${what}: import an absolute https:// URL; http:// is blocked as mixed content and a relative one points at itch`);
+      } else if (/^https:\/\/(raw|gist)\.githubusercontent\.com\//i.test(url)) {
+        add('R10', 'error', `${what}: served as text/plain, so browsers ignore it; use https://cdn.jsdelivr.net/gh/USER/REPO@TAG/file.css`);
+      } else if (unpinned(url)) {
+        add('R10', 'warning', `${what}: not pinned to a tag or full SHA, so visitors may get different versions for days`);
+      }
       imported = true;
     } else if (at === 'layer' && !node.block) {
       if (imported) layerAfterImport = true;
@@ -143,9 +171,17 @@ export function validate(css, page, { served = false } = {}) {
     }
   }
 
+  const relative = new Set();
+  const adBlocked = new Set();
   for (const node of walk(top)) {
     const at = atName(node);
     if (at === 'import' && !top.includes(node)) add('R9', 'error', `${short(node.prelude)} sits inside a block, where @import is invalid`);
+    // R23 (imports are R10's)
+    if (at !== 'import') for (const url of urls(node.prelude)) if (!absolute(url)) relative.add(url);
+    // R11: ad-block filter lists hide these class names from visitors who use them
+    if (node.block && !node.prelude.startsWith('@')) {
+      for (const m of node.prelude.matchAll(/\.(custom-(?:ad|social|share|cookie)[\w-]*)/g)) adBlocked.add(m[1]);
+    }
     if (at === 'layer' && node.block) {
       add('R15', 'warning', `${short(node.prelude)}: layered rules always lose to itch's unlayered ones`);
     }
@@ -154,6 +190,12 @@ export function validate(css, page, { served = false } = {}) {
     if (name && node.block && !name.startsWith('custom-')) {
       add('R16', 'error', `@keyframes ${name} needs the custom- prefix: if itch uses the same name, yours replaces its animation page-wide`);
     }
+  }
+  for (const url of relative) {
+    add('R23', 'error', `url(${short(url)}): use an absolute https:// URL (or data:); a relative one points at itch and http:// is blocked`);
+  }
+  for (const name of adBlocked) {
+    add('R11', 'warning', `.${name}: ad blockers hide classes starting custom-ad, custom-social, custom-share or custom-cookie`);
   }
   return problems;
 }

@@ -45,6 +45,34 @@ test('R16: @keyframes names start with custom-', () => {
   assert.deepEqual(rules('@keyframes "custom-x"{}@keyframes custom-y{}'), []);
 });
 
+test('R10: imports over https, not from raw GitHub, pinned on jsDelivr', () => {
+  const levels = (css) => validate(css, 'project').map((p) => `${p.rule} ${p.level}`);
+  assert.deepEqual(levels('@import "http://x.test/a.css";'), ['R10 error']);
+  assert.deepEqual(levels('@import url(a.css);'), ['R10 error']);
+  assert.deepEqual(levels('@import url("https://raw.githubusercontent.com/u/r/main/a.css");'), ['R10 error']);
+  assert.deepEqual(levels('@import url("https://cdn.jsdelivr.net/gh/u/r/a.css");'), ['R10 warning']);
+  assert.deepEqual(levels('@import url("https://cdn.jsdelivr.net/gh/u/r@main/a.css");'), ['R10 warning']);
+  assert.deepEqual(levels('@import url("https://cdn.jsdelivr.net/gh/u/r@abc1234/a.css");'), ['R10 warning']);
+  assert.deepEqual(levels('@import url("https://cdn.jsdelivr.net/gh/u/r@1.2.3/a.css");'), []);
+  assert.deepEqual(levels('@import url("https://cdn.jsdelivr.net/npm/@fontsource-variable/syne@5.2.6/index.css");'), []);
+  assert.deepEqual(levels('@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400..800&display=swap");'), []);
+  assert.deepEqual(levels('@import url("data:text/css,%23wrapper{color:red}");'), []);
+});
+
+test('R23: every url() absolute https:// or data:', () => {
+  assert.deepEqual(rules('#wrapper{background:url(img.png)}'), ['R23']);
+  assert.deepEqual(rules('#wrapper{background:url("http://x.test/a.png")}'), ['R23']);
+  assert.deepEqual(rules('#wrapper{background:url(//x.test/a.png)}#wrapper a{background:url(//x.test/a.png)}'), ['R23']);
+  assert.deepEqual(rules('@font-face{font-family:x;src:url(\'x.woff2\')}'), ['R23']);
+  assert.deepEqual(rules('#wrapper{background:url("https://x.test/a.png"),url(data:image/png;base64,AAAA)}/* url(a.png) */'), []);
+});
+
+test('R11: no class names that ad blockers hide', () => {
+  assert.deepEqual(rules('#wrapper .custom-ad{}'), ['R11']);
+  assert.deepEqual(rules('#wrapper .custom-share-button:hover,#wrapper{& .custom-share-button{}}'), ['R11']);
+  assert.deepEqual(rules('#wrapper .custom-card,#wrapper [class*=custom-]{}'), []);
+});
+
 test('R7: the cap applies to pasted CSS only', () => {
   const big = `#wrapper{--x:"${'a'.repeat(5120)}"}`;
   assert.deepEqual(validate(big, 'profile').map((p) => [p.rule, p.level]), [['R7', 'error']]);
