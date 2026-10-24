@@ -1,4 +1,4 @@
-// The owner's profile (mirokshi.itch.io), as the private repo's lib/title.js and lib/greeting.js have it.
+// The owner's profile (mirokshi.itch.io), as the private repo's lib/title.js, lib/greeting.js and lib/ascii.js have it.
 export const config = {
   plugins: [
     {
@@ -32,5 +32,6 @@ export const config = {
         color: 'var(--gold)', // defined in the owner's pasted CSS
       },
     },
+    { use: 'ascii' },
   ],
 };

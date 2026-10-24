@@ -50,3 +50,17 @@ test('greeting: first at both ends, one roll step per greeting', () => {
   assert.match(css, /animation:custom-hello-roll 29\.5s/); // 10 steps × (2.5 + 0.45) s
   assert.throws(() => render({ plugins: [{ use: 'greeting', options: { first } }] }), /needs first/);
 });
+
+test('every @keyframes name starts with custom- (R16)', () => {
+  const names = [...render(config, { seed: 5 }).matchAll(/@keyframes ([\w-]+)/g)].map((m) => m[1]);
+  assert.ok(names.length >= 4);
+  for (const name of names) assert.match(name, /^custom-/);
+});
+
+test('ascii: every text row is 100 characters wide, in every layer', () => {
+  const css = render({ plugins: [{ use: 'ascii' }] }, { seed: 9 });
+  // rows as they sit in the data URI: < and > encoded, the text itself is only letters and spaces
+  const rows = [...css.matchAll(/%3Ctext [^%]*%3E([^%]*)%3C\/text%3E/g)].map((m) => m[1]);
+  assert.equal(rows.length, 3 * 32); // field (2 layers) + wave
+  for (const row of rows) assert.equal(row.length, 100);
+});
