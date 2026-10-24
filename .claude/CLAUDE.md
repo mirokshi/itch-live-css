@@ -7,9 +7,8 @@ Guidance for Claude Code in this repository.
 **itch-live-css**: knowledge and tooling for customizing itch.io pages (profile, project/game, devlog, jam) with custom CSS, for creators who code and for those who don't. Planned layers (full plan in `ROADMAP.md`, in Spanish):
 
 1. An AI-ready **knowledge base** on itch custom CSS (`knowledge/`). **Done** 2026-10-14; checked with live probes on 2026-10-16 (only jam fields still open).
-2. An open-source **engine** (npm): config → CSS, plugins with option schemas, a validator whose rules map to the knowledge base's R1–R24, two outputs (pasted / served).
-3. A public **hosted service** that serves per-visit CSS through `@import` (profile and project only; `@import` never loads on jams).
-4. A **web configurator**: forms generated from plugin schemas, mock previews per page type, exports per page type.
+2. An open-source **engine** (`engine/`, not published to npm; the web uses it): config → CSS, plugins with option schemas, a validator whose rules map to the knowledge base's R1–R24, two outputs (pasted / served).
+3. + 4. **One web app on Vercel** (decided 2026-10-24): you build your CSS, preview it on mock pages and get a link to `@import` in itch. New Vercel project from this repo, configs by id in Upstash Redis, a secret edit link instead of accounts, first version covers profile and project (`@import` never loads on jams).
 5. **Framework adapters** (Tailwind v3.4, Bootstrap's CSS, Animate.css) and **AI integration** (llms.txt, an MCP server, a bring-your-own-key assistant in the configurator).
 
 **Status (2026-10-16): phase 0.** Live probe Runs 1 (draft project), 2 (profile), 3 (devlog post; the jam part is not done) and 4 (size caps, without the jam part) are done; their results are in `knowledge/evidence/live-probes/` and the knowledge base is retagged. Nothing is published. A local git repo exists (branch `main`, first commit 2026-10-16) with no remote yet: commit or push only when the owner asks. The current next step and the open tasks are in `HANDOFF.md` (local, git-ignored). Read it first when it exists.
@@ -49,7 +48,13 @@ engine/                      phase 1, started 2026-10-24: render() (served) and 
                              plugins/ (title, greeting, cards, ascii: the owner's 4 effects, ported 1:1 from the private repo),
                              importLine() and measure() (src/output.js), validate() (src/validate.js: R2, R3, R7–R12, R14–R16, R23 so far),
                              CLI bin/cli.js measure|validate; tests: cd engine && npm test
-.claude/launch.json          preview servers: knowledge-tests (8090) and knowledge-tests-xorigin (8091)
+web/                         the Vercel web app, started 2026-10-24 (local only): public/ (form + profile mock preview),
+                             api/ (preview, configs with secret edit key, css = /c/<id>.css), profile paste = @import +
+                             a fixed copy of the plugins that fit 5,120 bytes inside @layer custom-fallback (so the
+                             served, unlayered CSS always wins over it; checked in the preview), lib/store.js = Upstash
+                             Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a local JSON
+                             file (web/.data/, git-ignored); dev server: preview_start {name:"web"} (3001); tests: cd web && npm test
+.claude/launch.json          preview servers: knowledge-tests (8090), knowledge-tests-xorigin (8091) and web (3001)
 ```
 
 ## Knowledge-base conventions

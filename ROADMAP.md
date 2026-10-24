@@ -31,7 +31,7 @@ Hallazgos de la base de conocimiento que condicionan el diseño. Cada uno es una
 | H11 | En páginas con juego HTML5, `filter`, `transform`, `backdrop-filter` o `will-change` en los ancestros del juego rompen el modo maximizado (R22). | El validador lo detecta en configuraciones de proyecto; los efectos de fondo usan la receta segura de §4. |
 | H12 | itch no trae reglas de movimiento reducido, y su anillo de foco no llega a 3:1 en temas oscuros (§4, §10). | Toda salida incluye **B1** (movimiento reducido) y **B2** (foco) por defecto. |
 | H13 | Un `@import` envía la URL completa de la página como Referer (§8). | Sin cookies ni registros de visitantes; escapar todo dato que llegue en la petición (§2 P9). Política de privacidad (RGPD). |
-| H14 | Vercel Hobby: 1 M invocaciones al mes ≈ 33.000 visitas al día, y solo uso no comercial (§8). | La instancia pública va en otra plataforma (Cloudflare Workers como candidata; límites por confirmar). |
+| H14 | Vercel Hobby: 1 M invocaciones al mes ≈ 33.000 visitas al día, y solo uso no comercial (§8). | Se eligió Vercel igualmente (2026-10-24): vale mientras el proyecto sea gratuito y el tráfico quepa; si crece o se cobra, plan Pro o mudanza. |
 | H15 | No hay CSP que limite CSS, fuentes o imágenes externas en ningún tipo de página (§1). | El modelo `@import` es viable en perfil y proyecto. |
 | H16 | Las variables del tema solo alcanzan a quien las lee con `var()`; muchos colores y fuentes son literales, y dónde se declaran cambia según el tipo de página (§4). | El motor necesita un **mapa de selectores por tipo de página**, sacado de §3 y §4, no un único juego de reglas. |
 
@@ -67,7 +67,9 @@ Hallazgos de la base de conocimiento que condicionan el diseño. Cada uno es una
 
 **Salida:** base de conocimiento publicada, con las preguntas que necesitan cuenta resueltas.
 
-### Fase 1 · Motor (npm, open source)
+### Fase 1 · Motor (open source)
+
+No se publica como paquete npm (decidido 2026-10-24): es una carpeta del repo que usa la web (fases 2 y 3).
 
 - `render(config, contexto) → CSS`, azar con semilla, sin dependencias de plataforma (`Request`/`Response` estándar).
 - **Mapa de páginas** (perfil, proyecto, devlog, jam): selectores, dónde van las variables, colores literales, puntos de corte. Datos sacados de §3 y §4.
@@ -82,9 +84,11 @@ Hallazgos de la base de conocimiento que condicionan el diseño. Cada uno es una
 
 ### Fase 2 · Servicio público
 
-- Instancia en Cloudflare Workers + KV (confirmar límites) con **dominio propio** (H6).
+Las fases 2 y 3 son **una sola web** en un proyecto nuevo de Vercel (decidido 2026-10-24): creas tu CSS, lo ves en la vista previa y te da el link para pegarlo en itch.
+
+- Proyecto nuevo de Vercel desde este repo, configuraciones en **Upstash Redis**, con **dominio propio** (H6). Tu servicio actual sigue sirviendo tu perfil hasta que lo migres.
 - Responde desde memoria, `no-store`, con presupuesto de latencia; los datos externos se precalculan aparte (H5).
-- Configuraciones con id y **enlace secreto de edición**: se pega el `@import` una vez y los cambios aparecen sin volver a pegar.
+- Configuraciones con id y **enlace secreto de edición**, sin cuentas ni login: se pega el `@import` una vez y los cambios aparecen sin volver a pegar.
 - Solo configuración declarativa y plugins oficiales; tamaño máximo por configuración, límites por id e interruptor general.
 - Sin cookies ni registros; escape de todo dato de entrada; política de privacidad (H13).
 - Las configuraciones de jam no se sirven: el servicio avisa y el configurador ofrece la versión pegada (H1).
@@ -93,6 +97,8 @@ Hallazgos de la base de conocimiento que condicionan el diseño. Cada uno es una
 **Salida:** tu perfil servido desde la instancia pública durante 2 semanas sin incidencias.
 
 ### Fase 3 · Configurador web (versión mínima para no programadores)
+
+Primera versión: **perfil y proyecto** (decidido 2026-10-24); jam y devlog después.
 
 - Elegir tipo de página → catálogo de efectos con formularios generados desde los esquemas.
 - Vista previa sobre **maquetas propias** de cada tipo de página (mismas clases que itch, estilos propios: no se redistribuye el HTML ni el CSS de itch).
@@ -154,8 +160,14 @@ Tomadas el 2026-10-16:
 - **Creadores pequeños** citados en las evidencias: seudónimos `creator-NN`, como ya hace `crawlprofile.md`. Falta aplicarlo.
 - **Tus identificadores** (perfil, servicio de Vercel, notas del repo privado): se publican.
 
+Tomadas el 2026-10-24:
+
+- **Producto**: una web en Vercel donde creas tu CSS, lo simulas y te llevas el link (`@import`) para itch. El motor no se publica en npm.
+- **Plataforma**: proyecto nuevo de Vercel desde este repo, con Upstash Redis para las configuraciones.
+- **Edición**: enlace secreto, sin cuentas.
+- **Primera versión**: perfil y proyecto.
+
 Pendientes:
 
 - **Nombre** definitivo y **dominio**.
-- **Plataforma** de la instancia pública (Cloudflare Workers frente a Vercel, una vez confirmados los límites).
 - **Cuándo** crear el repo público en GitHub.
