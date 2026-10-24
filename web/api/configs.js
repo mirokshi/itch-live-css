@@ -2,18 +2,18 @@
 //   POST                     body: form → 201 { id, key, ...exports }   (key = the secret edit key)
 //   GET  ?id=…   + Bearer key        → { form, ...exports }
 //   PUT  ?id=…   + Bearer key  body: form → { ok, ...exports }
-// exports: { bio, paste } — the bio HTML and what goes into the profile's CSS field.
+// exports: { bio, link } — the bio HTML the effects need, and the @import line for itch's CSS field.
 // Only a hash of the key is stored. Unknown id and wrong key give the same 404.
 
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
-import { bioHtml, check, pasteForProfile } from '../lib/config.js';
+import { bioHtml, check, linkLine } from '../lib/config.js';
 import { handle, json, readJson } from '../lib/http.js';
 import * as store from '../lib/store.js';
 
 const hash = (key) => createHash('sha256').update(key).digest();
 const exports = (request, id, form) => ({
   bio: bioHtml(form),
-  paste: pasteForProfile(form, `${new URL(request.url).origin}/c/${id}.css`),
+  link: linkLine(`${new URL(request.url).origin}/c/${id}.css`),
 });
 const notFound = () => json({ error: 'unknown config or wrong edit key' }, 404);
 

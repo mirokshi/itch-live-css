@@ -1,4 +1,4 @@
-// The web's config (what the form edits and the store keeps) → engine config, CSS and bio HTML.
+// The web's config (what the form edits and the store keeps) → served CSS, bio HTML and @import line.
 //
 // form: {
 //   accent    '#rrggbb'                                  → --gold (greeting colour, card labels)
@@ -6,25 +6,40 @@
 //   greeting  null | { first, others: ['string', ...] }
 //   cards     boolean
 //   ascii     boolean
-//   reserve   bytes of the profile cap kept free for the user's own CSS (0–5000, default 0)
+//   css       the user's own CSS, served after the effects (it wins their ties)
+//   html      the user's bio HTML, only for the preview: never served
 // }
 
-import { importLine, measure, paste, render } from '../../engine/src/index.js';
+import { importLine, render } from '../../engine/src/index.js';
 import { FONTS } from '../public/fonts.js';
 import { BadRequest } from './http.js';
+
+const MAX_CSS = 50000; // characters
+const MAX_HTML = 5000; // characters, itch's bio cap
 
 const fail = (msg) => {
   throw new BadRequest(msg);
 };
 const text = (s, max) => typeof s === 'string' && s.trim() !== '' && [...s].length <= max;
+const optional = (s, max, name) => {
+  if (s === undefined) return '';
+  if (typeof s !== 'string' || s.length > max) fail(`${name}: text of at most ${max} characters`);
+  return s;
+};
 
 // Untrusted input → a clean form with only the known fields. Throws BadRequest.
 export function check(f) {
   if (!f || typeof f !== 'object') fail('config must be an object');
   if (typeof f.accent !== 'string' || !/^#[0-9a-f]{6}$/i.test(f.accent)) fail('accent must be #rrggbb');
-  const reserve = f.reserve ?? 0;
-  if (!Number.isInteger(reserve) || reserve < 0 || reserve > 5000) fail('reserve: whole bytes from 0 to 5000');
-  const out = { accent: f.accent.toLowerCase(), title: null, greeting: null, cards: f.cards === true, ascii: f.ascii === true, reserve };
+  const out = {
+    accent: f.accent.toLowerCase(),
+    title: null,
+    greeting: null,
+    cards: f.cards === true,
+    ascii: f.ascii === true,
+    css: optional(f.css, MAX_CSS, 'css'),
+    html: optional(f.html, MAX_HTML, 'html'),
+  };
 
   if (f.title) {
     const { text: t, fonts } = f.title;
@@ -61,55 +76,31 @@ function pluginList({ title, greeting, cards, ascii }) {
   return plugins;
 }
 
-// What the chosen plugins need around them: { imports, rules } (imports must come before every rule).
-function around(form, plugins) {
-  const uses = plugins.map((p) => p.use);
-  const imports = uses.includes('title')
-    ? [`@import url("https://fonts.googleapis.com/css2?${form.title.fonts.map((k) => `family=${FONTS[k].google}`).join('&')}&display=swap");`]
-    : [];
-  // Variables the plugins read (the owner's pasted CSS defines them). On :root, so a user's own
-  // pasted :root wins: imported rules lose specificity ties.
-  const rules = [`:root{--gold:${form.accent};--ink:#eef3ff;--line:rgba(170,195,255,.18);--sans:system-ui,sans-serif}`];
-  // the foil ring is positioned against the card
-  if (uses.includes('cards')) rules.push('#wrapper .game_cell{position:relative}');
-  return { imports, rules };
-}
+// The @charset/@import statements at the start of the user's CSS: they only work at the top of a
+// stylesheet, so they move above the effects. Quoted parts may hold ";".
+const LEADING = /^(?:\s+|\/\*[\s\S]*?\*\/|@(?:charset|import)\b(?:"[^"]*"|'[^']*'|[^;"'])*;)*/;
 
 // Clean form → served CSS. opts go to render(): { seed, data: { games }, now }.
 export function build(form, opts) {
   const plugins = pluginList(form);
-  const { imports, rules } = around(form, plugins);
-  return [...imports, ...rules].join('\n') + '\n' + render({ plugins }, opts);
+  const lead = form.css.match(LEADING)[0];
+  const head = [];
+  if (form.title) {
+    head.push(`@import url("https://fonts.googleapis.com/css2?${form.title.fonts.map((k) => `family=${FONTS[k].google}`).join('&')}&display=swap");`);
+  }
+  if (lead.trim()) head.push(lead.trim());
+  // Variables the plugins read, set for itch's default light theme. On :root, so the user's own
+  // CSS (later in this sheet) or pasted CSS can change them.
+  head.push(`:root{--gold:${form.accent};--ink:#222;--line:rgba(0,0,0,.08);--sans:system-ui,sans-serif}`);
+  // the foil ring is positioned against the card
+  if (form.cards) head.push('#wrapper .game_cell{position:relative}');
+  const rest = form.css.slice(lead.length).trim();
+  return head.join('\n') + '\n' + render({ plugins }, opts) + (rest ? `${rest}\n` : '');
 }
 
-// What the user pastes into the profile's CSS field: the @import of the served CSS, then a fixed
-// copy of as many plugins as fit in the profile cap minus form.reserve (in form order), so the
-// page keeps its look if the service fails. The copy sits in a cascade layer: unlayered rules beat layered ones whatever
-// their order, so the served CSS (unlayered) always wins over it; without the layer the pasted
-// copy would win the ties (imported rules lose them) and freeze the per-visit randomness.
-// → { css, size: measure(), included: [plugin], left: [plugin] }
-export function pasteForProfile(form, url) {
-  // shortcut: plain http only for the local dev server, which importLine() refuses
-  const line = url.startsWith('http://localhost') ? `@import url("${url}");` : importLine(url);
-  const text = (plugins) => {
-    const { imports, rules } = around(form, plugins);
-    return [line, ...imports, `@layer custom-fallback{${rules.join('')}${paste({ plugins }, { seed: 'fallback' })}}`].join('\n');
-  };
-  const all = pluginList(form);
-  const chosen = [];
-  const fits = (css) => {
-    const { bytes, limit } = measure(css, 'profile');
-    return bytes + form.reserve <= limit.max;
-  };
-  for (const p of all) if (fits(text([...chosen, p]))) chosen.push(p);
-  const css = text(chosen);
-  return {
-    css,
-    size: measure(css, 'profile'),
-    included: chosen.map((p) => p.use),
-    left: all.filter((p) => !chosen.includes(p)).map((p) => p.use),
-  };
-}
+// The line to paste into itch's CSS field.
+// shortcut: plain http only for the local dev server, which importLine() refuses
+export const linkLine = (url) => (url.startsWith('http://localhost') ? `@import url("${url}");` : importLine(url));
 
 const esc = (s) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 

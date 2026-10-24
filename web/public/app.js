@@ -2,12 +2,24 @@ import { FONTS } from './fonts.js';
 
 const form = document.getElementById('form');
 const frame = document.getElementById('preview');
+const stage = document.querySelector('.stage');
 const status = document.getElementById('status');
-const DEFAULT_FONTS = ['syne', 'hand', 'playfair'];
+const DEFAULT_FONTS = ['fraunces', 'inter', 'grotesk'];
+const SAMPLE_BIO = '<p>Hago juegos pequeños. Este es un perfil de ejemplo.</p>';
 
 document.getElementById('fonts').innerHTML = Object.entries(FONTS)
   .map(([k, f]) => `<label><input type="checkbox" name="title_font" value="${k}"${DEFAULT_FONTS.includes(k) ? ' checked' : ''}> ${f.name}</label>`)
   .join('');
+
+// Code editors over the two textareas (CodeMirror 5, loaded from cdnjs in index.html).
+const dark = matchMedia('(prefers-color-scheme: dark)');
+const editor = (id, mode) =>
+  CodeMirror.fromTextArea(document.getElementById(id), { mode, lineNumbers: true, lineWrapping: true, theme: dark.matches ? 'material-darker' : 'default' });
+const cssEditor = editor('css', 'css');
+const htmlEditor = editor('html', 'htmlmixed');
+dark.addEventListener('change', () => {
+  for (const ed of [cssEditor, htmlEditor]) ed.setOption('theme', dark.matches ? 'material-darker' : 'default');
+});
 
 // The edit link carries "id.key" in the fragment, so the key never reaches a server log or a Referer.
 const [id, key] = (location.hash.match(/^#edit=([\w-]+)\.([\w-]+)$/) ?? []).slice(1);
@@ -23,7 +35,8 @@ function readForm() {
       : null,
     cards: d.has('cards'),
     ascii: d.has('ascii'),
-    reserve: Number(d.get('reserve')),
+    css: cssEditor.getValue(),
+    html: htmlEditor.getValue(),
   };
 }
 
@@ -42,7 +55,8 @@ function fillForm(f) {
   }
   el.cards.checked = f.cards;
   el.ascii.checked = f.ascii;
-  el.reserve.value = f.reserve;
+  cssEditor.setValue(f.css ?? '');
+  htmlEditor.setValue(f.html ?? '');
 }
 
 async function api(path, method, body, auth) {
@@ -56,40 +70,76 @@ async function api(path, method, body, auth) {
   return data;
 }
 
+// What itch's sanitizer keeps of a bio (knowledge base §5): no scripts or styles, classes only if
+// they start with "custom", no id, data-*, aria-* or role. The iframe has no allow-scripts anyway.
+function itchSanitize(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  doc.querySelectorAll('script, style, link, meta, object, embed, form, input, button, select, textarea').forEach((e) => e.remove());
+  for (const el of doc.body.querySelectorAll('*')) {
+    for (const { name } of [...el.attributes]) {
+      if (name === 'class') {
+        const keep = [...el.classList].filter((c) => c.startsWith('custom'));
+        if (keep.length) el.setAttribute('class', keep.join(' '));
+        else el.removeAttribute('class');
+      } else if (name === 'id' || name === 'role' || /^(on|data-|aria-)/.test(name)) el.removeAttribute(name);
+    }
+  }
+  return doc.body.innerHTML;
+}
+
 // The preview iframe is same-origin: the CSS and the bio go straight into its DOM.
+// · effects (server, random): style#live — behind a loading screen, so the swap doesn't jump;
+// · the user's CSS and HTML: style#custom_css and the bio, at once, without re-rolling the effects.
+const doc = () => frame.contentDocument;
+let effectsBio = '';
+
+function applyUser() {
+  const { css, html } = readForm();
+  doc().getElementById('custom_css').textContent = css;
+  doc().getElementById('bio').innerHTML = html.trim() ? itchSanitize(html) : effectsBio + SAMPLE_BIO;
+}
+
 let timer;
-function refresh() {
+let generation = 0;
+function refreshEffects() {
   clearTimeout(timer);
+  stage.classList.add('is-loading');
   timer = setTimeout(async () => {
+    const mine = ++generation;
     try {
-      const { css, bio } = await api('/api/preview', 'POST', readForm());
-      const doc = frame.contentDocument;
-      doc.getElementById('custom_css').textContent = css;
-      doc.getElementById('bio').innerHTML = bio + '<p>Hago juegos pequeños y raros. Este es mi perfil de ejemplo.</p>';
+      const { css, bio } = await api('/api/preview', 'POST', { ...readForm(), css: '', html: '' });
+      if (mine !== generation) return; // a newer change is already on its way
+      doc().getElementById('live').textContent = css;
+      effectsBio = bio;
+      applyUser();
+      await doc().fonts.ready;
       status.textContent = '';
     } catch (err) {
       status.textContent = err.message;
     }
-  }, 250);
+    if (mine === generation) stage.classList.remove('is-loading');
+  }, 300);
 }
 
-const NAMES = { title: 'el título', greeting: 'el saludo', cards: 'las tarjetas', ascii: 'el campo ASCII' };
-const list = (uses) => uses.map((u) => NAMES[u]).join(', ');
+let userTimer;
+const refreshUser = () => {
+  clearTimeout(userTimer);
+  userTimer = setTimeout(applyUser, 200);
+};
 
-// exported: { bio, paste: { css, size, included, left } } from /api/configs
-function showResult({ bio, paste }) {
-  document.getElementById('out-paste').value = paste.css;
+function showResult({ bio, link }) {
+  document.getElementById('out-link').value = link;
   document.getElementById('out-bio').value = bio;
-  const { bytes, limit } = paste.size;
-  document.getElementById('out-size').textContent =
-    `Ocupa ${bytes.toLocaleString('es')} de ${limit.max.toLocaleString('es')} bytes; te quedan ${(limit.max - bytes).toLocaleString('es')} para tu CSS. ` +
-    (paste.included.length ? `Si el link falla, se sigue viendo ${list(paste.included)}. ` : '') +
-    (paste.left.length ? `Solo por el link (no caben en el tope): ${list(paste.left)}.` : '');
+  document.getElementById('bio-box').hidden = !bio;
   document.getElementById('out-edit').value = `${location.origin}/#edit=${saved.id}.${saved.key}`;
   document.getElementById('result').hidden = false;
 }
 
-form.addEventListener('input', refresh);
+// the editors' own hidden inputs also fire "input": they only touch the user's CSS and HTML
+form.addEventListener('input', (e) => e.target.closest('.CodeMirror') || refreshEffects());
+cssEditor.on('change', refreshUser);
+htmlEditor.on('change', refreshUser);
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   try {
@@ -126,5 +176,5 @@ if (saved) {
     status.textContent = `No se pudo abrir ese enlace de edición: ${err.message}`;
   }
 }
-if (frame.contentDocument?.readyState === 'complete' && frame.contentDocument.getElementById('bio')) refresh();
-else frame.addEventListener('load', refresh);
+if (doc()?.readyState === 'complete' && doc().getElementById('bio')) refreshEffects();
+else frame.addEventListener('load', refreshEffects, { once: true });

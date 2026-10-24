@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 
 process.env.FAKE_STORE = join(mkdtempSync(join(tmpdir(), 'itch-live-css-')), 'store.json');
-const { bioHtml, build, check, pasteForProfile } = await import('../lib/config.js');
+const { bioHtml, build, check } = await import('../lib/config.js');
 const configs = await import('../api/configs.js');
 const css = await import('../api/css.js');
 
@@ -24,9 +24,11 @@ const req = (path, method = 'GET', body, key) =>
   });
 
 test('check keeps known fields only and rejects bad input', () => {
-  assert.deepEqual(check({ ...form, extra: 1, cards: 'yes' }), { ...form, accent: '#ffc857', cards: false, reserve: 0 });
-  assert.equal(check({ ...form, reserve: 1024 }).reserve, 1024);
-  for (const reserve of [-1, 1.5, 5001, '100']) assert.throws(() => check({ ...form, reserve }), /reserve/);
+  assert.deepEqual(check({ ...form, extra: 1, cards: 'yes' }), { ...form, accent: '#ffc857', cards: false, css: '', html: '' });
+  assert.equal(check({ ...form, css: 'a{}', html: '<p>x</p>' }).html, '<p>x</p>');
+  assert.throws(() => check({ ...form, css: 'a'.repeat(50001) }), /css/);
+  assert.throws(() => check({ ...form, html: 'a'.repeat(5001) }), /html/);
+  assert.throws(() => check({ ...form, css: 3 }), /css/);
   assert.throws(() => check({ ...form, accent: 'red;}body{' }), /accent/);
   assert.throws(() => check({ ...form, title: { text: 'A', fonts: ['syne', 'nope'] } }), /fonts/);
   assert.throws(() => check({ ...form, title: { text: 'A', fonts: ['syne'] } }), /fonts/);
@@ -45,28 +47,16 @@ test('build: fonts @import first, accent variable, every plugin', () => {
   assert.equal(build(check(form), { seed: 1 }), out);
 });
 
-test('pasteForProfile: @import first, plugins in a layer, within the profile cap', () => {
-  const url = 'https://example.com/c/abcdefgh.css';
-  const big = check({ ...form, greeting: { first: '¡Hola!', others: Array(20).fill('Bonjour tout le monde !') }, ascii: true });
-  const p = pasteForProfile(big, url);
-  assert.ok(p.css.startsWith('@import url("https://example.com/c/abcdefgh.css");\n@import url("https://fonts.googleapis.com/'));
-  assert.match(p.css, /\n@layer custom-fallback\{:root\{--gold:#ffc857/);
-  assert.equal(p.size.fits, true);
-  assert.ok(p.size.bytes <= 5120);
-  assert.deepEqual([...p.included, ...p.left].sort(), ['ascii', 'cards', 'greeting', 'title']);
-  assert.ok(p.left.includes('ascii')); // its SVGs alone are ~25 KB
-  assert.equal(pasteForProfile(big, url).css, p.css); // fixed seed: the same paste on every save
-
-  // reserve: the copy only takes what's left; with 4000 reserved, nothing but the @import lines fits
-  const reserved = pasteForProfile({ ...big, reserve: 2000 }, url);
-  assert.ok(reserved.size.bytes + 2000 <= 5120);
-  assert.ok(reserved.included.length < p.included.length);
-  assert.deepEqual(pasteForProfile({ ...big, reserve: 4000 }, url).included, []);
-
-  const none = pasteForProfile(check({ accent: '#000000' }), url);
-  assert.deepEqual([none.included, none.left], [[], []]);
-  assert.doesNotMatch(none.css, /fonts\.googleapis/);
-  assert.throws(() => pasteForProfile(big, 'http://example.com/c/abcdefgh.css'), /https/);
+test('build: the user CSS goes last, its leading @imports go to the top', () => {
+  const user = ['/* mine */', '@import url("https://fonts.example/a;b.css");', '#wrapper .user_page{color:red}'].join('\n');
+  const out = build(check({ ...form, css: user }), { seed: 1 });
+  const lines = out.split('\n');
+  assert.match(lines[0], /fonts\.googleapis/);
+  assert.deepEqual(lines.slice(1, 3), ['/* mine */', '@import url("https://fonts.example/a;b.css");']);
+  assert.match(lines[3], /^:root\{/);
+  assert.ok(out.endsWith('#wrapper .user_page{color:red}\n'));
+  assert.ok(out.indexOf('custom-foil') < out.indexOf('color:red'));
+  assert.ok(build(check(form), { seed: 1 }).endsWith('}\n')); // no css: nothing appended
 });
 
 test('bioHtml escapes the user text', () => {
@@ -78,9 +68,9 @@ test('bioHtml escapes the user text', () => {
 test('save, serve, edit with the key only', async () => {
   const res = await configs.POST(req('/api/configs', 'POST', form));
   assert.equal(res.status, 201);
-  const { id, key, bio, paste } = await res.json();
+  const { id, key, bio, link } = await res.json();
   assert.match(bio, /custom-title/);
-  assert.ok(paste.css.startsWith(`@import url("https://x.test/c/${id}.css");`));
+  assert.equal(link, `@import url("https://x.test/c/${id}.css");`);
 
   const served = await css.GET(req(`/api/css?file=${id}.css`));
   assert.equal(served.status, 200);
@@ -91,7 +81,10 @@ test('save, serve, edit with the key only', async () => {
   assert.equal((await configs.PUT(req(`/api/configs?id=${id}`, 'PUT', { ...form, accent: '#000000' }, 'wrong'))).status, 404);
   assert.equal((await configs.PUT(req(`/api/configs?id=${id}`, 'PUT', { ...form, accent: '#123456' }, key))).status, 200);
   assert.deepEqual((await (await configs.GET(req(`/api/configs?id=${id}`, 'GET', null, key))).json()).form.accent, '#123456');
-  assert.match(await (await css.GET(req(`/api/css?file=${id}.css`))).text(), /--gold:#123456/);
+  assert.equal((await configs.PUT(req(`/api/configs?id=${id}`, 'PUT', { ...form, accent: '#123456', css: '.custom-x{color:red}' }, key))).status, 200);
+  const updated = await (await css.GET(req(`/api/css?file=${id}.css`))).text();
+  assert.match(updated, /--gold:#123456/);
+  assert.ok(updated.endsWith('.custom-x{color:red}' + String.fromCharCode(10)));
 
   assert.equal((await css.GET(req('/api/css?file=nope.css'))).status, 404);
   assert.equal((await configs.POST(req('/api/configs', 'POST', { accent: 'x' }))).status, 400);

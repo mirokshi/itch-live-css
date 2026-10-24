@@ -2,7 +2,7 @@
 
 export class BadRequest extends Error {}
 
-const MAX_BODY = 8192; // bytes; a full config is well under 2 KB
+const MAX_BODY = 256 * 1024; // bytes; the user's CSS (50,000 characters) is most of it
 
 export const json = (data, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });

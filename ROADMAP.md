@@ -166,6 +166,7 @@ Tomadas el 2026-10-24:
 - **Plataforma**: proyecto nuevo de Vercel desde este repo, con Upstash Redis para las configuraciones.
 - **Edición**: enlace secreto, sin cuentas.
 - **Primera versión**: perfil y proyecto.
+- **Tu propio CSS va en el link** y se entrega **solo la línea del `@import`**, sin copia pegada de respaldo. Cambia los principios 2 y la regla «solo plugins oficiales» de la fase 2: si el servicio falla, el perfil se ve sin efectos ni ese CSS.
 
 Pendientes:
 

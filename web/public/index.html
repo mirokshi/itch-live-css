@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>itch-live-css</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,7 +14,7 @@
     <h1>itch-live-css</h1>
     <p class="lead">Crea el CSS de tu perfil de itch.io, míralo en vivo y llévate el link.</p>
 
-    <label class="row">Color de acento <input type="color" name="accent" value="#ffc857"></label>
+    <label class="row">Color de acento <input type="color" name="accent" value="#d6336c"></label>
 
     <fieldset>
       <legend><label><input type="checkbox" name="title_on" checked> Título de letras mezcladas</label></legend>
@@ -34,33 +36,48 @@ Ciao!</textarea></label>
     <fieldset>
       <legend>Efectos</legend>
       <label><input type="checkbox" name="cards" checked> Tarjetas de juegos con borde foil</label>
-      <label><input type="checkbox" name="ascii" checked> Campo de caracteres ASCII al fondo</label>
+      <label><input type="checkbox" name="ascii"> Campo de caracteres ASCII al fondo</label>
     </fieldset>
 
-    <fieldset>
-      <legend>Tu propio CSS</legend>
-      <label>Bytes que reservas para él <input type="number" name="reserve" min="0" max="5000" step="1" value="1024"></label>
-      <p class="hint">El perfil admite 5.120 bytes de CSS. La copia de respaldo solo usa lo que dejes libre.</p>
+    <fieldset class="editor">
+      <legend>Tu CSS</legend>
+      <p class="hint">Va dentro del link, detrás de los efectos: no hace falta pegarlo en itch.</p>
+      <textarea name="css" id="css" rows="10" spellcheck="false"></textarea>
+    </fieldset>
+
+    <fieldset class="editor">
+      <legend>Tu HTML de la bio</legend>
+      <p class="hint">Solo para probar en la vista previa: no se sirve. itch quita las clases que no empiezan por <code>custom</code>, los <code>id</code> y los atributos <code>data-</code>, <code>aria-</code> y <code>role</code>, y aquí también.</p>
+      <textarea name="html" id="html" rows="8" spellcheck="false"></textarea>
     </fieldset>
 
     <p id="status" role="status"></p>
     <button id="save" type="submit">Guardar y obtener el link</button>
 
     <section id="result" hidden>
-      <h2>Tu CSS</h2>
-      <p class="hint">1. Pega esto <strong>al principio</strong> del CSS de tu perfil en itch (si tienes CSS propio, va detrás):</p>
-      <div class="copy"><textarea id="out-paste" rows="4" readonly></textarea><button type="button" data-copy="out-paste">Copiar</button></div>
-      <p class="hint" id="out-size"></p>
-      <p class="hint">2. Pega este HTML en tu bio:</p>
-      <div class="copy"><textarea id="out-bio" rows="3" readonly></textarea><button type="button" data-copy="out-bio">Copiar</button></div>
-      <p class="hint">3. Guarda este enlace de edición: es la única forma de cambiar tu CSS. No lo compartas.</p>
+      <h2>Tu link</h2>
+      <p class="hint">Pon esta línea <strong>al principio</strong> del CSS de tu perfil en itch:</p>
+      <div class="copy"><input id="out-link" readonly><button type="button" data-copy="out-link">Copiar</button></div>
+      <div id="bio-box">
+        <p class="hint">El título y el saludo necesitan este HTML en tu bio:</p>
+        <div class="copy"><textarea id="out-bio" rows="3" readonly></textarea><button type="button" data-copy="out-bio">Copiar</button></div>
+      </div>
+      <p class="hint">Guarda este enlace de edición: es la única forma de cambiar tu CSS. No lo compartas.</p>
       <div class="copy"><input id="out-edit" readonly><button type="button" data-copy="out-edit">Copiar</button></div>
       <p class="hint">Cuando cambies algo y vuelvas a guardar, itch lo mostrará sin pegar nada de nuevo.</p>
     </section>
   </form>
 
-  <iframe id="preview" src="preview.html" title="Vista previa del perfil"></iframe>
+  <div class="stage">
+    <!-- no allow-scripts: nothing pasted into the preview can run; allow-same-origin lets this page fill it -->
+    <iframe id="preview" src="preview.html" title="Vista previa del perfil" sandbox="allow-same-origin"></iframe>
+    <div class="loading" aria-hidden="true"><span class="spinner"></span> Generando la vista previa…</div>
+  </div>
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script type="module" src="app.js"></script>
 </body>
 </html>
