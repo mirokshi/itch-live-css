@@ -1,0 +1,3 @@
+{
+  "rewrites": [{ "source": "/c/:file", "destination": "/api/css?file=:file" }]
+}

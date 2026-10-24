@@ -1,0 +1,23 @@
+/* Mock profile theme, written from scratch (not itch's CSS): a dark profile like the ones the
+   plugins were made for. It only gives the layout the plugins expect: a flex-column
+   .game_cell_data and a positioned .game_thumb, as on itch. */
+html { background: radial-gradient(120% 90% at 50% 0%, #1d3a75, #0b1433 70%) fixed; }
+body { margin: 0; color: #eef3ff; font: 16px/1.6 system-ui, sans-serif; }
+#wrapper { min-height: 100vh; display: flex; flex-direction: column; }
+.user_page { flex: 1; padding: 32px 16px; }
+.inner_column { max-width: 900px; margin: 0 auto; }
+.user_profile { margin-bottom: 32px; }
+.user_profile h1 { margin: 0 0 8px; font-size: clamp(2.4rem, 8vw, 4.5rem); line-height: 1.1; }
+.user_profile p { margin: 0 0 8px; font-size: 1.1rem; }
+h2 { font-size: 1.2rem; font-weight: 600; }
+.game_grid_widget { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+.game_cell { display: flex; flex-direction: column; border-radius: 14px; background: rgba(10, 18, 46, .6); overflow: visible; }
+.game_thumb { position: relative; display: block; aspect-ratio: 315 / 250; border-radius: 14px 14px 0 0;
+  background: linear-gradient(135deg, #2b4c8c, #6a3d8f); }
+.game_cell:nth-child(2) .game_thumb { background: linear-gradient(135deg, #1f6b5c, #2b4c8c); }
+.game_cell:nth-child(3) .game_thumb { background: linear-gradient(135deg, #8f4d3d, #6a3d8f); }
+.game_cell_data { display: flex; flex-direction: column; padding: 10px 14px 14px; }
+.game_title a { color: #eef3ff; font-weight: 700; text-decoration: none; }
+.game_text { color: #b9c4e3; font-size: .9rem; }
+.game_genre { color: #8d9ac0; font-size: .8rem; }
+.footer { padding: 10px 16px; border-top: 1px solid rgba(170, 195, 255, .18); color: #8d9ac0; font-size: .8rem; }

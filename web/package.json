@@ -1,0 +1,12 @@
+{
+  "name": "itch-live-css-web",
+  "private": true,
+  "description": "Web app: build your itch.io CSS, preview it and get the @import link.",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "node --watch dev.js",
+    "test": "node --test"
+  }
+}

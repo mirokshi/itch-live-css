@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>itch-live-css</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <form id="form" autocomplete="off">
+    <h1>itch-live-css</h1>
+    <p class="lead">Crea el CSS de tu perfil de itch.io, míralo en vivo y llévate el link.</p>
+
+    <label class="row">Color de acento <input type="color" name="accent" value="#ffc857"></label>
+
+    <fieldset>
+      <legend><label><input type="checkbox" name="title_on" checked> Título de letras mezcladas</label></legend>
+      <label>Texto <input name="title_text" maxlength="24" value="Tu nombre"></label>
+      <p class="hint">Fuentes (2 a 4):</p>
+      <div id="fonts" class="checks"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend><label><input type="checkbox" name="greeting_on" checked> Saludo que cambia de idioma</label></legend>
+      <label>Primer saludo <input name="greeting_first" maxlength="40" value="¡Hola!"></label>
+      <label>Los demás, uno por línea <textarea name="greeting_others" rows="5">Hello!
+Bonjour !
+Hallo!
+Olá!
+Ciao!</textarea></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Efectos</legend>
+      <label><input type="checkbox" name="cards" checked> Tarjetas de juegos con borde foil</label>
+      <label><input type="checkbox" name="ascii" checked> Campo de caracteres ASCII al fondo</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Tu propio CSS</legend>
+      <label>Bytes que reservas para él <input type="number" name="reserve" min="0" max="5000" step="1" value="1024"></label>
+      <p class="hint">El perfil admite 5.120 bytes de CSS. La copia de respaldo solo usa lo que dejes libre.</p>
+    </fieldset>
+
+    <p id="status" role="status"></p>
+    <button id="save" type="submit">Guardar y obtener el link</button>
+
+    <section id="result" hidden>
+      <h2>Tu CSS</h2>
+      <p class="hint">1. Pega esto <strong>al principio</strong> del CSS de tu perfil en itch (si tienes CSS propio, va detrás):</p>
+      <div class="copy"><textarea id="out-paste" rows="4" readonly></textarea><button type="button" data-copy="out-paste">Copiar</button></div>
+      <p class="hint" id="out-size"></p>
+      <p class="hint">2. Pega este HTML en tu bio:</p>
+      <div class="copy"><textarea id="out-bio" rows="3" readonly></textarea><button type="button" data-copy="out-bio">Copiar</button></div>
+      <p class="hint">3. Guarda este enlace de edición: es la única forma de cambiar tu CSS. No lo compartas.</p>
+      <div class="copy"><input id="out-edit" readonly><button type="button" data-copy="out-edit">Copiar</button></div>
+      <p class="hint">Cuando cambies algo y vuelvas a guardar, itch lo mostrará sin pegar nada de nuevo.</p>
+    </section>
+  </form>
+
+  <iframe id="preview" src="preview.html" title="Vista previa del perfil"></iframe>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>

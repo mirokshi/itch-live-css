@@ -15,6 +15,9 @@ node_modules/
 *.pem
 *.key
 
+# The web's local store, used without Upstash (configs and edit-key hashes)
+web/.data/
+
 # Local working notes and machine-specific settings
 HANDOFF.md
 .claude/settings.local.json

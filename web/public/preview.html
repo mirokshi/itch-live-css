@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile preview</title>
+<!-- Our own mock of an itch.io profile: same class names as itch, our own markup and styles
+     (itch's HTML and CSS are not copied). The page fills #bio and style#custom_css. -->
+<link rel="stylesheet" href="preview.css">
+<style id="custom_css"></style>
+</head>
+<body>
+<div id="wrapper">
+  <div class="user_page">
+    <div class="inner_column">
+      <section class="user_profile formatted" id="bio"></section>
+      <h2>Games</h2>
+      <div class="game_grid_widget user_game_grid">
+        <div class="game_cell" data-game_id="1">
+          <a class="game_thumb" href="#"></a>
+          <div class="game_cell_data">
+            <div class="game_title"><a href="#">Where I Am</a></div>
+            <div class="game_text">A quiet walk through a place you remember.</div>
+            <div class="game_genre">Adventure</div>
+          </div>
+        </div>
+        <div class="game_cell" data-game_id="2">
+          <a class="game_thumb" href="#"></a>
+          <div class="game_cell_data">
+            <div class="game_title"><a href="#">Call of the Ranger</a></div>
+            <div class="game_text">Track, hide and survive the long night.</div>
+            <div class="game_genre">Action</div>
+          </div>
+        </div>
+        <div class="game_cell" data-game_id="3">
+          <a class="game_thumb" href="#"></a>
+          <div class="game_cell_data">
+            <div class="game_title"><a href="#">Tiny Test</a></div>
+            <div class="game_text">A small game made in a weekend.</div>
+            <div class="game_genre">Puzzle</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">itch.io · mock footer</div>
+</div>
+</body>
+</html>
