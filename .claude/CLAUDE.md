@@ -50,7 +50,8 @@ engine/                      phase 1, started 2026-10-24: render() (served) and 
                              CLI bin/cli.js measure|validate|dev (dev: preview_start {name:"engine-dev"}, 3000); tests: cd engine && npm test
 web/                         the Vercel web app, deployed 2026-10-24: public/ (form, CodeMirror 5 editors from cdnjs,
                              generic default-theme profile mock in a script-less sandboxed iframe), api/ (preview,
-                             configs with secret edit key, css = /c/<id>.css = effects + the user's own CSS); the
+                             configs with secret edit key, css = /c/<id>.css = effects + the user's own CSS,
+                             validate = engine validate() on the editor's CSS + rule titles read from §0); the
                              export is the @import line only (no pasted fallback, owner's call), lib/store.js = Upstash
                              Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a local JSON
                              file (web/.data/, git-ignored); dev server: preview_start {name:"web"} (3001); tests: cd web && npm test

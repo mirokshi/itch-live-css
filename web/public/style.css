@@ -129,6 +129,15 @@ iframe { display: block; flex: 1; min-height: 0; width: 100%; border: 0; transit
 .editor .CodeMirror { height: 220px; border: 1px solid var(--line); border-radius: 6px; font: 12px/1.5 ui-monospace, monospace; }
 code { font: .85em ui-monospace, monospace; }
 
+/* validator output under the CSS editor */
+.lint:empty { display: none; }
+.lint { margin-top: 8px; font-size: .85rem; }
+.lint-summary { margin: 0 0 6px; color: var(--muted); }
+.lint ul { margin: 0; padding: 0; list-style: none; max-height: 220px; overflow-y: auto; }
+.lint li { margin: 0 0 6px; padding: 6px 8px; border-left: 3px solid; border-radius: 4px; background: var(--bg); overflow-wrap: anywhere; }
+.lint-error { border-color: #e5484d; }
+.lint-warning { border-color: #f5a524; }
+
 h1 { margin: 0 0 4px; font-size: 1.4rem; }
 h2 { font-size: 1.1rem; margin: 24px 0 8px; }
 .lead, .hint { color: var(--muted); margin: 0 0 12px; }

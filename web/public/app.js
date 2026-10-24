@@ -246,10 +246,47 @@ function refreshEffects() {
   }, 300);
 }
 
+// The engine's validator on the user's CSS, under the editor: each problem with its rule from the
+// knowledge base. Built with textContent: messages quote the user's selectors.
+const lintBox = document.getElementById('lint');
+let lintRun = 0;
+async function lint() {
+  const mine = ++lintRun;
+  const css = cssEditor.getValue();
+  if (!css.trim()) return lintBox.replaceChildren();
+  try {
+    const { problems } = await api('/api/validate', 'POST', { css });
+    if (mine !== lintRun) return;
+    const errors = problems.filter((p) => p.level === 'error').length;
+    const summary = Object.assign(document.createElement('p'), {
+      className: 'lint-summary',
+      textContent: problems.length
+        ? `${errors} ${errors === 1 ? 'error' : 'errores'}, ${problems.length - errors} ${problems.length - errors === 1 ? 'aviso' : 'avisos'}`
+        : 'Sin problemas con las reglas de itch.',
+    });
+    const items = problems.map(({ rule, level, title, message }) => {
+      const li = document.createElement('li');
+      li.className = `lint-${level}`;
+      const head = document.createElement('strong');
+      head.textContent = `${level === 'error' ? 'Error' : 'Aviso'} · ${rule}${title ? ` · ${title}` : ''}`;
+      li.append(head, document.createElement('br'), message);
+      return li;
+    });
+    const list = document.createElement('ul');
+    list.append(...items);
+    lintBox.replaceChildren(summary, ...(items.length ? [list] : []));
+  } catch (err) {
+    if (mine === lintRun) lintBox.textContent = `No se pudo validar: ${err.message}`;
+  }
+}
+
 let userTimer;
+let lintTimer;
 const refreshUser = () => {
   clearTimeout(userTimer);
   userTimer = setTimeout(applyUser, 200);
+  clearTimeout(lintTimer);
+  lintTimer = setTimeout(lint, 500);
 };
 
 function showResult({ bio, link }) {
