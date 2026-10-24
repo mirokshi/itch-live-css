@@ -53,7 +53,10 @@ web/                         the Vercel web app, deployed 2026-10-24: public/ (f
                              preview.html / preview-project.html / preview-devlog.html in a script-less sandboxed
                              iframe, an itch-like theme panel per page type), api/ (preview,
                              configs with secret edit key, css = /c/<id>.css = effects + the user's own CSS,
-                             validate = engine validate() on the editor's CSS + rule titles read from §0); the
+                             validate = engine validate() on the editor's CSS + rule titles read from §0,
+                             showcase = opt-in list, approved by the owner on admin.html with the ADMIN_KEY env var);
+                             other pages: ideas.html (effect gallery, "use" → /?idea=<key>), showcase.html,
+                             docs.html (ES + EN summary of R1–R24, kept by hand in step with the knowledge base); the
                              export is the @import line only (no pasted fallback, owner's call), lib/store.js = Upstash
                              Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a local JSON
                              file (web/.data/, git-ignored); dev server: preview_start {name:"web"} (3001); tests: cd web && npm test

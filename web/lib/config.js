@@ -9,6 +9,8 @@
 //   ascii     boolean
 //   css       the user's own CSS, served after the effects (it wins their ties)
 //   html      the user's bio / description / post HTML, only for the preview: never served
+//   showcase  null | { url, name }  asks to appear in the showcase (an admin approves it): the itch
+//             page's address and an optional display name
 // }
 
 import { importLine, render } from '../../engine/src/index.js';
@@ -44,7 +46,17 @@ export function check(f) {
     ascii: f.ascii === true,
     css: optional(f.css, MAX_CSS, 'css'),
     html: optional(f.html, MAX_HTML, 'html'),
+    showcase: null,
   };
+  if (f.showcase) {
+    const { url, name = '' } = f.showcase;
+    // an itch.io page on https, nothing else: it is shown as a link to everyone
+    if (typeof url !== 'string' || url.length > 200 || !/^https:\/\/[a-z0-9-]+\.itch\.io(\/[\w./-]*)?$/.test(url)) {
+      fail('showcase: the address of your itch.io page, like https://you.itch.io/ or https://you.itch.io/game');
+    }
+    if (typeof name !== 'string' || [...name].length > 40) fail('showcase: a name of at most 40 characters');
+    out.showcase = { url, name: name.trim() };
+  }
 
   if (f.title) {
     const { text: t, fonts } = f.title;

@@ -16,6 +16,7 @@
       <h1>itch-live-css</h1>
       <button type="button" id="ideas-toggle" class="ghost" aria-controls="ideas" aria-expanded="false">Ideas</button>
     </div>
+    <nav class="site-nav" aria-label="Secciones"><a href="/" aria-current="page">Editor</a><a href="ideas.html">Ideas</a><a href="showcase.html">Expositor</a><a href="docs.html">Documentación</a></nav>
     <p class="lead">Escribe el CSS de tu página de itch.io, míralo en vivo y llévate un link que no hay que volver a pegar.</p>
 
     <!-- each saved CSS is for one kind of page; a devlog uses its game's CSS -->
@@ -40,6 +41,13 @@
       <textarea name="html" id="html" rows="8" spellcheck="false"></textarea>
     </fieldset>
 
+    <fieldset>
+      <legend><label><input type="checkbox" name="showcase_on"> Quiero salir en el expositor</label></legend>
+      <p class="hint">Cuando lo revisemos y lo aprobemos, tu página sale en el <a href="showcase.html">expositor</a>: el nombre, el link a tu página y una vista de tu CSS (nunca tu HTML).</p>
+      <label>Dirección de tu página en itch <input name="showcase_url" type="url" placeholder="https://tunombre.itch.io/" maxlength="200"></label>
+      <label>Nombre que se mostrará (opcional) <input name="showcase_name" maxlength="40"></label>
+    </fieldset>
+
     <p id="status" role="status"></p>
     <button id="save" type="submit">Guardar y obtener el link</button>
 
@@ -54,6 +62,7 @@
       <p class="hint">Guarda este enlace de edición: es la única forma de cambiar tu CSS. No lo compartas.</p>
       <div class="copy"><input id="out-edit" readonly><button type="button" data-copy="out-edit">Copiar</button></div>
       <p class="hint">Cuando cambies algo y vuelvas a guardar, itch lo mostrará sin pegar nada de nuevo.</p>
+      <p class="hint" id="showcase-status" hidden></p>
     </section>
   </section>
 

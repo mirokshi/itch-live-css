@@ -78,6 +78,7 @@ function readForm() {
     ascii: d.has('ascii'),
     css: cssEditor.getValue(),
     html: htmlEditor.getValue(),
+    showcase: d.has('showcase_on') ? { url: d.get('showcase_url').trim(), name: d.get('showcase_name') } : null,
   };
 }
 
@@ -100,6 +101,9 @@ function fillForm(f) {
   el.ascii.checked = f.ascii;
   cssEditor.setValue(f.css ?? '');
   htmlEditor.setValue(f.html ?? '');
+  el.showcase_on.checked = !!f.showcase;
+  el.showcase_url.value = f.showcase?.url ?? '';
+  el.showcase_name.value = f.showcase?.name ?? '';
 }
 
 async function api(path, method, body, auth) {
@@ -382,7 +386,16 @@ const refreshUser = () => {
   lintTimer = setTimeout(lint, 500);
 };
 
-function showResult({ bio, link }) {
+const SHOWCASE_STATUS = {
+  pending: 'Expositor: pendiente de aprobación.',
+  approved: 'Expositor: aprobado, tu página ya sale.',
+  rejected: 'Expositor: no aprobado.',
+};
+
+function showResult({ bio, link, showcase }) {
+  const note = document.getElementById('showcase-status');
+  note.hidden = !showcase;
+  note.textContent = SHOWCASE_STATUS[showcase] ?? '';
   document.getElementById('out-link').value = link;
   document.getElementById('out-bio').value = bio;
   document.getElementById('bio-box').hidden = !bio;
@@ -397,6 +410,8 @@ form.addEventListener('input', (e) => {
   if (e.target.name === 'page') {
     setPage(e.target.value);
     lint();
+  } else if (e.target.name.startsWith('showcase_')) {
+    // only read on save
   } else if (e.target.name === 'layout' || e.target.name.startsWith('theme_')) {
     if (e.target.type !== 'file') applyTheme();
   } else refreshEffects();
@@ -440,6 +455,18 @@ if (saved) {
     saved = null;
     status.textContent = `No se pudo abrir ese enlace de edición: ${err.message}`;
   }
+}
+// ?idea=<key>, from the ideas page: turn that effect on and open the ideas panel
+const IDEA_FIELDS = { title: 'title_on', greeting: 'greeting_on', cards: 'cards', ascii: 'ascii' };
+const idea = new URLSearchParams(location.search).get('idea');
+if (Object.hasOwn(IDEA_FIELDS, idea)) {
+  if (idea === 'cards' && form.dataset.page !== 'profile') {
+    form.elements.page.value = 'profile'; // the cards effect only exists on profiles
+    setPage('profile');
+  }
+  form.elements[IDEA_FIELDS[idea]].checked = true;
+  showIdeas(true);
+  countIdeas();
 }
 frame.addEventListener('load', refreshEffects);
 if (doc()?.readyState === 'complete' && doc().getElementById('bio')) refreshEffects();
