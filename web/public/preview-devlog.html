@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Devlog post preview</title>
+<!-- A generic itch.io devlog post with the default theme. Our own markup and styles, following the
+     tree in knowledge/sections/03 §7 (itch's HTML and CSS are not copied). A post gets its project's
+     theme and CSS. #header exists only when the project has a banner (style hides it otherwise).
+     The page fills #bio (the post body), style#game_theme, style#live and style#custom_css. -->
+<link rel="stylesheet" href="preview-game.css">
+<link rel="stylesheet" id="theme_font">
+<style id="game_theme"></style>
+<style id="live"></style>
+<style id="custom_css"></style>
+</head>
+<body class="game_layout_widget layout_widget responsive">
+<div id="wrapper" class="main wrapper game_page_wrapper">
+  <div id="inner_column" class="inner_column size_large family_lato">
+    <div id="header" class="header align_center devlog_header">
+      <a href="#"><img alt="My Game" class="header_banner"></a>
+      <h1 class="game_title">My Game</h1>
+    </div>
+    <div class="game_devlog_post_page page_widget base_widget">
+      <div class="split_columns">
+        <div class="primary_column">
+          <section class="post_header">
+            <h1>The game is out</h1>
+            <div class="breadcrumbs"><a href="#">My Game</a> » <a href="#">Devlog</a></div>
+            <div class="post_meta">2 days ago · by username</div>
+            <hr>
+          </section>
+          <section class="object_text_widget_widget base_widget user_formatted post_body" id="bio"></section>
+        </div>
+        <div class="game_metadata">
+          <section><a class="button buy_btn" href="#">Download Now</a> <span class="buy_message">Name your own price</span></section>
+          <section><div class="game_info_panel_widget"><table><tbody>
+            <tr><td>Status</td><td>Released</td></tr>
+            <tr><td>Author</td><td><a href="#">username</a></td></tr>
+            <tr><td>Genre</td><td>Puzzle</td></tr>
+          </tbody></table></div></section>
+          <section class="more_posts"><h2>More posts</h2><ul><li><a href="#">First update</a></li></ul></section>
+        </div>
+      </div>
+      <div class="game_comments_widget">
+        <h2>Comments</h2>
+        <p class="form_placeholder"><a href="#">Log in with itch.io</a> to leave a comment.</p>
+      </div>
+    </div>
+    <div id="view_game_footer" class="footer">
+      <a href="#">itch.io</a> · <a href="#">View all by username</a> · <a href="#">Report</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

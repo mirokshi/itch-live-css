@@ -1,19 +1,21 @@
 // The web's config (what the form edits and the store keeps) → served CSS, bio HTML and @import line.
 //
 // form: {
+//   page      'profile' | 'project' | 'devlog'  where the CSS goes (a devlog uses its project's CSS)
 //   accent    '#rrggbb'                                  → --gold (greeting colour, card labels)
 //   title     null | { text, fonts: [key, ...] }         keys from public/fonts.js, 2–4 of them
 //   greeting  null | { first, others: ['string', ...] }
-//   cards     boolean
+//   cards     boolean, profile only (the effect styles the profile's game cards)
 //   ascii     boolean
 //   css       the user's own CSS, served after the effects (it wins their ties)
-//   html      the user's bio HTML, only for the preview: never served
+//   html      the user's bio / description / post HTML, only for the preview: never served
 // }
 
 import { importLine, render } from '../../engine/src/index.js';
 import { FONTS } from '../public/fonts.js';
 import { BadRequest } from './http.js';
 
+export const PAGES = ['profile', 'project', 'devlog'];
 const MAX_CSS = 50000; // characters
 const MAX_HTML = 5000; // characters, itch's bio cap
 
@@ -31,11 +33,14 @@ const optional = (s, max, name) => {
 export function check(f) {
   if (!f || typeof f !== 'object') fail('config must be an object');
   if (typeof f.accent !== 'string' || !/^#[0-9a-f]{6}$/i.test(f.accent)) fail('accent must be #rrggbb');
+  const page = f.page ?? 'profile';
+  if (!PAGES.includes(page)) fail(`page must be one of ${PAGES.join(', ')}`);
   const out = {
+    page,
     accent: f.accent.toLowerCase(),
     title: null,
     greeting: null,
-    cards: f.cards === true,
+    cards: f.cards === true && page === 'profile',
     ascii: f.ascii === true,
     css: optional(f.css, MAX_CSS, 'css'),
     html: optional(f.html, MAX_HTML, 'html'),

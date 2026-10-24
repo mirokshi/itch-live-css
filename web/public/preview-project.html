@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game page preview</title>
+<!-- A generic itch.io game page with the default theme. Our own markup and styles, following the
+     tree in knowledge/sections/03 §6 (itch's HTML and CSS are not copied). The page fills #bio (the
+     description), style#game_theme, style#live and style#custom_css, in itch's order. -->
+<link rel="stylesheet" href="preview-game.css">
+<link rel="stylesheet" id="theme_font">
+<style id="game_theme"></style>
+<style id="live"></style>
+<style id="custom_css"></style>
+</head>
+<body class="game_layout_widget layout_widget responsive">
+<div id="wrapper" class="main wrapper game_page_wrapper">
+  <div id="inner_column" class="inner_column size_large family_lato">
+    <div id="header" class="header align_center">
+      <img alt="My Game" class="header_banner">
+      <h1 class="game_title">My Game</h1>
+    </div>
+    <div class="view_game_page page_widget base_widget">
+      <div class="columns">
+        <div class="left_col column">
+          <div class="formatted_description user_formatted" id="bio"></div>
+          <div class="more_information_toggle"><div class="toggle_row"><a class="toggle_info_btn" href="#">More information</a></div></div>
+          <h2 id="download">Download</h2>
+          <div class="buy_row">
+            <div class="button_message"><a class="button buy_btn" href="#">Download Now</a> <span class="buy_message">Name your own price</span></div>
+          </div>
+          <section id="devlog" class="game_devlog">
+            <h2>Development log</h2>
+            <ul><li><a href="#">First update</a></li><li><a href="#">The game is out</a></li></ul>
+          </section>
+          <div class="game_comments_widget">
+            <h2 id="comments">Comments</h2>
+            <p class="form_placeholder"><a href="#">Log in with itch.io</a> to leave a comment.</p>
+          </div>
+        </div>
+        <div class="right_col column">
+          <div class="video_embed"></div>
+          <div class="screenshot_list"><a href="#"><span class="screenshot"></span></a><a href="#"><span class="screenshot"></span></a><a href="#"><span class="screenshot"></span></a></div>
+        </div>
+      </div>
+    </div>
+    <div id="view_game_footer" class="footer">
+      <a href="#">itch.io</a> · <a href="#">View all by username</a> · <a href="#">Report</a> · <a href="#">Embed</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

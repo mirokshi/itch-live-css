@@ -24,7 +24,10 @@ const req = (path, method = 'GET', body, key) =>
   });
 
 test('check keeps known fields only and rejects bad input', () => {
-  assert.deepEqual(check({ ...form, extra: 1, cards: 'yes' }), { ...form, accent: '#ffc857', cards: false, css: '', html: '' });
+  assert.deepEqual(check({ ...form, extra: 1, cards: 'yes' }), { page: 'profile', ...form, accent: '#ffc857', cards: false, css: '', html: '' });
+  assert.equal(check({ ...form, page: 'devlog' }).page, 'devlog');
+  assert.equal(check({ ...form, page: 'project' }).cards, false); // the cards effect is profile-only
+  assert.throws(() => check({ ...form, page: 'jam' }), /page/);
   assert.equal(check({ ...form, css: 'a{}', html: '<p>x</p>' }).html, '<p>x</p>');
   assert.throws(() => check({ ...form, css: 'a'.repeat(50001) }), /css/);
   assert.throws(() => check({ ...form, html: 'a'.repeat(5001) }), /html/);

@@ -1,0 +1,70 @@
+/* Mock of a game page and a devlog post with itch's default theme, written from scratch (not itch's
+   CSS). Layout and defaults from knowledge/sections/03 §6–7 and 04 §2–4:
+   · #wrapper is the page background (#eeeeee by default); #inner_column is the 960px BG2 panel
+     (white by default), which clips and keeps 40px at the bottom for the footer;
+   · game page: .columns is a flex row, .left_col takes the width, .right_col (screenshots) is 367px;
+     at ≤1000px they stack with the screenshots first;
+   · devlog post: .split_columns is a flex row, .primary_column flex:1 with 20px side margins,
+     .game_metadata a 307px sidebar 40px to its right; block at ≤1000px;
+   · text size is a class on #inner_column: size_small / medium / large / very_large = 11/13/16/19px;
+   · a banner is #header.has_image; it hides the title; a devlog post has no #header without one.
+   style#game_theme (filled by the page) sets the colours, fonts and the background image. */
+body { margin: 0; font-family: Lato, system-ui, sans-serif; }
+/* class selectors, as itch's game.css: the theme's .wrapper / .inner_column rules must win */
+.wrapper { min-height: 100vh; padding: 20px 0 40px; box-sizing: border-box; background-color: #eeeeee; }
+.inner_column {
+  position: relative; max-width: 960px; margin: 0 auto; padding-bottom: 40px; overflow: hidden;
+  background-color: #fff; color: #222; box-shadow: 0 0 4px rgba(0, 0, 0, .1);
+}
+.size_small { font-size: 11px; } .size_medium { font-size: 13px; } .size_large { font-size: 16px; } .size_very_large { font-size: 19px; }
+.inner_column a { color: #fa5c5c; }
+
+.header { overflow: hidden; padding: 30px 20px 10px; }
+.header img { display: none; max-width: 100%; }
+.header.has_image { padding: 0; font-size: 0; }
+.header.has_image img { display: inline-block; }
+.header.has_image h1 { display: none; }
+.header.align_center { text-align: center; } .header.align_left { text-align: left; } .header.align_right { text-align: right; }
+.header h1.game_title { margin: 0; font-size: 2.5em; }
+.devlog_header:not(.has_image) { display: none; }
+
+.columns { display: flex; justify-content: center; gap: 0; padding: 20px; }
+.left_col { flex: 1; width: 0; min-width: 0; }
+.right_col { width: 367px; margin-left: 20px; }
+.screenshot_list a { display: block; margin-bottom: 10px; }
+.screenshot { display: block; aspect-ratio: 16 / 9; background: #ddd; }
+.formatted_description { line-height: 1.5; }
+.formatted_description h1 { font-size: 2em; margin: 0 0 .5em; line-height: 1.2; }
+.more_information_toggle { margin: 20px 0; }
+.left_col h2, .game_metadata h2, .game_comments_widget h2 { font-size: 1.3em; margin: 1.2em 0 .5em; }
+.button {
+  display: inline-block; padding: 6px 14px; border-radius: 3px; background-color: #fa5c5c; color: #fff !important;
+  font-weight: 700; text-decoration: none; text-shadow: 0 1px 0 rgba(0, 0, 0, .2);
+}
+.buy_message { opacity: .7; }
+
+.split_columns { display: flex; padding: 20px 0; }
+.primary_column { flex: 1; min-width: 0; margin: 0 20px; }
+.game_metadata { width: 307px; margin: 0 20px 0 40px; }
+.game_metadata section { margin-bottom: 20px; }
+.post_header h1 { margin: 0 0 6px; font-size: 1.8em; }
+.post_meta { opacity: .6; font-size: .9em; }
+.post_body { line-height: 1.5; }
+.game_info_panel_widget table { width: 100%; border-collapse: collapse; font-size: .9em; }
+.game_info_panel_widget td { padding: 4px 0; border-bottom: 1px solid rgba(0, 0, 0, .08); }
+.game_info_panel_widget td:first-child { opacity: .6; width: 40%; }
+.game_comments_widget { padding: 0 20px; }
+
+.footer { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 20px; font-size: 12px; color: #888; }
+
+@media (max-width: 1000px) {
+  .columns { flex-direction: column; }
+  .left_col { width: auto; order: 2; }
+  .right_col { width: auto; margin: 0 0 20px; order: 1; }
+  .screenshot_list { display: flex; gap: 10px; overflow-x: auto; }
+  .screenshot_list a { flex: 0 0 60%; }
+  .split_columns { display: block; }
+  .game_metadata { width: auto; margin: 20px; }
+  .footer { position: static; }
+  .inner_column { padding-bottom: 0; }
+}

@@ -49,7 +49,9 @@ engine/                      phase 1, started 2026-10-24: render() (served) and 
                              importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R4, R7–R12, R14–R16, R18, R23 so far),
                              CLI bin/cli.js measure|validate|dev (dev: preview_start {name:"engine-dev"}, 3000); tests: cd engine && npm test
 web/                         the Vercel web app, deployed 2026-10-24: public/ (form, CodeMirror 5 editors from cdnjs,
-                             generic default-theme profile mock in a script-less sandboxed iframe), api/ (preview,
+                             a page-type switch profile | project | devlog saved with the config, default-theme mocks
+                             preview.html / preview-project.html / preview-devlog.html in a script-less sandboxed
+                             iframe, an itch-like theme panel per page type), api/ (preview,
                              configs with secret edit key, css = /c/<id>.css = effects + the user's own CSS,
                              validate = engine validate() on the editor's CSS + rule titles read from §0); the
                              export is the @import line only (no pasted fallback, owner's call), lib/store.js = Upstash

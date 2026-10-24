@@ -23,4 +23,5 @@ test('validate: rejects anything but a CSS string', async () => {
   assert.equal((await call({ css: 3 })).status, 400);
   assert.equal((await call({ css: 'a'.repeat(50001) })).status, 400);
   assert.equal((await call(null)).status, 400);
+  assert.equal((await call({ css: '', page: 'jam' })).status, 400);
 });

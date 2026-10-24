@@ -5,7 +5,26 @@ const frame = document.getElementById('preview');
 const stage = document.querySelector('.stage');
 const status = document.getElementById('status');
 const DEFAULT_FONTS = ['fraunces', 'inter', 'grotesk']; // pre-ticked for when the title idea is turned on
-const SAMPLE_BIO = '<p>Hago juegos pequeños. Este es un perfil de ejemplo.</p>';
+
+// Per page type: its mock, the words for "your text", and the sample text shown when the HTML
+// editor is empty. A devlog post gets its game's theme and CSS (knowledge base §3.7).
+const PAGES = {
+  profile: {
+    file: 'preview.html', title: 'Vista previa del perfil', html: 'Tu HTML de la bio', text: 'tu bio',
+    where: 'del CSS de tu perfil', sample: '<p>Hago juegos pequeños. Este es un perfil de ejemplo.</p>',
+    hint: 'En itch: Edit theme en tu perfil → CSS.',
+  },
+  project: {
+    file: 'preview-project.html', title: 'Vista previa de la página del juego', html: 'Tu HTML de la descripción',
+    text: 'la descripción del juego', where: 'del CSS de tu juego', sample: '<p>Un juego de ejemplo. Esta es su descripción.</p>',
+    hint: 'En itch: Edit theme en la página del juego → CSS. Sus devlogs usan este mismo CSS.',
+  },
+  devlog: {
+    file: 'preview-devlog.html', title: 'Vista previa del post del devlog', html: 'Tu HTML del post', text: 'el post',
+    where: 'del CSS del juego', sample: '<p>Hoy sale la versión 1.0. Gracias por jugar.</p>',
+    hint: 'Un devlog no tiene CSS propio: usa el del juego (Edit theme en la página del juego → CSS).',
+  },
+};
 
 document.getElementById('fonts').innerHTML = Object.entries(FONTS)
   .map(([k, f]) => `<label><input type="checkbox" name="title_font" value="${k}"${DEFAULT_FONTS.includes(k) ? ' checked' : ''}> ${f.name}</label>`)
@@ -49,12 +68,13 @@ let saved = id ? { id, key } : null;
 function readForm() {
   const d = new FormData(form);
   return {
+    page: d.get('page'),
     accent: d.get('accent'),
     title: d.has('title_on') ? { text: d.get('title_text'), fonts: d.getAll('title_font') } : null,
     greeting: d.has('greeting_on')
       ? { first: d.get('greeting_first'), others: d.get('greeting_others').split('\n').map((s) => s.trim()).filter(Boolean) }
       : null,
-    cards: d.has('cards'),
+    cards: d.get('page') === 'profile' && d.has('cards'),
     ascii: d.has('ascii'),
     css: cssEditor.getValue(),
     html: htmlEditor.getValue(),
@@ -63,6 +83,8 @@ function readForm() {
 
 function fillForm(f) {
   const el = form.elements;
+  el.page.value = f.page ?? 'profile';
+  setPage(el.page.value);
   el.accent.value = f.accent;
   el.title_on.checked = !!f.title;
   if (f.title) {
@@ -114,52 +136,88 @@ function itchSanitize(html) {
 const doc = () => frame.contentDocument;
 let effectsBio = '';
 
-// What itch's profile theme editor writes into style#user_theme (knowledge base §4.3), into the
-// mock only: BG on body; Text, font, size and the 4 variables on .user_page; the background image on
-// .user_page_wrap (= #wrapper); Link on links and card titles; card text at 75 % / 50 % of Text;
-// B. Radius on card covers. Layout and banner are classes on .user_page. Every value comes from a
-// colour/hex input checked below, a fixed <select>, a number range or a data: URL read here.
+// What itch's theme editor writes, into the mock only (knowledge base §4.3–4.4). The branch follows
+// the mock that is loaded (it can lag behind the page switch while the iframe reloads).
+// · profile, style#user_theme: BG on body; Text, font, size and the 4 variables on .user_page; the
+//   background image on .user_page_wrap (= #wrapper); Link on links and card titles; card text at
+//   75 % / 50 % of Text; B. Radius on card covers; layout and banner are classes on .user_page;
+// · game page and devlog, style#game_theme: BG and the background image on .wrapper (= #wrapper);
+//   the BG2 panel, Text and font on .inner_column; headings font and colour; Link on links;
+//   Buttons; the Screenshots option; size and banner alignment are classes.
+// Every value comes from a colour/hex input checked below, a fixed <select>, a number range or a
+// data: URL read here.
 const FONT_CHOICES = ['Lato', 'Roboto', 'Open Sans', 'Montserrat', 'Nunito', 'Merriweather', 'Playfair Display', 'Press Start 2P', 'VT323', 'Space Mono'];
 form.elements.theme_font.innerHTML = FONT_CHOICES.map((f) => `<option>${f}</option>`).join('');
+form.elements.theme_hfont.innerHTML = '<option value="">Same as text</option>' + FONT_CHOICES.map((f) => `<option>${f}</option>`).join('');
 
 const images = { bg: '', banner: '' };
 const HEX = /^#[0-9a-f]{6}$/i;
+const COLOURS = ['bg', 'bg2', 'text', 'link', 'buttons', 'headers'];
+// each page type's default theme, set again when the page type changes
+const THEME_DEFAULTS = {
+  profile: { bg: '#ffffff', text: '#222222', link: '#ff2449' },
+  game: { bg: '#eeeeee', bg2: '#ffffff', text: '#222222', link: '#fa5c5c', buttons: '#fa5c5c', headers: '#222222' },
+};
+const rgba = (hex, alpha) => `rgba(${[1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(',')},${alpha})`;
+const family = (f) => `family=${f.replaceAll(' ', '+')}:ital,wght@0,400;0,700;1,400`;
 
 function applyTheme() {
   const el = form.elements;
   const d = doc();
-  const page = d.querySelector('.user_page');
-  const column = el.layout.value === 'column';
-  page.classList.toggle('mode_grid', !column);
-  page.classList.toggle('mode_column', column);
-  page.classList.toggle('has_banner', !!images.banner);
-  d.querySelector('.profile_banner').src = images.banner || '';
-
-  const font = el.theme_font.value;
-  d.getElementById('theme_font').href =
-    `https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=${font.replaceAll(' ', '+')}:ital,wght@0,400;0,700;1,400&display=swap`;
-
+  const game = !!d.getElementById('game_theme');
   const [bg, text, link] = ['bg', 'text', 'link'].map((k) => el[`theme_${k}`].value);
-  const radius = `${Number(el.theme_radius.value)}px`;
+  const font = el.theme_font.value;
+  const hfont = game ? el.theme_hfont.value : '';
+  d.getElementById('theme_font').href =
+    `https://fonts.googleapis.com/css2?${[...new Set(['Lato', font, hfont].filter(Boolean))].map(family).join('&')}&display=swap`;
+  d.querySelector('.header img').src = images.banner || '';
   const image = images.bg
     ? `background-image:url("${images.bg}");background-repeat:${el.theme_repeat.value};background-position:${el.theme_align.value};` +
       (el.theme_fixed.checked ? 'background-attachment:fixed' : '')
     : '';
-  d.getElementById('user_theme').textContent = [
-    `body{background-color:${bg}}`,
-    `.user_page{--itchio_font_family:"${font}";--itchio_link_color:${link};--itchio_border_radius:${radius};` +
-      `color:${text};font-size:${Number(el.theme_size.value)}%;font-family:"${font}",Lato,sans-serif}`,
-    `.user_page_wrap{${image}}`,
-    `.user_page a,.footer a{color:${link}}`,
-    `.game_grid_widget .game_cell .game_thumb{border-radius:${radius}}`,
-    `.game_grid_widget .game_cell .game_title a.title{color:${link}}`,
-    `.game_grid_widget .game_cell .game_text{color:color-mix(in srgb,${text} 75%,transparent)}`,
-    `.game_grid_widget .game_cell .game_genre{color:color-mix(in srgb,${text} 50%,transparent)}`,
+
+  if (!game) {
+    const page = d.querySelector('.user_page');
+    const column = el.layout.value === 'column';
+    page.classList.toggle('mode_grid', !column);
+    page.classList.toggle('mode_column', column);
+    page.classList.toggle('has_banner', !!images.banner);
+    const radius = `${Number(el.theme_radius.value)}px`;
+    d.getElementById('user_theme').textContent = [
+      `body{background-color:${bg}}`,
+      `.user_page{--itchio_font_family:"${font}";--itchio_link_color:${link};--itchio_border_radius:${radius};` +
+        `color:${text};font-size:${Number(el.theme_size.value)}%;font-family:"${font}",Lato,sans-serif}`,
+      `.user_page_wrap{${image}}`,
+      `.user_page a,.footer a{color:${link}}`,
+      `.game_grid_widget .game_cell .game_thumb{border-radius:${radius}}`,
+      `.game_grid_widget .game_cell .game_title a.title{color:${link}}`,
+      `.game_grid_widget .game_cell .game_text{color:color-mix(in srgb,${text} 75%,transparent)}`,
+      `.game_grid_widget .game_cell .game_genre{color:color-mix(in srgb,${text} 50%,transparent)}`,
+    ].join('');
+    return;
+  }
+
+  const header = d.getElementById('header');
+  header.classList.toggle('has_image', !!images.banner);
+  header.classList.remove('align_left', 'align_center', 'align_right');
+  header.classList.add(`align_${el.theme_balign.value}`);
+  const inner = d.getElementById('inner_column');
+  inner.classList.remove('size_small', 'size_medium', 'size_large', 'size_very_large');
+  inner.classList.add(`size_${el.theme_psize.value}`);
+  const headings = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].map((h) => `.inner_column ${h}`).join(',');
+  d.getElementById('game_theme').textContent = [
+    `.wrapper{background-color:${bg};${image}}`,
+    `.inner_column{color:${text};font-family:"${font}",Lato,sans-serif;` +
+      `background-color:${rgba(el.theme_bg2.value, Number(el.theme_bg2_alpha.value) / 100)}}`,
+    `${headings}{font-family:${hfont ? `"${hfont}"` : 'inherit'};color:${el.theme_headers.value}}`,
+    `.inner_column a,.inner_column .footer a{color:${link}}`,
+    `.inner_column .button{background-color:${el.theme_buttons.value};color:#fff}`,
+    `.view_game_page .right_col{display:${el.theme_shots.value === 'hidden' ? 'none' : 'block'}}`,
   ].join('');
 }
 
 // each colour has a hex text box and a swatch, kept in step like itch's
-for (const k of ['bg', 'text', 'link']) {
+for (const k of COLOURS) {
   const hex = form.elements[`theme_${k}_hex`];
   const swatch = form.elements[`theme_${k}`];
   hex.addEventListener('input', () => HEX.test(hex.value) && (swatch.value = hex.value.toLowerCase()));
@@ -220,7 +278,24 @@ function applyUser() {
   applyTheme();
   const { css, html } = readForm();
   doc().getElementById('custom_css').textContent = css;
-  doc().getElementById('bio').innerHTML = html.trim() ? itchSanitize(html) : effectsBio + SAMPLE_BIO;
+  doc().getElementById('bio').innerHTML = html.trim() ? itchSanitize(html) : effectsBio + PAGES[form.dataset.page].sample;
+}
+
+// The page type: its mock (whose "load" refreshes everything), its theme defaults and the wording.
+function setPage(page) {
+  const p = PAGES[page];
+  form.dataset.page = page;
+  frame.title = p.title;
+  document.getElementById('html-legend').textContent = p.html;
+  document.getElementById('page-hint').textContent = p.hint;
+  const strong = Object.assign(document.createElement('strong'), { textContent: 'al principio' });
+  document.getElementById('link-hint').replaceChildren('Pon esta línea ', strong, ` ${p.where} en itch:`);
+  document.getElementById('bio-hint').textContent = `Las ideas de título y saludo necesitan este HTML en ${p.text}:`;
+  for (const [k, v] of Object.entries(THEME_DEFAULTS[page === 'profile' ? 'profile' : 'game'])) {
+    form.elements[`theme_${k}`].value = v;
+    form.elements[`theme_${k}_hex`].value = v;
+  }
+  if (new URL(frame.src).pathname !== `/${p.file}`) frame.src = p.file;
 }
 
 let timer;
@@ -255,7 +330,7 @@ async function lint() {
   const css = cssEditor.getValue();
   if (!css.trim()) return lintBox.replaceChildren();
   try {
-    const { problems } = await api('/api/validate', 'POST', { css });
+    const { problems } = await api('/api/validate', 'POST', { css, page: form.dataset.page });
     if (mine !== lintRun) return;
     const errors = problems.filter((p) => p.level === 'error').length;
     const summary = Object.assign(document.createElement('p'), {
@@ -301,7 +376,10 @@ function showResult({ bio, link }) {
 // the theme controls only touch the mock (the image file is read on "change", above)
 form.addEventListener('input', (e) => {
   if (e.target.closest('.CodeMirror')) return;
-  if (e.target.name === 'layout' || e.target.name.startsWith('theme_')) {
+  if (e.target.name === 'page') {
+    setPage(e.target.value);
+    lint();
+  } else if (e.target.name === 'layout' || e.target.name.startsWith('theme_')) {
     if (e.target.type !== 'file') applyTheme();
   } else refreshEffects();
 });
@@ -334,6 +412,7 @@ form.addEventListener('click', async (e) => {
   setTimeout(() => (e.target.textContent = 'Copiar'), 1500);
 });
 
+setPage(form.elements.page.value);
 if (saved) {
   try {
     const exported = await api(`/api/configs?id=${saved.id}`, 'GET', null, saved.key);
@@ -344,5 +423,5 @@ if (saved) {
     status.textContent = `No se pudo abrir ese enlace de edición: ${err.message}`;
   }
 }
+frame.addEventListener('load', refreshEffects);
 if (doc()?.readyState === 'complete' && doc().getElementById('bio')) refreshEffects();
-else frame.addEventListener('load', refreshEffects, { once: true });
