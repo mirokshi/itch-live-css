@@ -31,9 +31,10 @@
 #wrapper .game_cell:nth-child(11)::before{animation-delay:-6.71s}
 #wrapper .game_cell:nth-child(12)::before{animation-delay:-8.8s}
 #wrapper .game_cell::after{background:conic-gradient(from var(--foil),transparent 0deg,rgba(255,200,87,0.95) 50deg,rgba(255,255,255,0.95) 80deg,rgba(255,200,87,0.95) 110deg,transparent 160deg)}
-#wrapper .game_cell:hover::before{opacity:0}
-#wrapper .game_cell:hover::after{opacity:1;animation:custom-foil 2.4s linear infinite}
-@media (prefers-reduced-motion:reduce){#wrapper .game_cell::after{animation:none}}
+#wrapper .game_cell:focus-within::before{opacity:0}
+#wrapper .game_cell:focus-within::after{opacity:1;animation:custom-foil 2.4s linear infinite}
+@media (hover:hover){#wrapper .game_cell:hover::before{opacity:0}#wrapper .game_cell:hover::after{opacity:1;animation:custom-foil 2.4s linear infinite}}
+@media (prefers-reduced-motion:reduce){#wrapper .game_cell::after{animation:none!important}}
 #wrapper .game_cell .game_cell_data::after{align-self:flex-start;margin-top:.6em;padding:.2em .7em;border-radius:999px;background:var(--line);font:600 .85rem/1.4 var(--sans);color:var(--ink);white-space:pre}
 #wrapper .game_cell .game_thumb::after{position:absolute;top:8px;right:8px;padding:.15em .6em;border-radius:999px;background:var(--gold);color:#0b1433;font:700 .72rem/1.5 var(--sans);box-shadow:0 2px 8px rgba(0,0,0,.35);pointer-events:none}
 #wrapper .game_cell[data-game_id="2660825"] .game_cell_data::after{content:"\1f441 \fe0e  1.8k";content:"\1f441 \fe0e  1.8k" / "1.8k views"}

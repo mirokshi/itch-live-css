@@ -5,11 +5,8 @@ import { config, games, now } from './mirokshi.js';
 
 const rules = (css, page = 'project', options) => validate(css, page, options).map((p) => p.rule);
 
-test("owner profile: the engine's served CSS has no errors", () => {
-  const problems = validate(render(config, { seed: 1, data: { games }, now }), 'profile', { served: true });
-  // known: the cards' foil hover, ported 1:1 from the prototype, is neither gated nor focusable (R18)
-  assert.deepEqual(problems.map((p) => `${p.rule} ${p.level}`), Array(4).fill('R18 warning'));
-  assert.ok(problems.every((p) => p.message.includes('.game_cell:hover')));
+test("owner profile: the engine's served CSS breaks no rule", () => {
+  assert.deepEqual(validate(render(config, { seed: 1, data: { games }, now }), 'profile', { served: true }), []);
 });
 
 test('R2: every style rule starts with #wrapper, also in @media, @supports and @layer', () => {

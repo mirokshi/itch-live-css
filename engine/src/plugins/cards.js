@@ -2,11 +2,13 @@
 //
 // · Foil: at rest, a faint golden glint slowly runs round each card's outline (one lap every
 //   FOIL_SLOW s, with a random offset per card on each render, so they don't move together); on
-//   hover, a brighter, faster one on top (FOIL_FAST s). The gradient border sits in .game_cell's
-//   ::before (slow) and ::after (fast): a plain border can't take gradients with rounded corners,
-//   so the whole box is painted and a mask cuts out the inside (a 1–1.5px ring). It turns by
-//   animating the conic-gradient's start angle --foil. With reduced motion both stop (the pasted
-//   CSS for ::before, block B1; here for ::after).
+//   hover (where the device has it) or keyboard focus inside the card, a brighter, faster one on
+//   top (FOIL_FAST s). The gradient border sits in .game_cell's ::before (slow) and ::after (fast):
+//   a plain border can't take gradients with rounded corners, so the whole box is painted and a
+//   mask cuts out the inside (a 1–1.5px ring). It turns by animating the conic-gradient's start
+//   angle --foil. With reduced motion both stop (the pasted CSS for ::before, block B1; here for
+//   ::after). Unlike the prototype (2026-10-24): hover gated and a focus twin (R18), and the
+//   reduced-motion stop now wins over the hover rule.
 // · Figures (data.games): "👁 1.2k   ⬇ 340" under the card's details, in a pill. Downloads only
 //   when there are some (browser games barely have any).
 // · Labels on the cover, top right (itch's "GIF" goes left): "Most viewed" for the game with the
@@ -50,6 +52,7 @@ const foilRing = (a, [gold1, white, gold2, end]) =>
   `rgba(255,255,255,${a}) ${white}deg,rgba(255,200,87,${a}) ${gold2}deg,transparent ${end}deg)`;
 
 function foilCss(rand) {
+  const fast = `opacity:1;animation:custom-foil ${FOIL_FAST}s linear infinite`;
   const delays = [];
   for (let k = 1; k <= FOIL_CARDS; k++) {
     delays.push(`#wrapper .game_cell:nth-child(${k})::before{animation-delay:${n(-rand(0, FOIL_SLOW))}s}`);
@@ -65,9 +68,12 @@ function foilCss(rand) {
       `animation:custom-foil ${FOIL_SLOW}s linear infinite}`,
     ...delays,
     `#wrapper .game_cell::after{background:${foilRing(0.95, [50, 80, 110, 160])}}`,
-    '#wrapper .game_cell:hover::before{opacity:0}',
-    `#wrapper .game_cell:hover::after{opacity:1;animation:custom-foil ${FOIL_FAST}s linear infinite}`,
-    '@media (prefers-reduced-motion:reduce){#wrapper .game_cell::after{animation:none}}',
+    // the bright glint: on keyboard focus inside the card, and on hover only where hover exists (R18)
+    '#wrapper .game_cell:focus-within::before{opacity:0}',
+    `#wrapper .game_cell:focus-within::after{${fast}}`,
+    `@media (hover:hover){#wrapper .game_cell:hover::before{opacity:0}#wrapper .game_cell:hover::after{${fast}}}`,
+    // !important: the :hover/:focus-within rules above are more specific
+    '@media (prefers-reduced-motion:reduce){#wrapper .game_cell::after{animation:none!important}}',
   ];
 }
 
