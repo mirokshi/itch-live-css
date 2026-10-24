@@ -152,6 +152,8 @@ iframe { display: block; flex: 1; min-height: 0; width: 100%; border: 0; transit
 }
 
 .editor .CodeMirror { height: 220px; border: 1px solid var(--line); border-radius: 6px; font: 12px/1.5 ui-monospace, monospace; }
+/* minified CSS is one long line with long tokens (data: URLs): break them anywhere, in the box */
+.CodeMirror-wrap pre.CodeMirror-line, .CodeMirror-wrap pre.CodeMirror-line-like { word-break: break-all; }
 code { font: .85em ui-monospace, monospace; }
 
 /* site navigation, on every page */
@@ -216,7 +218,8 @@ h2 { font-size: 1.1rem; margin: 24px 0 8px; }
 .lead, .hint { color: var(--muted); margin: 0 0 12px; }
 .hint { font-size: .9rem; margin: 8px 0 6px; }
 
-fieldset { border: 1px solid var(--line); border-radius: 10px; margin: 16px 0; padding: 8px 12px 12px; }
+/* min-width:0: a fieldset is as wide as its content by default, so a long minified line would widen it */
+fieldset { min-width: 0; border: 1px solid var(--line); border-radius: 10px; margin: 16px 0; padding: 8px 12px 12px; }
 legend { font-weight: 600; padding: 0 4px; }
 label { display: block; margin: 6px 0; }
 .row { display: flex; align-items: center; gap: 10px; }
