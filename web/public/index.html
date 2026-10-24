@@ -31,6 +31,7 @@
     <fieldset class="editor">
       <legend>Tu CSS</legend>
       <p class="hint">Va dentro del link: no hace falta pegarlo en itch.</p>
+      <div class="ed-tools"><button type="button" class="ghost small" data-format="css">Dar formato</button><button type="button" class="ghost small" data-expand="css">Ampliar</button></div>
       <textarea name="css" id="css" rows="10" spellcheck="false"></textarea>
       <div id="lint" class="lint" aria-live="polite"></div>
     </fieldset>
@@ -38,6 +39,7 @@
     <fieldset class="editor">
       <legend id="html-legend">Tu HTML de la bio</legend>
       <p class="hint">Solo para probar en la vista previa: no se sirve. itch quita las clases que no empiezan por <code>custom</code>, los <code>id</code> y los atributos <code>data-</code>, <code>aria-</code> y <code>role</code>, y aquí también.</p>
+      <div class="ed-tools"><button type="button" class="ghost small" data-format="html">Dar formato</button><button type="button" class="ghost small" data-expand="html">Ampliar</button></div>
       <textarea name="html" id="html" rows="8" spellcheck="false"></textarea>
     </fieldset>
 
@@ -176,10 +178,21 @@ Ciao!</textarea></label>
     </fieldset>
   </aside>
 </form>
+
+<!-- "Ampliar": the same editor moves in here while the dialog is open, so nothing is copied -->
+<dialog id="editor-dialog" class="editor-dialog" aria-labelledby="dialog-title">
+  <div class="dialog-head">
+    <h2 id="dialog-title"></h2>
+    <div class="ed-tools"><button type="button" class="ghost small" id="dialog-format">Dar formato</button><button type="button" class="ghost small" id="dialog-close">Cerrar</button></div>
+  </div>
+  <div id="dialog-body" class="dialog-body"></div>
+</dialog>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify-html.min.js"></script>
 <script type="module" src="app.js"></script>
 </body>
 </html>

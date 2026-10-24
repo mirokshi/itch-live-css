@@ -61,6 +61,45 @@ dark.addEventListener('change', () => {
   for (const ed of [cssEditor, htmlEditor]) ed.setOption('theme', dark.matches ? 'material-darker' : 'default');
 });
 
+// "Dar formato" (js-beautify, from cdnjs) and "Ampliar": a modal <dialog> the editor itself moves
+// into, so its text, cursor and undo history stay; it goes back to its place on close.
+const EDITORS = {
+  css: { cm: cssEditor, legend: () => 'Tu CSS', tidy: (s) => css_beautify(s, { indent_size: 2 }) },
+  html: { cm: htmlEditor, legend: () => document.getElementById('html-legend').textContent, tidy: (s) => html_beautify(s, { indent_size: 2, wrap_line_length: 0 }) },
+};
+function tidy(key) {
+  const { cm, tidy } = EDITORS[key];
+  if (typeof css_beautify !== 'function' || typeof html_beautify !== 'function') {
+    status.textContent = 'No se pudo cargar el formateador.';
+    return;
+  }
+  const before = cm.getValue();
+  const after = tidy(before);
+  if (after !== before) cm.setValue(after);
+}
+const dialog = document.getElementById('editor-dialog');
+let expanded = null; // { key, parent, next }: where the editor came from
+function expand(key) {
+  const wrapper = EDITORS[key].cm.getWrapperElement();
+  expanded = { key, parent: wrapper.parentNode, next: wrapper.nextSibling };
+  document.getElementById('dialog-title').textContent = EDITORS[key].legend();
+  document.getElementById('dialog-body').append(wrapper);
+  dialog.showModal();
+  EDITORS[key].cm.refresh();
+  EDITORS[key].cm.focus();
+}
+dialog.addEventListener('close', () => {
+  const { key, parent, next } = expanded;
+  parent.insertBefore(EDITORS[key].cm.getWrapperElement(), next);
+  EDITORS[key].cm.refresh();
+  document.querySelector(`[data-expand="${key}"]`).focus();
+  expanded = null;
+});
+document.getElementById('dialog-close').addEventListener('click', () => dialog.close());
+document.getElementById('dialog-format').addEventListener('click', () => tidy(expanded.key));
+for (const b of document.querySelectorAll('[data-format]')) b.addEventListener('click', () => tidy(b.dataset.format));
+for (const b of document.querySelectorAll('[data-expand]')) b.addEventListener('click', () => expand(b.dataset.expand));
+
 // The edit link carries "id.key" in the fragment, so the key never reaches a server log or a Referer.
 const [id, key] = (location.hash.match(/^#edit=([\w-]+)\.([\w-]+)$/) ?? []).slice(1);
 let saved = id ? { id, key } : null;
