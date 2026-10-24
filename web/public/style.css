@@ -80,6 +80,14 @@ iframe { display: block; flex: 1; min-height: 0; width: 100%; border: 0; transit
   background: #fff; color: var(--t-red); font: 14px Lato, system-ui, sans-serif;
 }
 .tcol > span { display: block; margin: 7px 0 6px; font-weight: 700; }
+.more-btn {
+  display: block; width: 100%; margin: 6px 0; padding: 3px; border: 1px solid var(--t-line); border-radius: 3px;
+  background: #fff; color: var(--t-text); font: 14px Lato, system-ui, sans-serif;
+}
+.more { padding: 2px 0 4px; }
+/* image options sit under their box, labels right-aligned, as in itch's editor */
+.trow.indent { grid-template-columns: 88px 1fr; }
+.trow.indent > label { text-align: right; }
 .bg-box {
   display: flex; align-items: center; justify-content: center; height: 64px; margin: 0;
   border: 1px solid var(--t-line); background: #ddd center / contain no-repeat; cursor: pointer;

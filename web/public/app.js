@@ -172,7 +172,8 @@ function applyTheme() {
     `https://fonts.googleapis.com/css2?${[...new Set(['Lato', font, hfont].filter(Boolean))].map(family).join('&')}&display=swap`;
   d.querySelector('.header img').src = images.banner || '';
   const image = images.bg
-    ? `background-image:url("${images.bg}");background-repeat:${el.theme_repeat.value};background-position:${el.theme_align.value};` +
+    ? `background-image:url("${images.bg}");background-repeat:${(game ? el.theme_prepeat : el.theme_repeat).value};` +
+      `background-position:${el.theme_align.value};` +
       (el.theme_fixed.checked ? 'background-attachment:fixed' : '')
     : '';
 
@@ -245,21 +246,38 @@ const showBg = (on) => {
   bgBox.style.backgroundImage = on ? `url("${images.bg}")` : '';
   bgBox.classList.toggle('has-image', on);
 };
-const showBanner = (on) => (document.getElementById('banner-clear').hidden = !on);
+const bannerBox = document.getElementById('banner-box');
+const showBanner = (on) => {
+  document.getElementById('banner-clear').hidden = document.getElementById('banner-options').hidden = !on;
+  bannerBox.style.backgroundImage = on ? `url("${images.banner}")` : '';
+  bannerBox.classList.toggle('has-image', on);
+};
 readImage(form.elements.theme_bg_image, 'bg', showBg);
 readImage(form.elements.theme_banner, 'banner', showBanner);
+readImage(form.elements.theme_banner_p, 'banner', showBanner);
 document.getElementById('bg-clear').addEventListener('click', () => {
   images.bg = '';
   form.elements.theme_bg_image.value = '';
   showBg(false);
   applyTheme();
 });
-document.getElementById('banner-clear').addEventListener('click', () => {
-  images.banner = '';
-  form.elements.theme_banner.value = '';
-  showBanner(false);
-  applyTheme();
-});
+for (const id of ['banner-clear', 'banner-clear-p']) {
+  document.getElementById(id).addEventListener('click', () => {
+    images.banner = '';
+    form.elements.theme_banner.value = form.elements.theme_banner_p.value = '';
+    showBanner(false);
+    applyTheme();
+  });
+}
+
+// "More options..." folds, as in itch's editor
+for (const btn of document.querySelectorAll('.more-btn')) {
+  btn.addEventListener('click', () => {
+    const more = document.getElementById(btn.getAttribute('aria-controls'));
+    more.hidden = !more.hidden;
+    btn.setAttribute('aria-expanded', String(!more.hidden));
+  });
+}
 
 // the panel folds away to give the preview the whole width
 const themePanel = document.getElementById('theme');

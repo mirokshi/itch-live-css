@@ -68,39 +68,56 @@
 
       <h3>Color</h3>
       <div class="trow"><span>BG</span><span class="hex"><input name="theme_bg_hex" value="#ffffff" maxlength="7" spellcheck="false" aria-label="BG en hex"><input type="color" name="theme_bg" value="#ffffff" aria-label="BG"></span></div>
-      <div class="trow" data-only="project"><span>BG2</span><span class="hex"><input name="theme_bg2_hex" value="#ffffff" maxlength="7" spellcheck="false" aria-label="BG2 en hex"><input type="color" name="theme_bg2" value="#ffffff" aria-label="BG2"></span></div>
-      <div class="trow" data-only="project"><label for="t-bg2a">BG2 Alpha</label><input type="range" id="t-bg2a" name="theme_bg2_alpha" min="0" max="100" value="100"></div>
+      <div class="trow" data-only="project"><span>BG 2</span><span class="hex"><input name="theme_bg2_hex" value="#ffffff" maxlength="7" spellcheck="false" aria-label="BG 2 en hex"><input type="color" name="theme_bg2" value="#ffffff" aria-label="BG 2"></span></div>
       <div class="trow"><span>Text</span><span class="hex"><input name="theme_text_hex" value="#222222" maxlength="7" spellcheck="false" aria-label="Text en hex"><input type="color" name="theme_text" value="#222222" aria-label="Text"></span></div>
       <div class="trow"><span>Link</span><span class="hex"><input name="theme_link_hex" value="#ff2449" maxlength="7" spellcheck="false" aria-label="Link en hex"><input type="color" name="theme_link" value="#ff2449" aria-label="Link"></span></div>
-      <div class="trow" data-only="project"><span>Buttons</span><span class="hex"><input name="theme_buttons_hex" value="#fa5c5c" maxlength="7" spellcheck="false" aria-label="Buttons en hex"><input type="color" name="theme_buttons" value="#fa5c5c" aria-label="Buttons"></span></div>
-      <div class="trow" data-only="project"><span>Headers</span><span class="hex"><input name="theme_headers_hex" value="#222222" maxlength="7" spellcheck="false" aria-label="Headers en hex"><input type="color" name="theme_headers" value="#222222" aria-label="Headers"></span></div>
+      <button type="button" class="more-btn" data-only="project" aria-expanded="false" aria-controls="more-colour">More options...</button>
+      <div id="more-colour" class="more" data-only="project" hidden>
+        <div class="trow"><label for="t-bg2a">BG2 Alpha</label><input type="range" id="t-bg2a" name="theme_bg2_alpha" min="0" max="100" value="100"></div>
+        <div class="trow"><span>Buttons</span><span class="hex"><input name="theme_buttons_hex" value="#fa5c5c" maxlength="7" spellcheck="false" aria-label="Buttons en hex"><input type="color" name="theme_buttons" value="#fa5c5c" aria-label="Buttons"></span></div>
+        <div class="trow"><span>Headers</span><span class="hex"><input name="theme_headers_hex" value="#222222" maxlength="7" spellcheck="false" aria-label="Headers en hex"><input type="color" name="theme_headers" value="#222222" aria-label="Headers"></span></div>
+      </div>
 
       <h3>Text</h3>
       <div class="trow"><label for="t-font">Font</label><select id="t-font" name="theme_font"></select></div>
-      <div class="trow" data-only="project"><label for="t-hfont">Headings</label><select id="t-hfont" name="theme_hfont"></select></div>
       <div class="trow" data-only="profile"><label for="t-size">Size</label><input type="range" id="t-size" name="theme_size" min="80" max="150" step="5" value="100"></div>
       <div class="trow" data-only="project"><label for="t-psize">Size</label><select id="t-psize" name="theme_psize"><option value="small">Small</option><option value="medium">Medium</option><option value="large" selected>Large</option><option value="very_large">Very large</option></select></div>
+      <button type="button" class="more-btn" data-only="project" aria-expanded="false" aria-controls="more-text">More options...</button>
+      <div id="more-text" class="more" data-only="project" hidden>
+        <div class="trow"><label for="t-hfont">Headings</label><select id="t-hfont" name="theme_hfont"></select></div>
+      </div>
+
+      <h3 data-only="project">Layout</h3>
+      <div class="trow" data-only="project"><label for="t-shots">Screenshots</label><select id="t-shots" name="theme_shots"><option value="sidebar" selected>Sidebar</option><option value="hidden">Hidden</option><option value="auto">Auto</option></select></div>
 
       <h3>Images</h3>
-      <div class="trow"><span>Banner</span><label class="itch-btn">Upload<input type="file" name="theme_banner" accept="image/*" class="visually-hidden"></label></div>
-      <div class="trow" data-only="project"><label for="t-balign">Banner align</label><select id="t-balign" name="theme_balign"><option value="left">Left</option><option value="center" selected>Center</option><option value="right">Right</option></select></div>
-      <button type="button" id="banner-clear" class="itch-btn-outline" hidden>Remove banner</button>
+      <!-- profile: an Upload button; game page: an image box with its alignment -->
+      <div class="trow" data-only="profile"><span>Banner</span><label class="itch-btn">Upload<input type="file" name="theme_banner" accept="image/*" class="visually-hidden"></label></div>
+      <button type="button" id="banner-clear" class="itch-btn-outline" data-only="profile" hidden>Remove banner</button>
+      <div class="tcol" data-only="project">
+        <span>Banner</span>
+        <label class="bg-box" id="banner-box"><span class="itch-btn">Upload</span><input type="file" name="theme_banner_p" accept="image/*" class="visually-hidden"></label>
+      </div>
+      <div id="banner-options" data-only="project" hidden>
+        <div class="trow indent"><label for="t-balign">Align</label><select id="t-balign" name="theme_balign"><option value="left">Left</option><option value="center" selected>Center</option><option value="right">Right</option></select></div>
+        <button type="button" id="banner-clear-p" class="itch-btn-outline">Remove image</button>
+      </div>
       <div class="tcol">
         <span>Background</span>
         <label class="bg-box" id="bg-box"><span class="itch-btn">Upload</span><input type="file" name="theme_bg_image" accept="image/*" class="visually-hidden"></label>
       </div>
       <div id="bg-options" hidden>
-        <div class="trow"><label for="t-repeat">Repeat</label><select id="t-repeat" name="theme_repeat"><option value="no-repeat">None</option><option value="repeat" selected>Repeat</option><option value="repeat-x">Repeat X</option></select></div>
-        <div class="trow"><label for="t-align">Align</label><select id="t-align" name="theme_align"><option value="0 0">Left</option><option value="50% 0" selected>Center</option><option value="100% 0">Right</option></select></div>
-        <div class="trow"><label for="t-fixed">Fixed</label><input type="checkbox" id="t-fixed" name="theme_fixed"></div>
+        <!-- repeat modes seen per page type (knowledge base §4.8): profiles repeat-x, projects repeat-y -->
+        <div class="trow indent" data-only="profile"><label for="t-repeat">Repeat</label><select id="t-repeat" name="theme_repeat"><option value="no-repeat">None</option><option value="repeat" selected>Repeat</option><option value="repeat-x">Horizontally</option></select></div>
+        <div class="trow indent" data-only="project"><label for="t-prepeat">Repeat</label><select id="t-prepeat" name="theme_prepeat"><option value="no-repeat">None</option><option value="repeat" selected>Repeat</option><option value="repeat-y">Vertically</option></select></div>
+        <div class="trow indent"><label for="t-align">Align</label><select id="t-align" name="theme_align"><option value="0 0">Left</option><option value="50% 0" selected>Center</option><option value="100% 0">Right</option></select></div>
+        <div class="trow indent"><label for="t-fixed">Fixed</label><input type="checkbox" id="t-fixed" name="theme_fixed"></div>
         <button type="button" id="bg-clear" class="itch-btn-outline">Remove image</button>
       </div>
 
       <h3 data-only="profile">My projects</h3>
       <div class="trow" data-only="profile"><label for="t-layout">Layout</label><select id="t-layout" name="layout"><option value="grid">Grid</option><option value="column">Sidebar</option></select></div>
       <div class="trow" data-only="profile"><label for="t-radius">B. Radius</label><input type="range" id="t-radius" name="theme_radius" min="0" max="30" value="0"></div>
-      <h3 data-only="project">Other</h3>
-      <div class="trow" data-only="project"><label for="t-shots">Screenshots</label><select id="t-shots" name="theme_shots"><option value="sidebar">Sidebar</option><option value="hidden">Hidden</option><option value="auto" selected>Auto</option></select></div>
     </aside>
 
     <div class="stage-main">
