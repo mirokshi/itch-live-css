@@ -16,3 +16,40 @@ export function cssString(s) {
     .join('');
   return `"${body}"`;
 }
+
+// Hand-written CSS → one line: drops comments and the whitespace CSS doesn't need, by the same rules
+// as the owner's old regex minifier (no space next to { } ; , or after :, no ; before }), but strings,
+// unquoted url(...) and \ escapes are copied untouched. The space before : stays (" ::selection").
+export function minify(css) {
+  let out = '';
+  let space = false; // whitespace skipped since the last character written
+  for (let i = 0; i < css.length; ) {
+    const c = css[i];
+    if (c === '/' && css[i + 1] === '*') {
+      const end = css.indexOf('*/', i + 2);
+      i = end < 0 ? css.length : end + 2;
+      continue;
+    }
+    if (/\s/.test(c)) {
+      space = true;
+      i++;
+      continue;
+    }
+    let token = c;
+    if (c === '\\') token = css.slice(i, i + 2);
+    else if (c === '"' || c === "'") {
+      let k = i + 1;
+      while (k < css.length && css[k] !== c && css[k] !== '\n') k += css[k] === '\\' ? 2 : 1;
+      token = css.slice(i, k + 1);
+    } else if ((c === 'u' || c === 'U') && /^url\(\s*[^\s'"]/i.test(css.slice(i, i + 64))) {
+      const end = css.indexOf(')', i);
+      token = css.slice(i, end < 0 ? css.length : end + 1);
+    }
+    if (space && out && !/[{};,:]$/.test(out) && !'{};,'.includes(c)) out += ' ';
+    if (c === '}' && out.endsWith(';')) out = out.slice(0, -1);
+    out += token;
+    i += token.length;
+    space = false;
+  }
+  return out;
+}

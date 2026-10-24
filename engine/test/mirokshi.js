@@ -1,4 +1,7 @@
-// The owner's profile (mirokshi.itch.io), as the private repo's lib/title.js, greeting.js, cards.js and ascii.js have it.
+import { readFileSync } from 'node:fs';
+
+// The owner's profile (mirokshi.itch.io), as the private repo's lib/title.js, greeting.js, cards.js and ascii.js have it:
+// the served part. The pasted part is `pasted`, below.
 export const config = {
   plugins: [
     {
@@ -49,3 +52,9 @@ export const games = [
 
 // what `node bin/cli.js dev test/mirokshi.js` serves with, like the prototype's dev.js --mock
 export const data = { games };
+
+// The pasted part (≤ 5,120 bytes): the owner's own CSS, the private repo's src/main.css at commit 37f461b
+// with the engine's fixes (R16 keyframe names, R18 hover, reduced motion on ::after).
+export const pasted = {
+  plugins: [{ use: 'css', options: { css: readFileSync(new URL('./mirokshi.css', import.meta.url), 'utf8') } }],
+};

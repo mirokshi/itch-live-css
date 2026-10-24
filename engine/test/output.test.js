@@ -1,13 +1,38 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { importLine, measure, paste, render } from '../src/index.js';
-import { config, games, now } from './mirokshi.js';
+import { minify } from '../src/css.js';
+import { importLine, measure, paste, render, validate } from '../src/index.js';
+import { config, games, now, pasted } from './mirokshi.js';
 
 test('paste: the served rules on one line', () => {
   const options = { seed: 4, data: { games }, now };
-  const pasted = paste(config, options);
-  assert.ok(!pasted.includes('\n'));
-  assert.equal(pasted, render(config, options).trimEnd().split('\n').join(''));
+  const css = paste(config, options);
+  assert.ok(!css.includes('\n'));
+  assert.equal(css, render(config, options).trimEnd().split('\n').join(''));
+});
+
+test('minify: drops comments and spare whitespace, never touches strings, url() or escapes', () => {
+  assert.equal(minify('/* a */\r\n#wrapper  .x ,\n#wrapper ::selection { color: red ;\n}\n'), '#wrapper .x,#wrapper ::selection{color:red}');
+  assert.equal(minify('a : b'), 'a :b'); // the space before : stays, as in the old hook (" ::selection")
+  const kept = '#wrapper::before{content:"a  ;  b /* c */";background:url(data:x/y;a,{b})}';
+  assert.equal(minify(kept), kept);
+  assert.equal(minify("#wrapper .custom-w-1\\/2{width:50% !important}"), "#wrapper .custom-w-1\\/2{width:50% !important}");
+  assert.equal(minify('@media (max-width: 650px) {#wrapper{margin:0 auto}}'), '@media (max-width:650px){#wrapper{margin:0 auto}}');
+  assert.equal(minify('  /* only */  '), '');
+});
+
+test('css plugin: the stylesheet minified, where it sits in the config', () => {
+  const css = paste({ plugins: [{ use: 'css', options: { css: '@import url("https://x.test/a.css");\n#wrapper { color: red; }' } }] });
+  assert.equal(css, '@import url("https://x.test/a.css");#wrapper{color:red}');
+  assert.throws(() => paste({ plugins: [{ use: 'css', options: {} }] }), /needs css/);
+});
+
+test('phase 1 exit: the owner profile comes whole from the engine', () => {
+  const pastedCss = paste(pasted);
+  assert.equal(measure(pastedCss, 'profile').fits, true);
+  // the title's gold hover is decorative and the title can't take focus, so it has no focus twin
+  assert.deepEqual(validate(pastedCss, 'profile').map((p) => `${p.rule} ${p.level}`), ['R18 warning']);
+  assert.deepEqual(validate(render(config, { seed: 1, data: { games }, now }), 'profile', { served: true }), []);
 });
 
 test('importLine: https only, nothing that breaks out of the string', () => {

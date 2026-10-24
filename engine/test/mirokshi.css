@@ -1,0 +1,251 @@
+/* ════════════════════════════════════════════════════════════
+   PERFIL itch.io — «Aurora» · tema Medianoche (oscuro)
+   Fondo: assets/fondo-1.jpg (azul profundo con grano: esquinas #050311, media #1b3367,
+   punto más claro #3d6fba). Minimalista · alegre · animado.  Todo va dentro de #wrapper.
+   Antes de publicar, probar: móvil, sin sesión y accesibilidad.
+   En el theme editor de itch.io: BG #0b1433, Text #eef3ff, Link #ffc857 (ver notas).
+   .footer NO se oculta.  Límite de itch.io ≈ 5120 caracteres.
+   Este es el FUENTE: lo que se pega en itch es dist/main.min.css (lo genera el hook al guardar).
+   ════════════════════════════════════════════════════════════ */
+
+/* Fuentes del TÍTULO (MIX, ver test/mix.html): 3 fuentes VARIABLES de Google que
+   comparten el rango wght 400-700 (donde las 3 mutan fluido para el "breathe"):
+   Syne (geométrica), Edu Hand (manuscrita) y Playfair Display (serif itálica).
+   El cuerpo usa la fuente del theme editor; estas 3 del título sí se importan. */
+@import url('https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Hand:wght@400..700&family=Playfair+Display:ital,wght@1,400..900&family=Syne:wght@400..800&display=swap');
+/* CSS que CAMBIA EN CADA VISITA (servicio custom-css/ en Vercel, sin caché): fuentes y grosor que
+   respira del título, saludo que va cambiando de idioma, borde «foil» dorado, cifras y
+   etiquetas de las tarjetas, y campo de caracteres ASCII al fondo (#wrapper::before/::after).
+   Los colores NO cambian: son los de este archivo (--gold, --ink…). Nada de este archivo depende
+   de él: si el servicio cae (o un bloqueador como Brave lo corta), se ve la mezcla fija del
+   título, el texto del marcador del saludo tal cual, las tarjetas con su borde fino y sin cifras,
+   y el fondo sin caracteres. */
+@import url('https://itch-io-custom-css-custom-css.vercel.app/live.css');
+
+/* ── Paleta y tipografía ─────────────────────────────────────── */
+#wrapper{
+  --ink:#eef3ff;   /* ≥4.5:1 incluso sobre el punto más claro del fondo (#3d6fba) */
+  --muted:#a9b9e0;
+  --gold:#ffc857;  /* acento dorado = complementario del azul del fondo (subrayado, hover título, precio, ::selection); igual que el Link del theme editor */
+  --card:rgba(10,18,46,.5);   /* card de "cristal" azul noche: translúcida + backdrop-filter (ver .game_cell). Más opaca = subir el .5 */
+  --line:rgba(170,195,255,.18); --r:18px;   /* borde algo más claro: marca el canto del cristal */
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --disp:"Syne","Segoe UI",system-ui,sans-serif;
+  position:relative; isolation:isolate; min-height:100vh;
+  color:var(--ink); font-family:var(--sans); line-height:1.6;
+  /* La imagen de fondo la pone itch en .user_page_wrap (= este mismo #wrapper:
+     <div class="user_page_wrap" id="wrapper">). ⚠️ NO uses el SHORTHAND 'background'
+     (resetea background-image y, como #wrapper es ID, le gana a .user_page_wrap y
+     la BORRA). Los LONGHAND background-* SÍ valen y NO tocan la imagen: aquí
+     evitamos que se repita (el degradado hacía costuras) y la hacemos cubrir el
+     viewport, fija al hacer scroll. min-height:100vh (arriba) ayuda también. */
+  background-repeat:no-repeat; background-size:cover;
+  background-position:center; background-attachment:fixed;
+}
+
+/* ── Fondo: lo pone itch.io desde su panel (theme editor) en #wrapper (arriba); aquí no se
+   pinta ni se difumina. (Se probó un difuminado suave con #wrapper::before{background:inherit;
+   filter:blur(2px)} —alisaba el grano de la imagen— y se retiró a petición.) */
+
+/* ── Lienzo / ancho del contenido ────────────────────────────── */
+/* 1160px → tarjetas de ~278px en la fila de 4 (con 1040px eran ~248px; se pidieron algo más
+   anchas, 2026-10-16) */
+#wrapper #inner_column,
+#wrapper .inner_column{max-width:1160px; padding:0 22px}
+/* Texto del cuerpo a --ink: el theme editor pinta .user_page con su text_color; lo fijamos
+   a --ink (red de seguridad) para los <h2> (bio, secciones) sobre el fondo oscuro. */
+#wrapper .user_page{color:var(--ink)}
+
+/* entrada suave de los bloques al cargar */
+#wrapper #profile_header,
+#wrapper .user_profile{animation:custom-rise .7s both}
+/* margin-bottom: aire entre la descripción y las tarjetas de juegos (itch solo deja los 10px de
+   margen del <h2>, con el que este se funde → 40px en total; pedido 2026-10-12) */
+#wrapper .user_profile{animation-delay:.1s; margin-bottom:40px}
+@keyframes custom-rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* ── Cabecera: el título visible es el widget .custom-title, un <h1> pegado en la BIO
+   (ver custom-mix.html). El h1 real de itch (#profile_header › .text_header>h1) NO está
+   vacío: lleva tu nombre "Mrksh" y lo oculta la regla .text_header>h1{display:none} de la
+   sección de enlaces. No la quites o "Mrksh" reaparece encima del título. Con él oculto,
+   .custom-title es el único h1 de la página (y lo que leen los lectores de pantalla). */
+/* Título "Mirokshi": MIX tipográfico (cada letra su fuente variable) en ONDA. Las 8 letras
+   forman la palabra, cada una subida/bajada y girada según su punto de una onda senoidal
+   (una longitud de onda completa a lo ancho del nombre). La onda avanza de izquierda a derecha
+   SIEMPRE, sin depender del ratón (también en móvil). Antes solo avanzaba con el puntero en la
+   página (#wrapper:hover → running; paused fuera) y se pidió que fuera constante (2026-10-12).
+   Sustituye a la "pila" (letras amontonadas que se repartían al acercar el ratón, 2026-10-08→12).
+   Cómo: cada letra hace la MISMA animación (sube↔baja con ease-in-out alternate ≈ seno) con un
+   desfase por letra (--i × .4s = 1/8 del periodo de 3.2s). El giro (wr) va 1/4 de periodo por
+   detrás de la altura (wy) → cada letra se inclina con la pendiente de la onda, como un barco.
+   Delays siempre NEGATIVOS (−periodo / −1.75×periodo de base: −3.2s / −5.6s): así, desde el
+   primer fotograma, cada letra ya está en su fase. Para cambiar la velocidad, escala JUNTOS
+   1.6s, .4s, 3.2s y 5.6s. */
+#wrapper .custom-title{
+  color:var(--ink);   /* tinta clara en reposo, sobre el fondo oscuro */
+  font-weight:400;    /* es un <h1> (negrita por defecto) */
+  text-align:center; line-height:1.05; padding:52px 40px 36px;   /* aire arriba/abajo (la onda sube y baja) */
+  margin:0 auto; width:fit-content;
+  font-size:clamp(3rem,10vw,6rem); letter-spacing:.03em;          /* letras algo sueltas */
+  white-space:nowrap;   /* una sola línea */
+  transition:color .6s ease;   /* el dorado se hereda a los span */
+}
+#wrapper .custom-title span{
+  display:inline-block;
+  animation:custom-wy 1.6s ease-in-out infinite alternate,custom-wr 1.6s ease-in-out infinite alternate;
+  animation-delay:calc(var(--i,0)*.4s - 3.2s),calc(var(--i,0)*.4s - 5.6s);
+}
+@keyframes custom-wy{from{translate:0 -.13em}to{translate:0 .13em}}   /* altura: ±.13em */
+@keyframes custom-wr{from{rotate:-7deg}to{rotate:7deg}}               /* inclinación: ±7° */
+/* --i = posición de la letra (la 1ª usa el 0 por defecto). Si cambias el nº de letras,
+   ajusta estas reglas y el .4s (= periodo 3.2s / nº de letras para una onda completa). */
+#wrapper .custom-title :nth-child(2){--i:1}
+#wrapper .custom-title :nth-child(3){--i:2}
+#wrapper .custom-title :nth-child(4){--i:3}
+#wrapper .custom-title :nth-child(5){--i:4}
+#wrapper .custom-title :nth-child(6){--i:5}
+#wrapper .custom-title :nth-child(7){--i:6}
+#wrapper .custom-title :nth-child(8){--i:7}
+/* dorado --gold al pasar por el propio título: ~3.3:1 sobre el punto más claro del fondo y
+   ~8:1 sobre su media → AA para texto grande. */
+/* (hover → bloque @media (hover:hover) tras el subrayado de las cards, R18) */
+#wrapper .custom-fs{font-family:"Syne",var(--disp)}
+#wrapper .custom-fh{font-family:"Edu AU VIC WA NT Hand",cursive; font-size:.85em}
+#wrapper .custom-fp{font-family:"Playfair Display",serif; font-style:italic}
+/* Saludo: <span class="custom-hello">Hi!</span> donde se quiera de la bio (ver bio/custom-hello.html).
+   Nota manuscrita en dorado (--gold), algo girada. El servicio custom-css/ la convierte en un
+   rodillo que va pasando por saludos en otros idiomas; sin él se ve el texto del marcador quieto,
+   con este estilo. */
+#wrapper .custom-hello{
+  display:inline-block; font:400 1.2em/1 "Edu AU VIC WA NT Hand",cursive;
+  color:var(--gold); rotate:-6deg; margin-right:.1em;
+}
+/* (Regla #profile_header img —fallback de banner-imagen— retirada para ahorrar
+   caracteres; usas nombre de texto. Re-añadir si algún día subes un banner.) */
+
+/* ── Enlaces / redes: la píldora envuelve TODO el grupo ─────────
+   itch envuelve cada red en <span class="link_group"> con el icono SVG
+   y el <a> dentro. Antes la píldora era solo el <a> (el icono quedaba
+   fuera de la cápsula); ahora estilamos .link_group → icono + texto
+   comparten la misma píldora como una sola cápsula. Hover/foco: realce simple (fondo + borde).        */
+#wrapper .text_header>h1,#wrapper .user_links{display:none!important}   /* oculta el h1 real "Mrksh" (el título es el .custom-title de la bio; ver Cabecera) y el widget de enlaces sociales (a petición). */
+/* (Las píldoras de enlaces .link_group se retiraron: el widget .user_links queda
+   oculto. Si vuelves a mostrar los enlaces, dímelo y restauro su estilo.) */
+
+/* ── Rejilla de juegos: GRID uniforme (mismo ancho y alto) ───────
+   itch da a cada celda el ancho de SU miniatura, y las portadas miden
+   distinto → quedaba descuadrado. Forzamos columnas iguales y
+   normalizamos cada miniatura a una proporción fija con object-fit:cover.
+   ¿Más/menos tarjetas por fila? cambia el 340px de minmax(). */
+#wrapper .game_grid_widget,
+#wrapper .user_game_grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);   /* una fila de 4 en escritorio */
+  grid-auto-rows:1fr;     /* todas las filas con la MISMA altura → cards simétricas ENTRE filas */
+  align-items:stretch;    /* ⚠️ itch fuerza align-items:start en .game_grid_widget (NO vale fiarse del default); con stretch cada card llena el alto de su fila → iguales DENTRO de la fila */
+  gap:16px;
+  /* (sin perspective: el antiguo giro rotateY usaba UNA perspectiva para toda la rejilla, con el
+     punto de fuga en su centro → las cards de los extremos se veían como un trapecio deformado) */
+}
+/* Se adapta para que no se aplaste en pantallas pequeñas: 4 → 2 → 1 */
+@media (max-width:960px){
+  #wrapper .game_grid_widget,
+  #wrapper .user_game_grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:520px){
+  #wrapper .game_grid_widget,
+  #wrapper .user_game_grid{grid-template-columns:1fr}
+}
+
+#wrapper .game_cell{
+  width:auto!important; min-width:0; max-width:none; margin:0;  /* llena la columna, no la imagen */
+  position:relative;
+  display:flex; flex-direction:column;   /* miniatura arriba, datos abajo */
+  background:var(--card); border-radius:var(--r);
+  /* cristal esmerilado: desenfoca el fondo que asoma tras la card (sin grano detrás del texto → se lee
+     mejor) y aviva un poco su azul. Sin soporte, la card queda translúcida sin desenfoque (legible igual). */
+  backdrop-filter:blur(12px) saturate(1.4);
+  padding:12px; border:1px solid var(--line);
+  box-shadow:0 10px 24px -12px rgba(0,0,0,.6);   /* sombra negra: sobre fondo oscuro una azulada no se ve */
+  /* TRANSICIÓN (no @keyframes): si el ratón solo pasa por encima no se corta a medias, vuelve suave.
+     El back-easing sobrepasa el destino → pequeño rebote al despegarse y al volver. */
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .35s ease,border-color .35s;
+}
+#wrapper .game_cell .game_cell_data{flex:1 0 auto}  /* los datos rellenan el alto sobrante */
+/* hover "pegatina": la card se despega 4px hacia arriba-izquierda y flota sobre un halo azul
+   claro desenfocado (la luz del fondo), desplazado abajo-derecha (2ª sombra). Bordes difuminados:
+   un border no se puede desenfocar, así que la línea se aclara (azul claro al 35%) y un brillo
+   suave pegado al contorno (1ª sombra, 0 0 8px) la emborrona. Plano, sin 3D → la card no se
+   deforma. z-index:2 deja el halo por encima de las vecinas. El dorado queda para el texto. */
+/* (hover → bloque @media (hover:hover) tras el subrayado de las cards, R18) */
+/* (El "foco" —al pasar por una card, las demás se desenfocan: .game_grid_widget:has(.game_cell:hover)
+   .game_cell:not(:hover){filter:blur(3px);opacity:.7}— se probó y se descartó a petición, 2026-10-12.) */
+/* Miniatura uniforme: misma proporción para todas (portadas itch = 630×500).
+   !important por si itch fija el tamaño en el atributo style de la imagen. */
+#wrapper .game_thumb{
+  width:100%!important; height:auto!important; aspect-ratio:63/50;
+  overflow:hidden; border-radius:12px;
+  background-size:cover!important; background-position:center!important;  /* por si es background-image */
+}
+#wrapper .game_thumb img{
+  width:100%!important; height:100%!important; object-fit:cover;
+  display:block;
+}
+#wrapper .game_title{padding-bottom:5px}   /* aire bajo la fila del título; el subrayado va en el <a>, así queda pegado al texto */
+#wrapper .game_title a{
+  font-weight:700; color:var(--ink); text-decoration:none; transition:color .3s;
+  position:relative; display:inline-block; max-width:100%;   /* ancla el subrayado animado del hover; max-width evita desbordes con títulos largos */
+}
+/* (hover → bloque @media (hover:hover) tras el subrayado de las cards, R18) */
+/* subrayado animado al pasar por la card: se dibuja de izquierda a derecha (scaleX 0→1)
+   y se repliega al salir. Es una TRANSICIÓN (no @keyframes) → en prefers-reduced-motion
+   la regla de accesibilidad la vuelve instantánea (el subrayado aparece sin dibujarse). */
+#wrapper .game_title a::before{
+  content:""; position:absolute; left:0; bottom:-2px; width:100%; height:2px;
+  background:var(--gold); border-radius:2px;
+  transform:scaleX(0); transform-origin:left; transition:transform .35s ease;
+}
+/* ── Hover (R18, motor itch-live-css 2026-10-24) ───────────────
+   Solo donde hay ratón: en pantallas táctiles el toque dejaba el hover pegado. Las cards llevan
+   su gemelo de teclado (:focus-within, al tabular a su enlace) en el mismo bloque, para no pasar
+   del tope del perfil; quien navega con teclado casi siempre tiene ratón. El título no se puede
+   enfocar: su dorado es decorativo y se queda sin gemelo. */
+@media (hover:hover){
+  #wrapper .custom-title:hover{color:var(--gold)}
+  #wrapper .game_cell:hover,#wrapper .game_cell:focus-within{
+    transform:translate(-4px,-4px);
+    z-index:2;
+    box-shadow:0 0 8px 1px rgba(110,160,255,.45),8px 10px 24px -6px rgba(80,130,255,.5);
+    border-color:rgba(140,180,255,.35);
+  }
+  #wrapper .game_cell:hover .game_title a,#wrapper .game_cell:focus-within .game_title a{color:var(--gold)}
+  #wrapper .game_cell:hover .game_title a::before,#wrapper .game_cell:focus-within .game_title a::before{transform:scaleX(1)}
+}
+#wrapper .price_value{color:var(--gold); font-weight:700}
+
+/* Sin aparición escalonada en las cards: un `animation:rise` sobre la propia .game_cell
+   re-disparaba el fade-in al sacar el ratón. El hover "pegatina" es la única animación de la
+   card → queda limpio. (El título y la bio conservan su entrada `rise`.) */
+
+/* ── Detalles alegres ────────────────────────────────────────── */
+#wrapper ::selection{background:var(--gold); color:#0b1433}
+
+/* ── Footer: se mantiene visible (obligatorio) ───────────────── */
+#wrapper .footer{margin-top:48px}
+#wrapper .footer a{color:var(--muted)}
+
+/* ── Ajustes móvil ───────────────────────────────────────────── */
+@media (max-width:650px){
+  #wrapper #profile_header{font-size:clamp(2rem,9vw,3rem); padding:32px 0 6px}
+  #wrapper #inner_column,#wrapper .inner_column{padding:0 16px}
+}
+
+/* ── Accesibilidad: respeta «reducir movimiento» ─────────────── */
+@media (prefers-reduced-motion:reduce){
+  #wrapper *,#wrapper *::before,#wrapper *::after{
+    animation:none!important; transition-duration:.01ms!important; transition-delay:0s!important
+  }
+  /* sin movimiento: la card no se despega; se quedan el brillo y el halo azul (no son movimiento) */
+  #wrapper .game_cell{transform:none!important}
+  /* el título: el animation:none de arriba quita la onda → palabra recta y quieta */
+}

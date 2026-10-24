@@ -75,7 +75,7 @@ No se publica como paquete npm (decidido 2026-10-24): es una carpeta del repo qu
 - **Mapa de páginas** (perfil, proyecto, devlog, jam): selectores, dónde van las variables, colores literales, puntos de corte. Datos sacados de §3 y §4.
 - **Plugins con esquema de opciones**: el mismo esquema genera el formulario del configurador y las herramientas de la IA.
 - **Validador** con una regla por cada R de la base de conocimiento, más H8 y H11.
-- **Dos salidas**: *pegada* (minificada con esbuild, medida en caracteres y bytes, saltos de línea de proyecto contados) y *servida* (`@import`).
+- **Dos salidas**: *pegada* (minificada con un minificador propio, sin dependencias, medida en caracteres y bytes, saltos de línea de proyecto contados) y *servida* (`@import`).
 - Primeros plugins: tus efectos actuales (mezcla de letras, rodillo de saludos, tarjetas «pegatina» con cifras y etiquetas de la API de itch), más color de acento, fuentes, tarjetas, fondo con propiedades sueltas (B3), capa decorativa (B4), B1 y B2. El cielo de estrellas se retiró de tu perfil el 2026-10-16; como plugin genérico para otros sigue siendo posible.
 - CLI: `dev` (servidor local) y `measure`.
 - Tests: instantáneas con semilla, más las páginas de `knowledge/tests/` como suite de regresión.

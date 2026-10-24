@@ -45,7 +45,8 @@ knowledge/
   method/                    how the knowledge base was built: research-workflow.js and finish-workflow.js
                              (Claude Code Workflow scripts, parameterised by args), open-questions.json (237 questions)
 engine/                      phase 1, started 2026-10-24: render() (served) and paste() (pasted) from a config, seeded rng,
-                             plugins/ (title, greeting, cards, ascii: the owner's 4 effects, ported 1:1 from the private repo),
+                             plugins/ (title, greeting, cards, ascii: the owner's 4 effects, ported 1:1 from the private repo;
+                             css: hand-written CSS through minify() in src/css.js), test/mirokshi.js + .css = the owner's profile,
                              importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R4, R7–R12, R14–R16, R18, R23 so far),
                              CLI bin/cli.js measure|validate|dev (dev: preview_start {name:"engine-dev"}, 3000); tests: cd engine && npm test
 web/                         the Vercel web app, deployed 2026-10-24: public/ (form, CodeMirror 5 editors from cdnjs,
