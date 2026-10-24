@@ -3,13 +3,13 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { cssString } from '../src/css.js';
 import { render } from '../src/index.js';
-import { config } from './mirokshi.js';
+import { config, games, now } from './mirokshi.js';
 
 // UPDATE_SNAPSHOTS=1 npm test rewrites the snapshot after an intended change.
 const SNAP = new URL('./mirokshi.snap.css', import.meta.url);
 
 test('owner profile: snapshot for a fixed seed', () => {
-  const css = render(config, { seed: 'snapshot' });
+  const css = render(config, { seed: 'snapshot', data: { games }, now });
   if (process.env.UPDATE_SNAPSHOTS) writeFileSync(SNAP, css);
   assert.equal(css, readFileSync(SNAP, 'utf8'));
 });
@@ -63,4 +63,18 @@ test('ascii: every text row is 100 characters wide, in every layer', () => {
   const rows = [...css.matchAll(/%3Ctext [^%]*%3E([^%]*)%3C\/text%3E/g)].map((m) => m[1]);
   assert.equal(rows.length, 3 * 32); // field (2 layers) + wave
   for (const row of rows) assert.equal(row.length, 100);
+});
+
+test('cards: figures, labels and id check', () => {
+  const cards = (g) => render({ plugins: [{ use: 'cards' }] }, { seed: 1, data: { games: g }, now });
+  const css = cards(games);
+  const rule = (id, part) => css.split('\n').find((l) => l.startsWith(`#wrapper .game_cell[data-game_id="${id}"] .${part}`));
+  assert.match(rule(2660825, 'game_cell_data'), /"1\.8k views"/); // no downloads, so none shown
+  assert.match(rule(1862929, 'game_cell_data'), /"920 views, 312 downloads"/);
+  assert.match(rule(2660825, 'game_thumb'), /"Most viewed"/);
+  assert.equal(rule(1862929, 'game_thumb'), undefined); // old and not the top one
+  assert.match(rule(2540459, 'game_thumb'), /"New"/);
+  assert.doesNotMatch(cards([games[0]]), /Most viewed/); // a single game is not "most" anything
+  assert.doesNotMatch(cards([]), /data-game_id/); // no data: foil only
+  assert.throws(() => cards([{ ...games[0], id: '1"]{}*{color:red' }]), /integer id/);
 });
