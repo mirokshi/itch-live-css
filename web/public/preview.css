@@ -29,3 +29,17 @@ body { margin: 0; color: #222; font-family: Lato, system-ui, sans-serif; font-si
   .columns { flex-direction: column; gap: 0; }
   .profile_column { flex-basis: auto; }
 }
+
+/* "Sidebar" in the theme editor (.mode_column), from knowledge/sections/04: the profile column
+   takes the width, games go in one 315px column 40px to its right, both sticky at top:10px; at
+   ≤800px the columns stack and the games become a horizontal strip. */
+.mode_column .columns { gap: 0; min-height: 400px; align-items: flex-start; }
+.mode_column .profile_column { flex: 1; position: sticky; top: 10px; }
+.mode_column .game_column { flex: 0 0 315px; margin-left: 40px; position: sticky; top: 10px; }
+.mode_column .user_game_grid { grid-template-columns: 315px; }
+@media (max-width: 800px) {
+  .mode_column .columns { flex-direction: column; }
+  .mode_column .profile_column, .mode_column .game_column { position: static; flex: none; width: 100%; margin-left: 0; }
+  .mode_column .user_game_grid { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 8px; }
+  .mode_column .user_game_grid .game_cell { flex: 0 0 250px; }
+}

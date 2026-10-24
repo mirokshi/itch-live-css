@@ -9,39 +9,18 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main>
-  <form id="form" autocomplete="off">
-    <h1>itch-live-css</h1>
-    <p class="lead">Crea el CSS de tu perfil de itch.io, míralo en vivo y llévate el link.</p>
-
-    <label class="row">Color de acento <input type="color" name="accent" value="#d6336c"></label>
-
-    <fieldset>
-      <legend><label><input type="checkbox" name="title_on" checked> Título de letras mezcladas</label></legend>
-      <label>Texto <input name="title_text" maxlength="24" value="Tu nombre"></label>
-      <p class="hint">Fuentes (2 a 4):</p>
-      <div id="fonts" class="checks"></div>
-    </fieldset>
-
-    <fieldset>
-      <legend><label><input type="checkbox" name="greeting_on" checked> Saludo que cambia de idioma</label></legend>
-      <label>Primer saludo <input name="greeting_first" maxlength="40" value="¡Hola!"></label>
-      <label>Los demás, uno por línea <textarea name="greeting_others" rows="5">Hello!
-Bonjour !
-Hallo!
-Olá!
-Ciao!</textarea></label>
-    </fieldset>
-
-    <fieldset>
-      <legend>Efectos</legend>
-      <label><input type="checkbox" name="cards" checked> Tarjetas de juegos con borde foil</label>
-      <label><input type="checkbox" name="ascii"> Campo de caracteres ASCII al fondo</label>
-    </fieldset>
+<!-- One form for the three areas (editor, preview, ideas), so FormData reads every field. -->
+<form id="form" class="app" autocomplete="off">
+  <section class="panel">
+    <div class="top">
+      <h1>itch-live-css</h1>
+      <button type="button" id="ideas-toggle" class="ghost" aria-controls="ideas" aria-expanded="false">Ideas</button>
+    </div>
+    <p class="lead">Escribe el CSS de tu perfil de itch.io, míralo en vivo y llévate un link que no hay que volver a pegar.</p>
 
     <fieldset class="editor">
       <legend>Tu CSS</legend>
-      <p class="hint">Va dentro del link, detrás de los efectos: no hace falta pegarlo en itch.</p>
+      <p class="hint">Va dentro del link: no hace falta pegarlo en itch.</p>
       <textarea name="css" id="css" rows="10" spellcheck="false"></textarea>
     </fieldset>
 
@@ -59,21 +38,79 @@ Ciao!</textarea></label>
       <p class="hint">Pon esta línea <strong>al principio</strong> del CSS de tu perfil en itch:</p>
       <div class="copy"><input id="out-link" readonly><button type="button" data-copy="out-link">Copiar</button></div>
       <div id="bio-box">
-        <p class="hint">El título y el saludo necesitan este HTML en tu bio:</p>
+        <p class="hint">Las ideas de título y saludo necesitan este HTML en tu bio:</p>
         <div class="copy"><textarea id="out-bio" rows="3" readonly></textarea><button type="button" data-copy="out-bio">Copiar</button></div>
       </div>
       <p class="hint">Guarda este enlace de edición: es la única forma de cambiar tu CSS. No lo compartas.</p>
       <div class="copy"><input id="out-edit" readonly><button type="button" data-copy="out-edit">Copiar</button></div>
       <p class="hint">Cuando cambies algo y vuelvas a guardar, itch lo mostrará sin pegar nada de nuevo.</p>
     </section>
-  </form>
+  </section>
 
   <div class="stage">
+    <!-- What itch's theme editor sets on the page. Only changes the mock, never the served CSS;
+         the image stays in this browser. -->
+    <div class="stage-bar">
+      <span class="bar-title">Tema de itch (solo vista previa):</span>
+      <fieldset>
+        <legend>Diseño</legend>
+        <label><input type="radio" name="layout" value="grid" checked> Grid</label>
+        <label><input type="radio" name="layout" value="column"> Sidebar</label>
+      </fieldset>
+      <label>Fondo <input type="color" name="theme_bg" value="#ffffff"></label>
+      <label class="file-btn">Imagen de fondo…<input type="file" name="theme_bg_image" accept="image/*" class="visually-hidden"></label>
+      <select name="theme_bg_mode" aria-label="Cómo se pinta la imagen de fondo" hidden>
+        <option value="repeat">Mosaico</option>
+        <option value="cover">Cubrir</option>
+      </select>
+      <button type="button" id="bg-clear" class="ghost small" hidden>Quitar imagen</button>
+      <label>Texto <input type="color" name="theme_text" value="#222222"></label>
+      <label>Enlaces <input type="color" name="theme_link" value="#ff2449"></label>
+    </div>
     <!-- no allow-scripts: nothing pasted into the preview can run; allow-same-origin lets this page fill it -->
     <iframe id="preview" src="preview.html" title="Vista previa del perfil" sandbox="allow-same-origin"></iframe>
     <div class="loading" aria-hidden="true"><span class="spinner"></span> Generando la vista previa…</div>
   </div>
-</main>
+
+  <aside id="ideas" class="panel" hidden>
+    <div class="top">
+      <h2>Ideas</h2>
+      <button type="button" id="ideas-close" class="ghost" aria-label="Cerrar las ideas">✕</button>
+    </div>
+    <p class="hint">Efectos opcionales que cambian en cada visita. Se suman a tu CSS dentro del link.</p>
+
+    <label class="row">Color de acento <input type="color" name="accent" value="#d6336c"></label>
+
+    <fieldset>
+      <legend><label><input type="checkbox" name="title_on"> Título de letras mezcladas</label></legend>
+      <p class="hint">Cada letra con una fuente distinta, y el grosor «respira».</p>
+      <label>Texto <input name="title_text" maxlength="24" value="Tu nombre"></label>
+      <p class="hint">Fuentes (2 a 4):</p>
+      <div id="fonts" class="checks"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend><label><input type="checkbox" name="greeting_on"> Saludo que cambia de idioma</label></legend>
+      <p class="hint">Un saludo de la bio que va rodando por otros idiomas.</p>
+      <label>Primer saludo <input name="greeting_first" maxlength="40" value="¡Hola!"></label>
+      <label>Los demás, uno por línea <textarea name="greeting_others" rows="5">Hello!
+Bonjour !
+Hallo!
+Olá!
+Ciao!</textarea></label>
+    </fieldset>
+
+    <fieldset>
+      <legend><label><input type="checkbox" name="cards"> Tarjetas con borde foil</label></legend>
+      <p class="hint">Un brillo dorado que recorre el borde de cada juego.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend><label><input type="checkbox" name="ascii"> Fondo de caracteres ASCII</label></legend>
+      <p class="hint">Un campo de letras al fondo con ondas que lo reescriben.</p>
+    </fieldset>
+  </aside>
+</form>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>

@@ -4,12 +4,33 @@ const form = document.getElementById('form');
 const frame = document.getElementById('preview');
 const stage = document.querySelector('.stage');
 const status = document.getElementById('status');
-const DEFAULT_FONTS = ['fraunces', 'inter', 'grotesk'];
+const DEFAULT_FONTS = ['fraunces', 'inter', 'grotesk']; // pre-ticked for when the title idea is turned on
 const SAMPLE_BIO = '<p>Hago juegos pequeños. Este es un perfil de ejemplo.</p>';
 
 document.getElementById('fonts').innerHTML = Object.entries(FONTS)
   .map(([k, f]) => `<label><input type="checkbox" name="title_font" value="${k}"${DEFAULT_FONTS.includes(k) ? ' checked' : ''}> ${f.name}</label>`)
   .join('');
+
+// The ideas panel (the optional effects): opened from the "Ideas" button, which counts the ones on
+// so they aren't forgotten while the panel is closed.
+const ideas = document.getElementById('ideas');
+const toggle = document.getElementById('ideas-toggle');
+function showIdeas(open) {
+  ideas.hidden = !open;
+  form.classList.toggle('ideas-open', open);
+  toggle.setAttribute('aria-expanded', String(open));
+  if (open) ideas.scrollIntoView({ block: 'start' }); // on phones the panel sits below the preview
+}
+toggle.addEventListener('click', () => showIdeas(ideas.hidden));
+document.getElementById('ideas-close').addEventListener('click', () => {
+  showIdeas(false);
+  toggle.focus();
+});
+function countIdeas() {
+  const f = readForm();
+  const on = [f.title, f.greeting, f.cards, f.ascii].filter(Boolean).length;
+  toggle.textContent = on ? `Ideas (${on})` : 'Ideas';
+}
 
 // Code editors over the two textareas (CodeMirror 5, loaded from cdnjs in index.html).
 const dark = matchMedia('(prefers-color-scheme: dark)');
@@ -93,7 +114,56 @@ function itchSanitize(html) {
 const doc = () => frame.contentDocument;
 let effectsBio = '';
 
+// What itch's theme editor sets (knowledge base §3, §4), into the mock only:
+// · layout: exactly one of .mode_grid / .mode_column on .user_page;
+// · background on #wrapper; text colour on .user_page, which game cards dim to 75 % and 50 %;
+//   link colour on links (a literal colour, not only --itchio_link_color).
+// All values come from colour inputs (#rrggbb) or a data: URL read here, so they're safe in CSS.
+let bgImage = '';
+function applyTheme() {
+  const el = form.elements;
+  const column = el.layout.value === 'column';
+  const page = doc().querySelector('.user_page');
+  page.classList.toggle('mode_grid', !column);
+  page.classList.toggle('mode_column', column);
+
+  const text = el.theme_text.value;
+  const link = el.theme_link.value;
+  const image = !bgImage
+    ? ''
+    : `background-image:url("${bgImage}");` +
+      (el.theme_bg_mode.value === 'cover' ? 'background-size:cover;background-position:center;background-attachment:fixed' : 'background-repeat:repeat');
+  doc().getElementById('user_theme').textContent = [
+    `#wrapper{background-color:${el.theme_bg.value};${image}}`,
+    `.user_page{color:${text};--itchio_link_color:${link}}`,
+    `.user_page a,.footer a{color:${link}}`,
+    `.game_title a{color:${text}}`,
+    `.game_text{color:color-mix(in srgb,${text} 75%,transparent)}`,
+    `.game_genre{color:color-mix(in srgb,${text} 50%,transparent)}`,
+  ].join('');
+}
+
+const bgFile = form.elements.theme_bg_image;
+const bgClear = document.getElementById('bg-clear');
+function setBgImage(url) {
+  bgImage = url;
+  bgClear.hidden = form.elements.theme_bg_mode.hidden = !url;
+  applyTheme();
+}
+bgFile.addEventListener('change', () => {
+  const file = bgFile.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => setBgImage(reader.result);
+  reader.readAsDataURL(file);
+});
+bgClear.addEventListener('click', () => {
+  bgFile.value = '';
+  setBgImage('');
+});
+
 function applyUser() {
+  applyTheme();
   const { css, html } = readForm();
   doc().getElementById('custom_css').textContent = css;
   doc().getElementById('bio').innerHTML = html.trim() ? itchSanitize(html) : effectsBio + SAMPLE_BIO;
@@ -103,6 +173,7 @@ let timer;
 let generation = 0;
 function refreshEffects() {
   clearTimeout(timer);
+  countIdeas();
   stage.classList.add('is-loading');
   timer = setTimeout(async () => {
     const mine = ++generation;
@@ -135,8 +206,14 @@ function showResult({ bio, link }) {
   document.getElementById('result').hidden = false;
 }
 
-// the editors' own hidden inputs also fire "input": they only touch the user's CSS and HTML
-form.addEventListener('input', (e) => e.target.closest('.CodeMirror') || refreshEffects());
+// the editors' own hidden inputs also fire "input" (they only touch the user's CSS and HTML), and
+// the theme controls only touch the mock (the image file is read on "change", above)
+form.addEventListener('input', (e) => {
+  if (e.target.closest('.CodeMirror')) return;
+  if (e.target.name === 'layout' || e.target.name.startsWith('theme_')) {
+    if (e.target.type !== 'file') applyTheme();
+  } else refreshEffects();
+});
 cssEditor.on('change', refreshUser);
 htmlEditor.on('change', refreshUser);
 
