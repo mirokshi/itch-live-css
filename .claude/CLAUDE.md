@@ -53,7 +53,9 @@ web/                         the Vercel web app, deployed 2026-10-24: public/ (f
                              a page-type switch profile | project | devlog saved with the config, default-theme mocks
                              preview.html / preview-project.html / preview-devlog.html in a script-less sandboxed
                              iframe, an itch-like theme panel per page type), api/ (preview,
-                             configs with secret edit key, css = /c/<id>.css = effects + the user's own CSS,
+                             configs with secret edit key, css = /c/<id>.css = effects + the user's own CSS (config from memory via
+                             store.getCached: re-read once a minute, last copy if Upstash fails; the config in ITCH_OWNER_ID
+                             also gets itch's game data, lib/itch.js with ITCH_API_KEY),
                              validate = engine validate() on the editor's CSS + rule titles read from §0,
                              showcase = opt-in list, approved by the owner on admin.html with the ADMIN_KEY env var);
                              other pages: ideas.html (effect gallery, "use" → /?idea=<key>), showcase.html,

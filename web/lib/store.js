@@ -61,7 +61,28 @@ const { read, write } =
     : fileStore();
 
 export const get = (id) => read(`config:${id}`);
-export const set = (id, value) => write(`config:${id}`, value);
+export async function set(id, value) {
+  await write(`config:${id}`, value);
+  memory.set(id, { value, at: Date.now() });
+}
+
+// For /c/<id>.css: a config from memory, read again at most once a minute per instance, and the
+// last copy when the store fails (a hanging @import blanks the page, knowledge base §8). A save on
+// this instance refreshes it at once; on other instances an edit shows within the minute.
+const TTL = 60 * 1000;
+const memory = new Map(); // id → { value, at }; only configs that exist, so made-up ids can't fill it
+export async function getCached(id) {
+  const kept = memory.get(id);
+  if (kept && Date.now() - kept.at < TTL) return kept.value;
+  try {
+    const value = await get(id);
+    if (value) memory.set(id, { value, at: Date.now() });
+    return value;
+  } catch (err) {
+    if (kept) return kept.value;
+    throw err;
+  }
+}
 // shortcut: one list read and written whole (no locking); fine for a hand-moderated list of a few
 // hundred entries, move to a Redis hash if it grows or saves collide
 export const getShowcase = async () => (await read('meta:showcase')) ?? [];

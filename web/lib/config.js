@@ -80,7 +80,7 @@ export function check(f) {
 }
 
 // Clean form → the engine's plugin list.
-function pluginList({ title, greeting, cards, ascii }) {
+export function pluginList({ title, greeting, cards, ascii }) {
   const plugins = [];
   if (title) {
     // fonts cycle along the letters, so no font fills more than half the bag (the engine's rule)
