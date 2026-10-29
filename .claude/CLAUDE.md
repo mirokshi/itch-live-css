@@ -55,14 +55,16 @@ web/                         the Vercel web app, deployed 2026-10-24: public/ (f
                              iframe, an itch-like theme panel per page type), api/ (preview,
                              configs with secret edit key, css = /c/<id>.css = effects + the user's own CSS (config from memory via
                              store.getCached: re-read once a minute, last copy if Upstash fails; the config in ITCH_OWNER_ID
-                             also gets itch's game data, lib/itch.js with ITCH_API_KEY),
+                             also gets itch's game data, lib/itch.js with ITCH_API_KEY; Google Fonts @imports inlined as
+                             @font-face by lib/googlefonts.js; env PAUSED=1 stops serving and saving, BLOCKED_IDS=a,b stops ids),
                              validate = engine validate() on the editor's CSS + rule titles read from §0,
                              showcase = opt-in list, approved by the owner on admin.html with the ADMIN_KEY env var);
-                             other pages: ideas.html (effect gallery, "use" → /?idea=<key>), showcase.html,
+                             other pages: ideas.html (effect gallery, "use" → /?idea=<key>), showcase.html, privacy.html,
                              docs.html (ES + EN summary of R1–R24, kept by hand in step with the knowledge base); the
                              export is the @import line only (no pasted fallback, owner's call), lib/store.js = Upstash
                              Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a local JSON
                              file (web/.data/, git-ignored); dev server: preview_start {name:"web"} (3001); tests: cd web && npm test
+.github/workflows/watch.yml  hourly check of the owner's /c/SovP42id.css (200, text/css, < 3 s, effects + itch data + own CSS)
 .claude/launch.json          preview servers: knowledge-tests (8090), knowledge-tests-xorigin (8091), web (3001) and engine-dev (3000)
 ```
 

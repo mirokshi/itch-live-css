@@ -95,7 +95,7 @@ export function pluginList({ title, greeting, cards, ascii }) {
 
 // The @charset/@import statements at the start of the user's CSS: they only work at the top of a
 // stylesheet, so they move above the effects. Quoted parts may hold ";".
-const LEADING = /^(?:\s+|\/\*[\s\S]*?\*\/|@(?:charset|import)\b(?:"[^"]*"|'[^']*'|[^;"'])*;)*/;
+export const LEADING = /^(?:\s+|\/\*[\s\S]*?\*\/|@(?:charset|import)\b(?:"[^"]*"|'[^']*'|[^;"'])*;)*/;
 
 // Clean form → served CSS. opts go to render(): { seed, data: { games }, now }.
 export function build(form, opts) {
@@ -106,9 +106,9 @@ export function build(form, opts) {
     head.push(`@import url("https://fonts.googleapis.com/css2?${form.title.fonts.map((k) => `family=${FONTS[k].google}`).join('&')}&display=swap");`);
   }
   if (lead.trim()) head.push(lead.trim());
-  // Variables the plugins read, set for itch's default light theme. On :root, so the user's own
-  // CSS (later in this sheet) or pasted CSS can change them.
-  head.push(`:root{--gold:${form.accent};--ink:#222;--line:rgba(0,0,0,.08);--sans:system-ui,sans-serif}`);
+  // Variables the plugins read, set for itch's default light theme. On #wrapper, not :root (R3), so
+  // the user's own CSS (later in this sheet) or pasted CSS can change them with #wrapper{…}.
+  head.push(`#wrapper{--gold:${form.accent};--ink:#222;--line:rgba(0,0,0,.08);--sans:system-ui,sans-serif}`);
   // the foil ring is positioned against the card
   if (form.cards) head.push('#wrapper .game_cell{position:relative}');
   const rest = form.css.slice(lead.length).trim();

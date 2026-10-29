@@ -56,7 +56,7 @@ test('build: the user CSS goes last, its leading @imports go to the top', () => 
   const lines = out.split('\n');
   assert.match(lines[0], /fonts\.googleapis/);
   assert.deepEqual(lines.slice(1, 3), ['/* mine */', '@import url("https://fonts.example/a;b.css");']);
-  assert.match(lines[3], /^:root\{/);
+  assert.match(lines[3], /^#wrapper\{--gold:/); // R3: never :root
   assert.ok(out.endsWith('#wrapper .user_page{color:red}\n'));
   assert.ok(out.indexOf('custom-foil') < out.indexOf('color:red'));
   assert.ok(build(check(form), { seed: 1 }).endsWith('}\n')); // no css: nothing appended

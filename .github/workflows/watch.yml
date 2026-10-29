@@ -1,0 +1,26 @@
+# Watches the CSS the owner's profile imports (phase 2 exit: two weeks without incidents). A failed
+# run emails the owner: GitHub notifies whoever last edited a scheduled workflow.
+name: watch
+
+on:
+  schedule:
+    - cron: '17 * * * *' # hourly: the repo is private, with 2,000 free Actions minutes a month
+  workflow_dispatch:
+
+jobs:
+  profile-css:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: The profile's CSS answers in under 3 s, as CSS, with the effects, itch's data and the owner's CSS
+        env:
+          URL: https://itch-live-css-web.vercel.app/c/SovP42id.css
+        run: |
+          IFS='|' read -r status time type <<< "$(curl -sS -m 10 -o served.css -w '%{http_code}|%{time_total}|%{content_type}' "$URL")"
+          echo "HTTP $status, $type, $time s, $(wc -c < served.css) bytes"
+          test "$status" = 200
+          [[ "$type" == text/css* ]]
+          awk -v t="$time" 'BEGIN { exit !(t < 3) }'
+          grep -q 'custom-breath' served.css # the effects
+          grep -q 'data-game_id' served.css  # itch's data for the cards
+          grep -q -e '--card:' served.css    # the owner's own CSS

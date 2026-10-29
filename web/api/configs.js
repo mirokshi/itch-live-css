@@ -28,8 +28,12 @@ async function owned(request) {
   return { id, rec };
 }
 
+// PAUSED=1 (Vercel env var, see api/css.js) also stops saving
+const paused = () => process.env.PAUSED && json({ error: 'saving is paused for now' }, 503);
+
 export const POST = (request) =>
   handle(async () => {
+    if (paused()) return paused();
     const form = check(await readJson(request));
     let id;
     do id = randomBytes(6).toString('base64url'); while (await store.get(id));
@@ -45,6 +49,7 @@ export async function GET(request) {
 
 export const PUT = (request) =>
   handle(async () => {
+    if (paused()) return paused();
     const o = await owned(request);
     if (!o) return notFound();
     const form = check(await readJson(request));
