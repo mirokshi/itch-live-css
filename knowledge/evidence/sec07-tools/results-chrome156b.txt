@@ -1,0 +1,25 @@
+# sec07-probe.html, HeadlessChrome 156.0.8078.49, run 2026-10-29 (second load: T21/T22 must differ)
+T1 selector-list-drop | 600px | 600px | PASS
+T2 own-rule-survives | 25px | 25px | PASS
+T3 value-fallback | 28px | 13.9531px | FAIL
+T4 var-trap (auto = full 600px) | 600px | 18.2812px | FAIL
+T5 @supports(rotate:random()) applied? | 600px | 30px | FAIL
+T6 @supports not(...) applied? | 31px | 600px | FAIL
+T7 @supports(--x:random()) applied? | 32px | 32px | PASS
+T8 @supports selector(:has(a)) | 33px | 33px | PASS
+T8b @supports selector(::scroll-marker) | 34px | 34px | PASS
+T9 registered angle at 50% | 180deg | 180deg | PASS
+T10 unregistered at 25% | 0deg | 0deg | PASS
+T11 sin(var(--angle)) | 150px | 150px | PASS
+T12 translate+transform offset | 15 | 15 | PASS
+T13 sibling-index delays | 0.06s,0.12s,0.18s | 0.06s,0.12s,0.18s | PASS
+T14 @supports(animation-timeline:view()) | 35px | 35px | PASS
+T15a timeline before shorthand | auto | auto | PASS
+T15b timeline after shorthand | view() | view() | PASS
+T16 @media{@supports{}} nest | 36px | 36px | PASS
+T17 nested @supports in #wrapper{} | 38px | 38px | PASS
+T18 :is() forgiving | 39px | 39px | PASS
+T19 (hover:hover) and (pointer:fine) [info] | 40px | 40px | PASS
+T20 content alt-text computed | "*" / "" | "*" / "" | PASS
+T21 random step roller (multiple of -14px, 0..-364) [0px -364px] | true | true | PASS
+T22 random delays [-0.460976s,-0.145595s,-1.34328s] | true | true | PASS

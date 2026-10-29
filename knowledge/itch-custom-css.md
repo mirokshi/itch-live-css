@@ -329,7 +329,7 @@ Full detail: [sections/06-cascade-and-specificity.md](sections/06-cascade-and-sp
 
 ## 7. JS-free techniques and browser support
 
-Only Chromium was run; Firefox/Safari data is MDN BCD [verified · gapfill07-07]. Re-check after 2026-10-28 (Chrome 156 `random()` 2026-10-20, Firefox 159 scroll-driven animations 2026-10-27) [documented · gapfill07-08]. Safari + iOS Safari ≈ 17.9 % of global usage (caniuse, 2026-10-13) [documented · support-02]. On a project page, itch stores `@layer`, `@property`, `@container` (size and style), `@scope`, nesting, `@starting-style`, `@view-transition`, `@counter-style`, `@function`, range media and `sibling-index()` intact, and Chromium 155 applied them all; `random()` was stored but not applied [verified 2026-10-16 · live-c11 to live-c21, live-c28 to live-c30, live-c36].
+Only Chromium was run; Firefox/Safari data is MDN BCD [verified · gapfill07-07]. Re-checked 2026-10-29: Chrome 156.0.8078.49 has `random()` and re-rolls it on every load; the support probe changed only its 9 `random()` rows from Chrome 155 [verified 2026-10-29 · support-62]. Firefox 159 shipped scroll-driven animations on 2026-10-27; `random()` covers about 56 % of global users, scroll-driven animations 88 % [documented · support-63]. Next dated item: `text-wrap:balance` Widely on 2026-11-13. Safari + iOS Safari ≈ 17.9 % of global usage (caniuse, 2026-10-13) [documented · support-02]. On a project page, itch stores `@layer`, `@property`, `@container` (size and style), `@scope`, nesting, `@starting-style`, `@view-transition`, `@counter-style`, `@function`, range media and `sibling-index()` intact, and Chromium 155 applied them all; `random()` was stored but not applied [verified 2026-10-16 · live-c11 to live-c21, live-c28 to live-c30, live-c36].
 
 **Fallbacks** (Chrome 155)
 - Plain value first, modern value second, in one rule: only the unsupported one drops [verified · s07-n1 T3]. Never fall back through a custom property: `--r:random(…);width:28px;width:var(--r)` computes `auto` [verified · s07-n1 T4].
@@ -359,7 +359,7 @@ Only Chromium was run; Firefox/Safari data is MDN BCD [verified · gapfill07-07]
 Profiles keep ≥ 2 columns down to 320 px; for one column on phones add `@media (max-width:500px){#wrapper .mode_grid .user_game_grid{grid-template-columns:1fr}}`. Jams drop to 1 column at 320 px by themselves [verified · gapfill07-01, gapfill07-03].
 
 **Per-visit randomness**
-- Native: `#wrapper .game_cell{rotate:0deg}@supports (rotate: random(0deg, 1deg)){#wrapper .game_cell{rotate:random(-2deg, 2deg)}}`. Today only Safari 26.2+ supports it [verified · s07-n1 T5, T6, T22, support-03].
+- Native: `#wrapper .game_cell{rotate:0deg}@supports (rotate: random(0deg, 1deg)){#wrapper .game_cell{rotate:random(-2deg, 2deg)}}`. Chrome/Edge 156+ and Safari 26.2+ support it, Firefox doesn't yet [verified · s07-n1 T5, T6, T22, support-03; verified 2026-10-29 · support-62].
 - Otherwise use an external per-visit stylesheet (§8). It is render-blocking (a 2.5 s import pushed FCP to 2.53 s) and can be blocked [verified · s07-n9; observed · community-36].
 
 Full detail: [sections/07-techniques-and-support.md](sections/07-techniques-and-support.md)
@@ -479,7 +479,7 @@ The research never logged in. The [probe kit](probes/README.md) settles 115 open
 | 8 | `perspective`, `contain`, `content-visibility`, individual transforms on embed ancestors (R22) | Variants in `evidence/gapfill-s04-tools/maximize_r.mjs` |
 | 9 | B2 on logged-in-only controls (comment textarea, owner bars) | Logged-in visitor, devtools override, no posting (account) |
 | 10 | Why Brave Shields blocked a vercel.app import (R10) | Brave defaults against several hosts |
-| 11 | `random()` in Chrome 156, scroll-driven animations in Firefox 159 (§7) | Re-check after 2026-10-28 |
+| 11 | `random()` in Chrome 156, scroll-driven animations in Firefox 159 (§7). Settled on 2026-10-29: Chrome 156 runs `random()` (support-62); Firefox 159 shipped scroll timelines, documented only (support-63). Still open: a live itch page re-rolling per load, and a Firefox run | A guarded `random()` rule on a scratch itch page, reloaded twice; the probes in Firefox 159 |
 | 12 | Does `#wrapper .game_frame:not(.maximized){width:100%!important;height:auto!important;aspect-ratio:…}` render well with itch's JS: auto-load, click-to-launch and fullscreen-start frames, and embeds wider than 920 px whose `#inner_column` width the JS pins (§6) | Live render of an HTML5 page with the rule injected, as in `evidence/gapfill-s04-tools/maximize.mjs`, at 1280/1000/600 px |
 
 ## Appendix: Evidence index

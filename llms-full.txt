@@ -340,7 +340,7 @@ Full detail: [sections/06-cascade-and-specificity.md](sections/06-cascade-and-sp
 
 ## 7. JS-free techniques and browser support
 
-Only Chromium was run; Firefox/Safari data is MDN BCD [verified · gapfill07-07]. Re-check after 2026-10-28 (Chrome 156 `random()` 2026-10-20, Firefox 159 scroll-driven animations 2026-10-27) [documented · gapfill07-08]. Safari + iOS Safari ≈ 17.9 % of global usage (caniuse, 2026-10-13) [documented · support-02]. On a project page, itch stores `@layer`, `@property`, `@container` (size and style), `@scope`, nesting, `@starting-style`, `@view-transition`, `@counter-style`, `@function`, range media and `sibling-index()` intact, and Chromium 155 applied them all; `random()` was stored but not applied [verified 2026-10-16 · live-c11 to live-c21, live-c28 to live-c30, live-c36].
+Only Chromium was run; Firefox/Safari data is MDN BCD [verified · gapfill07-07]. Re-checked 2026-10-29: Chrome 156.0.8078.49 has `random()` and re-rolls it on every load; the support probe changed only its 9 `random()` rows from Chrome 155 [verified 2026-10-29 · support-62]. Firefox 159 shipped scroll-driven animations on 2026-10-27; `random()` covers about 56 % of global users, scroll-driven animations 88 % [documented · support-63]. Next dated item: `text-wrap:balance` Widely on 2026-11-13. Safari + iOS Safari ≈ 17.9 % of global usage (caniuse, 2026-10-13) [documented · support-02]. On a project page, itch stores `@layer`, `@property`, `@container` (size and style), `@scope`, nesting, `@starting-style`, `@view-transition`, `@counter-style`, `@function`, range media and `sibling-index()` intact, and Chromium 155 applied them all; `random()` was stored but not applied [verified 2026-10-16 · live-c11 to live-c21, live-c28 to live-c30, live-c36].
 
 **Fallbacks** (Chrome 155)
 - Plain value first, modern value second, in one rule: only the unsupported one drops [verified · s07-n1 T3]. Never fall back through a custom property: `--r:random(…);width:28px;width:var(--r)` computes `auto` [verified · s07-n1 T4].
@@ -370,7 +370,7 @@ Only Chromium was run; Firefox/Safari data is MDN BCD [verified · gapfill07-07]
 Profiles keep ≥ 2 columns down to 320 px; for one column on phones add `@media (max-width:500px){#wrapper .mode_grid .user_game_grid{grid-template-columns:1fr}}`. Jams drop to 1 column at 320 px by themselves [verified · gapfill07-01, gapfill07-03].
 
 **Per-visit randomness**
-- Native: `#wrapper .game_cell{rotate:0deg}@supports (rotate: random(0deg, 1deg)){#wrapper .game_cell{rotate:random(-2deg, 2deg)}}`. Today only Safari 26.2+ supports it [verified · s07-n1 T5, T6, T22, support-03].
+- Native: `#wrapper .game_cell{rotate:0deg}@supports (rotate: random(0deg, 1deg)){#wrapper .game_cell{rotate:random(-2deg, 2deg)}}`. Chrome/Edge 156+ and Safari 26.2+ support it, Firefox doesn't yet [verified · s07-n1 T5, T6, T22, support-03; verified 2026-10-29 · support-62].
 - Otherwise use an external per-visit stylesheet (§8). It is render-blocking (a 2.5 s import pushed FCP to 2.53 s) and can be blocked [verified · s07-n9; observed · community-36].
 
 Full detail: [sections/07-techniques-and-support.md](sections/07-techniques-and-support.md)
@@ -490,7 +490,7 @@ The research never logged in. The [probe kit](probes/README.md) settles 115 open
 | 8 | `perspective`, `contain`, `content-visibility`, individual transforms on embed ancestors (R22) | Variants in `evidence/gapfill-s04-tools/maximize_r.mjs` |
 | 9 | B2 on logged-in-only controls (comment textarea, owner bars) | Logged-in visitor, devtools override, no posting (account) |
 | 10 | Why Brave Shields blocked a vercel.app import (R10) | Brave defaults against several hosts |
-| 11 | `random()` in Chrome 156, scroll-driven animations in Firefox 159 (§7) | Re-check after 2026-10-28 |
+| 11 | `random()` in Chrome 156, scroll-driven animations in Firefox 159 (§7). Settled on 2026-10-29: Chrome 156 runs `random()` (support-62); Firefox 159 shipped scroll timelines, documented only (support-63). Still open: a live itch page re-rolling per load, and a Firefox run | A guarded `random()` rule on a scratch itch page, reloaded twice; the probes in Firefox 159 |
 | 12 | Does `#wrapper .game_frame:not(.maximized){width:100%!important;height:auto!important;aspect-ratio:…}` render well with itch's JS: auto-load, click-to-launch and fullscreen-start frames, and embeds wider than 920 px whose `#inner_column` width the JS pins (§6) | Live render of an HTML5 page with the rule injected, as in `evidence/gapfill-s04-tools/maximize.mjs`, at 1280/1000/600 px |
 
 ## Appendix: Evidence index
@@ -4280,10 +4280,10 @@ How to read it:
 - Browser behaviour was run **only in Chromium**: headless Chrome 147 and 155, Chrome 155 with `--enable-experimental-web-platform-features` (the "flag build"), Edge 155, and Chromium 152 for some local tests. The Firefox and Safari columns come from MDN browser-compat-data (BCD) 8.1.5, web-features 3.42.0, release notes and engine source. They are *documented*, not run. **A `verified` tag on a support row covers the Chromium result only**; §7.4 shows the two halves separately. No Firefox or WebKit engine was available on the test machine (Playwright's cache holds only Chromium 1217), so every cross-browser warning in this section is documented or inferred **[verified · gapfill07-07]**.
 - Related sections: 02 §2.7 (P8: motion and WCAG 2.2.2), 05 (HTML sanitizer), 06 (cascade and `@import` order), 08 (external CSS, fonts and per-visit services in depth), 10 (testing and accessibility).
 
-> **Time-bound facts: as of 2026-10-14.** These rows change on known dates. Re-run `knowledge/evidence/support-probe.html` and `sec07-tools/sec07-probe.html` and re-fetch BCD, web-features and caniuse **after 2026-10-28** before trusting them **[documented · gapfill07-08]**:
-> - `random()`: Chrome 156 ships it on **2026-10-20** (§7.4, §7.14). After that date "Chrome 155 rejects it" is history; Chromium plus Safari 26.2+ have it.
-> - Scroll-driven animations: Firefox 159 ships them on **2026-10-27** (§7.4, §7.7).
-> - `text-wrap:balance` becomes Baseline *Widely* on **2026-11-13**.
+> **Time-bound facts: re-checked 2026-10-29** (dates first listed 2026-10-14 **[documented · gapfill07-08]**):
+> - `random()`: Chrome 156 (2026-10-20) has it. In Chrome 156.0.8078.49 both probes gave what the Chrome 155 flag build gave, and a new value on every load **[verified 2026-10-29 · support-62]**. Chromium 156+ and Safari 26.2+ have it; Firefox only in Nightly **[documented · support-63]** (§7.4, §7.14).
+> - Scroll-driven animations: Firefox 159 shipped them on **2026-10-27** **[documented · support-63]**; not run in Firefox, which the test machine lacks (§7.4, §7.7).
+> - `text-wrap:balance` becomes Baseline *Widely* on **2026-11-13**: re-check after that date.
 > - Edge 156 on 2026-10-22; caniuse usage shares (2026-10-13 data) drift monthly.
 > - itch's own grid script and stylesheets (§7.13) were last checked on 2026-10-14, with asset stamp `?1791985261`. That stamp changed at least three times that day, so re-test the grid rules after any visible itch redesign.
 
@@ -4427,7 +4427,7 @@ Notes:
 | `transition-behavior: allow-discrete` | Newly (2024-08-06) | 117 | 129 | 17.4 | 93.1 % | – | all **[documented · support-24]** |
 | Transitioning `display` itself | not Baseline | 117 | no | 18 | – | instant toggle | all **[documented · support-24]** |
 | `interpolate-size` / `calc-size()` | no | 129 | no | no | 71.7 % | snaps open | Cr **[verified · support-25]** · FF/Sa **[documented · support-25]** |
-| Scroll-driven animations | no | 115 | **159** (2026-10-27) | 26 | 87.8 % | base = final state + `@supports` | Cr **[verified · s07-n1 T15]**; versions **[documented · support-19]** · re-verify after 2026-10-27 |
+| Scroll-driven animations | no | 115 | **159** (2026-10-27) | 26 | 88.2 % | base = final state + `@supports` | Cr **[verified · s07-n1 T15, support-62]**; versions **[documented · support-19, support-63]** |
 | Cross-document `@view-transition` | no | 126 | no | 18.2 | 87.8 % | plain navigation | Cr **[verified · support-21]** · FF/Sa **[documented · support-21]** |
 | Same-document view transitions | Newly (2025-10-14) | 111 | 144 | 18 | – | need JS, so useless on itch | all **[documented · support-22]** |
 | `view-transition-name: match-element` | – | 137 | 144 | 18.4 | 86.8 % | same-document only | all **[documented · support-22]** |
@@ -4448,7 +4448,7 @@ Notes:
 | Typed `attr(data-x type(<length>))` | no | 133 | 155 | Technology Preview only | 73.0 % | unusable with user HTML: `data-*` is stripped | Cr **[verified · support-38]** · FF/Sa **[documented · support-38]**; `data-*` stripped **[observed · s07-n7]** |
 | `if()` | no | 137 | no | no | 68.9 % | plain declaration first | Cr **[verified · support-09]** · FF/Sa **[documented · support-09]** |
 | `@function` | no | 139 | no | Technology Preview | 68.7 % | don't use | Cr **[verified · support-39]** · FF/Sa **[documented · support-39]** |
-| `random()` | no | **156** (2026-10-20) | Nightly only | 26.2 | 13.1 % | constant first, or `@supports` | Cr **[verified · support-03]** · FF/Sa **[documented · support-03, repo-15]** · re-verify after 2026-10-20 |
+| `random()` | no | **156** (2026-10-20) | Nightly only | 26.2 | 56.0 % (2026-10-29, rising as Chrome updates) | constant first, or `@supports` | Cr **[verified 2026-10-29 · support-62]** · FF/Sa **[documented · support-03, support-63, repo-15]** |
 | `random-item()` | – | no | no | flag off in 27 | 0 | don't use | all **[documented · support-05]** |
 | `@custom-media`, `@mixin`/`@apply` | no | no | pref off | no | 0 | write the query out | Cr **[verified · support-49]** · FF/Sa **[documented · support-49]** |
 
@@ -4762,10 +4762,10 @@ The bio and description sanitizer removes `id`, `data-*`, `aria-*`, `role` and `
 
 itch runs no JS, so "different on every visit" has two routes: native CSS `random()`, rolled by the browser, or an external stylesheet regenerated by a server on every request.
 
-#### Native `random()`: Safari today, Chrome from 2026-10-20
+#### Native `random()`: Chrome 156+ and Safari 26.2+
 
-- **Support (as of 2026-10-14; re-verify after 2026-10-20):** Safari/iOS 26.2+ (~13 % of users), Chrome 156 (stable 2026-10-20), Firefox Nightly only **[documented · support-03, repo-15]**. Chrome 155 rejects it and the flag build accepts it **[verified · support-03]**. A `random()` declaration saved on a project was stored unchanged and not applied in Brave 155 (Chromium 155) **[verified 2026-10-16 · live-c28]**. Once Chrome 156 ships, a guarded `random()` in the pasted CSS covers Chromium and Safari; Firefox and older browsers still get the constant **[documented · repo-15]**.
-- **Semantics,** tested in the Chrome 155 flag build, which has the Chrome 156 implementation:
+- **Support (re-checked 2026-10-29):** Chrome/Edge 156+ (stable 2026-10-20) and Safari/iOS 26.2+, about 56 % of global users and rising as Chrome updates; Firefox Nightly only **[verified 2026-10-29 · support-62; documented · support-63, repo-15]**. Chrome 155 rejected it and its flag build accepted it **[verified · support-03]**. A `random()` declaration saved on a project was stored unchanged and not applied in Brave 155 (Chromium 155) **[verified 2026-10-16 · live-c28]**. A guarded `random()` in the pasted CSS now covers Chromium 156+ and Safari 26.2+; Firefox and older browsers still get the constant **[documented · repo-15]**.
+- **Semantics,** tested in the Chrome 155 flag build and unchanged in Chrome 156 stable **[verified 2026-10-29 · support-62]**:
   - A value is rolled **once per element and property** when style is first computed, and it does **not** re-roll on later restyles **[verified · support-04]**.
   - Unnamed `random()` calls are independent per element and per property **[verified · support-56]**.
   - A dashed name, `random(--k, a, b)`, shares one value everywhere, across properties too: `width` and `height` with the same `--k` gave a square **[verified · support-56]**.
@@ -4782,7 +4782,7 @@ itch runs no JS, so "different on every visit" has two routes: native CSS `rando
 }
 ```
 
-In Chrome 155 the guard is false and the constant applies. In the flag build, three elements got three different negative delays **[verified · s07-n1 T5, T6, T22]**. **Never** write `--r:random(…)` and use `var(--r)` as a "fallback": it computes to `auto` **[verified · s07-n1 T4]**. Whether `random()` re-rolls on every page load of a real itch page is untested: the 2026-10-16 project run couldn't check it, because Chromium 155 has no `random()` (live-c28) (§7.19).
+In Chrome 155 the guard is false and the constant applies. In the flag build and in Chrome 156, three elements got three different negative delays, and a second load gave three new ones **[verified · s07-n1 T5, T6, T22; verified 2026-10-29 · support-62]**. **Never** write `--r:random(…)` and use `var(--r)` as a "fallback": in a browser without `random()` it computes to `auto` **[verified · s07-n1 T4]**. On a real itch page the re-roll per load is inferred, not run: itch stores `random()` unchanged (live-c28) and Chrome 156 re-rolls per load on a local page (support-62) (§7.19).
 
 #### External per-visit stylesheet (every visitor today, except on jam pages)
 
@@ -4889,7 +4889,7 @@ What to take from it:
 
 - **Run the probes in Firefox and Safari.** Open `knowledge/evidence/support-probe.html` (139 rows) and `knowledge/evidence/sec07-tools/sec07-probe.html` plus `sec07-probe2.html` (the fallback patterns of this section). That is the cheapest way to turn the *documented* columns above into *verified* ones **[verified · s07-n1, s07-n2]**.
   - Without a Mac or a Firefox install, Playwright's engines are the next best thing: `npx playwright install firefox webkit`, then load the same files in `firefox.launch()` and `webkit.launch()`. Tag those results "verified (Playwright WebKit)": Playwright's WebKit build is not Safari, and iOS-only behaviour such as `background-attachment:fixed` or `dvh` needs a real iPhone. On the test machine this was not done; its Playwright cache holds only Chromium 1217 **[verified · gapfill07-07]**.
-- **Re-check dated items** after 2026-10-20 (Chrome 156: `random()`), 2026-10-27 (Firefox 159: scroll-driven animations) and 2026-11-13 (`text-wrap:balance` Widely). After 2026-10-28, re-run the two probes in Chrome 156 and Firefox 159 and re-fetch BCD, web-features and caniuse before editing §7.4 **[documented · gapfill07-08]**.
+- **Re-check dated items.** Done on 2026-10-29 for Chrome 156 (`random()`, run) and Firefox 159 (scroll-driven animations, documented only) **[verified 2026-10-29 · support-62; documented · support-63]**. Next: `text-wrap:balance` after 2026-11-13. Re-run the two probes and re-fetch BCD, web-features and caniuse before editing §7.4 **[documented · gapfill07-08]**.
 - **Render live pages with itch's JS running** when a rule touches game grids. Harnesses that strip `<script>` miss the runtime grid sizer and show rules working that do nothing live (§7.13). `gapfill07-tools/livegrid.mjs` loads a live page, swaps test rules into `style#custom_css` (or appends them to `style#jam_theme`), and reads the grids at several widths for about 1 document GET per page **[verified · gapfill07-01]**.
 - **Measure cost, not just looks,** for any always-running effect: CPU throttling ×4 with Moto-G-class emulation, then frames, long frames and layout time per second (§7.17, `gapfill07-tools/perf.mjs`) **[verified · gapfill07-06]**.
 - **Community iteration workflow** **[community · community-43]**:
@@ -4908,7 +4908,7 @@ What to take from it:
 | Does a real profile → project navigation on itch fire a cross-document view transition? Do duplicate `view-transition-name`s on one page cancel it? | Opt in on both pages, navigate in Chrome, read `pagereveal`'s `event.viewTransition` |
 | Does clicking an absolute same-page link update `:target` on `<a name>` like loading with the hash? | A bio with two `<a name>` panels; click the links in Chrome, Firefox and Safari |
 | Are `class` on `<details>`, `popover`/`popovertarget`, inline `style="--i:…"` and empty spans inside an `h1` kept by the sanitizer? On a project description the first three are dropped and the empty spans kept (live-t08, live-a12 to live-a14, live-s11, live-s12, live-t23); bios remain | Save them in a scratch bio, then curl the page |
-| Does native `random()` give a fresh value on every load of a live itch page? Not checkable in the 2026-10-16 run: Chromium 155 has no `random()` (live-c28) | After 2026-10-20, a guarded `random()` rule on a scratch page; reload in Chrome 156 and Safari 26.2+ |
+| Does native `random()` give a fresh value on every load of a live itch page? The parts hold: itch stores it unchanged (live-c28) and Chrome 156 re-rolls per load on a local page (support-62) | A guarded `random()` rule on a scratch itch page (owner's account); reload twice in Chrome 156 and Safari 26.2+ |
 | Do `@starting-style` (first render), scroll reveal and the fallback patterns behave in Firefox and Safari as in Chrome? More broadly, which FF/Sa cells of §7.4 hold when run? | `npx playwright install firefox webkit`; load `support-probe.html`, `sec07-probe.html`, `sec07-probe2.html`, `sec07-target.html`, `support-tools/verify2/v2-probe.html` and `knowledge/tests/index.html` (served on :8090/:8091) in both engines; also run `gapfill07-tools/finite-motion.html`. Tag results "verified (Playwright WebKit ≠ Safari)" |
 | Safari: nested `@view-transition` inside `#wrapper{}`; `backdrop-filter` with `var()` on macOS 26; alt text for generated content; `outline:auto` colour | Safari 18.2+/26+ device test (Playwright WebKit first, then real Safari) |
 | iOS only: does the theme image with `background-attachment:fixed` scroll with the page, and do `dvh` units resize with the toolbar? | Real iPhone (or a BrowserStack iOS session) on a test profile |
@@ -6698,10 +6698,10 @@ Tags read `[confidence · fact-id]`. Evidence was checked on **2026-10-14** unle
 
 ### I. Browser support
 
-**98. `random()` works for only a minority of visitors.**
-- *Symptom:* per-visit random tilts, hues or star positions work in Safari but not in Chrome or Firefox.
+**98. `random()` doesn't work for every visitor.**
+- *Symptom:* per-visit random tilts, hues or star positions work in Chrome and Safari but not in Firefox or older browsers.
 - *Cause:*
-  - Today (2026-10-14) `random()` works in Safari/iOS 26.2+ only (about 13% of global users). Chrome 155 rejects it, Chrome 156 ships it on 2026-10-20, and Firefox has it only in Nightly [verified · support-03; documented · repo-15]. On a project itch stores `random()` unchanged, and Chromium 155 doesn't apply it [verified 2026-10-16 · live-c28].
+  - As of 2026-10-29 `random()` works in Chrome/Edge 156+ and Safari/iOS 26.2+, about 56% of global users and rising as Chrome updates; Chrome 155 rejected it, and Firefox has it only in Nightly [verified 2026-10-29 · support-62; verified · support-03; documented · support-63, repo-15]. On a project itch stores `random()` unchanged, and Chromium 155 doesn't apply it [verified 2026-10-16 · live-c28].
   - Safari 26.2–26.4 scoped named values (`random(--k,…)`) per element. Safari 26.5 and Chrome share them globally [verified · support-04, support-56].
   - `random-item()` is enabled in no stable browser [documented · support-05].
 - *Fix:*

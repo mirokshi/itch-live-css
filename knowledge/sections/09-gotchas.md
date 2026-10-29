@@ -995,10 +995,10 @@ Tags read `[confidence · fact-id]`. Evidence was checked on **2026-10-14** unle
 
 ### I. Browser support
 
-**98. `random()` works for only a minority of visitors.**
-- *Symptom:* per-visit random tilts, hues or star positions work in Safari but not in Chrome or Firefox.
+**98. `random()` doesn't work for every visitor.**
+- *Symptom:* per-visit random tilts, hues or star positions work in Chrome and Safari but not in Firefox or older browsers.
 - *Cause:*
-  - Today (2026-10-14) `random()` works in Safari/iOS 26.2+ only (about 13% of global users). Chrome 155 rejects it, Chrome 156 ships it on 2026-10-20, and Firefox has it only in Nightly [verified · support-03; documented · repo-15]. On a project itch stores `random()` unchanged, and Chromium 155 doesn't apply it [verified 2026-10-16 · live-c28].
+  - As of 2026-10-29 `random()` works in Chrome/Edge 156+ and Safari/iOS 26.2+, about 56% of global users and rising as Chrome updates; Chrome 155 rejected it, and Firefox has it only in Nightly [verified 2026-10-29 · support-62; verified · support-03; documented · support-63, repo-15]. On a project itch stores `random()` unchanged, and Chromium 155 doesn't apply it [verified 2026-10-16 · live-c28].
   - Safari 26.2–26.4 scoped named values (`random(--k,…)`) per element. Safari 26.5 and Chrome share them globally [verified · support-04, support-56].
   - `random-item()` is enabled in no stable browser [documented · support-05].
 - *Fix:*

@@ -2,7 +2,7 @@
 
 > A public knowledge base for AI assistants and developers on writing custom CSS (and the description HTML it styles) for itch.io profile, project/game, devlog and jam pages: what itch does with your CSS, where it applies, which selectors are stable, what the policies forbid, and how to stay accessible. Every claim carries a confidence tag and a fact id that leads to its evidence. Last verified 2026-10-14, with live probes on 2026-10-16.
 
-- Start with `knowledge/itch-custom-css.md` (~78,600 characters). It holds the rules an AI must never break, copy-exact CSS blocks, and a condensed guide that links to the detailed section files. Load a section file only when you need its detail; together they are ~865 KB.
+- Start with `knowledge/itch-custom-css.md` (~79,300 characters). It holds the rules an AI must never break, copy-exact CSS blocks, and a condensed guide that links to the detailed section files. Load a section file only when you need its detail; together they are ~865 KB.
 - Confidence tags: verified, verified (live render), verified (script-free harness), documented, observed, community, library model, inferred, unverified. Don't upgrade a tag without a new direct check.
 - Most checks were made logged out. Facts that need an itch account (size caps, the sanitizer as itch runs it, what a save does to CSS) were settled on 2026-10-16 with the live probe kit in `knowledge/probes/` on a draft project and the profile; results are in `knowledge/evidence/live-probes/`. Devlog and jam fields are still open.
 - Browser results are Chromium unless noted. Screen-reader speech and Firefox/Safari layout are untested; only accessibility trees were spot-checked in Firefox 142 and WebKit 26.
