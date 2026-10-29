@@ -28,6 +28,7 @@ globalThis.fetch = async (url, opts) => {
 
 const { GET } = await import('../api/css.js');
 const { check, pluginList } = await import('../lib/config.js');
+const { FONTS } = await import('../public/fonts.js');
 
 const form = check({ accent: '#ffc857', cards: true });
 for (const id of ['owner123', 'other123', 'stale123']) db.set(`config:${id}`, JSON.stringify({ form }));
@@ -63,8 +64,8 @@ test("the owner's form gives the engine's owner config", () => {
   const greeting = engineOwner.plugins.find((p) => p.use === 'greeting').options;
   const owner = check({
     accent: '#ffc857',
-    // fonts cycle along the letters: this order gives the owner's 3 Syne, 2 Edu Hand, 3 Playfair
-    title: { text: 'Mirokshi', fonts: ['syne', 'playfair', 'hand'] },
+    // what the form sends with these three ticked: FONTS order, which cycles into the owner's 3/3/2
+    title: { text: 'Mirokshi', fonts: Object.keys(FONTS).filter((k) => ['hand', 'playfair', 'syne'].includes(k)) },
     greeting: { first: greeting.first, others: greeting.others },
     cards: true,
     ascii: true,
