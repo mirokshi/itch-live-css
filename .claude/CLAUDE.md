@@ -64,7 +64,8 @@ web/                         the Vercel web app, deployed 2026-10-24: public/ (f
                              export is the @import line only (no pasted fallback, owner's call), lib/store.js = Upstash
                              Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a local JSON
                              file (web/.data/, git-ignored); dev server: preview_start {name:"web"} (3001); tests: cd web && npm test
-.github/workflows/watch.yml  hourly check of the owner's /c/SovP42id.css (200, text/css, < 3 s, effects + itch data + own CSS)
+.github/workflows/watch.yml  hourly check of the owner's /c/SovP42id.css (200, text/css, < 3 s, effects + itch data + own CSS);
+                             daily smoke check (one GET) that the logged-out profile still has the markup that CSS selects
 .claude/launch.json          preview servers: knowledge-tests (8090), knowledge-tests-xorigin (8091), web (3001) and engine-dev (3000)
 ```
 

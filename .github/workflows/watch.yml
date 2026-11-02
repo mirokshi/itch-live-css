@@ -1,14 +1,17 @@
-# Watches the CSS the owner's profile imports (phase 2 exit: two weeks without incidents). A failed
-# run emails the owner: GitHub notifies whoever last edited a scheduled workflow.
+# Watches the CSS the owner's profile imports (phase 2 exit: two weeks without incidents) and, once a day,
+# the itch markup that CSS selects. A failed run emails the owner: GitHub notifies whoever last edited a
+# scheduled workflow.
 name: watch
 
 on:
   schedule:
     - cron: '17 * * * *' # hourly: the repo is private, with 2,000 free Actions minutes a month
+    - cron: '43 6 * * *' # daily: itch's markup, one GET of the profile (allowed by robots.txt)
   workflow_dispatch:
 
 jobs:
   profile-css:
+    if: github.event.schedule != '43 6 * * *'
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
@@ -24,3 +27,32 @@ jobs:
           grep -q 'custom-breath' served.css # the effects
           grep -q 'data-game_id' served.css  # itch's data for the cards
           grep -q -e '--card:' served.css    # the owner's own CSS
+
+  itch-markup:
+    # Smoke check: if itch renames what the served CSS selects, the profile loses its look without an error.
+    if: github.event.schedule != '17 * * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: The logged-out profile still has the ids, classes and attributes the served CSS selects, and imports it
+        env:
+          URL: https://mirokshi.itch.io/
+        run: |
+          status=$(curl -sS -m 15 -o page.html -w '%{http_code}' "$URL")
+          echo "HTTP $status, $(wc -c < page.html) bytes"
+          test "$status" = 200
+          missing=()
+          for id in wrapper profile_header; do
+            grep -q "id=\"$id\"" page.html || missing+=("#$id")
+          done
+          # Whole class tokens, so game_cell can't pass on game_cell_data. custom-title and custom-hello are the bio's.
+          for c in user_page user_profile user_links inner_column text_header user_game_grid game_grid_widget \
+                   game_cell game_cell_data game_thumb game_title footer custom-title custom-hello; do
+            grep -qE "class=\"([^\"]* )?$c( [^\"]*)?\"" page.html || missing+=(".$c")
+          done
+          grep -oE '<[^>]*data-game_id="[0-9]+"[^>]*>' page.html | grep -qE 'class="([^"]* )?game_cell[ "]' \
+            || missing+=('.game_cell[data-game_id]')
+          grep -qF "id=\"custom_css\">@import url('https://itch-live-css-web.vercel.app/c/SovP42id.css');" page.html \
+            || missing+=('the @import in style#custom_css')
+          if (( ${#missing[@]} )); then echo "Missing: ${missing[*]}"; exit 1; fi
+          echo 'All found'

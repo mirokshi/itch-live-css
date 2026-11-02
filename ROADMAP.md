@@ -63,7 +63,7 @@ Hallazgos de la base de conocimiento que condicionan el diseño. Cada uno es una
 - [x] Volver a comprobar después del 2026-10-28: `random()` en Chrome 156 (comprobado el 2026-10-29) y las animaciones ligadas al scroll en Firefox 159 (salió el 2026-10-27; documentado, sin probar en Firefox).
 - [x] Repo preparado (2026-10-16): licencias, aviso de terceros, README en inglés, seudónimos y revisión de limpieza.
 - [ ] Primer commit y repo público en GitHub.
-- [ ] Rastreador de humo periódico que avise si itch cambia el DOM o sus hojas de estilo (reutiliza las herramientas de `knowledge/evidence/`).
+- [ ] Rastreador de humo periódico que avise si itch cambia el DOM o sus hojas de estilo (reutiliza las herramientas de `knowledge/evidence/`). Hecho en parte (2026-11-03): `.github/workflows/watch.yml` comprueba a diario que tu perfil sigue teniendo el marcado que selecciona tu CSS servido; faltan las hojas de estilo de itch y las páginas de proyecto y devlog.
 
 **Salida:** base de conocimiento publicada, con las preguntas que necesitan cuenta resueltas.
 
