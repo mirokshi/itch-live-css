@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 1 — Where your CSS goes, and how much fits · Guía · itch-live-css</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="site docs guide">
+  <header>
+    <nav class="site-nav" aria-label="Secciones"><a href="/">Editor</a><a href="/ideas.html">Ideas</a><a href="/showcase.html">Expositor</a><a href="/guia/">Guía</a><a href="/docs.html">Documentación</a><a href="/privacy.html">Privacidad</a></nav>
+    <p class="lang-links"><a href="../es/01-donde-va-tu-css.html">Español</a></p>
+  </header>
+  <article>
+<h1>Chapter 1 — Where your CSS goes, and how much fits</h1>
+<p>Before writing a single rule you need to know three things: whether you can paste CSS at all, which pages it reaches, and how much of it itch will accept. Get these wrong and nothing else in this guide matters.</p>
+<h2>1.1 Do you have access?</h2>
+<p>Custom CSS is not on by default. itch staff turn it on by hand, account by account, after you ask through itch&#39;s support page. Accounts with nothing published are usually refused, and the wait can be weeks. [S1]</p>
+<p>The quick test: open your page&#39;s theme editor (next section). If there is no <strong>Custom CSS</strong> field, you don&#39;t have access yet. Until you do, you still have the theme editor&#39;s colours and fonts, plus the HTML you can write in your bio or project description. [S1]</p>
+<h2>1.2 Finding the field</h2>
+<p>On your own page, while logged in:</p>
+<ol>
+<li>Click <strong>Edit theme</strong>.</li>
+<li>Open the <strong>Misc</strong> tab.</li>
+<li>Paste into <strong>Custom CSS</strong>.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<p>The <strong>Edit theme</strong> button disappears when the window is 980 px wide or narrower, so do this on a desktop-width window. [S2]</p>
+<h2>1.3 Which pages your CSS reaches</h2>
+<p>Each place you can paste CSS has its own field, and each field styles a fixed set of pages:</p>
+<table>
+<thead>
+<tr>
+<th>Where you paste</th>
+<th>Pages it styles</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Your profile (<code>yourname.itch.io</code>)</td>
+<td>The profile page only</td>
+</tr>
+<tr>
+<td>A project</td>
+<td>The project page <strong>and</strong> its <code>/devlog</code> index, every devlog post and the <code>/comments</code> page</td>
+</tr>
+<tr>
+<td>A jam you host</td>
+<td>The jam&#39;s overview page only</td>
+</tr>
+</tbody></table>
+<p>Two consequences catch people out:</p>
+<ul>
+<li><strong>One project sheet, four kinds of page.</strong> A rule meant for your game page also lands on your devlog posts. Chapter 2 shows how to aim a rule at one of them. [S3]</li>
+<li><strong>Some pages are never styled</strong>: the purchase page, project boards and forums, collections, itch&#39;s blog, and the jam&#39;s entries, results, feed, community and rating pages. No CSS reaches them, whatever you do. [S3]</li>
+</ul>
+<p>There is no JavaScript anywhere: itch doesn&#39;t allow it. Everything in this guide is pure CSS. [S3]</p>
+<h2>1.4 How much fits</h2>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>Limit</th>
+<th>What happens over it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Profile</td>
+<td><strong>5,120 bytes</strong></td>
+<td>Save refused, nothing changes</td>
+</tr>
+<tr>
+<td>Project and devlog</td>
+<td>No practical limit (over 650,000 characters saved)</td>
+<td>A huge paste fails as a broken request</td>
+</tr>
+<tr>
+<td>Jam</td>
+<td>About 20 KB; 20,410 characters are known to work</td>
+<td>Not measured</td>
+</tr>
+</tbody></table>
+<p>[S4]</p>
+<h3>The profile limit is in bytes, not characters</h3>
+<p>itch&#39;s error message says &quot;characters&quot;, but it counts <strong>bytes</strong>. Plain English letters, digits and punctuation are one byte each. Accented letters such as <code>é</code> are two bytes, many symbols (<code>→</code>, <code>★</code>) are three, and emoji are four. So a profile sheet with accented text fits fewer characters than the 5,120 the message suggests. [S4]</p>
+<p>Other details of the profile limit:</p>
+<ul>
+<li><strong>Comments count.</strong> Strip them before pasting.</li>
+<li><strong>Spaces and line breaks at the very start and end don&#39;t count</strong>, because itch trims them first.</li>
+<li><strong>Over the limit, the whole save is refused.</strong> You get an error box saying your changes were not saved. itch never cuts your CSS short, so you won&#39;t end up with half a stylesheet, but you also won&#39;t get any of it. [S4]</li>
+</ul>
+<h3>Measuring before you paste</h3>
+<p>Paste this into your browser&#39;s console (F12 → Console), put your CSS between the backticks, and press Enter:</p>
+<pre><code class="language-js">new TextEncoder().encode(String.raw`PASTE YOUR CSS HERE`.trim()).length
+</code></pre>
+<p>The number is the byte count itch will check. Keep it at 5,120 or under for a profile. If your CSS contains a backtick or <code>${</code>, use the Python version instead:</p>
+<pre><code class="language-sh">python -c &quot;import sys;s=open(sys.argv[1],encoding=&#39;utf-8&#39;).read().strip();print(len(s),len(s.encode()))&quot; my-profile.css
+</code></pre>
+<p>It prints characters, then bytes. [S5]</p>
+<h3>Fitting more into a profile</h3>
+<ul>
+<li><strong>Minify.</strong> Remove comments, line breaks and spaces you don&#39;t need. Use a real CSS minifier. Some quick search-and-replace &quot;minifiers&quot; mangle the text inside <code>content:&quot;…&quot;</code>. [S6]</li>
+<li><strong>Write symbols as themselves.</strong> A raw <code>→</code> costs 3 bytes; the escape that means the same thing costs 5. [S6]</li>
+<li><strong>Don&#39;t embed fonts or images as Base64.</strong> Base64 inflates a file by about a third: a 2.5 KB font subset becomes 3.4 KB of CSS. [S6]</li>
+<li><strong>Still too big?</strong> Host the rest as a file and load it with <code>@import</code>. Chapter 6 covers how to do that safely. It doesn&#39;t work on jams. [S6]</li>
+</ul>
+<h2>1.5 What itch does to your CSS when you save</h2>
+<p>itch keeps your CSS almost exactly as you typed it. It doesn&#39;t minify, check, fix or scope it. Only three things change: [S7]</p>
+<ol>
+<li><strong>Every <code>&lt;/style&gt;</code> is deleted</strong>, in any letter case, even inside a comment or a string. If your CSS contains that text, the code around it changes silently. Never paste the <code>&lt;style&gt;</code> tags, only what goes between them. [S7]</li>
+<li><strong>Spaces and line breaks at the start and end are trimmed.</strong> [S7]</li>
+<li><strong>Line breaks on a project are stored as two bytes (CRLF) instead of one.</strong> It is harmless, but it is one more reason to paste project CSS as a single minified line. [S7]</li>
+</ol>
+<p>When your CSS has a mistake, the browser skips the broken rule without telling you, and itch doesn&#39;t warn you either. Common silent failures:</p>
+<ul>
+<li><code>calc(40px+10px)</code>: <code>calc</code> needs spaces around <code>+</code> and <code>-</code>.</li>
+<li><code>//</code> comments: CSS has only <code>/* … */</code>.</li>
+<li>A missing <code>}</code>.</li>
+<li>One unknown selector in a list, which drops the whole rule. [S8]</li>
+</ul>
+<p>Chapter 7 is about finding these.</p>
+<h2>1.6 Seeing your change</h2>
+<ul>
+<li><strong>You</strong> see your changes at once, and even see unsaved CSS while the editor is open. [S9]</li>
+<li><strong>Visitors</strong> can keep seeing the old page for about two and a half minutes after a save, because itch caches it. Adding <code>?something</code> to the address doesn&#39;t skip the cache. [S9]</li>
+</ul>
+<p>So always check the result <strong>logged out</strong>: in a private window, after a few minutes.</p>
+<h2>Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> The <strong>Custom CSS</strong> field is there (you have access).</li>
+<li><input disabled="" type="checkbox"> You know which pages your sheet reaches. On a project, that includes the devlog and comments.</li>
+<li><input disabled="" type="checkbox"> Profile CSS is <strong>5,120 bytes or less</strong>, measured as bytes, comments included.</li>
+<li><input disabled="" type="checkbox"> You pasted only CSS: no <code>&lt;style&gt;</code> tags, no <code>&lt;/style&gt;</code> anywhere.</li>
+<li><input disabled="" type="checkbox"> Project CSS is one minified line.</li>
+<li><input disabled="" type="checkbox"> You checked the saved page logged out, after the cache had expired.</li>
+</ul>
+<hr>
+<h2>Sources</h2>
+<p>Every claim above maps to a fact in the itch-live-css knowledge base (<code>knowledge/itch-custom-css.md</code>, §0–§1). &quot;Verified&quot; means it was reproduced directly; dated entries come from live tests on itch.io in October 2026.</p>
+<ul>
+<li><strong>S1</strong> Access by request, missing field = no access: documented · docs-01, docs-02, docs-03, community-48.</li>
+<li><strong>S2</strong> Editor path, button hidden at ≤ 980 px: observed · gapfill01-07; verified · gapfill01-08.</li>
+<li><strong>S3</strong> Pages styled and not styled, no JavaScript: verified · s01-n2, crawlproject-42, crawljam-03, crawljam-35, crawljam-44; documented · docs-05, repo-04.</li>
+<li><strong>S4</strong> Size limits, bytes not characters, comments count, edges trimmed, refusal message: verified 2026-10-16 · live-cap-A1, live-cap-A2a, live-cap-A2c, live-cap-A3a to live-cap-A3c, live-cap-B1, live-cap-B2; jam: documented · crawljam-29; inferred · gapfill01-03.</li>
+<li><strong>S5</strong> Measuring script: verified · s01-n8. The console one-liner is this guide&#39;s own and counts the same way (trimmed text, UTF-8 bytes); <code>String.raw</code> keeps backslashes such as <code>\2192</code> intact.</li>
+<li><strong>S6</strong> Byte-saving tips: verified · corpus-19, s01-n6, x08-06, community-11; documented · docs-32.</li>
+<li><strong>S7</strong> What a save changes: verified 2026-10-16 · live-c01 to live-c45, live-css; verified · corpus-01, corpus-02, corpus-03, gapfill01-02.</li>
+<li><strong>S8</strong> Silent failures: verified · localtests-41, localtests-42, support-08.</li>
+<li><strong>S9</strong> Preview and cache: documented · community-05; verified · crawlprofile-46; verified 2026-10-16 · live-dom.</li>
+</ul>
+
+  </article>
+  <nav class="guide-steps" aria-label="Capítulos"><a href="02-the-24-rules.html">Chapter 2 — The 24 rules, in plain words →</a></nav>
+  <p class="hint">Text under CC BY 4.0 (see knowledge/LICENSE in the project). Not affiliated with itch.io.</p>
+</main>
+</body>
+</html>

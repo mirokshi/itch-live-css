@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 5 — Motion that's safe to ship · Guía · itch-live-css</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="site docs guide">
+  <header>
+    <nav class="site-nav" aria-label="Secciones"><a href="/">Editor</a><a href="/ideas.html">Ideas</a><a href="/showcase.html">Expositor</a><a href="/guia/">Guía</a><a href="/docs.html">Documentación</a><a href="/privacy.html">Privacidad</a></nav>
+    <p class="lang-links"><a href="../es/05-movimiento-seguro.html">Español</a></p>
+  </header>
+  <article>
+<h1>Chapter 5 — Motion that&#39;s safe to ship</h1>
+<p>Animation is the fastest way to make a page feel alive, and the fastest way to make it unusable: motion that never stops, a heading that a screen reader spells letter by letter, an animation name that silently replaces one of itch&#39;s. This chapter gives you the rules, one block you always include, and patterns that respect them.</p>
+<h2>5.1 The short version</h2>
+<ol>
+<li>Name every <code>@keyframes</code> with a <code>custom-</code> prefix (R16).</li>
+<li>Motion that starts by itself stops within 5 seconds and ends at rest (R17).</li>
+<li>Always include the reduced-motion block in 5.4 (R17).</li>
+<li>Hover effects go behind <code>@media (hover: hover)</code> and get a focus equivalent (R18).</li>
+<li>Never put <code>!important</code> on an animated property (R14).</li>
+</ol>
+<h2>5.2 Name your keyframes <code>custom-…</code></h2>
+<p>itch defines 13 animation names of its own, among them <code>bounce</code> and <code>spin</code>. Keyframe names are global: if you write <code>@keyframes spin</code>, yours replaces itch&#39;s on the whole page, and whatever itch was spinning now does your animation. The prefix makes a clash impossible. [S1]</p>
+<pre><code class="language-css">@keyframes custom-pop { 50% { scale: 1.08; } }
+</code></pre>
+<h2>5.3 Five seconds, then rest</h2>
+<p>The accessibility standard (WCAG 2.2.2) says that motion which starts by itself, lasts more than 5 seconds and sits alongside other content needs a way to pause, stop or hide it. CSS has no pause button, and honouring &quot;reduce motion&quot; doesn&#39;t count as one. So: [S2]</p>
+<ul>
+<li><strong>Give every automatic animation a finite iteration count</strong> and a total length under 5 seconds.</li>
+<li><strong>End at rest.</strong> The final frame should be the element&#39;s normal state.</li>
+<li><strong>Loop only on hover or focus</strong>, or after the visitor has clearly chosen to start it.</li>
+</ul>
+<pre><code class="language-css">@keyframes custom-bob { to { translate: 0 -4px; } }
+#wrapper .custom-title { animation: custom-bob 1.2s ease-in-out 4 alternate; }
+</code></pre>
+<p>Four runs of 1.2 s, alternating, is 4.8 s. An even count with <code>alternate</code> ends back where it started. [S2]</p>
+<h3>Entrances: animate <em>from</em> hidden, not <em>to</em> visible</h3>
+<p>The wrong way: give the element <code>opacity: 0</code> and animate it to <code>1</code> with <code>forwards</code>. If the animation never runs (reduced motion, an old browser, a blocked stylesheet), the content stays invisible.</p>
+<p>The right way: leave the element visible and animate <strong>from</strong> the hidden state:</p>
+<pre><code class="language-css">@keyframes custom-in { from { opacity: 0; translate: 0 18px; } }
+#wrapper .custom-card { animation: custom-in .6s ease-out; }
+</code></pre>
+<p>When the animation is skipped, the element is simply there. [S3]</p>
+<h2>5.4 The reduced-motion block (always include it)</h2>
+<p>Visitors who turn on &quot;reduce motion&quot; in their system settings should get a still page. This block stops every animation and transition inside <code>#wrapper</code>:</p>
+<pre><code class="language-css">@media (prefers-reduced-motion:reduce){#wrapper,#wrapper::before,#wrapper::after,#wrapper *,#wrapper *::before,#wrapper *::after{animation:none!important;transition:none!important}}
+</code></pre>
+<p>It is 181 characters. Copy it exactly:</p>
+<ul>
+<li><code>#wrapper *</code> alone misses <code>#wrapper</code> itself and its <code>::before</code> and <code>::after</code>, which is where full-page decorations live (chapter 3). Shorter versions left 3 or 4 of 6 test animations running.</li>
+<li><code>transition: none</code> works better than the common <code>transition-duration: .01ms</code> trick, which can leave elements stuck at their starting value when the animation timeline is frozen.</li>
+<li>If a hover effect moves something, reset it inside the same media query too, for example <code>#wrapper .game_cell:hover { transform: none; translate: none; }</code>.</li>
+</ul>
+<p>[S4]</p>
+<p>itch has no reduced-motion rules of its own, so without this block nothing on your page respects the setting. [S4]</p>
+<h2>5.5 Hover, touch and keyboard</h2>
+<p>Phones have no hover, and keyboard users never hover at all. So:</p>
+<pre><code class="language-css">@media (hover: hover) {
+  #wrapper .game_cell { transition: translate .2s ease-out; }
+  #wrapper .game_cell:hover { translate: 0 -4px; }
+}
+#wrapper .game_cell:focus-within { translate: 0 -4px; }
+</code></pre>
+<ul>
+<li><code>@media (hover: hover)</code> keeps the hover effect away from touch screens, where it gets stuck after a tap.</li>
+<li><code>:focus-within</code> gives keyboard users the same effect. On profile game cards it&#39;s needed: the cover link is skipped by Tab, so the card&#39;s other links carry the focus.</li>
+</ul>
+<p>Nothing on the page may work only on hover. [S5]</p>
+<h2>5.6 Patterns that follow the rules</h2>
+<h3>A word wave</h3>
+<p>Animate whole words, not letters. Splitting a heading into one <code>inline-block</code> span per letter changes its accessible name, the text assistive technology announces, to separate letters (&quot;M i r o&quot;). If you must animate letters, keep a hidden copy of the word for screen readers and draw the letters as decorative generated content. [S6]</p>
+<pre><code class="language-css">@keyframes custom-wave { 50% { translate: 0 -6px; } }
+#wrapper .custom-wave span { display: inline-block; animation: custom-wave 1.6s ease-in-out calc(var(--i) * .1s) 2; }
+#wrapper .custom-wave span:nth-child(2) { --i: 1; }
+#wrapper .custom-wave span:nth-child(3) { --i: 2; }
+</code></pre>
+<p>The keyframes have no <code>from</code> or <code>to</code>, so every run starts and ends at the normal position. <code>translate</code> needs <code>display: inline-block</code> on inline elements. [S7]</p>
+<h3>A staggered entrance</h3>
+<pre><code class="language-css">#wrapper .game_cell { animation: custom-in .5s ease-out; animation-delay: .2s; animation-delay: calc(sibling-index() * 60ms); }
+</code></pre>
+<p>Browsers that don&#39;t know <code>sibling-index()</code> ignore the second <code>animation-delay</code> and keep the first. This is the safe way to use any new CSS: plain value first, new value second, in the same rule. Don&#39;t route the fallback through a custom property, because then an unsupported value breaks both. [S8]</p>
+<h3>On first render with <code>@starting-style</code></h3>
+<p><code>@starting-style</code> sets the values an element transitions <em>from</em> when it first appears, with no keyframes. It works on itch&#39;s first render. [S9]</p>
+<h3>Scroll-driven reveals</h3>
+<pre><code class="language-css">@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    #wrapper .custom-reveal { animation: custom-in linear both; animation-timeline: view(); }
+  }
+}
+</code></pre>
+<p>Put <code>animation-timeline</code> <strong>after</strong> the <code>animation</code> shorthand, because the shorthand resets it. The <code>@supports</code> and reduced-motion wrappers mean browsers without support, and visitors who asked for less motion, simply see the content. Chrome and, since October 2026, Firefox support scroll-driven animations: about 88 % of users. [S10]</p>
+<h3>Smooth page changes between your profile and your projects</h3>
+<pre><code class="language-css">@view-transition { navigation: auto; }
+</code></pre>
+<p>Put it at the top level (not inside a <code>#wrapper</code> rule) in <strong>both</strong> sheets, your profile&#39;s and the project&#39;s. Moving between them then cross-fades instead of flashing. [S11]</p>
+<p>The reduced-motion block in 5.4 doesn&#39;t reach view transitions, which animate outside <code>#wrapper</code>. Wrap the rule in <code>@media (prefers-reduced-motion: no-preference) { … }</code> to respect the setting. [S11]</p>
+<h3>A new tilt on every visit</h3>
+<pre><code class="language-css">#wrapper .game_cell { rotate: 0deg; }
+@supports (rotate: random(0deg, 1deg)) {
+  #wrapper .game_cell { rotate: random(-2deg, 2deg); }
+}
+</code></pre>
+<p><code>random()</code> picks a new value on each page load in Chrome and Edge 156+ and Safari 26.2+, about 56 % of users. Firefox doesn&#39;t support it yet, and those visitors get the straight version. <code>@supports (--x: …)</code> can&#39;t detect support, so test a real property, as here. [S12]</p>
+<h2>5.7 Pitfalls</h2>
+<ul>
+<li><strong>An animation stops or the wrong one runs.</strong> A second <code>animation</code> declaration replaced the whole list, <code>!important</code> froze it, or a keyframe name clashed with one of itch&#39;s. [S13]</li>
+<li><strong>Slow pages.</strong> Animate <code>transform</code>, <code>translate</code>, <code>scale</code>, <code>rotate</code> and <code>opacity</code>, which are cheap. Never loop <code>font-weight</code>: in a throttled test it took about 0.9 s of layout work per second and dropped the page to around 20 frames per second. [S14]</li>
+<li><strong>Flashing.</strong> Stay under three flashes per second. Flashing content can get a page delisted. [S15]</li>
+<li><strong>HTML5 game pages.</strong> Keep <code>transform</code>, <code>filter</code>, <code>backdrop-filter</code>, <code>will-change</code> and entrance animations off the game&#39;s containers (R22; chapter 2). [S16]</li>
+</ul>
+<h2>Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Every <code>@keyframes</code> name starts with <code>custom-</code>.</li>
+<li><input disabled="" type="checkbox"> Automatic motion is finite, under 5 seconds, and ends at rest.</li>
+<li><input disabled="" type="checkbox"> Entrances animate <em>from</em> hidden; nothing starts at <code>opacity: 0</code> with <code>forwards</code>.</li>
+<li><input disabled="" type="checkbox"> The reduced-motion block is included, copied exactly.</li>
+<li><input disabled="" type="checkbox"> Hover effects sit in <code>@media (hover: hover)</code>, with <code>:focus-visible</code> or <code>:focus-within</code> equivalents.</li>
+<li><input disabled="" type="checkbox"> Headings animate by word, not by letter.</li>
+<li><input disabled="" type="checkbox"> New features have a plain fallback first, or an <code>@supports</code> test on a real property.</li>
+<li><input disabled="" type="checkbox"> No <code>!important</code> on animated properties; no looping <code>font-weight</code>; under 3 flashes per second.</li>
+</ul>
+<hr>
+<h2>Sources</h2>
+<p>From the itch-live-css knowledge base, <code>knowledge/itch-custom-css.md</code> §0 (R14, R16–R18, R22), §0.1 (block B1), §2, §7, §9 and §10.</p>
+<ul>
+<li><strong>S1</strong> itch&#39;s 13 global keyframe names, clash replaces itch&#39;s: verified · s06-static, s06-kf.</li>
+<li><strong>S2</strong> 5-second rule and WCAG 2.2.2, finite motion at rest, the <code>custom-bob</code> example: documented · a11y-25; verified · gapfill02-01, gapfill02-02, s10-02, a11y-24.</li>
+<li><strong>S3</strong> Entrances from hidden, no base <code>opacity: 0</code> + <code>forwards</code>: verified · a11y-24.</li>
+<li><strong>S4</strong> Block B1, its selector list and <code>transition: none</code>, hover reset; itch has no reduced-motion rules: verified · gapfill02-01, gapfill02-02, s10-02, repo-50, itchcss-26.</li>
+<li><strong>S5</strong> Hover gating and focus equivalents, card cover link skipped by Tab, nothing hover-only: verified · s10-03, a11y-18; inferred · s10-03.</li>
+<li><strong>S6</strong> Letter spans rename a heading: verified · repo-59, s10-14, s10-27.</li>
+<li><strong>S7</strong> Finite wave without <code>from</code>/<code>to</code>; <code>translate</code> needs <code>inline-block</code>: verified · gapfill07-04, s07-n2 T29.</li>
+<li><strong>S8</strong> Stagger with <code>sibling-index()</code> fallback; plain value first; no fallback through custom properties: verified · s07-n1 T3, T4, T13.</li>
+<li><strong>S9</strong> <code>@starting-style</code> on first render: verified · support-54.</li>
+<li><strong>S10</strong> Scroll-driven animation order and wrappers: verified · s07-n1 T15. Firefox 159 and the 88 % figure: documented · support-63.</li>
+<li><strong>S11</strong> <code>@view-transition</code> on both pages: verified · support-21. The reduced-motion wrapper is general CSS, not tested on itch.</li>
+<li><strong>S12</strong> Native <code>random()</code> and its support: verified · s07-n1 T5, T6, T22, support-03; verified 2026-10-29 · support-62; documented · support-63. <code>@supports (--x: …)</code> detects nothing: verified · s07-n1 T5–T7.</li>
+<li><strong>S13</strong> Animation stops or wrong one runs: verified · repo-45, localtests-24, itchcss-28.</li>
+<li><strong>S14</strong> Looping <code>font-weight</code> cost: verified · gapfill07-06.</li>
+<li><strong>S15</strong> Flashing and delisting: documented · s02-n3; inferred · docs-16.</li>
+<li><strong>S16</strong> HTML5 game containers: verified · s04-gf-08, s04-gf-09, s04-gf-11.</li>
+</ul>
+
+  </article>
+  <nav class="guide-steps" aria-label="Capítulos"><a href="04-colour-and-type.html">← Chapter 4 — Colour and type, with tokens and dark themes</a><a href="06-recipes.html">Chapter 6 — Copy-ready recipes →</a></nav>
+  <p class="hint">Text under CC BY 4.0 (see knowledge/LICENSE in the project). Not affiliated with itch.io.</p>
+</main>
+</body>
+</html>

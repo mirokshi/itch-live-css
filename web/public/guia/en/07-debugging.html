@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 7 — Debugging: when it doesn't show, and why · Guía · itch-live-css</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="site docs guide">
+  <header>
+    <nav class="site-nav" aria-label="Secciones"><a href="/">Editor</a><a href="/ideas.html">Ideas</a><a href="/showcase.html">Expositor</a><a href="/guia/">Guía</a><a href="/docs.html">Documentación</a><a href="/privacy.html">Privacidad</a></nav>
+    <p class="lang-links"><a href="../es/07-depuracion.html">Español</a></p>
+  </header>
+  <article>
+<h1>Chapter 7 — Debugging: when it doesn&#39;t show, and why</h1>
+<p>Most CSS problems on itch look the same from the outside: the change you made does nothing, or it works for you and not for visitors. The cause is almost always one of five things: a rule that the browser silently dropped, a rule that loses to itch&#39;s own, a cache that is still serving the old page, a preview that only you can see, or a tool that is reading the page the wrong way. This chapter goes through them in that order.</p>
+<h2>7.1 Start here: check what visitors actually get</h2>
+<p>Before you change any CSS, confirm what is being served. Your own view is not what visitors see:</p>
+<ul>
+<li><strong>You</strong> see unsaved CSS in the editor preview, and your own page is never cached. [S1]</li>
+<li><strong>Visitors</strong> get a cached copy. After a profile save, logged-out visitors can keep the old page for about two and a half minutes, then get the new one. [S1]</li>
+</ul>
+<p>So: test in a private window, logged out, after a few minutes. To see the cache state, open the browser&#39;s network panel (F12), reload, and look at the response headers for <code>X-Cache-Status</code>. <code>HIT</code> means a cached copy; <code>EXPIRED</code> followed by a fresh page means the change has arrived. You can also check the text itch is serving: on a profile, look for your <code>style#custom_css</code> element logged out. [S1]</p>
+<p>Changing the address (adding <code>?something</code>) does not skip the cache. [S1]</p>
+<h2>7.2 Your rule is silently ignored</h2>
+<p>This is the most common problem, and itch never tells you about it. Browsers skip any rule they can&#39;t parse, and the rest of the stylesheet carries on. Things that cause it: [S2]</p>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>calc(40px+10px)</code>: no spaces around <code>+</code> or <code>-</code></td>
+<td>Write <code>calc(40px + 10px)</code></td>
+</tr>
+<tr>
+<td><code>//</code> comments</td>
+<td>Use <code>/* … */</code></td>
+</tr>
+<tr>
+<td>A stray or missing <code>}</code></td>
+<td>Count braces. A missing one can make everything after it disappear</td>
+</tr>
+<tr>
+<td>An unknown selector in a list, such as <code>a, badselector</code></td>
+<td>The whole rule is dropped. Split the list, or remove the unknown part</td>
+</tr>
+<tr>
+<td><code>and(</code> inside <code>@media</code></td>
+<td>Use <code>and</code> with a space: <code>@media (min-width: 600px) and (hover: hover)</code></td>
+</tr>
+<tr>
+<td>A bad <code>var()</code></td>
+<td>The property becomes <code>unset</code>. Check the variable name and that it is set</td>
+</tr>
+</tbody></table>
+<p>A strong cause for &quot;nothing happens and there&#39;s no error&quot;: <strong>the rule doesn&#39;t parse</strong>. In your browser&#39;s DevTools, a rule with an invalid selector is missing from the Styles panel, and an invalid property is shown crossed out (general browser behaviour, not tested on itch). A rule that parses but doesn&#39;t match is a different problem (7.3).</p>
+<p>The knowledge base&#39;s validator flags many of these before you paste (<code>node engine/bin/cli.js validate yourfile.css profile</code>), but it cannot catch everything. [S2]</p>
+<h2>7.3 Your rule parses but loses to itch&#39;s</h2>
+<p>itch&#39;s own rules come first in the page. Yours come last, so ties go to you. But these cases lose anyway: [S3]</p>
+<table>
+<thead>
+<tr>
+<th>Opponent</th>
+<th>What beats it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>itch&#39;s normal rules</td>
+<td>Any rule starting with <code>#wrapper</code> (R2)</td>
+</tr>
+<tr>
+<td>itch&#39;s <code>!important</code></td>
+<td><code>#wrapper … !important</code>, or style the parent instead</td>
+</tr>
+<tr>
+<td>An inline <code>style=&quot;&quot;</code> attribute (such as on cover images and the game frame)</td>
+<td><code>!important</code> only. Inline styles beat even <code>#wrapper#wrapper</code></td>
+</tr>
+<tr>
+<td>itch&#39;s JavaScript, which writes inline sizes and a grid sizer <strong>after</strong> your CSS</td>
+<td><code>#wrapper</code> plus a class. On profiles the sizer&#39;s specificity is (0,2,0), so a <code>#wrapper .mode_grid .user_game_grid</code> rule beats it; on jams the sizer is an ID (1,0,0), so <code>#wrapper</code> plus a class is needed</td>
+</tr>
+<tr>
+<td>A rule inside <code>@layer</code></td>
+<td>Layers always lose to normal rules. Don&#39;t use them (R15)</td>
+</tr>
+</tbody></table>
+<p>Two more traps:</p>
+<ul>
+<li><strong>Nesting needs modern browsers.</strong> <code>#wrapper { .x { } }</code> works in current browsers but is dropped by older ones. Write essential rules flat. [S4]</li>
+<li><strong>Imported rules lose to pasted ones.</strong> If you split your CSS with <code>@import</code> (chapter 6), the pasted rules win ties. Add weight to the imported rules, for example <code>#wrapper h1.custom-title</code>. [S4]</li>
+</ul>
+<p>To see which rule wins: open DevTools, select the element, and look at the <strong>Styles</strong> panel. Rules that lost are crossed out, with the rule that won listed above them. This is the fastest way to find a cascade problem.</p>
+<h2>7.4 Custom properties follow the page, not the specificity</h2>
+<p>A custom property takes the value from the nearest element that declares it, not the most specific rule. If you declare <code>--accent</code> on a child and use it on the parent, the parent doesn&#39;t see it. Declare tokens on <code>#wrapper</code> (chapter 4) and read them below it. [S5]</p>
+<h2>7.5 Animations and names</h2>
+<ul>
+<li><strong><code>@keyframes</code> names are global.</strong> A name that matches one of itch&#39;s (<code>spin</code>, <code>bounce</code>) replaces it on the whole page. Use the <code>custom-</code> prefix (R16; chapter 5). [S6]</li>
+<li><strong><code>animation</code> is a list.</strong> A second <code>animation</code> declaration in the same rule replaces the first, so one of your animations stops. Put them in one declaration, or animate a different property. [S6]</li>
+<li><strong>Animations freeze</strong> if they carry <code>!important</code> (R14). An unregistered custom property doesn&#39;t freeze, but it animates in steps rather than smoothly. [S6]</li>
+<li><strong>Relative <code>url()</code> paths</strong> resolve against different bases: the visitor&#39;s page when pasted, your sheet when imported. Use absolute <code>https://</code> addresses everywhere (R23). [S6]</li>
+</ul>
+<h2>7.6 Things that break only in some layouts</h2>
+<ul>
+<li><strong>A fixed decoration never shows.</strong> The element sits behind <code>#wrapper</code>&#39;s background because <code>#wrapper</code> isn&#39;t in its own stacking context. Add <code>position: relative; isolation: isolate;</code> to <code>#wrapper</code> and put the decoration on <code>#wrapper::before</code> (chapter 3). [S7]</li>
+<li><strong>A decoration covers the Follow button.</strong> Give the decoration <code>pointer-events: none</code>, and keep the top-right corner clear. [S7]</li>
+<li><strong>Fixed layers scroll with the page.</strong> A <code>transform</code>, <code>filter</code>, <code>backdrop-filter</code>, <code>perspective</code>, <code>will-change: transform</code> or <code>contain</code> on <code>#wrapper</code>, <code>.user_page</code> or <code>#inner_column</code> turns it into their containing block. Move the effect to a pseudo-element. HTML5 games: R22. [S7]</li>
+<li><strong>Sideways scroll on phones.</strong> Usually an oversized element or a rotated one. <code>overflow-x: hidden</code> removes the scroll bar but breaks <code>position: sticky</code>; use <code>overflow-x: clip</code> (chapter 3). [S8]</li>
+<li><strong>Cards of uneven height.</strong> itch aligns grid items to the top. Stretch them (chapter 3, 3.4). [S8]</li>
+<li><strong>The footer&#39;s margin doesn&#39;t work.</strong> The profile footer is absolutely positioned. Use a bottom margin on the last block, or padding on <code>#wrapper</code> (chapter 3, 3.6). [S8]</li>
+</ul>
+<h2>7.7 A saved change doesn&#39;t appear</h2>
+<p>Work through this list in order:</p>
+<ol>
+<li><strong>Are you looking logged out?</strong> Your own view can be different (7.1). [S1]</li>
+<li><strong>Did the save succeed?</strong> Over the profile limit, itch refuses the whole save and shows an error box. Measure the size (chapter 1). [S9]</li>
+<li><strong>Is the cache still serving the old copy?</strong> Wait a few minutes, then check in a private window. [S1]</li>
+<li><strong>Does the CSS parse?</strong> Check in DevTools (7.2). [S2]</li>
+<li><strong>Is something else winning?</strong> Check in DevTools (7.3). [S3]</li>
+</ol>
+<h2>7.8 Shrinking CSS can break it</h2>
+<p>A minifier that removes whitespace can also remove what the browser needs. Choose the tool deliberately:</p>
+<ul>
+<li><strong>Use esbuild with <code>--minify</code> and <code>--charset=utf8</code>.</strong> In the knowledge base&#39;s tests it kept the nested rules and range media queries that the others removed, and non-ASCII text intact. The exact command-line flags are inferred from the API options tested. [S10]</li>
+<li><strong>Avoid csso,</strong> which removes nesting and range media queries, and <strong>lightningcss without targets,</strong> which drops fallbacks. [S10]</li>
+<li><strong>Don&#39;t minify strings by regular expression.</strong> Quick search-and-replace tools can rewrite the text inside <code>content: &quot;…&quot;</code>. [S10]</li>
+<li><strong>Check after minifying.</strong> Run the size measurement (chapter 1) and open the page logged out. A minifier error can be silent.</li>
+</ul>
+<h2>7.9 Reading the page with tools</h2>
+<p>Automated tools and screen readers read the page differently from a browser:</p>
+<ul>
+<li><strong><code>read_page</code>-style tools include hidden text and ignore <code>::before</code> and <code>::after</code>.</strong> Don&#39;t use them to check what a visitor sees. Use the browser&#39;s accessibility tree (DevTools, or the Chrome DevTools Protocol&#39;s accessibility call) instead. [S11]</li>
+<li><strong>Live pages are a poor guide.</strong> Most top-level selectors on styled pages don&#39;t start with <code>#wrapper</code>, so a styled page proves little about what your rules will do. Copy the rules from this guide, and test your own page. [S12]</li>
+<li><strong>A script-free copy of a page is not the real thing.</strong> It doesn&#39;t run itch&#39;s JavaScript, so grid sizing, the wrapper&#39;s minimum height and the lazy covers behave differently. Judge layout on a live render. [S13]</li>
+</ul>
+<h2>Checklist when something breaks</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Checked logged out, in a private window, after the cache had expired (7.1).</li>
+<li><input disabled="" type="checkbox"> Looked at the rule in DevTools: is it crossed out, or missing entirely? (7.2, 7.3)</li>
+<li><input disabled="" type="checkbox"> Checked the size and the <code>&lt;/style&gt;</code> rule (chapter 1). Saved text matches what you pasted.</li>
+<li><input disabled="" type="checkbox"> Checked the minified version against the source (7.8).</li>
+<li><input disabled="" type="checkbox"> Checked the accessibility tree, not text tools, for what a screen reader would hear (7.9).</li>
+</ul>
+<hr>
+<h2>Sources</h2>
+<p>From the itch-live-css knowledge base, <code>knowledge/itch-custom-css.md</code> §1, §6, §9 and §10.</p>
+<ul>
+<li><strong>S1</strong> Owner view versus logged-out view, cache headers, <code>X-Cache-Status</code>, query strings do not bypass: verified 2026-10-16 · live-dom; documented · community-05; verified · crawlprofile-46.</li>
+<li><strong>S2</strong> Silent parse failures (<code>calc</code>, <code>//</code>, braces, unknown selector, <code>and(</code>), <code>var()</code> to <code>unset</code>: verified · localtests-41, localtests-42, localtests-32, support-06, support-08, s01-n6.</li>
+<li><strong>S3</strong> Cascade losers: inline <code>style</code> beats <code>#wrapper#wrapper</code>, runtime sizer, <code>!important</code>: verified · crawlprofile-12, localtests-04, crawljam-07, docs-17, localtests-24; jam sizer <code>#&lt;generated id&gt;</code> (1,0,0): inferred · community-47, verified locally · s06-run.</li>
+<li><strong>S4</strong> Nesting support and drop in older browsers: verified · support-15; observed · crawlprofile-57. Imported rules lose to pasted ones: verified · localtests-01, repo-13.</li>
+<li><strong>S5</strong> Custom properties follow the nearest declaring ancestor: verified · localtests-06, s06-heads.</li>
+<li><strong>S6</strong> Global keyframe names, <code>animation</code> list replacement, <code>!important</code> freezing animations, unregistered <code>@property</code> animating discretely, relative <code>url()</code> bases: verified · s06-static, s06-kf, repo-45, s06-run, localtests-24.</li>
+<li><strong>S7</strong> Stacking context for fixed decorations, Follow button, fixed layers and containing blocks: verified · localtests-39, repo-46, itchcss-29, localtests-37, crawlprofile-60.</li>
+<li><strong>S8</strong> Sideways scroll and <code>overflow-x: clip</code>, grid alignment, absolute footer: verified · localtests-27, localtests-29, repo-32, repo-33, crawlprofile-09, repo-24.</li>
+<li><strong>S9</strong> Save refused over the cap, with an error box: verified 2026-10-16 · live-cap-A1.</li>
+<li><strong>S10</strong> Minifier choice and the failures listed: verified · gapfill09-05, gapfill09-15, gapfill09-11, gapfill09-12, gapfill09-06; the CLI flag names are inferred from the API options tested.</li>
+<li><strong>S11</strong> Tools read hidden text and ignore pseudo-elements: verified · localtests-34, a11y-50.</li>
+<li><strong>S12</strong> Most top-level selectors on live pages lack <code>#wrapper</code>: verified · corpus-16.</li>
+<li><strong>S13</strong> Script-free harness differences: verified (live render) · s10-17 to s10-24.</li>
+</ul>
+
+  </article>
+  <nav class="guide-steps" aria-label="Capítulos"><a href="06-recipes.html">← Chapter 6 — Copy-ready recipes</a><a href="08-before-you-save.html">Chapter 8 — Before you save: the final check →</a></nav>
+  <p class="hint">Text under CC BY 4.0 (see knowledge/LICENSE in the project). Not affiliated with itch.io.</p>
+</main>
+</body>
+</html>

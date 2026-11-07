@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capítulo 1 — Dónde va tu CSS y cuánto cabe · Guía · itch-live-css</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="site docs guide">
+  <header>
+    <nav class="site-nav" aria-label="Secciones"><a href="/">Editor</a><a href="/ideas.html">Ideas</a><a href="/showcase.html">Expositor</a><a href="/guia/">Guía</a><a href="/docs.html">Documentación</a><a href="/privacy.html">Privacidad</a></nav>
+    <p class="lang-links"><a href="../en/01-where-your-css-goes.html">English</a></p>
+  </header>
+  <article>
+<h1>Capítulo 1 — Dónde va tu CSS y cuánto cabe</h1>
+<p>Antes de escribir una sola regla necesitas saber tres cosas: si puedes pegar CSS, a qué páginas llega y cuánto acepta itch. Si fallas en esto, nada de lo demás de la guía importa.</p>
+<h2>1.1 ¿Tienes acceso?</h2>
+<p>El CSS personalizado no viene activado por defecto. El personal de itch lo activa a mano, cuenta por cuenta, cuando lo pides a través de la página de soporte de itch. Las cuentas sin nada publicado suelen recibir una negativa, y la espera puede ser de semanas. [S1]</p>
+<p>La prueba rápida: abre el editor de tema de tu página (siguiente sección). Si no hay un campo <strong>Custom CSS</strong>, todavía no tienes acceso. Mientras tanto conservas los colores y las fuentes del editor de tema, además del HTML que puedes escribir en tu biografía o en la descripción del proyecto. [S1]</p>
+<h2>1.2 Dónde está el campo</h2>
+<p>En tu propia página, con la sesión iniciada:</p>
+<ol>
+<li>Haz clic en <strong>Edit theme</strong>.</li>
+<li>Abre la pestaña <strong>Misc</strong>.</li>
+<li>Pega en <strong>Custom CSS</strong>.</li>
+<li>Haz clic en <strong>Save</strong>.</li>
+</ol>
+<p>El botón <strong>Edit theme</strong> desaparece cuando la ventana tiene 980 px de ancho o menos, así que hazlo en una ventana de escritorio. [S2]</p>
+<h2>1.3 A qué páginas llega tu CSS</h2>
+<p>Cada lugar donde puedes pegar CSS tiene su propio campo, y cada campo da estilo a un conjunto fijo de páginas:</p>
+<table>
+<thead>
+<tr>
+<th>Dónde lo pegas</th>
+<th>Páginas que estiliza</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tu perfil (<code>tunombre.itch.io</code>)</td>
+<td>Solo la página del perfil</td>
+</tr>
+<tr>
+<td>Un proyecto</td>
+<td>La página del proyecto <strong>y</strong> su índice <code>/devlog</code>, todas las entradas de devlog y la página <code>/comments</code></td>
+</tr>
+<tr>
+<td>Una jam que organizas</td>
+<td>Solo la página de resumen de la jam</td>
+</tr>
+</tbody></table>
+<p>Hay dos consecuencias que pillan desprevenido a mucha gente:</p>
+<ul>
+<li><strong>Una hoja de proyecto, cuatro tipos de página.</strong> Una regla pensada para la página de tu juego también llega a tus entradas de devlog. El capítulo 2 explica cómo apuntar una regla a una sola de ellas. [S3]</li>
+<li><strong>Algunas páginas nunca se estilizan</strong>: la página de compra, los tableros y foros de proyectos, las colecciones, el blog de itch y las páginas de entradas, resultados, feed, comunidad y valoraciones de la jam. Ningún CSS llega a ellas, hagas lo que hagas. [S3]</li>
+</ul>
+<p>No hay JavaScript en ninguna parte: itch no lo permite. Todo lo de esta guía es CSS puro. [S3]</p>
+<h2>1.4 Cuánto cabe</h2>
+<table>
+<thead>
+<tr>
+<th>Página</th>
+<th>Límite</th>
+<th>Qué pasa si se supera</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Perfil</td>
+<td><strong>5.120 bytes</strong></td>
+<td>Se rechaza el guardado, nada cambia</td>
+</tr>
+<tr>
+<td>Proyecto y devlog</td>
+<td>Sin límite práctico (más de 650.000 caracteres guardados)</td>
+<td>Un pegado enorme falla como petición rota</td>
+</tr>
+<tr>
+<td>Jam</td>
+<td>Unos 20 KB; se sabe que funcionan 20.410 caracteres</td>
+<td>Sin medir</td>
+</tr>
+</tbody></table>
+<p>[S4]</p>
+<h3>El límite del perfil se cuenta en bytes, no en caracteres</h3>
+<p>El mensaje de error de itch dice «caracteres», pero cuenta <strong>bytes</strong>. Las letras, los dígitos y los signos de puntuación básicos ASCII ocupan un byte cada uno. Las letras acentuadas, como <code>é</code>, ocupan dos bytes; muchos símbolos (<code>→</code>, <code>★</code>) ocupan tres, y los emojis cuatro. Así que una hoja de perfil con texto acentuado cabe en menos caracteres de los que sugiere el mensaje de 5.120. [S4]</p>
+<p>Otros detalles del límite del perfil:</p>
+<ul>
+<li><strong>Los comentarios cuentan.</strong> Quítalos antes de pegar.</li>
+<li><strong>Los espacios y saltos de línea al principio y al final no cuentan</strong>, porque itch los recorta antes.</li>
+<li><strong>Si se supera el límite, se rechaza todo el guardado.</strong> Aparece un cuadro de error que dice que los cambios no se guardaron. itch nunca corta tu CSS a la mitad, así que no acabarás con una hoja a medias, pero tampoco se guardará nada. [S4]</li>
+</ul>
+<h3>Medir antes de pegar</h3>
+<p>Pega esto en la consola de tu navegador (F12 → Console), pon tu CSS entre las comillas invertidas y pulsa Intro:</p>
+<pre><code class="language-js">new TextEncoder().encode(String.raw`PEGA AQUÍ TU CSS`.trim()).length
+</code></pre>
+<p>El número es el recuento de bytes que comprobará itch. Para un perfil, mantenlo en 5.120 o menos. Si tu CSS contiene una comilla invertida o <code>${</code>, usa la versión de Python:</p>
+<pre><code class="language-sh">python -c &quot;import sys;s=open(sys.argv[1],encoding=&#39;utf-8&#39;).read().strip();print(len(s),len(s.encode()))&quot; mi-perfil.css
+</code></pre>
+<p>Muestra primero los caracteres y después los bytes. [S5]</p>
+<h3>Cómo caber más en un perfil</h3>
+<ul>
+<li><strong>Minifica.</strong> Quita comentarios, saltos de línea y espacios que no necesitas. Usa un minificador de CSS de verdad. Algunos «minificadores» rápidos de buscar y reemplazar estropean el texto dentro de <code>content:&quot;…&quot;</code>. [S6]</li>
+<li><strong>Escribe los símbolos tal cual.</strong> Un <code>→</code> directo ocupa 3 bytes; el escape que significa lo mismo ocupa 5. [S6]</li>
+<li><strong>No incrustes fuentes ni imágenes en Base64.</strong> Base64 hace un archivo aproximadamente un tercio más grande: un subconjunto de fuente de 2,5 KB se convierte en 3,4 KB de CSS. [S6]</li>
+<li><strong>¿Sigue siendo demasiado?</strong> Aloja el resto en un archivo y cárgalo con <code>@import</code>. El capítulo 6 explica cómo hacerlo con seguridad. No funciona en las jams. [S6]</li>
+</ul>
+<h2>1.5 Qué hace itch con tu CSS al guardar</h2>
+<p>itch guarda tu CSS casi exactamente como lo escribiste. No lo minifica, no lo comprueba, no lo corrige ni lo limita a tu página. Solo cambian tres cosas: [S7]</p>
+<ol>
+<li><strong>Se borra cada <code>&lt;/style&gt;</code></strong>, en cualquier combinación de mayúsculas y minúsculas, incluso dentro de un comentario o de una cadena. Si tu CSS contiene ese texto, el código que lo rodea cambia en silencio. Nunca pegues las etiquetas <code>&lt;style&gt;</code>, solo lo que va entre ellas. [S7]</li>
+<li><strong>Los espacios y saltos de línea al principio y al final se recortan.</strong> [S7]</li>
+<li><strong>Los saltos de línea de un proyecto se guardan como dos bytes (CRLF) en lugar de uno.</strong> No es grave, pero es una razón más para pegar el CSS de proyecto como una sola línea minificada. [S7]</li>
+</ol>
+<p>Cuando tu CSS tiene un error, el navegador salta la regla rota sin avisarte, e itch tampoco te avisa. Fallos silenciosos habituales:</p>
+<ul>
+<li><code>calc(40px+10px)</code>: <code>calc</code> necesita espacios alrededor de <code>+</code> y <code>-</code>.</li>
+<li>Comentarios <code>//</code>: en CSS solo existen los <code>/* … */</code>.</li>
+<li>Una <code>}</code> que falta.</li>
+<li>Un selector desconocido en una lista, que hace caer la regla entera. [S8]</li>
+</ul>
+<p>El capítulo 7 trata de cómo encontrarlos.</p>
+<h2>1.6 Cómo ver tu cambio</h2>
+<ul>
+<li><strong>Tú</strong> ves tus cambios al momento, e incluso ves el CSS sin guardar mientras el editor está abierto. [S9]</li>
+<li><strong>Los visitantes</strong> pueden seguir viendo la página antigua durante unos dos minutos y medio tras un guardado, porque itch la tiene en caché. Añadir <code>?algo</code> a la dirección no salta la caché. [S9]</li>
+</ul>
+<p>Por eso comprueba siempre el resultado <strong>sin sesión iniciada</strong>: en una ventana privada, pasados unos minutos.</p>
+<h2>Lista de comprobación</h2>
+<ul>
+<li><input disabled="" type="checkbox"> El campo <strong>Custom CSS</strong> está disponible (tienes acceso).</li>
+<li><input disabled="" type="checkbox"> Sabes a qué páginas llega tu hoja. En un proyecto, eso incluye el devlog y los comentarios.</li>
+<li><input disabled="" type="checkbox"> El CSS del perfil ocupa <strong>5.120 bytes o menos</strong>, medidos en bytes, con comentarios incluidos.</li>
+<li><input disabled="" type="checkbox"> Solo pegaste CSS: ni etiquetas <code>&lt;style&gt;</code>, ni <code>&lt;/style&gt;</code> en ninguna parte.</li>
+<li><input disabled="" type="checkbox"> El CSS del proyecto es una sola línea minificada.</li>
+<li><input disabled="" type="checkbox"> Revisaste la página guardada sin sesión iniciada, después de que expirara la caché.</li>
+</ul>
+<hr>
+<h2>Fuentes</h2>
+<p>Cada afirmación de arriba corresponde a un dato de la base de conocimiento de itch-live-css (<code>knowledge/itch-custom-css.md</code>, §0–§1). «Verificado» significa que se reprodujo directamente; las entradas con fecha proceden de pruebas en vivo en itch.io en octubre de 2026.</p>
+<ul>
+<li><strong>S1</strong> Acceso por solicitud, campo ausente = sin acceso: documentado · docs-01, docs-02, docs-03, community-48.</li>
+<li><strong>S2</strong> Ruta del editor, botón oculto a ≤ 980 px: observado · gapfill01-07; verificado · gapfill01-08.</li>
+<li><strong>S3</strong> Páginas estilizadas y no estilizadas, sin JavaScript: verificado · s01-n2, crawlproject-42, crawljam-03, crawljam-35, crawljam-44; documentado · docs-05, repo-04.</li>
+<li><strong>S4</strong> Límites de tamaño, bytes y no caracteres, los comentarios cuentan, recorte de extremos, mensaje de rechazo: verificado 2026-10-16 · live-cap-A1, live-cap-A2a, live-cap-A2c, live-cap-A3a a live-cap-A3c, live-cap-B1, live-cap-B2; jam: documentado · crawljam-29; inferido · gapfill01-03.</li>
+<li><strong>S5</strong> Script de medición: verificado · s01-n8. El comando de consola es propio de esta guía y cuenta igual (texto recortado, bytes UTF-8); <code>String.raw</code> mantiene intactas las barras invertidas como <code>\2192</code>.</li>
+<li><strong>S6</strong> Consejos para ahorrar bytes: verificado · corpus-19, s01-n6, x08-06, community-11; documentado · docs-32.</li>
+<li><strong>S7</strong> Qué cambia un guardado: verificado 2026-10-16 · live-c01 a live-c45, live-css; verificado · corpus-01, corpus-02, corpus-03, gapfill01-02.</li>
+<li><strong>S8</strong> Fallos silenciosos: verificado · localtests-41, localtests-42, support-08.</li>
+<li><strong>S9</strong> Vista previa y caché: documentado · community-05; verificado · crawlprofile-46; verificado 2026-10-16 · live-dom.</li>
+</ul>
+
+  </article>
+  <nav class="guide-steps" aria-label="Capítulos"><a href="02-las-24-reglas.html">Capítulo 2 — Las 24 reglas, en palabras sencillas →</a></nav>
+  <p class="hint">Texto bajo CC BY 4.0 (ver knowledge/LICENSE del proyecto). No está afiliado a itch.io.</p>
+</main>
+</body>
+</html>

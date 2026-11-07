@@ -1,0 +1,20 @@
+/* Profile starter: palette, colours, dark theme, focus ring, reduced motion */
+#wrapper {
+  --bg: #0b1433;
+  --text: #eef3ff;
+  --accent: #ffc857;
+  --focus-ring: #ffc857;
+  --itchio_input_focus_color: var(--focus-ring);
+  color-scheme: dark;
+  background-color: var(--bg);
+}
+#wrapper .user_page { --itchio_link_color: var(--accent); color: var(--text); }
+#wrapper .user_page a, #wrapper .footer a, #wrapper .game_title a { color: var(--accent); }
+#wrapper .footer { color: var(--text); }
+#wrapper .game_author, #wrapper .game_text, #wrapper .game_genre, #wrapper .game_platform { color: var(--text); }
+#wrapper :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+#wrapper :is(.game_cell, .header_tabs, .screenshot_list, .breadcrumbs) :focus-visible { outline-offset: -2px; }
+#wrapper .game_cell { position: relative; }
+#wrapper .game_cell:has(:focus-visible)::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; border: 3px solid var(--focus-ring); border-radius: inherit; }
+#wrapper .game_cell:focus-within .game_cell_tools { opacity: 1; }
+@media (prefers-reduced-motion:reduce){#wrapper,#wrapper::before,#wrapper::after,#wrapper *,#wrapper *::before,#wrapper *::after{animation:none!important;transition:none!important}}

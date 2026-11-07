@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 2 — The 24 rules, in plain words · Guía · itch-live-css</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="site docs guide">
+  <header>
+    <nav class="site-nav" aria-label="Secciones"><a href="/">Editor</a><a href="/ideas.html">Ideas</a><a href="/showcase.html">Expositor</a><a href="/guia/">Guía</a><a href="/docs.html">Documentación</a><a href="/privacy.html">Privacidad</a></nav>
+    <p class="lang-links"><a href="../es/02-las-24-reglas.html">Español</a></p>
+  </header>
+  <article>
+<h1>Chapter 2 — The 24 rules, in plain words</h1>
+<p>These are the rules that decide whether your CSS works, whether it stays on your page, and whether a visitor can still use the page. The numbers match the knowledge base (R1–R24), so you can look up any rule&#39;s evidence there.</p>
+<p>Most of them are not technical limits. itch serves whatever CSS you paste. The rules exist because itch can remove access, and because a visitor can be harmed by a page that breaks or hides things. [policy]</p>
+<h2>Access and scope</h2>
+<h3>R1 — Check that you have the field first</h3>
+<p>Staff grant custom CSS by hand. Without the field, nothing you paste does anything. The fallback is the theme editor plus HTML in your bio or description. (Chapter 1 shows how to check.) [R1]</p>
+<h3>R2 — Start every rule with <code>#wrapper</code></h3>
+<p>itch doesn&#39;t scope your CSS. Whatever you write is applied to the whole page, so a bare <code>body</code>, <code>html</code>, <code>a</code>, <code>img</code> or <code>*</code> restyles the site around your content, including the header and footer. Start every selector with <code>#wrapper</code>, even inside <code>@media</code> and <code>@supports</code>.</p>
+<pre><code class="language-css">@media (min-width: 700px) {
+  #wrapper .user_page { max-width: 720px; }
+}
+</code></pre>
+<p>Never write <code>body &gt; #wrapper</code>: the knowledge base lists it as a forbidden selector. [R2]</p>
+<h3>R3 — Set your variables on <code>#wrapper</code>, not <code>:root</code></h3>
+<p>Custom properties on <code>:root</code> or <code>html</code> leak into itch&#39;s own UI. On a jam it recoloured the site header. Put your variables on <code>#wrapper</code> (or on <code>#wrapper .user_page</code> for a profile), and they stay inside the page. [R3]</p>
+<h3>R4 — Never use the <code>background</code> shorthand on <code>#wrapper</code></h3>
+<p>The theme already paints your background image on that element, using separate properties. The shorthand resets all of them, so your image disappears. Use the longhands (<code>background-color</code>, <code>background-image</code>, <code>background-size</code> and so on). [R4]</p>
+<h3>R13 — On a project, your sheet also styles the devlog and comments</h3>
+<p>A project&#39;s CSS reaches <code>/devlog</code>, every devlog post and <code>/comments</code>. Target the page you mean with the page classes: the main page, the index, a post and the comments page are all different. Test all four before you publish. [R13]</p>
+<h2>Not breaking or faking itch&#39;s UI</h2>
+<h3>R5 — Never hide, move, cover or fake itch&#39;s own controls</h3>
+<p>That includes footer links, the site header, the &quot;User tools&quot; bar, dialogs, buy and download buttons, prices, the &quot;More information&quot; box and the external-link badge. Restyling them is fine; hiding or moving them can cost you CSS access. [R5]</p>
+<h3>R6 — Never mislead visitors or track them</h3>
+<p>No fake buttons, fake modals, fake badges, layers that catch clicks, or impersonation of a site or a person. Your CSS can&#39;t call home either: no <code>url()</code> requests that act as beacons, no form-field selectors, no cookies, no visitor logging. [R6]</p>
+<h3>R12 — Don&#39;t target numbered IDs</h3>
+<p>Ids like <code>#user_123</code> or <code>#view_game_456</code> change with every render. Use stable hooks: <code>#wrapper</code>, <code>#profile_header</code>, <code>#inner_column</code>, <code>#header</code>, <code>#view_game_footer</code> and <code>#entries</code>. [R12]</p>
+<h3>R20 — Keep exactly one <code>h1</code></h3>
+<p>Each page should have one <code>h1</code> that names it. Some layouts hide itch&#39;s own heading (a profile with a banner, a project with a banner or an HTML5 embed). Then add an <code>&lt;h1&gt;</code> with a <code>custom-</code> class to your bio or description. On jams keep itch&#39;s <code>.jam_title_header</code>, and never style <code>#wrapper h1</code>. [R20]</p>
+<h2>Size and pasting</h2>
+<h3>R7 — Measure your size and say what it is</h3>
+<p>Profile CSS may be at most <strong>5,120 bytes</strong> after leading and trailing whitespace is trimmed; comments count. Over that, the save is refused, not cut. Projects and devlogs have no practical limit. Jams are about 20 KB. Measure every build; chapter 1 has the commands. [R7]</p>
+<h3>R8 — Paste minified CSS only</h3>
+<p>No <code>&lt;style&gt;</code> tags. Never the text <code>&lt;/style&gt;</code>, in any letter case, even inside a comment, because itch deletes it from the stored sheet. Write <code>&gt;</code> as is, not as <code>&amp;gt;</code>. [R8]</p>
+<h3>R9 — Put every <code>@import</code> first</h3>
+<p>Only comments, <code>@charset</code> or an <code>@layer</code> line may come before an <code>@import</code>. Anywhere else it is dropped without warning. On jams <code>@import</code> never loads; use <code>@font-face</code> or the font picker instead. [R9]</p>
+<h3>R10 — Import only safe, pinned, <code>https://</code> files</h3>
+<p>Use <code>https://</code>, a stylesheet (<code>text/css</code>), a successful response and a fixed version URL. Don&#39;t import from <code>raw.githubusercontent.com</code> or GitHub gists, which change under you. Keep your CSS usable if the import fails or is blocked: the page should still look acceptable without it. [R10]</p>
+<h3>R23 — Use absolute <code>https://</code> URLs everywhere</h3>
+<p>In every <code>url()</code> and every <code>@import</code>, write the full address. Relative paths resolve against the page the visitor is on, not against your file. [R23]</p>
+<h2>Naming</h2>
+<h3>R11 — Give HTML classes the <code>custom-</code> prefix</h3>
+<p>In bios and descriptions, itch keeps a class only if it starts with a lowercase <code>custom</code>. Anything after the prefix survives, but <code>id</code>, <code>data-*</code>, <code>aria-*</code>, <code>role</code>, event handlers and <code>tabindex</code> are removed. Also avoid names starting with <code>custom-ad</code>, <code>custom-social</code>, <code>custom-share</code> and <code>custom-cookie</code>: ad blockers hide them. [R11]</p>
+<h3>R16 — Prefix every <code>@keyframes</code> name with <code>custom-</code></h3>
+<p>itch already defines about a dozen animation names, such as <code>bounce</code> and <code>spin</code>. A rule with the same name replaces itch&#39;s animation on every page. <code>custom-bob</code> is safe; <code>bob</code> is not. [R16]</p>
+<h2>Motion and interaction</h2>
+<h3>R14 — Use <code>!important</code> only to beat itch&#39;s own <code>!important</code></h3>
+<p>Use it against itch&#39;s <code>!important</code>, inline <code>style=&quot;&quot;</code>, or another <code>!important</code> that is also yours. Never on an animated property (it freezes the animation), and never <code>outline: none !important</code>. [R14]</p>
+<h3>R15 — Don&#39;t use <code>@layer</code> for your overrides</h3>
+<p>itch has no layers. Any rule inside a layer loses to every normal rule of itch&#39;s, however specific yours is. Write normal rules instead. [R15]</p>
+<h3>R17 — Animation starts, runs briefly and stops</h3>
+<p>Any motion that starts on its own must finish within 5 seconds and end at rest. A looping animation alongside content breaks WCAG 2.2.2, and reduced-motion settings don&#39;t fix that. Keep the resting state readable: never start from <code>opacity: 0</code> with <code>forwards</code>. Loop only on hover or focus, or after the visitor&#39;s explicit choice. [R17]</p>
+<pre><code class="language-css">@keyframes custom-bob { to { translate: 0 -4px; } }
+#wrapper .custom-title { animation: custom-bob 1.2s ease-in-out 4 alternate; }
+</code></pre>
+<p>That is the pattern: named with the prefix, finite, and ending at rest.</p>
+<h3>R18 — Put hover effects behind <code>@media (hover: hover)</code></h3>
+<p>Touch screens have no hover. Wrap hover effects in <code>@media (hover: hover)</code>, and give each one a focus equivalent so keyboard users get the same effect. [R18]</p>
+<h3>R21 — Hide silent things with <code>display: none</code></h3>
+<p><code>opacity: 0</code>, <code>color: transparent</code> and screen-reader-only text remain in the accessibility tree, so a screen reader still announces them. <code>display: none</code> removes them. Decorative generated content (<code>content: &quot;★&quot;</code>) should also be announced as nothing: give it an empty alternative with <code>content: &quot;★&quot; / &quot;&quot;</code>. [R21]</p>
+<h3>R22 — On HTML5 project pages, keep effects off the game&#39;s ancestors</h3>
+<p><code>filter</code>, <code>backdrop-filter</code>, <code>transform</code>, <code>will-change</code> and entrance animations on <code>#wrapper</code>, <code>#inner_column</code>, <code>.view_game_page</code> or <code>.embed_wrapper</code> can interfere with the embedded game. Put them on elements inside the page, and release <code>isolation</code> while the game is maximised. [R22]</p>
+<h2>Accessibility</h2>
+<h3>R19 — Keep a focus ring that is easy to see</h3>
+<p>itch&#39;s default focus ring is a dark purple that measures only 1.1–1.5:1 against the dark backgrounds tested. WCAG asks for at least 3:1 for focus indicators. Set a ring that meets it, and keep a visible outline on every focusable element. [R19]</p>
+<h3>R24 — Check logged out, at phone widths</h3>
+<p>Test at 320 px and 375 px, plus the breakpoints of your page type, logged out, with itch&#39;s scripts running. Screen-reader checks by reading the page as text miss what a visitor hears, so test with a screen reader too. [R24]</p>
+<h2>Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> I have the Custom CSS field (R1).</li>
+<li><input disabled="" type="checkbox"> Every selector starts with <code>#wrapper</code> (R2), and variables are on <code>#wrapper</code> or below (R3).</li>
+<li><input disabled="" type="checkbox"> No <code>background</code> shorthand on <code>#wrapper</code> (R4).</li>
+<li><input disabled="" type="checkbox"> I don&#39;t hide, move or fake itch&#39;s UI, and I don&#39;t track anyone (R5, R6).</li>
+<li><input disabled="" type="checkbox"> No numbered ids (R12). One <code>h1</code> (R20).</li>
+<li><input disabled="" type="checkbox"> Size measured in bytes, minified, no <code>&lt;/style&gt;</code> (R7, R8).</li>
+<li><input disabled="" type="checkbox"> <code>@import</code> lines come first, pinned and <code>https://</code> (R9, R10, R23).</li>
+<li><input disabled="" type="checkbox"> Classes and keyframes start with <code>custom-</code> (R11, R16).</li>
+<li><input disabled="" type="checkbox"> Motion is finite and at rest (R17); hover effects are gated (R18).</li>
+<li><input disabled="" type="checkbox"> Focus ring meets 3:1 (R19); checked logged out at 320 and 375 px (R24).</li>
+</ul>
+<hr>
+<h2>Sources</h2>
+<p>Each rule comes from the knowledge base&#39;s §0 (&quot;Rules an AI must never break&quot;) and §2. Fact ids are listed so you can check the evidence and its tag. The tags stay as they are in the knowledge base: a rule can&#39;t be stronger here than there.</p>
+<ul>
+<li><strong>Policy framing</strong> (most rules are policy, enforced by staff): documented · docs-10, docs-12, docs-13, community-23; no public revocation found.</li>
+<li><strong>R1</strong> documented · docs-01, community-48.</li>
+<li><strong>R2</strong> documented · docs-09; verified · corpus-01, corpus-16, S03-N7. The <code>body.frame_maximized</code> exception is in §4 (s04-gf-10).</li>
+<li><strong>R3</strong> verified · crawljam-42, itchcss-12, crawljam-05.</li>
+<li><strong>R4</strong> verified · repo-18, itchcss-57, crawlprofile-35, crawlproject-23.</li>
+<li><strong>R5</strong> documented · docs-10, docs-11, docs-12, community-23; community · community-24; verified · itchcss-46.</li>
+<li><strong>R6</strong> documented · docs-10, docs-12, docs-13, external-33; verified · external-32, external-47.</li>
+<li><strong>R7</strong> verified 2026-10-16 · live-cap-A1, live-cap-A2c, live-cap-A3a to live-cap-A3c, live-cap-B1, live-cap-B2; jam: documented · crawljam-29; inferred · gapfill01-03.</li>
+<li><strong>R8</strong> verified 2026-10-16 · live-c42 to live-c44; documented · repo-05; observed · crawlprofile-25; verified · corpus-02.</li>
+<li><strong>R9</strong> verified · repo-10, external-03, s06-run, crawljam-02.</li>
+<li><strong>R10</strong> verified · external-04, external-05, external-06, localtests-12; observed · repo-14. Pinned imports are shown in chapter 6, recipe 7; the per-visit service exception is outside this guide.</li>
+<li><strong>R11</strong> verified 2026-10-16 · live-k03 to live-k15, live-a01 to live-a06, live-a11; documented · docs-34; observed · sanitizer-05, gapfill05-06; verified · external-30, x08-07.</li>
+<li><strong>R12</strong> verified · crawlproject-01, crawlproject-06.</li>
+<li><strong>R13</strong> verified · s01-n2, crawlproject-37, S03-N3.</li>
+<li><strong>R14</strong> verified · docs-17, crawljam-07, localtests-04, localtests-24, gapfill01-13.</li>
+<li><strong>R15</strong> verified · support-37, external-12, s06-static.</li>
+<li><strong>R16</strong> verified · s06-static, s06-kf.</li>
+<li><strong>R17</strong> verified · gapfill02-01, gapfill02-02, s10-02, a11y-24; documented · a11y-25.</li>
+<li><strong>R18</strong> verified · s10-03, a11y-18.</li>
+<li><strong>R19</strong> verified · s04-5, s04-gf-02, s04-gf-16.</li>
+<li><strong>R20</strong> verified · itchcss-54, crawlproject-10; verified (live render) · s10-25; observed · crawljam-46.</li>
+<li><strong>R21</strong> verified · a11y-03, a11y-10.</li>
+<li><strong>R22</strong> verified · s04-gf-08, s04-gf-09, s04-gf-11.</li>
+<li><strong>R23</strong> verified · s02-n6, localtests-19.</li>
+<li><strong>R24</strong> documented · docs-15; verified · a11y-31, localtests-34; verified (live render) · s10-17.</li>
+<li><strong>[policy]</strong> documented · docs-10, docs-12, docs-13 (see the policy framing above).</li>
+</ul>
+
+  </article>
+  <nav class="guide-steps" aria-label="Capítulos"><a href="01-where-your-css-goes.html">← Chapter 1 — Where your CSS goes, and how much fits</a><a href="03-layouts-that-fit-phones.html">Chapter 3 — Layouts that fit on a phone →</a></nav>
+  <p class="hint">Text under CC BY 4.0 (see knowledge/LICENSE in the project). Not affiliated with itch.io.</p>
+</main>
+</body>
+</html>

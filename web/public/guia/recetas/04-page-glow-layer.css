@@ -1,0 +1,11 @@
+/* Full-page glow behind the content (profile or project), released while an HTML5 game is maximised */
+#wrapper { position: relative; isolation: isolate; }
+#wrapper::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(circle at 20% 10%, rgba(255, 200, 87, .18), transparent 45%), radial-gradient(circle at 85% 80%, rgba(120, 160, 255, .16), transparent 50%);
+}
+body.frame_maximized #wrapper { isolation: auto; }

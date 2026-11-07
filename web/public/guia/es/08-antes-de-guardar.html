@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capítulo 8 — Antes de guardar: la comprobación final · Guía · itch-live-css</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="site docs guide">
+  <header>
+    <nav class="site-nav" aria-label="Secciones"><a href="/">Editor</a><a href="/ideas.html">Ideas</a><a href="/showcase.html">Expositor</a><a href="/guia/">Guía</a><a href="/docs.html">Documentación</a><a href="/privacy.html">Privacidad</a></nav>
+    <p class="lang-links"><a href="../en/08-before-you-save.html">English</a></p>
+  </header>
+  <article>
+<h1>Capítulo 8 — Antes de guardar: la comprobación final</h1>
+<p>Repasa este capítulo cada vez que cambies tu CSS, en orden. Cada paso detecta un tipo distinto de fallo, y los últimos son los que la gente se salta.</p>
+<h2>8.1 Mide el tamaño</h2>
+<ul>
+<li><strong>Perfil:</strong> 5.120 bytes o menos, después de recortar el principio y el final, con los comentarios incluidos. Mídelo con los comandos del capítulo 1. [S1]</li>
+<li><strong>Proyecto y devlog:</strong> sin límite práctico, pero pega una sola línea minificada. Cuenta también los saltos de línea: en los proyectos se guardan como dos bytes cada uno. [S1]</li>
+<li><strong>Jam:</strong> mantenla en 20.410 caracteres o menos. Es el tamaño más grande que se sabe que se guarda; el límite real no se ha medido. [S2]</li>
+</ul>
+<p>Si te pasas, el guardado se rechaza, no se corta. Nada cambia en tu página hasta que corrijas el tamaño. [S1]</p>
+<h2>8.2 Comprueba el texto en sí</h2>
+<p>Antes de pegar, busca en tu CSS lo siguiente:</p>
+<ul>
+<li><code>&lt;style</code> o <code>&lt;/style</code> en cualquier parte, en cualquier combinación de mayúsculas y minúsculas, incluso dentro de un comentario. itch borra <code>&lt;/style&gt;</code> y el CSS que lo rodea cambia en silencio (R8). [S3]</li>
+<li>Cualquier <code>@import</code> que no esté en la primera línea, o cualquier <code>@import</code> en una jam (R9). [S3]</li>
+<li>Selectores que no empiezan por <code>#wrapper</code> (R2), IDs numerados como <code>#user_123</code> (R12) y abreviaturas <code>background</code> en <code>#wrapper</code> (R4). [S3]</li>
+<li>Nombres de <code>@keyframes</code> sin el prefijo <code>custom-</code> (R16). [S3]</li>
+<li>Efectos al pasar el ratón fuera de <code>@media (hover: hover)</code> (R18), y <code>!important</code> en propiedades animadas (R14). [S3]</li>
+</ul>
+<p>Si tienes el validador de itch-live-css, ejecútalo sobre el archivo para tu tipo de página. Comprueba la mayor parte de la lista anterior e indica el número de regla de cada problema. No puede comprobar lo que oye un lector de pantalla, ni cómo se ve la página. [S4]</p>
+<h2>8.3 Guarda y después comprueba lo que reciben los visitantes</h2>
+<p>Guardar no es el final. Revisa la página guardada, sin sesión iniciada, después de que expire la caché (unos tres minutos, capítulo 7):</p>
+<ol>
+<li><p>Abre una ventana privada, o cierra la sesión.</p>
+</li>
+<li><p>Carga la página y compruébala a <strong>320 px</strong> y <strong>375 px</strong>, además de los puntos de cambio de tu tipo de página (capítulo 3).</p>
+</li>
+<li><p>Páginas que revisar:</p>
+<ul>
+<li><strong>Perfil:</strong> la página principal.</li>
+<li><strong>Proyecto:</strong> la página principal, el índice <code>/devlog</code>, una entrada de devlog y <code>/comments</code>. Las cuatro comparten tu hoja (R13).</li>
+<li><strong>Jam:</strong> la página de resumen.</li>
+</ul>
+</li>
+<li><p>Confirma el CSS que se sirve. Descarga la página como texto y busca <code>custom_css</code>, para comprobar que tu CSS ha llegado. El comando siguiente lo hace para un perfil. Sustituye el marcador por tu dirección y no añadas <code>-L</code>, que sigue las redirecciones:</p>
+<pre><code class="language-bash">curl -s https://TU-NOMBRE.itch.io/ -o page.html &amp;&amp; grep -c custom_css page.html
+</code></pre>
+<p>Un recuento de <code>1</code> o más significa que el elemento está ahí. [S5]</p>
+</li>
+</ol>
+<p>Las comprobaciones sin sesión iniciada son las que importan. Los propietarios ven encabezados adicionales y envoltorios del editor que los visitantes no ven. [S6]</p>
+<h2>8.4 Comprobaciones de accesibilidad y comportamiento</h2>
+<p>Haz estas comprobaciones en la página guardada, sin sesión iniciada:</p>
+<ul>
+<li><strong>Teclado:</strong> pulsa Tab recorriendo toda la página. Cada enlace y botón debe mostrar un anillo de foco visible con contraste de 3:1 o más (R19). [S7]</li>
+<li><strong>Movimiento reducido:</strong> activa «reducir movimiento» en los ajustes de tu sistema. Nada debe moverse. [S8]</li>
+<li><strong>Contraste:</strong> comprueba el texto contra la zona más clara de tu imagen de fondo, no contra el color de fondo (capítulo 4). [S9]</li>
+<li><strong>Colores forzados:</strong> activa el modo de alto contraste. Las tarjetas deben seguir teniendo contorno. [S9]</li>
+<li><strong>Encabezados:</strong> debe haber exactamente un <code>h1</code> que nombre la página, también en los perfiles con banner (R20). Usa el árbol de accesibilidad del navegador para ver lo que recibe un lector de pantalla. Las herramientas de texto que leen la página pueden incluir texto oculto, así que no bastan. [S10]</li>
+<li><strong>Sin la importación:</strong> si usas <code>@import</code>, comprueba que la página sigue viéndose aceptable con la importación bloqueada (capítulo 6, receta 7). [S11]</li>
+</ul>
+<h2>8.5 Lo que no cubren las pruebas de esta guía</h2>
+<p>Sé honesto con tus visitantes sobre lo que has probado y lo que no. La base de conocimiento probó estas áreas y no las demás:</p>
+<ul>
+<li><strong>Navegadores.</strong> Para los diseños y las técnicas solo se ejecutó Chromium. El comportamiento de Firefox y Safari se tomó de datos públicos de compatibilidad, no se probó en itch. Revisa tu página en ambos antes de darla por terminada. [S12]</li>
+<li><strong>Lectores de pantalla.</strong> No se probó la salida de voz con un lector de pantalla real. Sí se probó el árbol de accesibilidad. [S12]</li>
+<li><strong>Jams.</strong> La hoja de CSS de jam más grande que se sabe que se guarda tiene 20.410 caracteres. El límite real no se ha medido. [S2]</li>
+<li><strong>Vista del propietario.</strong> Tu propia vista puede diferir de lo que ven los visitantes. Úsala solo para editar, y juzga el resultado sin sesión iniciada. [S6]</li>
+</ul>
+<h2>8.6 Que siga funcionando</h2>
+<p>itch cambia su marcado y sus reglas. Una página que funciona hoy puede romperse tras una actualización, y nada te avisará. Crea estos hábitos:</p>
+<ul>
+<li><strong>Una comprobación diaria.</strong> Una petición al día a tu perfil sin sesión iniciada que confirme que el marcado del que depende tu CSS sigue ahí. Elige dos o tres selectores de tu CSS y comprueba que aún aparecen en la página. Basta con un script sencillo que descargue la página y los busque. [S13]</li>
+<li><strong>Un registro de cambios.</strong> Cada vez que guardes, escribe una línea: la fecha, qué cambió, el tamaño en bytes, y las páginas y navegadores que comprobaste. Cuando algo se rompa más adelante, ese registro te dice qué cambió por última vez. [S14]</li>
+<li><strong>Revisa la guía.</strong> Los datos de esta guía tienen fecha. Cuando itch cambie algo que la guía describe, el capítulo correspondiente debe actualizarse y volver a fecharse. [S14]</li>
+</ul>
+<h2>8.7 La lista de comprobación final</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Tamaño medido: perfil en bytes por debajo de 5.120; proyecto o devlog como una línea; jam por debajo de 20.410 caracteres.</li>
+<li><input disabled="" type="checkbox"> Ningún <code>&lt;style&gt;</code> ni <code>&lt;/style&gt;</code> en ninguna parte; <code>@import</code> primero y fijado; ningún <code>@import</code> en una jam.</li>
+<li><input disabled="" type="checkbox"> Cada selector empieza por <code>#wrapper</code>; ningún ID numerado; ninguna abreviatura <code>background</code> en <code>#wrapper</code>.</li>
+<li><input disabled="" type="checkbox"> <code>@keyframes</code> con nombre <code>custom-…</code>; movimiento finito, de menos de 5 segundos, que termina en reposo; bloque de movimiento reducido incluido.</li>
+<li><input disabled="" type="checkbox"> Efectos al pasar el ratón dentro de <code>@media (hover: hover)</code>; el foco del teclado muestra un anillo de 3:1.</li>
+<li><input disabled="" type="checkbox"> Guardado, y después comprobado sin sesión iniciada, con la caché expirada, a 320 y 375 px.</li>
+<li><input disabled="" type="checkbox"> Revisado cada tipo de página que comparte tu hoja (proyecto: principal, devlog, entrada, comentarios).</li>
+<li><input disabled="" type="checkbox"> Un solo <code>h1</code>; contraste comprobado sobre la zona más clara de la imagen; colores forzados y movimiento reducido comprobados.</li>
+<li><input disabled="" type="checkbox"> Firefox y Safari comprobados, o la página dice que no lo están.</li>
+<li><input disabled="" type="checkbox"> Línea de registro de cambios escrita.</li>
+</ul>
+<hr>
+<h2>Fuentes</h2>
+<p>De la base de conocimiento de itch-live-css, <code>knowledge/itch-custom-css.md</code> §1, §9 y §10 (la «Ship gate» y la tabla de encabezados), más los capítulos 1–7 de esta guía.</p>
+<ul>
+<li><strong>S1</strong> Límites de tamaño, bytes, recorte, saltos de línea: verificado 2026-10-16 · live-cap-A1, live-cap-A2c, live-cap-A3a a live-cap-A3c, live-cap-B1, live-cap-B2.</li>
+<li><strong>S2</strong> Límite de jam: documentado · crawljam-29; inferido · gapfill01-03. No medido, según §1.</li>
+<li><strong>S3</strong> Reglas R2, R4, R8, R9, R12, R14, R16, R18: ver las fuentes del capítulo 2.</li>
+<li><strong>S4</strong> Validador: <code>engine validate()</code> cubre R2–R4, R7–R12, R14–R16, R18 y R23 por ahora (notas del proyecto). No comprueba la accesibilidad ni la página renderizada.</li>
+<li><strong>S5</strong> Comprobación del CSS servido: verificado · crawlprofile-58 (un GET sin <code>-L</code>, leyendo <code>style#custom_css</code>).</li>
+<li><strong>S6</strong> Vista del propietario y comprobaciones sin sesión: observado · crawlprofile-43, a11y-21; verificado · s10-17 (hace falta una página renderizada en vivo con los scripts de itch).</li>
+<li><strong>S7</strong> Anillos de foco en las paradas de Tab: verificado · s04-gf-02, s04-gf-06, s04-gf-16.</li>
+<li><strong>S8</strong> Bloque de movimiento reducido probado: verificado · gapfill02-01, gapfill02-02, s10-02, repo-50.</li>
+<li><strong>S9</strong> Contraste sobre la zona más clara de la imagen; colores forzados: verificado · s10-06, s10-05, a11y-28.</li>
+<li><strong>S10</strong> Encabezados y el árbol de accesibilidad: verificado · a11y-03, a11y-57, localtests-34, a11y-50, repo-59.</li>
+<li><strong>S11</strong> La página debe funcionar sin la importación: observado · repo-54; verificado · localtests-12.</li>
+<li><strong>S12</strong> Cobertura de navegadores y lectores de pantalla: verificado · s10-30, gapfill07-07; datos de Firefox y Safari documentados · support-02.</li>
+<li><strong>S13</strong> Comprobación diaria del marcado como hábito: el propio flujo de vigilancia de la base hace esto para una página (observado en <code>.github/workflows/watch.yml</code> del repositorio); el consejo de hacerlo es de esta guía.</li>
+<li><strong>S14</strong> Datos con fecha y registro de cambios: la base de conocimiento tiene fecha y se revisa (por ejemplo, la revisión del 29 de octubre de 2026 de Chrome 156 y Firefox 159; support-62, support-63).</li>
+</ul>
+
+  </article>
+  <nav class="guide-steps" aria-label="Capítulos"><a href="07-depuracion.html">← Capítulo 7 — Depuración: cuando no se ve, y por qué</a></nav>
+  <p class="hint">Texto bajo CC BY 4.0 (ver knowledge/LICENSE del proyecto). No está afiliado a itch.io.</p>
+</main>
+</body>
+</html>

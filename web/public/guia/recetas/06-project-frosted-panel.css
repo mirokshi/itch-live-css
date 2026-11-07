@@ -1,0 +1,5 @@
+/* Project: frosted glass behind the content, safe with a maximised HTML5 game */
+#wrapper #inner_column { isolation: isolate; }
+#wrapper #inner_column::before { content: ""; position: absolute; inset: 0; z-index: -1; backdrop-filter: blur(8px); }
+#wrapper:has(.game_frame.maximized) #inner_column { isolation: auto; }
+#wrapper:has(.game_frame.maximized) #inner_column::before { content: none; }

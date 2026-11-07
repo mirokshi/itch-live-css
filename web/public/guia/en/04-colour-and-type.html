@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 4 — Colour and type, with tokens and dark themes · Guía · itch-live-css</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="site docs guide">
+  <header>
+    <nav class="site-nav" aria-label="Secciones"><a href="/">Editor</a><a href="/ideas.html">Ideas</a><a href="/showcase.html">Expositor</a><a href="/guia/">Guía</a><a href="/docs.html">Documentación</a><a href="/privacy.html">Privacidad</a></nav>
+    <p class="lang-links"><a href="../es/04-color-y-tipografia.html">Español</a></p>
+  </header>
+  <article>
+<h1>Chapter 4 — Colour and type, with tokens and dark themes</h1>
+<p>Colour and fonts are where most custom CSS starts, and where itch&#39;s theme quietly fights back: a link colour that won&#39;t change, a font that only applies to half the page, card text you can&#39;t read on a dark background. This chapter shows where itch writes each colour and font, and how to take them over cleanly with a handful of tokens.</p>
+<h2>4.1 Try the theme editor first</h2>
+<p>The theme editor already sets background, text, link and button colours, a background image and a Google font. If an option there does what you want, use it: it costs you no CSS bytes and survives itch&#39;s changes. Write CSS for what the editor can&#39;t do. [S1]</p>
+<h2>4.2 Why your rules win</h2>
+<p>None of the theme&#39;s rules use ID selectors, and itch&#39;s own stylesheets only use IDs for its lightbox. So any rule that starts with <code>#wrapper</code> beats every normal itch rule. That&#39;s another reason for R2. [S2]</p>
+<p>The only exceptions are a few itch rules marked <code>!important</code>. Those are the only places where you need <code>!important</code> too (R14). [S2]</p>
+<h2>4.3 Your own tokens</h2>
+<p>Define your palette once, as custom properties on <code>#wrapper</code>, and use them everywhere:</p>
+<pre><code class="language-css">#wrapper {
+  --bg: #0b1433;
+  --panel: #142046;
+  --text: #eef3ff;
+  --accent: #ffc857;
+  --focus-ring: #ffc857;
+}
+</code></pre>
+<p>Why <code>#wrapper</code> and not <code>:root</code>: properties on <code>:root</code> leak into itch&#39;s own UI. On a jam they recoloured the site header (R3). Everything inside <code>#wrapper</code>, footer included, can read tokens set on <code>#wrapper</code>. [S3]</p>
+<p>Changing the palette later means changing these lines and nothing else.</p>
+<h2>4.4 Taking over itch&#39;s colours</h2>
+<p>itch has theme variables (<code>--itchio_link_color</code> and friends), but on profiles and projects many colours are written as plain values, not variables. Setting a variable changes only the things that read it. So you have to set the variable <strong>and</strong> restyle the elements that ignore it.</p>
+<h3>Profile</h3>
+<p>itch declares its variables on <code>.user_page</code>, so override them there. Links, game titles and the footer use plain colours, so set those as well:</p>
+<pre><code class="language-css">#wrapper { background-color: var(--bg); }
+#wrapper .user_page { --itchio_link_color: var(--accent); color: var(--text); }
+#wrapper .user_page a, #wrapper .footer a, #wrapper .game_title a { color: var(--accent); }
+#wrapper .footer { color: var(--text); }
+</code></pre>
+<p>[S4]</p>
+<h3>Project, devlog and comments</h3>
+<p>Here itch declares ten variables on <code>#wrapper</code> itself. The text colour and the semi-transparent panel behind your content are plain values on <code>.inner_column</code>:</p>
+<pre><code class="language-css">#wrapper {
+  --itchio_bg_color: var(--bg);
+  --itchio_text_color: var(--text);
+  --itchio_link_color: var(--accent);
+  background-color: var(--bg);
+}
+#wrapper .inner_column { color: var(--text); background-color: var(--panel); }
+#wrapper .inner_column a { color: var(--accent); }
+</code></pre>
+<p>Buttons also need their own rule (<code>#wrapper .button { … }</code>). [S5]</p>
+<h3>Jam</h3>
+<p>Since itch&#39;s mid-2026 jam redesign, jam links and buttons follow the variables on <code>#wrapper</code>. If you change <code>--itchio_button_color</code>, also set its <code>_hover_color</code>, <code>_active_color</code>, <code>_shadow_color</code> and <code>_border_color</code> partners, or the hover, pressed and border states keep itch&#39;s colours. Some text in the entries grid is coloured with <code>!important</code> and needs <code>!important</code> from you as well. [S6]</p>
+<h3>Background colour and image</h3>
+<p>Use <code>background-color</code>, <code>background-image</code> and the other longhands on <code>#wrapper</code>, never the <code>background</code> shorthand (R4). The theme&#39;s background image lives on that same element, and the shorthand erases it. [S7]</p>
+<h2>4.5 Dark themes</h2>
+<p>itch has no dark-mode rules of its own. When you go dark:</p>
+<ul>
+<li><p><strong>Tell the browser.</strong> <code>#wrapper { color-scheme: dark; }</code> switches scroll bars and form controls inside the page to their dark versions. <code>light-dark()</code> returns the light value unless <code>color-scheme</code> is set, and itch never sets it. [S8]</p>
+</li>
+<li><p><strong>Fix the faded card text.</strong> On profiles, itch draws card authors at 75 % of the text colour and platforms and genres at 50 %. On dark backgrounds that can fall below readable contrast. Give them a solid colour:</p>
+<pre><code class="language-css">#wrapper .game_genre, #wrapper .game_platform { color: var(--text); }
+</code></pre>
+<p>[S9]</p>
+</li>
+<li><p><strong>Recolour the profile footer</strong> (shown in 4.4). It doesn&#39;t follow the theme. [S9]</p>
+</li>
+</ul>
+<h3>Following the visitor&#39;s light or dark setting</h3>
+<p>Because everything reads tokens, switching with the visitor&#39;s system setting is a few lines:</p>
+<pre><code class="language-css">@media (prefers-color-scheme: light) {
+  #wrapper { --bg: #f6f4ef; --panel: #ffffff; --text: #1d1f2b; --accent: #8a4b00; color-scheme: light; }
+}
+</code></pre>
+<p>This is standard CSS, not something itch does for you. On a profile, every extra palette costs bytes against the 5,120 limit, so measure (chapter 1). [S10]</p>
+<h2>4.6 Contrast you can trust</h2>
+<ul>
+<li><strong>Body text needs at least 4.5:1</strong> against what is behind it, and focus rings at least 3:1 (WCAG). [S11]</li>
+<li><strong>Measure against the brightest part of your background image</strong>, not the background colour. A pale text colour measured 16.3:1 against the page&#39;s dark blue, but only 4.6:1 over the brightest patch of its background image. [S11]</li>
+<li><strong>Make panels semi-transparent, never text.</strong> A translucent panel behind the text keeps contrast predictable. Translucent text depends on whatever is underneath. [S11]</li>
+<li><strong>High-contrast mode</strong> (Windows &quot;forced colours&quot;) removes shadows and gradients. Give cards <code>border: 1px solid transparent</code> so they still have an outline there. [S12]</li>
+</ul>
+<h2>4.7 A focus ring that matches your palette</h2>
+<p>itch&#39;s focus ring is a dark purple that almost disappears on dark themes (R19). This block (it reads the <code>--focus-ring</code> token from 4.3) replaces it everywhere, including on game cards, where a plain outline gets cut off:</p>
+<pre><code class="language-css">#wrapper { --itchio_input_focus_color: var(--focus-ring); }
+#wrapper :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+#wrapper :is(.game_cell, .header_tabs, .screenshot_list, .breadcrumbs) :focus-visible { outline-offset: -2px; }
+#wrapper .game_cell { position: relative; }
+#wrapper .game_cell:has(:focus-visible)::after {
+  content: &quot;&quot;; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  border: 3px solid var(--focus-ring); border-radius: inherit;
+}
+#wrapper .game_cell:focus-within .game_cell_tools { opacity: 1; }
+</code></pre>
+<p>Pick a <code>--focus-ring</code> with at least 3:1 contrast on every surface it can land on. <code>#ffc857</code> gives 11.75:1 on <code>#0b1433</code>, but only 1.54:1 on white. [S13]</p>
+<h2>4.8 Fonts</h2>
+<h3>Where to set the font</h3>
+<p>The theme writes the font family as a plain value, not through <code>--itchio_font_family</code>. Changing the variable alone doesn&#39;t change the text. Set the family where itch does: [S14]</p>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>Selector</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Profile</td>
+<td><code>#wrapper .user_page</code></td>
+</tr>
+<tr>
+<td>Project, devlog</td>
+<td><code>#wrapper .inner_column</code></td>
+</tr>
+<tr>
+<td>Jam</td>
+<td><code>#wrapper</code></td>
+</tr>
+</tbody></table>
+<h3>Extra weights and other fonts</h3>
+<p>A font picked in the theme editor loads only regular (400) and bold (700), plus their italics. For other weights, or a font the picker doesn&#39;t offer:</p>
+<pre><code class="language-css">/* Profile or project: the @import must be the very first line (R9) */
+@import url(&quot;https://fonts.googleapis.com/css2?family=Syne:wght@400..800&amp;display=swap&quot;);
+#wrapper .user_page { font-family: &quot;Syne&quot;, sans-serif; } /* project: #wrapper .inner_column */
+</code></pre>
+<p>[S15]</p>
+<ul>
+<li><strong>Copy the URL exactly</strong> from Google Fonts and keep <code>&amp;display=swap</code>. A wrong letter case, an unknown family or a weight range the font doesn&#39;t have makes Google answer with an error page. The whole import is then dropped without warning, and the fallback font shows. [S16]</li>
+<li><strong>Jams can&#39;t <code>@import</code></strong> (R9). Use <code>@font-face</code> with an absolute <code>https://</code> link to one font file per weight, from a host that allows cross-site font loading. [S16]</li>
+<li><strong>Privacy:</strong> Google Fonts sees every visitor&#39;s IP address, which is a GDPR concern in the EU. Bunny Fonts offers a compatible <code>css2</code> address, or you can host the files yourself with cross-origin access enabled. [S17]</li>
+<li><strong>Only the <code>@import</code> line counts toward the profile limit</strong>, not the size of the font file. [S18]</li>
+</ul>
+<h3>Font size on profiles</h3>
+<p>A profile sets its font size as a percentage on <code>.user_page</code>. Sizes in <code>em</code> follow it; sizes in <code>px</code> or <code>rem</code> don&#39;t. [S19]</p>
+<h2>Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Used the theme editor for what it can do.</li>
+<li><input disabled="" type="checkbox"> Palette defined once as tokens on <code>#wrapper</code>, never on <code>:root</code>.</li>
+<li><input disabled="" type="checkbox"> itch&#39;s variables set where the theme declares them, <strong>and</strong> links, titles, buttons and the footer restyled directly.</li>
+<li><input disabled="" type="checkbox"> Background set with longhands only.</li>
+<li><input disabled="" type="checkbox"> Dark theme: <code>color-scheme: dark</code>, solid card text colours, profile footer recoloured.</li>
+<li><input disabled="" type="checkbox"> Text at 4.5:1 or more over the brightest part of the background image; focus ring at 3:1 or more.</li>
+<li><input disabled="" type="checkbox"> Font family set on the right selector; Google Fonts URL copied exactly; no <code>@import</code> on jams.</li>
+</ul>
+<hr>
+<h2>Sources</h2>
+<p>From the itch-live-css knowledge base, <code>knowledge/itch-custom-css.md</code> §0.1 (blocks B2, B3), §4, §7, §8 and §10.</p>
+<ul>
+<li><strong>S1</strong> Theme editor first: documented · docs-44.</li>
+<li><strong>S2</strong> No IDs in theme rules; <code>!important</code> counts: verified · crawlproject-31, s04-2, s04-4, itchcss-18, s04-1, docs-17, crawljam-07.</li>
+<li><strong>S3</strong> Variables on <code>#wrapper</code>, <code>:root</code> leaked on a jam: verified · crawljam-42, itchcss-12, crawljam-05.</li>
+<li><strong>S4</strong> Profile variables and plain colours: verified · itchcss-12, repo-20, repo-21, crawlprofile-32; footer colour: verified · itchcss-22.</li>
+<li><strong>S5</strong> Project variables and plain values on <code>.inner_column</code>: verified · corpus-44, itchcss-13, crawlproject-21, crawlproject-24; inferred · s04-2.</li>
+<li><strong>S6</strong> Jam variables, button partners, <code>!important</code> grid text: verified · crawljam-05, crawljam-08, crawljam-11, crawljam-34, itchcss-14.</li>
+<li><strong>S7</strong> Background longhands: verified · itchcss-57, crawlprofile-35, crawlproject-23, itchcss-20, localtests-18.</li>
+<li><strong>S8</strong> No dark-mode rules in itch, <code>color-scheme: dark</code>, <code>light-dark()</code>: verified · a11y-14, support-52, itchcss-27, support-59, s07-n2 T27; observed · s07-n11.</li>
+<li><strong>S9</strong> Faded card text, footer: verified · a11y-38, crawlprofile-54, itchcss-22.</li>
+<li><strong>S10</strong> <code>prefers-color-scheme</code> switch: general CSS, not tested on itch. The byte cost follows from R7.</li>
+<li><strong>S11</strong> Contrast measured on the brightest image region, translucent panels: verified · s10-06; panels: inferred · s10-06. The 4.5:1 and 3:1 thresholds are WCAG 2.2.</li>
+<li><strong>S12</strong> Forced colours and transparent borders: verified · s10-05, a11y-28.</li>
+<li><strong>S13</strong> Focus block B2 and its contrast figures: verified · s04-gf-02, s04-gf-06, s04-gf-16. Reformatted onto several lines here; same rules.</li>
+<li><strong>S14</strong> Font family is a plain value; where to set it: verified · crawlprofile-32, crawlprofile-37, crawlproject-24, crawlproject-28, crawljam-14; inferred for the variable.</li>
+<li><strong>S15</strong> Theme fonts load 400/700 + italics: verified · corpus-13, corpus-45, gapfill07-05.</li>
+<li><strong>S16</strong> Google Fonts errors drop the import; jam <code>@font-face</code>: verified · external-38, external-39, crawljam-02, itchcss-07, external-16.</li>
+<li><strong>S17</strong> Privacy and alternatives: community · external-43; verified · x08-05.</li>
+<li><strong>S18</strong> Only the <code>@import</code> line counts: verified · external-01, repo-09.</li>
+<li><strong>S19</strong> Profile font size in <code>%</code>: verified · crawlprofile-39, itchcss-43.</li>
+</ul>
+
+  </article>
+  <nav class="guide-steps" aria-label="Capítulos"><a href="03-layouts-that-fit-phones.html">← Chapter 3 — Layouts that fit on a phone</a><a href="05-safe-motion.html">Chapter 5 — Motion that's safe to ship →</a></nav>
+  <p class="hint">Text under CC BY 4.0 (see knowledge/LICENSE in the project). Not affiliated with itch.io.</p>
+</main>
+</body>
+</html>

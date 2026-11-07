@@ -1,0 +1,21 @@
+/* Project starter (also styles the devlog and comments): palette, colours, panel, focus ring, reduced motion */
+#wrapper {
+  --bg: #0b1433;
+  --panel: rgba(20, 32, 70, .92);
+  --text: #eef3ff;
+  --accent: #ffc857;
+  --focus-ring: #ffc857;
+  --itchio_bg_color: var(--bg);
+  --itchio_text_color: var(--text);
+  --itchio_link_color: var(--accent);
+  --itchio_input_focus_color: var(--focus-ring);
+  color-scheme: dark;
+  background-color: var(--bg);
+  min-height: 100vh;
+}
+#wrapper .inner_column { color: var(--text); background-color: var(--panel); }
+#wrapper .inner_column a { color: var(--accent); }
+#wrapper .button { background-color: var(--accent); color: var(--bg); }
+#wrapper :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+#wrapper :is(.game_cell, .header_tabs, .screenshot_list, .breadcrumbs) :focus-visible { outline-offset: -2px; }
+@media (prefers-reduced-motion:reduce){#wrapper,#wrapper::before,#wrapper::after,#wrapper *,#wrapper *::before,#wrapper *::after{animation:none!important;transition:none!important}}

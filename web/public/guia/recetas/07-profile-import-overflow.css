@@ -1,0 +1,5 @@
+/* Profile over the cap: the import line goes first and loads the extras from a pinned URL; the pasted rules carry the look on their own */
+@import url("https://cdn.jsdelivr.net/gh/USER/REPO@1.0.0/profile-extra.css");
+#wrapper { --bg: #0b1433; --text: #eef3ff; --accent: #ffc857; background-color: var(--bg); }
+#wrapper .user_page { --itchio_link_color: var(--accent); color: var(--text); }
+#wrapper .user_page a, #wrapper .footer a { color: var(--accent); }

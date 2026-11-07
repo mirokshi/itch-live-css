@@ -1,0 +1,4 @@
+/* Profile title that slides in once, from hidden, and ends at rest */
+@keyframes custom-in { from { opacity: 0; translate: 0 18px; } }
+#wrapper #profile_header h1 { animation: custom-in .7s ease-out; }
+@media (prefers-reduced-motion:reduce){#wrapper,#wrapper::before,#wrapper::after,#wrapper *,#wrapper *::before,#wrapper *::after{animation:none!important;transition:none!important}}

@@ -241,3 +241,9 @@ button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px
 .copy { display: flex; gap: 6px; align-items: flex-start; }
 .copy input, .copy textarea { margin: 0; font: 12px/1.4 ui-monospace, monospace; }
 .copy button { flex: none; padding: 6px 10px; }
+
+/* guide: chapter pages (guia/) */
+.guide-steps { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin: 32px 0 8px; }
+.guide-steps a { color: var(--accent); }
+.lang-links { margin: 6px 0 0; font-size: .9rem; }
+.guide pre { overflow-x: auto; max-width: 100%; }
