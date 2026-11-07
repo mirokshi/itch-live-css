@@ -16,7 +16,7 @@
     {
       "name": "web",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["--watch", "web/dev.js"],
+      "runtimeArgs": ["web/node_modules/vite/bin/vite.js", "web"],
       "port": 3001
     },
     {
