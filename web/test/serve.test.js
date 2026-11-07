@@ -33,7 +33,7 @@ globalThis.fetch = async (url, opts) => {
 const { GET } = await import('../api/css.js');
 const configs = await import('../api/configs.js');
 const { check, pluginList } = await import('../lib/config.js');
-const { FONTS } = await import('../public/fonts.js');
+const { FONTS } = await import('../lib/fonts.js');
 
 const form = check({ accent: '#ffc857', cards: true });
 for (const id of ['owner123', 'other123', 'stale123']) db.set(`config:${id}`, JSON.stringify({ form }));

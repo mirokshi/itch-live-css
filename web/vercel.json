@@ -1,4 +1,8 @@
 {
+  "framework": "vite",
+  "installCommand": "npm install && npm ci --prefix ../engine",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "rewrites": [{ "source": "/c/:file", "destination": "/api/css?file=:file" }],
   "redirects": [
     { "source": "/guia/es", "destination": "/guia/es/01-donde-va-tu-css.html" },

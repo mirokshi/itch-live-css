@@ -3,7 +3,7 @@
 // form: {
 //   page      'profile' | 'project' | 'devlog'  where the CSS goes (a devlog uses its project's CSS)
 //   accent    '#rrggbb'                                  → --gold (greeting colour, card labels)
-//   title     null | { text, fonts: [key, ...] }         keys from public/fonts.js, 2–4 of them
+//   title     null | { text, fonts: [key, ...] }         keys from lib/fonts.js, 2–4 of them
 //   greeting  null | { first, others: ['string', ...] }
 //   cards     boolean, profile only (the effect styles the profile's game cards)
 //   ascii     boolean
@@ -14,7 +14,7 @@
 // }
 
 import { importLine, render } from '../../engine/src/index.js';
-import { FONTS } from '../public/fonts.js';
+import { FONTS } from './fonts.js';
 import { BadRequest } from './http.js';
 
 export const PAGES = ['profile', 'project', 'devlog'];

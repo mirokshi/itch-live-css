@@ -1,0 +1,449 @@
+{
+  "titles": {
+    "editor": "itch-live-css",
+    "ideas": "Ideas · itch-live-css",
+    "showcase": "Expositor · itch-live-css",
+    "admin": "Administración · itch-live-css",
+    "docs": "Documentación · itch-live-css",
+    "privacy": "Privacidad · itch-live-css",
+    "guide": "Guía · itch-live-css",
+    "chapter": "{{title}} · Guía · itch-live-css"
+  },
+  "nav": {
+    "label": "Secciones",
+    "editor": "Editor",
+    "ideas": "Ideas",
+    "showcase": "Expositor",
+    "guide": "Guía",
+    "docs": "Documentación",
+    "privacy": "Privacidad"
+  },
+  "lang": {
+    "label": "Idioma"
+  },
+  "pageNames": {
+    "profile": "Perfil",
+    "project": "Página de juego",
+    "devlog": "Devlog"
+  },
+  "thumb": {
+    "title": "Vista previa: {{page}}"
+  },
+  "copy": {
+    "copy": "Copiar",
+    "done": "Copiado"
+  },
+  "pages": {
+    "profile": {
+      "title": "Vista previa del perfil",
+      "html": "Tu HTML de la bio",
+      "text": "tu bio",
+      "where": "del CSS de tu perfil",
+      "into": "en el CSS de tu perfil",
+      "sample": "Hago juegos pequeños. Este es un perfil de ejemplo.",
+      "hint": "En itch: Edit theme en tu perfil → CSS."
+    },
+    "project": {
+      "title": "Vista previa de la página del juego",
+      "html": "Tu HTML de la descripción",
+      "text": "la descripción del juego",
+      "where": "del CSS de tu juego",
+      "into": "en el CSS de tu juego",
+      "sample": "Un juego de ejemplo. Esta es su descripción.",
+      "hint": "En itch: Edit theme en la página del juego → CSS. Sus devlogs usan este mismo CSS."
+    },
+    "devlog": {
+      "title": "Vista previa del post del devlog",
+      "html": "Tu HTML del post",
+      "text": "el post",
+      "where": "del CSS del juego",
+      "into": "en el CSS del juego",
+      "sample": "Hoy sale la versión 1.0. Gracias por jugar.",
+      "hint": "Un devlog no tiene CSS propio: usa el del juego (Edit theme en la página del juego → CSS)."
+    }
+  },
+  "editor": {
+    "lead": "Escribe el CSS de tu página de itch.io, míralo en vivo y llévatelo listo para pegar, o en un link que no hay que volver a pegar.",
+    "where": "¿Dónde lo vas a usar?",
+    "cssLegend": "Tu CSS",
+    "cssHint": "Abajo te lo damos minificado para pegar en itch, o dentro de un link si no cabe o usas efectos.",
+    "htmlHint": "Solo para probar en la vista previa: no se sirve. itch quita las clases que no empiezan por `custom`, los `id` y los atributos `data-`, `aria-` y `role`, y aquí también.",
+    "format": "Dar formato",
+    "expand": "Ampliar",
+    "themeOpen": "Tema de itch ›",
+    "loading": "Generando la vista previa…",
+    "editFailed": "No se pudo abrir ese enlace de edición: {{error}}",
+    "tidyFailed": "No se pudo cargar el formateador.",
+    "saved": "Guardado.",
+    "saveLink": "Guardar y obtener el link",
+    "saveEdit": "Guardar y obtener el enlace de edición",
+    "defaultTitle": "Tu nombre",
+    "defaultGreeting": "¡Hola!",
+    "error": "{{error}}"
+  },
+  "lint": {
+    "errors_one": "{{count}} error",
+    "errors_other": "{{count}} errores",
+    "warnings_one": "{{count}} aviso",
+    "warnings_other": "{{count}} avisos",
+    "summary": "{{errors}}, {{warnings}}",
+    "none": "Sin problemas con las reglas de itch.",
+    "failed": "No se pudo validar: {{error}}",
+    "error": "Error",
+    "warning": "Aviso",
+    "line": "línea {{line}}",
+    "syntax": "Sintaxis"
+  },
+  "export": {
+    "title": "Para itch",
+    "paste": "Pega esto {{into}} en itch.",
+    "size": "Ocupa {{bytes}} de {{max}} bytes.",
+    "noLimit": "Aquí no hay límite de tamaño.",
+    "pasteLabel": "CSS para pegar",
+    "optional": "Guardar es opcional: te da un enlace de edición para volver a este CSS, o para salir en el expositor.",
+    "empty": "Escribe tu CSS arriba y aquí lo tendrás listo para pegar.",
+    "effects": "Los efectos cambian en cada visita, así que van en un link: guarda para obtenerlo.",
+    "effectsSaved": "Los efectos cambian en cada visita, así que van en un link (abajo).",
+    "tooBig": "Tu CSS minificado ocupa {{bytes}} bytes y el perfil admite {{max}}: va en un link, que no tiene ese límite. Guarda para obtenerlo.",
+    "tooBigSaved": "Tu CSS minificado ocupa {{bytes}} bytes y el perfil admite {{max}}: va en un link, que no tiene ese límite (abajo)."
+  },
+  "showcaseForm": {
+    "label": "Quiero salir en el expositor",
+    "hint": "Cuando lo revisemos y lo aprobemos, tu página sale en el [expositor](/showcase.html): el nombre, el link a tu página y una vista de tu CSS (nunca tu HTML).",
+    "url": "Dirección de tu página en itch",
+    "urlPlaceholder": "https://tunombre.itch.io/",
+    "name": "Nombre que se mostrará (opcional)",
+    "pending": "Expositor: pendiente de aprobación.",
+    "approved": "Expositor: aprobado, tu página ya sale.",
+    "rejected": "Expositor: no aprobado."
+  },
+  "result": {
+    "linkTitle": "Tu link",
+    "linkHint": "Pon esta línea **al principio** {{where}} en itch:",
+    "linkLabel": "Tu link",
+    "bioHint": "Las ideas de título y saludo necesitan este HTML en {{text}}:",
+    "bioLabel": "HTML para la bio",
+    "editHint": "Guarda este enlace de edición: es la única forma de cambiar tu CSS. No lo compartas.",
+    "editLabel": "Enlace de edición",
+    "againLink": "Cuando cambies algo y vuelvas a guardar, itch lo mostrará sin pegar nada de nuevo.",
+    "againPaste": "Si cambias algo, copia de nuevo el CSS de «Para itch» y pégalo en itch."
+  },
+  "ideasPanel": {
+    "title": "Ideas",
+    "close": "Cerrar las ideas",
+    "hint": "Efectos opcionales que cambian en cada visita. Van en un link, junto a tu CSS.",
+    "accent": "Color de acento",
+    "titleLabel": "Título de letras mezcladas",
+    "titleHint": "Cada letra con una fuente distinta, y el grosor «respira».",
+    "titleText": "Texto",
+    "fonts": "Fuentes (2 a 4):",
+    "greetingLabel": "Saludo que cambia de idioma",
+    "greetingHint": "Un saludo de tu texto que va rodando por otros idiomas.",
+    "greetingFirst": "Primer saludo",
+    "greetingOthers": "Los demás, uno por línea",
+    "cardsLabel": "Tarjetas con borde foil",
+    "cardsHint": "Un brillo dorado que recorre el borde de cada juego.",
+    "asciiLabel": "Fondo de caracteres ASCII",
+    "asciiHint": "Un campo de letras al fondo con ondas que lo reescriben."
+  },
+  "theme": {
+    "label": "Tema de itch",
+    "head": "Simula el editor de temas de itch: solo cambia la vista previa.",
+    "hide": "Ocultar el tema de itch",
+    "hex": "{{label}} en hex"
+  },
+  "ideas": {
+    "title": "Ideas",
+    "intro": "Efectos listos para usar. Cambian en cada visita, van dentro de tu link y se suman a tu propio CSS. «Usar esta idea» abre el editor con el efecto activado; ahí lo ajustas en el panel «Ideas».",
+    "use": "Usar esta idea",
+    "sampleName": "Tu nombre",
+    "sampleHello": "¡Hola!",
+    "sampleBio": "Una página de ejemplo.",
+    "title_name": "Título de letras mezcladas",
+    "title_text": "Cada letra de tu nombre con una fuente distinta, y el grosor «respira» despacio. Las fuentes se mezclan de nuevo en cada visita.",
+    "title_pages": "Perfil, juego y devlog",
+    "greeting_name": "Saludo que cambia de idioma",
+    "greeting_text": "Un saludo de tu texto rueda como un panel de aeropuerto por otros idiomas. Los lectores de pantalla leen tu texto real.",
+    "greeting_pages": "Perfil, juego y devlog",
+    "cards_name": "Tarjetas con borde foil",
+    "cards_text": "Un brillo dorado recorre el borde de cada juego de tu perfil, con un ritmo distinto en cada tarjeta y más rápido al pasar el ratón.",
+    "cards_pages": "Solo perfil",
+    "ascii_name": "Fondo de caracteres ASCII",
+    "ascii_text": "Un campo de letras y números detrás de la página, con ondas que lo reescriben. Se queda quieto si el visitante pide menos movimiento.",
+    "ascii_pages": "Perfil, juego y devlog"
+  },
+  "showcase": {
+    "title": "Expositor",
+    "intro": "Páginas de itch.io hechas con itch-live-css. Sus dueños pidieron salir aquí y las revisamos una a una. La vista es su CSS sobre una página de ejemplo; para verla de verdad, abre su página en itch.",
+    "join": "¿Quieres salir? Marca «Quiero salir en el expositor» al guardar en el [editor](/).",
+    "view": "Ver en itch.io",
+    "empty": "Todavía no hay páginas aprobadas. ¡La tuya puede ser la primera!",
+    "sampleBio": "Una página de ejemplo con el CSS de esta persona."
+  },
+  "admin": {
+    "title": "Revisión del expositor",
+    "key": "Clave de administración",
+    "enter": "Entrar",
+    "count": "{{count}} solicitudes, {{pending}} pendientes.",
+    "failed": "No se pudo entrar: {{error}}",
+    "noName": "(sin nombre)",
+    "pending": "Pendiente",
+    "approved": "Aprobado",
+    "rejected": "Rechazado",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "leave": "Dejar pendiente"
+  },
+  "guide": {
+    "title": "Guía de CSS para itch.io",
+    "recipes": "Recetas",
+    "steps": "Capítulos",
+    "foot": "Texto bajo CC BY 4.0 (ver knowledge/LICENSE del proyecto). No está afiliado a itch.io."
+  },
+  "rules": {
+    "R1": "Pregunta primero si la cuenta tiene acceso al CSS.",
+    "R2": "Empieza cada selector por #wrapper",
+    "R3": "Pon las variables del tema en #wrapper o más abajo, nunca en :root/html",
+    "R4": "Nunca uses el atajo background en #wrapper.",
+    "R5": "Nunca ocultes, muevas, tapes, renombres ni imites la interfaz de itch",
+    "R6": "Nunca engañes ni rastrees",
+    "R7": "Controla el tamaño y dilo.",
+    "R8": "Pega solo CSS minificado",
+    "R9": "Pon cada @import al principio",
+    "R10": "Importa solo URLs https://, text/css, 2xx y con versión fijada",
+    "R11": "Las clases del HTML de la página deben empezar por custom-",
+    "R12": "Nunca apuntes a ids con números",
+    "R13": "La hoja de un proyecto también da estilo a su /devlog, sus posts y /comments.",
+    "R14": "!important solo contra el !important de itch, un style=\"\" en línea o un !important en capa",
+    "R15": "Nunca pongas tus cambios en @layer ni en @import … layer()",
+    "R16": "Empieza los nombres de @keyframes por custom-.",
+    "R17": "Incluye B1 con cualquier movimiento.",
+    "R18": "Pon los efectos hover dentro de @media (hover:hover)",
+    "R19": "Mantén un anillo de foco visible con contraste ≥ 3:1 (B2).",
+    "R20": "Deja exactamente un h1 que nombre la página.",
+    "R21": "Oculta lo que no debe oírse con display:none",
+    "R22": "En páginas de juegos HTML5, deja filter, backdrop-filter, transform, will-change y las animaciones de entrada con fill-mode fuera de los ancestros del juego",
+    "R23": "URLs https:// absolutas",
+    "R24": "Compruébalo sin sesión iniciada"
+  },
+  "validator": {
+    "R2": {
+      "wrapper": "\"{{sel}}\" debe empezar por #wrapper: itch sirve tu CSS en toda la página"
+    },
+    "R3": {
+      "root": "\"{{sel}}\" define variables: ponlas en #wrapper o más abajo (en :root recolorearon la cabecera de las jams de itch)",
+      "profile": "itch declara las variables --itchio_ del perfil en .user_page, que gana a #wrapper: ponlas en #wrapper .user_page"
+    },
+    "R4": {
+      "background": "\"{{sel}}\" usa el atajo background, que borra la imagen de fondo del creador: usa las propiedades background-* sueltas (B3)"
+    },
+    "R7": {
+      "cap": "{{bytes}} bytes, por encima del tope de {{max}} ({{page}}): itch no guarda",
+      "jam": "{{chars}} caracteres, más de los {{max}} que se sabe que se guardan en una jam"
+    },
+    "R8": {
+      "style": "quita todos los <style> y </style>: itch borra </style> (en cualquier mayúscula), y eso cambia el CSS que lo rodea"
+    },
+    "R9": {
+      "jam": "{{what}}: en una jam un @import nunca carga; usa @font-face para las fuentes",
+      "order": "{{what}} va después de otras reglas, así que el navegador lo ignora: pon todos los @import al principio",
+      "layer": "{{what}} va detrás de un @layer que está entre imports: carga, pero nunca se aplica",
+      "nested": "{{what}} está dentro de un bloque, donde @import no vale"
+    },
+    "R10": {
+      "absolute": "{{what}}: importa una URL https:// absoluta; http:// se bloquea por contenido mixto y una relativa apunta a itch",
+      "raw": "{{what}}: se sirve como text/plain, así que el navegador lo ignora; usa https://cdn.jsdelivr.net/gh/USUARIO/REPO@TAG/archivo.css",
+      "unpinned": "{{what}}: no está fijado a una etiqueta o un SHA completo, así que los visitantes pueden recibir versiones distintas durante días"
+    },
+    "R11": {
+      "adblock": ".{{name}}: los bloqueadores de anuncios ocultan las clases que empiezan por {{names}} o {{last}}"
+    },
+    "R12": {
+      "numbered": "#{{id}}: los ids con números cambian de una página a otra; usa uno estable (#wrapper, #inner_column, #profile_header…) o una clase"
+    },
+    "R14": {
+      "outline": "{{prop}}:{{value}} oculta el anillo de foco a quien usa el teclado; cámbiale el estilo en lugar de quitarlo (B2)",
+      "frozen": "{{prop}} !important: tus @keyframes animan {{prop}}, y !important gana a las animaciones, así que puede congelarlas"
+    },
+    "R15": {
+      "import": "{{what}}: importado en una capa, sus reglas siempre pierden contra las de itch",
+      "layer": "{{what}}: las reglas en capa siempre pierden contra las de itch, que no tienen capa"
+    },
+    "R16": {
+      "prefix": "@keyframes {{name}} necesita el prefijo {{prefix}}: si itch usa el mismo nombre, el tuyo sustituye su animación en toda la página"
+    },
+    "R18": {
+      "gate": "\"{{sel}}\": pon los efectos hover dentro de @media (hover:hover)",
+      "twin": "\"{{sel}}\" no tiene equivalente de foco: dale el mismo efecto con :focus-visible"
+    },
+    "R23": {
+      "url": "url({{url}}): usa una URL https:// absoluta (o data:); una relativa apunta a itch y http:// se bloquea"
+    },
+    "syntax": {
+      "broken": "{{reason}}: el navegador se salta la parte rota del CSS, e itch la guarda tal cual"
+    }
+  },
+  "docs": {
+    "sections": [
+      {
+        "paragraphs": [
+          "Qué se puede y qué no se puede hacer con CSS en las páginas de itch.io: perfil, página de juego, devlog y jam. Resumen de la base de conocimiento de itch-live-css, comprobada con pruebas en vivo en octubre de 2026."
+        ]
+      },
+      {
+        "title": "Antes de empezar",
+        "paragraphs": [
+          "**El CSS personalizado no está abierto a todo el mundo.** itch lo activa a mano, cuenta por cuenta. Si en *Edit theme* no ves el campo CSS, tienes que pedírselo a itch. Sin él solo tienes el editor de temas y el HTML de tu texto."
+        ]
+      },
+      {
+        "title": "Dónde va el CSS",
+        "table": {
+          "head": [
+            "",
+            "Perfil",
+            "Página de juego",
+            "Devlog",
+            "Jam"
+          ],
+          "rows": [
+            [
+              "Campo",
+              "Edit theme → CSS del perfil",
+              "Edit theme → CSS del juego",
+              "No tiene: usa el del juego",
+              "CSS de la jam"
+            ],
+            [
+              "Tamaño máximo",
+              "5.120 bytes (UTF-8, comentarios incluidos); si te pasas, itch no guarda",
+              "Sin tope práctico",
+              "El del juego",
+              "Sin medir (20.410 caracteres guardan)"
+            ],
+            [
+              "Link de itch-live-css (`@import`)",
+              "Sí",
+              "Sí",
+              "Sí, el del juego",
+              "**No**: en las jams un `@import` nunca carga"
+            ],
+            [
+              "Tu texto",
+              "Bio, hasta 5.000 caracteres de HTML",
+              "Descripción",
+              "Texto del post",
+              "Descripción de la jam"
+            ],
+            [
+              "iframes en el texto",
+              "Funcionan",
+              "Pasan a «clic para cargar»",
+              "Funcionan",
+              "Sin comprobar"
+            ]
+          ]
+        }
+      },
+      {
+        "title": "Cómo llega tu CSS a itch",
+        "items": [
+          {
+            "text": "**Sin efectos**, el editor te da tu CSS minificado para **pegarlo** en itch.",
+            "items": [
+              "En el perfil se pega si ocupa como mucho 5.120 bytes. Si no cabe, te da el link (`@import`), que no tiene ese límite.",
+              "En la página de juego y en el devlog siempre se pega: allí no hay límite."
+            ]
+          },
+          "**Con efectos** (título, saludo, tarjetas o fondo ASCII), solo el link: los efectos cambian en cada visita y los genera esta web.",
+          "Si pegas, guardar es opcional. Guarda si quieres un enlace de edición para volver a tu CSS o salir en el expositor."
+        ]
+      },
+      {
+        "title": "Lo que puedes hacer",
+        "items": [
+          "Cambiar colores, fuentes, fondos, bordes, espacios y tamaños de casi todo lo que hay dentro de `#wrapper`.",
+          "Animaciones y transiciones CSS, variables, `@font-face` y fuentes de Google con `@import` (no en jams).",
+          "Usar tus propias clases en el HTML de tu texto, si empiezan por `custom` en minúscula: `custom-caja`, `custom-w-1/2`, `custom-w-[3px]` y `custom:md:flex` sobreviven.",
+          "Partir el CSS sin servidor: un `@import` de `data:` funciona.",
+          "Con el link de este servicio: efectos que cambian en cada visita y CSS que se actualiza sin volver a pegarlo."
+        ]
+      },
+      {
+        "title": "Lo que no puedes hacer",
+        "items": [
+          "**JavaScript**: itch no lo permite.",
+          "Usar `id`, `data-*`, `aria-*` o `role` en tu HTML: itch los quita. También quita las clases que no empiezan por `custom` (así que `md:custom-…`, `!custom-…` y `-custom-…` desaparecen).",
+          "Escribir `</style>` en tu CSS: itch lo borra, en cualquier mayúscula.",
+          "**Ocultar, mover, tapar o imitar la interfaz de itch**: el pie de página, la cabecera del sitio, los botones de compra y descarga, los precios, los diálogos. Es una norma de itch y te pueden quitar el CSS.",
+          "**Engañar o rastrear**: nada de botones o avisos falsos, capas que capturen clics, suplantar a otros, ni balizas con `url()` para registrar visitas."
+        ]
+      },
+      {
+        "title": "Reglas para que tu CSS funcione",
+        "items": [
+          "Empieza **cada** selector por `#wrapper`, también dentro de `@media`: itch sirve tu CSS en toda la página.",
+          "Pon las variables del tema en `#wrapper` o más abajo, nunca en `:root`. En el perfil, en `#wrapper .user_page`.",
+          "No uses el atajo `background` en `#wrapper`: borra tu imagen de fondo. Usa `background-color`, `background-image`…",
+          "Pon todos los `@import` al principio, con direcciones `https://` completas. Lo mismo en cada `url()`.",
+          "Empieza los nombres de `@keyframes` por `custom-`: itch tiene animaciones propias (`spin`, `bounce`…) y una con el mismo nombre las sustituye.",
+          "No metas tus reglas en `@layer`: siempre pierden contra las de itch.",
+          "No uses ids con números (`#user_123`, `#view_game_456`): cambian. Los estables son `#wrapper`, `#profile_header`, `#inner_column`, `#header` y `#view_game_footer`.",
+          "El CSS de un juego también se aplica a su devlog y a sus comentarios. Para afinar, usa `#wrapper .view_game_page`, `.game_devlog_post_page`…",
+          "Los bloqueadores de anuncios ocultan clases como `custom-ad`, `custom-social`, `custom-share` o `custom-cookie`: evítalas.",
+          "`!important` solo contra los `!important` de itch o los estilos en línea; nunca en una propiedad animada (la congela).",
+          "Pon los efectos de `:hover` dentro de `@media (hover:hover)` y repítelos con `:focus-visible`.",
+          "Accesibilidad: respeta `prefers-reduced-motion`, deja un anillo de foco visible, un solo `h1` que nombre la página, y textos con buen contraste.",
+          "En juegos HTML5, no pongas `filter`, `transform`, `backdrop-filter` ni `will-change` en los contenedores del juego: rompen la pantalla completa.",
+          "Compruébalo sin sesión iniciada y en el móvil. Tras guardar, los visitantes tardan unos 2,5 minutos en ver el cambio; tú lo ves al momento."
+        ]
+      },
+      {
+        "title": "Sobre el link de itch-live-css",
+        "items": [
+          "Va en la primera línea de tu CSS. Lo que guardas en el editor llega a itch sin volver a pegar nada.",
+          "Un `@import` retiene el dibujado de la página hasta que responde. Si el servicio fallara, tu página se vería sin este CSS. Por eso, cuando tu CSS cabe, el editor te lo da para pegar.",
+          "No funciona en jams: allí todo tiene que ir pegado."
+        ]
+      }
+    ],
+    "title": "Documentación"
+  },
+  "privacy": {
+    "sections": [
+      {
+        "paragraphs": [
+          "itch-live-css no tiene cuentas, no usa cookies y no guarda nada de quien visita tu página de itch."
+        ]
+      },
+      {
+        "title": "Lo que se guarda cuando guardas",
+        "paragraphs": [
+          "Si solo copias tu CSS para pegarlo en itch y no guardas, no se guarda nada. Cuando guardas:"
+        ],
+        "items": [
+          "Tu configuración: tipo de página, color, efectos, tu CSS y el HTML que pegues para la vista previa (ese HTML nunca se sirve).",
+          "Una huella de tu clave de edición, no la clave: si pierdes el enlace de edición, nadie puede recuperarlo.",
+          "Si pides salir en el expositor: la dirección de tu página de itch y el nombre que pongas, que se muestran a todo el mundo cuando se aprueban."
+        ],
+        "after": [
+          "Se guarda en Upstash (Redis), y la web funciona en Vercel. No se pide correo ni ningún dato personal."
+        ]
+      },
+      {
+        "title": "Quien visita tu página de itch",
+        "paragraphs": [
+          "Si usas el link, su navegador pide tu CSS a esta web. Como cualquier petición, lleva su IP, su navegador y la dirección de la página de itch desde la que viene. Esta web no guarda nada de eso; Vercel, el alojamiento, trata las peticiones según su propia política de privacidad.",
+          "Si usas fuentes del título, su navegador las descarga de Google Fonts, que ve su IP."
+        ]
+      },
+      {
+        "title": "En esta web",
+        "paragraphs": [
+          "El editor y sus herramientas (CodeMirror y js-beautify) vienen de esta misma web. La vista previa carga fuentes de Google Fonts. Las páginas de documentación y privacidad recuerdan en tu navegador (localStorage) el idioma que eliges; no sale de tu navegador."
+        ]
+      }
+    ],
+    "title": "Privacidad"
+  }
+}

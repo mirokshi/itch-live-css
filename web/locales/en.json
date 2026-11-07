@@ -1,0 +1,392 @@
+{
+  "titles": {
+    "editor": "itch-live-css",
+    "ideas": "Ideas · itch-live-css",
+    "showcase": "Showcase · itch-live-css",
+    "admin": "Admin · itch-live-css",
+    "docs": "Documentation · itch-live-css",
+    "privacy": "Privacy · itch-live-css",
+    "guide": "Guide · itch-live-css",
+    "chapter": "{{title}} · Guide · itch-live-css"
+  },
+  "nav": {
+    "label": "Sections",
+    "editor": "Editor",
+    "ideas": "Ideas",
+    "showcase": "Showcase",
+    "guide": "Guide",
+    "docs": "Documentation",
+    "privacy": "Privacy"
+  },
+  "lang": {
+    "label": "Language"
+  },
+  "pageNames": {
+    "profile": "Profile",
+    "project": "Game page",
+    "devlog": "Devlog"
+  },
+  "thumb": {
+    "title": "Preview: {{page}}"
+  },
+  "copy": {
+    "copy": "Copy",
+    "done": "Copied"
+  },
+  "pages": {
+    "profile": {
+      "title": "Profile preview",
+      "html": "Your bio HTML",
+      "text": "your bio",
+      "where": "of your profile's CSS",
+      "into": "into your profile's CSS",
+      "sample": "I make small games. This is a sample profile.",
+      "hint": "On itch: Edit theme on your profile → CSS."
+    },
+    "project": {
+      "title": "Game page preview",
+      "html": "Your description HTML",
+      "text": "the game's description",
+      "where": "of your game's CSS",
+      "into": "into your game's CSS",
+      "sample": "A sample game. This is its description.",
+      "hint": "On itch: Edit theme on the game page → CSS. Its devlogs use this same CSS."
+    },
+    "devlog": {
+      "title": "Devlog post preview",
+      "html": "Your post HTML",
+      "text": "the post",
+      "where": "of the game's CSS",
+      "into": "into the game's CSS",
+      "sample": "Version 1.0 is out today. Thanks for playing.",
+      "hint": "A devlog has no CSS of its own: it uses the game's (Edit theme on the game page → CSS)."
+    }
+  },
+  "editor": {
+    "lead": "Write the CSS for your itch.io page, see it live and take it away ready to paste, or as a link you never paste again.",
+    "where": "Where will you use it?",
+    "cssLegend": "Your CSS",
+    "cssHint": "Below you get it minified to paste into itch, or inside a link if it doesn't fit or you use effects.",
+    "htmlHint": "Only to try in the preview: it isn't served. itch strips classes that don't start with `custom`, `id`s and `data-`, `aria-` and `role` attributes, and so does this preview.",
+    "format": "Format",
+    "expand": "Expand",
+    "themeOpen": "itch theme ›",
+    "loading": "Generating the preview…",
+    "editFailed": "Couldn't open that edit link: {{error}}",
+    "tidyFailed": "Couldn't load the formatter.",
+    "saved": "Saved.",
+    "saveLink": "Save and get the link",
+    "saveEdit": "Save and get the edit link",
+    "defaultTitle": "Your name",
+    "defaultGreeting": "Hello!",
+    "error": "{{error}}"
+  },
+  "lint": {
+    "errors_one": "{{count}} error",
+    "errors_other": "{{count}} errors",
+    "warnings_one": "{{count}} warning",
+    "warnings_other": "{{count}} warnings",
+    "summary": "{{errors}}, {{warnings}}",
+    "none": "No problems with itch's rules.",
+    "failed": "Couldn't validate: {{error}}",
+    "error": "Error",
+    "warning": "Warning",
+    "line": "line {{line}}",
+    "syntax": "Syntax"
+  },
+  "export": {
+    "title": "For itch",
+    "paste": "Paste this {{into}} on itch.",
+    "size": "It takes {{bytes}} of {{max}} bytes.",
+    "noLimit": "There's no size limit here.",
+    "pasteLabel": "CSS to paste",
+    "optional": "Saving is optional: it gives you an edit link to come back to this CSS, or to appear in the showcase.",
+    "empty": "Write your CSS above and you'll get it here ready to paste.",
+    "effects": "Effects change on every visit, so they go in a link: save to get it.",
+    "effectsSaved": "Effects change on every visit, so they go in a link (below).",
+    "tooBig": "Your minified CSS takes {{bytes}} bytes and a profile takes {{max}}: it goes in a link, which has no such limit. Save to get it.",
+    "tooBigSaved": "Your minified CSS takes {{bytes}} bytes and a profile takes {{max}}: it goes in a link, which has no such limit (below)."
+  },
+  "showcaseForm": {
+    "label": "I want to appear in the showcase",
+    "hint": "Once we review and approve it, your page appears in the [showcase](/showcase.html): the name, the link to your page and a view of your CSS (never your HTML).",
+    "url": "Your itch page's address",
+    "urlPlaceholder": "https://yourname.itch.io/",
+    "name": "Name to show (optional)",
+    "pending": "Showcase: waiting for approval.",
+    "approved": "Showcase: approved, your page is live.",
+    "rejected": "Showcase: not approved."
+  },
+  "result": {
+    "linkTitle": "Your link",
+    "linkHint": "Put this line **at the start** {{where}} on itch:",
+    "linkLabel": "Your link",
+    "bioHint": "The title and greeting ideas need this HTML in {{text}}:",
+    "bioLabel": "HTML for the bio",
+    "editHint": "Keep this edit link: it's the only way to change your CSS. Don't share it.",
+    "editLabel": "Edit link",
+    "againLink": "When you change something and save again, itch shows it without pasting anything again.",
+    "againPaste": "If you change something, copy the CSS from \"For itch\" again and paste it into itch."
+  },
+  "ideasPanel": {
+    "title": "Ideas",
+    "close": "Close the ideas",
+    "hint": "Optional effects that change on every visit. They go in a link, with your CSS.",
+    "accent": "Accent colour",
+    "titleLabel": "Mixed-letter title",
+    "titleHint": "Each letter in a different font, and the weight \"breathes\".",
+    "titleText": "Text",
+    "fonts": "Fonts (2 to 4):",
+    "greetingLabel": "Greeting that changes language",
+    "greetingHint": "A greeting from your text that rolls through other languages.",
+    "greetingFirst": "First greeting",
+    "greetingOthers": "The others, one per line",
+    "cardsLabel": "Cards with a foil border",
+    "cardsHint": "A golden shine that runs around each game's border.",
+    "asciiLabel": "ASCII character background",
+    "asciiHint": "A field of letters in the background, with waves that rewrite it."
+  },
+  "theme": {
+    "label": "itch theme",
+    "head": "Mimics itch's theme editor: it only changes the preview.",
+    "hide": "Hide the itch theme",
+    "hex": "{{label}} in hex"
+  },
+  "ideas": {
+    "title": "Ideas",
+    "intro": "Ready-to-use effects. They change on every visit, go inside your link and add to your own CSS. \"Use this idea\" opens the editor with the effect on; tune it there in the \"Ideas\" panel.",
+    "use": "Use this idea",
+    "sampleName": "Your name",
+    "sampleHello": "Hello!",
+    "sampleBio": "A sample page.",
+    "title_name": "Mixed-letter title",
+    "title_text": "Each letter of your name in a different font, and the weight slowly \"breathes\". The fonts mix again on every visit.",
+    "title_pages": "Profile, game and devlog",
+    "greeting_name": "Greeting that changes language",
+    "greeting_text": "A greeting from your text rolls through other languages like an airport board. Screen readers read your real text.",
+    "greeting_pages": "Profile, game and devlog",
+    "cards_name": "Cards with a foil border",
+    "cards_text": "A golden shine runs around the border of each game on your profile, with its own rhythm per card and faster on hover.",
+    "cards_pages": "Profile only",
+    "ascii_name": "ASCII character background",
+    "ascii_text": "A field of letters and digits behind the page, with waves that rewrite it. It stays still if the visitor asks for less motion.",
+    "ascii_pages": "Profile, game and devlog"
+  },
+  "showcase": {
+    "title": "Showcase",
+    "intro": "itch.io pages made with itch-live-css. Their owners asked to appear here and we review them one by one. The view is their CSS on a sample page; to see the real thing, open their page on itch.",
+    "join": "Want to appear? Tick \"I want to appear in the showcase\" when you save in the [editor](/).",
+    "view": "View on itch.io",
+    "empty": "No approved pages yet. Yours could be the first!",
+    "sampleBio": "A sample page with this person's CSS."
+  },
+  "admin": {
+    "title": "Showcase review",
+    "key": "Admin key",
+    "enter": "Enter",
+    "count": "{{count}} requests, {{pending}} pending.",
+    "failed": "Couldn't sign in: {{error}}",
+    "noName": "(no name)",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "approve": "Approve",
+    "reject": "Reject",
+    "leave": "Leave pending"
+  },
+  "guide": {
+    "title": "itch.io CSS guide",
+    "recipes": "Recipes",
+    "steps": "Chapters",
+    "foot": "Text under CC BY 4.0 (see knowledge/LICENSE in the project). Not affiliated with itch.io."
+  },
+  "rules": {
+    "R1": "Ask first whether the account has CSS access.",
+    "R2": "Start every style-rule selector with #wrapper",
+    "R3": "Set theme variables on #wrapper or below, never on :root/html",
+    "R4": "Never use the background shorthand on #wrapper.",
+    "R5": "Never hide, move, cover, relabel or fake itch's UI",
+    "R6": "Never mislead or track",
+    "R7": "Budget the size and report it.",
+    "R8": "Paste minified CSS only",
+    "R9": "Put every @import first",
+    "R10": "Import only https://, text/css, 2xx, version-pinned URLs",
+    "R11": "Classes in page HTML must start with custom-",
+    "R12": "Never target numbered ids",
+    "R13": "A project's sheet also styles its /devlog, devlog posts and /comments.",
+    "R14": "!important only against itch's !important, inline style=\"\" or a layered !important",
+    "R15": "Never put overrides in @layer or @import … layer()",
+    "R16": "Prefix @keyframes names with custom-.",
+    "R17": "Ship B1 with any motion.",
+    "R18": "Gate hover effects in @media (hover:hover)",
+    "R19": "Keep a visible focus ring of ≥ 3:1 (B2).",
+    "R20": "Expose exactly one h1 naming the page.",
+    "R21": "Hide silent things with display:none",
+    "R22": "On HTML5 project pages keep filter, backdrop-filter, transform, will-change and fill-mode entrance animations off the embed's ancestors",
+    "R23": "Absolute https:// URLs",
+    "R24": "Verify logged out"
+  },
+  "docs": {
+    "sections": [
+      {
+        "paragraphs": [
+          "What CSS can and can't do on itch.io pages: profile, game page, devlog and jam. A summary of the itch-live-css knowledge base, checked with live probes in October 2026."
+        ]
+      },
+      {
+        "title": "Before you start",
+        "paragraphs": [
+          "**Custom CSS isn't open to everyone.** itch turns it on by hand, account by account. If *Edit theme* shows no CSS field, ask itch for it. Without it you only have the theme editor and the HTML of your text."
+        ]
+      },
+      {
+        "title": "Where the CSS goes",
+        "table": {
+          "head": [
+            "",
+            "Profile",
+            "Game page",
+            "Devlog",
+            "Jam"
+          ],
+          "rows": [
+            [
+              "Field",
+              "Edit theme → profile CSS",
+              "Edit theme → game CSS",
+              "None: it uses the game's",
+              "Jam CSS"
+            ],
+            [
+              "Size limit",
+              "5,120 bytes (UTF-8, comments included); over it, itch refuses to save",
+              "No practical limit",
+              "The game's",
+              "Not measured (20,410 characters save)"
+            ],
+            [
+              "itch-live-css link (`@import`)",
+              "Yes",
+              "Yes",
+              "Yes, the game's",
+              "**No**: on jams an `@import` never loads"
+            ],
+            [
+              "Your text",
+              "Bio, up to 5,000 characters of HTML",
+              "Description",
+              "Post body",
+              "Jam description"
+            ],
+            [
+              "iframes in the text",
+              "Work",
+              "Become \"click to load\"",
+              "Work",
+              "Not checked"
+            ]
+          ]
+        }
+      },
+      {
+        "title": "How your CSS gets to itch",
+        "items": [
+          {
+            "text": "**Without effects**, the editor gives you your CSS minified, to **paste** into itch.",
+            "items": [
+              "On a profile it's pasted if it takes at most 5,120 bytes. If it doesn't fit, you get the link (`@import`), which has no such limit.",
+              "On a game page and a devlog it's always pasted: there's no limit there."
+            ]
+          },
+          "**With effects** (title, greeting, cards or ASCII background), only the link: effects change on every visit and this site makes them.",
+          "If you paste, saving is optional. Save if you want an edit link to come back to your CSS, or to appear in the showcase."
+        ]
+      },
+      {
+        "title": "What you can do",
+        "items": [
+          "Change colours, fonts, backgrounds, borders, spacing and sizes of almost everything inside `#wrapper`.",
+          "CSS animations and transitions, variables, `@font-face` and Google Fonts through `@import` (not on jams).",
+          "Use your own classes in your text's HTML if they start with lowercase `custom`: `custom-box`, `custom-w-1/2`, `custom-w-[3px]` and `custom:md:flex` survive.",
+          "Split your CSS without a server: a `data:` `@import` works.",
+          "With this service's link: effects that change on every visit, and CSS that updates without pasting it again."
+        ]
+      },
+      {
+        "title": "What you can't do",
+        "items": [
+          "**JavaScript**: itch doesn't allow it.",
+          "Use `id`, `data-*`, `aria-*` or `role` in your HTML: itch strips them. It also strips classes that don't start with `custom` (so `md:custom-…`, `!custom-…` and `-custom-…` go).",
+          "Write `</style>` in your CSS: itch deletes it, in any case.",
+          "**Hide, move, cover or fake itch's interface**: the footer, the site header, buy and download buttons, prices, dialogs. It's an itch rule, and they can take your CSS away.",
+          "**Mislead or track**: no fake buttons or notices, click-catching layers, impersonation, or `url()` beacons that log visits."
+        ]
+      },
+      {
+        "title": "Rules for CSS that works",
+        "items": [
+          "Start **every** selector with `#wrapper`, inside `@media` too: itch serves your CSS page-wide.",
+          "Set theme variables on `#wrapper` or below, never on `:root`. On a profile, on `#wrapper .user_page`.",
+          "Don't use the `background` shorthand on `#wrapper`: it wipes your background image. Use `background-color`, `background-image`…",
+          "Put every `@import` first, with full `https://` addresses. The same for every `url()`.",
+          "Start `@keyframes` names with `custom-`: itch has its own animations (`spin`, `bounce`…) and a same-name one replaces them.",
+          "Don't put your rules in `@layer`: they always lose to itch's.",
+          "Don't use numbered ids (`#user_123`, `#view_game_456`): they change. Stable ones are `#wrapper`, `#profile_header`, `#inner_column`, `#header` and `#view_game_footer`.",
+          "A game's CSS also styles its devlog and comments. To be precise, use `#wrapper .view_game_page`, `.game_devlog_post_page`…",
+          "Ad blockers hide classes such as `custom-ad`, `custom-social`, `custom-share` or `custom-cookie`: avoid them.",
+          "`!important` only against itch's `!important` or inline styles; never on an animated property (it freezes it).",
+          "Put `:hover` effects inside `@media (hover:hover)` and repeat them on `:focus-visible`.",
+          "Accessibility: honour `prefers-reduced-motion`, keep a visible focus ring, one `h1` naming the page, and readable contrast.",
+          "On HTML5 games, keep `filter`, `transform`, `backdrop-filter` and `will-change` off the game's containers: they break fullscreen.",
+          "Check it logged out and on a phone. After a save, visitors see the change about 2.5 minutes later; you see it at once."
+        ]
+      },
+      {
+        "title": "About the itch-live-css link",
+        "items": [
+          "It goes on the first line of your CSS. What you save in the editor reaches itch without pasting anything again.",
+          "An `@import` holds the page's drawing until it answers. If the service failed, your page would show without this CSS. That's why, when your CSS fits, the editor gives it to you to paste.",
+          "It doesn't work on jams: there everything has to be pasted."
+        ]
+      }
+    ],
+    "title": "Documentation"
+  },
+  "privacy": {
+    "sections": [
+      {
+        "paragraphs": [
+          "itch-live-css has no accounts, uses no cookies and keeps nothing about the people who visit your itch page."
+        ]
+      },
+      {
+        "title": "What is kept when you save",
+        "paragraphs": [
+          "If you only copy your CSS to paste it into itch and don't save, nothing is kept. When you save:"
+        ],
+        "items": [
+          "Your config: page type, colour, effects, your CSS and the HTML you paste for the preview (that HTML is never served).",
+          "A hash of your edit key, not the key: if you lose your edit link, nobody can recover it.",
+          "If you ask to appear in the showcase: your itch page's address and the name you give, shown to everyone once approved."
+        ],
+        "after": [
+          "It is stored with Upstash (Redis), and the site runs on Vercel. No email or other personal data is asked for."
+        ]
+      },
+      {
+        "title": "People who visit your itch page",
+        "paragraphs": [
+          "If you use the link, their browser asks this site for your CSS. Like any request, it carries their IP, their browser and the address of the itch page it comes from. This site keeps none of it; Vercel, the host, handles requests under its own privacy policy.",
+          "If you use title fonts, their browser downloads them from Google Fonts, which sees their IP."
+        ]
+      },
+      {
+        "title": "On this site",
+        "paragraphs": [
+          "The editor and its tools (CodeMirror and js-beautify) come from this site itself. The preview loads fonts from Google Fonts. The documentation and privacy pages remember your language choice in your browser (localStorage); it never leaves your browser."
+        ]
+      }
+    ],
+    "title": "Privacy"
+  }
+}
