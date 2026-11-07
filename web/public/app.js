@@ -361,7 +361,8 @@ function setPage(page) {
 
 let timer;
 let generation = 0;
-function refreshEffects() {
+// delay: wait for the user to stop typing; 0 when the preview first loads, so it shows at once
+function refreshEffects(delay = 300) {
   clearTimeout(timer);
   countIdeas();
   stage.classList.add('is-loading');
@@ -379,7 +380,7 @@ function refreshEffects() {
       status.textContent = err.message;
     }
     if (mine === generation) stage.classList.remove('is-loading');
-  }, 300);
+  }, delay);
 }
 
 // The engine's validator on the user's CSS, under the editor: each problem with its rule from the
@@ -507,5 +508,5 @@ if (Object.hasOwn(IDEA_FIELDS, idea)) {
   showIdeas(true);
   countIdeas();
 }
-frame.addEventListener('load', refreshEffects);
-if (doc()?.readyState === 'complete' && doc().getElementById('bio')) refreshEffects();
+frame.addEventListener('load', () => refreshEffects(0));
+if (doc()?.readyState === 'complete' && doc().getElementById('bio')) refreshEffects(0);
