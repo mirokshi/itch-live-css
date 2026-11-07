@@ -24,3 +24,7 @@ HANDOFF.md
 
 # Guía de pago "CSS para itch.io": borrador privado, no se publica con el repo
 guia-paga/
+
+# Notas locales: ajustes de Obsidian y plantillas/ADRs de trabajo
+.obsidian/
+docs/
