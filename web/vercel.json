@@ -1,3 +1,7 @@
 {
-  "rewrites": [{ "source": "/c/:file", "destination": "/api/css?file=:file" }]
+  "rewrites": [{ "source": "/c/:file", "destination": "/api/css?file=:file" }],
+  "redirects": [
+    { "source": "/guia/es", "destination": "/guia/es/01-donde-va-tu-css.html" },
+    { "source": "/guia/en", "destination": "/guia/en/01-where-your-css-goes.html" }
+  ]
 }
