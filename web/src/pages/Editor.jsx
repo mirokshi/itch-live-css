@@ -2,21 +2,22 @@
 // itch's theme panel, the validator's problems, and what to take to itch (export.js decides: the
 // CSS to paste, or the @import link). Saving is needed for the link, optional otherwise.
 
-import { Loader2Icon, XIcon } from 'lucide-react';
+import { XIcon } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { FONTS } from '../../lib/fonts.js';
 import { CodeEditor } from '../CodeEditor.jsx';
-import { Inline, Navbar } from '../common.jsx';
+import { Copy, Inline, Navbar } from '../common.jsx';
 import { exportFor } from '../export.js';
 import { applyTheme, itchSanitize, PAGES, THEME_COLOURS, THEME_DEFAULTS } from '../preview.js';
 import { ThemePanel } from '../ThemePanel.jsx';
@@ -26,9 +27,9 @@ const ideasDefaults = (t) => ({
   accent: '#d6336c',
   titleOn: false, titleText: t('editor.defaultTitle'), fonts: ['fraunces', 'inter', 'grotesk'],
   greetingOn: false, greetingFirst: t('editor.defaultGreeting'), greetingOthers: 'Hello!\nBonjour !\nHallo!\nOlá!\nCiao!',
-  cards: false, ascii: false,
+  foil: false, foilColor: '#2f27ce', foilWidth: 1.5, foilSpeed: 1, foilSync: false, badges: false, ascii: false, scheme: false,
 });
-const IDEA_FIELDS = { title: 'titleOn', greeting: 'greetingOn', cards: 'cards', ascii: 'ascii' };
+const IDEA_FIELDS = { title: 'titleOn', greeting: 'greetingOn', foil: 'foil', badges: 'badges', ascii: 'ascii', scheme: 'scheme' };
 
 async function api(path, method, body, auth) {
   const res = await fetch(path, {
@@ -50,23 +51,6 @@ const Section = ({ title, children, ...props }) => (
 );
 
 // a read-only field with its copy button
-function Copy({ text, label, rows }) {
-  const { t } = useTranslation();
-  const [done, setDone] = useState(false);
-  const copy = async () => {
-    await navigator.clipboard.writeText(text);
-    setDone(true);
-    setTimeout(() => setDone(false), 1500);
-  };
-  const field = 'font-mono text-xs';
-  return (
-    <div className="flex items-start gap-2">
-      {rows ? <Textarea rows={rows} readOnly value={text} aria-label={label} className={field} /> : <Input readOnly value={text} aria-label={label} className={field} />}
-      <Button type="button" variant="outline" size="sm" onClick={copy}>{t(done ? 'copy.done' : 'copy.copy')}</Button>
-    </div>
-  );
-}
-
 // a checkbox with its label (Radix checkbox: a button with role="checkbox")
 function Check({ id, checked, onChange, children }) {
   return (
@@ -126,6 +110,7 @@ export function Editor() {
   const [lint, setLint] = useState(null); // { text, problems } | { error }
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null); // 'css' | 'html' while in the dialog
+  const [asking, setAsking] = useState(false); // the save dialog, with the showcase consent
 
   const config = {
     page,
@@ -134,8 +119,14 @@ export function Editor() {
     greeting: ideas.greetingOn
       ? { first: ideas.greetingFirst, others: ideas.greetingOthers.split('\n').map((s) => s.trim()).filter(Boolean) }
       : null,
-    cards: page === 'profile' && ideas.cards,
+    foil: page === 'profile' && ideas.foil,
+    foilColor: ideas.foilColor,
+    foilWidth: Number(ideas.foilWidth),
+    foilSpeed: Number(ideas.foilSpeed),
+    foilSync: !!ideas.foilSync,
+    badges: page === 'profile' && ideas.badges,
     ascii: ideas.ascii,
+    scheme: ideas.scheme,
     css,
     html,
     showcase: showcase.on ? { url: showcase.url.trim(), name: showcase.name } : null,
@@ -175,7 +166,7 @@ export function Editor() {
   // delay: wait for the user to stop typing; 0 when the preview (re)loads, so it shows at once
   function refreshEffects(delay = 300) {
     clearTimeout(timer.current);
-    setLoading(true);
+    if (delay === 0) setLoading(true); // edits re-roll the effects in place: no cover, or it flashes on every keystroke
     timer.current = setTimeout(async () => {
       const mine = ++generation.current;
       try {
@@ -194,7 +185,7 @@ export function Editor() {
   }
 
   // effects: when an idea changes (a page switch reloads the mock, whose load refreshes them)
-  const effectsKey = JSON.stringify([config.accent, config.title, config.greeting, ideas.cards, config.ascii]);
+  const effectsKey = JSON.stringify([config.accent, config.title, config.greeting, ideas.foil, ideas.foilColor, ideas.foilWidth, ideas.foilSpeed, ideas.foilSync, ideas.badges, config.ascii, config.scheme]);
   const first = useRef(true);
   useEffect(() => {
     if (first.current) first.current = false;
@@ -242,8 +233,14 @@ export function Editor() {
       ...(f.title && { titleText: f.title.text, fonts: f.title.fonts }),
       greetingOn: !!f.greeting,
       ...(f.greeting && { greetingFirst: f.greeting.first, greetingOthers: f.greeting.others.join('\n') }),
-      cards: f.cards,
+      foil: !!(f.foil ?? f.cards),
+      foilColor: f.foilColor ?? (f.cards ? '#ffc857' : '#2f27ce'),
+      foilWidth: f.foilWidth ?? 1.5,
+      foilSpeed: f.foilSpeed ?? 1,
+      foilSync: !!f.foilSync,
+      badges: !!(f.badges ?? f.cards),
       ascii: f.ascii,
+      scheme: !!f.scheme,
     }));
     setCss(f.css ?? '');
     setHtml(f.html ?? '');
@@ -262,7 +259,7 @@ export function Editor() {
     // ?idea=<key>, from the ideas page: turn that effect on and open the ideas panel
     const idea = new URLSearchParams(location.search).get('idea');
     if (Object.hasOwn(IDEA_FIELDS, idea)) {
-      if (idea === 'cards') choosePage('profile'); // the cards effect only exists on profiles
+      if (idea === 'foil' || idea === 'badges') choosePage('profile'); // the cards effects only exist on profiles
       setIdeas((i) => ({ ...i, [IDEA_FIELDS[idea]]: true }));
       setIdeasOpen(true);
     }
@@ -282,6 +279,8 @@ export function Editor() {
 
   async function save(e) {
     e.preventDefault();
+    e.stopPropagation(); // the dialog sits in a portal: its submit would bubble to the outer form
+    setAsking(false);
     try {
       let got;
       if (saved) got = await api(`/api/configs?id=${saved.id}`, 'PUT', config, saved.key);
@@ -338,7 +337,7 @@ export function Editor() {
   return (
     <>
       <Navbar current="/" />
-      <form className={`app${ideasOpen ? ' ideas-open' : ''}`} data-page={page} autoComplete="off" onSubmit={save}>
+      <form className={`app${ideasOpen ? ' ideas-open' : ''}`} data-page={page} autoComplete="off" onSubmit={(e) => { e.preventDefault(); setAsking(true); }}>
         <section className="panel">
           <h1 className="sr-only">{t('titles.editor')}</h1>
           <Hint>{t('editor.lead')}</Hint>
@@ -383,24 +382,11 @@ export function Editor() {
             </CardHeader>
             {out.mode === 'paste' && out.css && (
               <CardContent className="space-y-2">
-                <Copy text={out.css} rows={3} label={t('export.pasteLabel')} />
+                <Copy text={out.css} rows={3} label={t('export.pasteLabel')} pretty="css" />
                 <Hint>{t('export.optional')}</Hint>
               </CardContent>
             )}
           </Card>
-
-          <Section>
-            <Check id="showcase-on" checked={showcase.on} onChange={setShow('on')}>{t('showcaseForm.label')}</Check>
-            <Hint><Inline text={t('showcaseForm.hint')} /></Hint>
-            <div className="grid gap-1.5">
-              <Label htmlFor="showcase-url">{t('showcaseForm.url')}</Label>
-              <Input id="showcase-url" type="url" placeholder={t('showcaseForm.urlPlaceholder')} maxLength={200} value={showcase.url} onChange={setShow('url')} />
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="showcase-name">{t('showcaseForm.name')}</Label>
-              <Input id="showcase-name" maxLength={40} value={showcase.name} onChange={setShow('name')} />
-            </div>
-          </Section>
 
           <p role="status" className="mt-6 min-h-6 text-sm text-muted-foreground">{status && t(status.id, status.params)}</p>
           <Button type="submit">{t(out.mode === 'import' ? 'editor.saveLink' : 'editor.saveEdit')}</Button>
@@ -418,7 +404,7 @@ export function Editor() {
                 {exported.bio && (
                   <>
                     <Hint>{t('result.bioHint', { text: t(`pages.${page}.text`) })}</Hint>
-                    <Copy text={exported.bio} rows={3} label={t('result.bioLabel')} />
+                    <Copy text={exported.bio} rows={3} label={t('result.bioLabel')} pretty="html" />
                   </>
                 )}
                 <Hint>{t('result.editHint')}</Hint>
@@ -443,10 +429,17 @@ export function Editor() {
                 {t('editor.themeOpen')}
               </Button>
               {/* no allow-scripts: nothing pasted into the preview can run; allow-same-origin lets this page fill it */}
-              <iframe ref={frame} src={PAGES[page].file} title={t(`pages.${page}.title`)} sandbox="allow-same-origin" onLoad={() => refreshEffects(0)} />
-            </div>
-            <div className="loading absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-popover px-3.5 py-2 text-sm text-popover-foreground shadow-lg" aria-hidden="true">
-              <Loader2Icon className="size-4 animate-spin motion-reduce:animate-none" /> {t('editor.loading')}
+              <div className="relative flex min-h-0 min-w-0 flex-1">
+                <iframe ref={frame} src={PAGES[page].file} title={t(`pages.${page}.title`)} sandbox="allow-same-origin" onLoad={() => refreshEffects(0)} />
+                {/* a page-shaped skeleton over the preview, only while the preview itself (re)loads */}
+                <div className="loading absolute inset-0 space-y-4 bg-white p-6" aria-hidden="true">
+                  <Skeleton className="h-9 w-48" />
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-64 w-full" />
+                  <div className="space-y-2"><Skeleton className="h-4 w-40" /><Skeleton className="h-3 w-56" /></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -493,8 +486,33 @@ export function Editor() {
           </Card>
           <Card size="sm" data-only="profile">
             <CardContent className="space-y-2">
-              <Check id="cards-on" checked={ideas.cards} onChange={setIdea('cards')}>{t('ideasPanel.cardsLabel')}</Check>
-              <Hint>{t('ideasPanel.cardsHint')}</Hint>
+              <Check id="foil-on" checked={ideas.foil} onChange={setIdea('foil')}>{t('ideasPanel.foilLabel')}</Check>
+              <Hint>{t('ideasPanel.foilHint')}</Hint>
+              {ideas.foil && (
+                <div className="flex items-center gap-3">
+                  <Label htmlFor="foil-color">{t('ideasPanel.foilColor')}</Label>
+                  <input id="foil-color" type="color" className="h-8 w-11 cursor-pointer rounded-md border bg-transparent p-0.5" value={ideas.foilColor} onChange={setIdea('foilColor')} />
+                </div>
+              )}
+              {ideas.foil && (
+                <div className="grid gap-1.5">
+                  <Label htmlFor="foil-width">{t('ideasPanel.foilWidth')}: {ideas.foilWidth} px</Label>
+                  <input id="foil-width" type="range" min="1" max="4" step="0.5" className="w-full accent-primary" value={ideas.foilWidth} onChange={setIdea('foilWidth')} />
+                </div>
+              )}
+              {ideas.foil && (
+                <div className="grid gap-1.5">
+                  <Label htmlFor="foil-speed">{t('ideasPanel.foilSpeed')}: {ideas.foilSpeed}×</Label>
+                  <input id="foil-speed" type="range" min="0.5" max="3" step="0.25" className="w-full accent-primary" value={ideas.foilSpeed} onChange={setIdea('foilSpeed')} />
+                </div>
+              )}
+              {ideas.foil && <Check id="foil-sync" checked={ideas.foilSync} onChange={setIdea('foilSync')}>{t('ideasPanel.foilSync')}</Check>}
+            </CardContent>
+          </Card>
+          <Card size="sm" data-only="profile">
+            <CardContent className="space-y-2">
+              <Check id="badges-on" checked={ideas.badges} onChange={setIdea('badges')}>{t('ideasPanel.badgesLabel')}</Check>
+              <Hint>{t('ideasPanel.badgesHint')}</Hint>
             </CardContent>
           </Card>
           <Card size="sm">
@@ -503,9 +521,38 @@ export function Editor() {
               <Hint>{t('ideasPanel.asciiHint')}</Hint>
             </CardContent>
           </Card>
+          <Card size="sm">
+            <CardContent className="space-y-2">
+              <Check id="scheme-on" checked={ideas.scheme} onChange={setIdea('scheme')}>{t('ideasPanel.schemeLabel')}</Check>
+              <Hint>{t('ideasPanel.schemeHint')}</Hint>
+            </CardContent>
+          </Card>
         </aside>
       </form>
 
+      <Dialog open={asking} onOpenChange={setAsking}>
+        <DialogContent className="sm:max-w-md">
+          <form className="space-y-4" onSubmit={save}>
+            <DialogHeader>
+              <DialogTitle>{t('showcaseForm.title')}</DialogTitle>
+              <DialogDescription><Inline text={t('showcaseForm.hint')} /></DialogDescription>
+            </DialogHeader>
+            <Check id="showcase-on" checked={showcase.on} onChange={setShow('on')}>{t('showcaseForm.label')}</Check>
+            <div className="grid gap-1.5">
+              <Label htmlFor="showcase-url">{t('showcaseForm.url')}</Label>
+              <Input id="showcase-url" type="url" required={showcase.on} disabled={!showcase.on} placeholder={t('showcaseForm.urlPlaceholder')} maxLength={200} value={showcase.url} onChange={setShow('url')} />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="showcase-name">{t('showcaseForm.name')}</Label>
+              <Input id="showcase-name" disabled={!showcase.on} maxLength={40} value={showcase.name} onChange={setShow('name')} />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setAsking(false)}>{t('showcaseForm.cancel')}</Button>
+              <Button type="submit">{t(out.mode === 'import' ? 'editor.saveLink' : 'editor.saveEdit')}</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
       <Dialog open={!!expanded} onOpenChange={(open) => !open && collapse()}>
         <DialogContent className="flex h-[min(85vh,900px)] flex-col sm:max-w-[min(1100px,calc(100vw-32px))]" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>

@@ -1,7 +1,7 @@
 // CodeMirror 6 over a CSS or HTML text. The text lives in the parent's state (value/onChange); the
 // validator's problems show as marks at their line and column (lint: { text, problems }, applied
 // only while the editor still holds the text they were found in). viewRef gets the EditorView, so
-// the parent can move view.dom into the "Ampliar" dialog and back.
+// the parent can move view.dom into the "Ampliar" dialog and back. readOnly: to show code (idea pages).
 
 import { css } from '@codemirror/lang-css';
 import { html } from '@codemirror/lang-html';
@@ -28,7 +28,7 @@ function diagnostics(doc, problems) {
   });
 }
 
-export function CodeEditor({ lang, label, value, onChange, lint, viewRef }) {
+export function CodeEditor({ lang, label, value, onChange = () => {}, lint, viewRef, readOnly = false }) {
   const host = useRef(null);
   const changed = useRef(onChange);
   changed.current = onChange;
@@ -44,6 +44,7 @@ export function CodeEditor({ lang, label, value, onChange, lint, viewRef }) {
           EditorView.lineWrapping,
           EditorView.contentAttributes.of({ 'aria-label': label }),
           lintGutter(),
+          EditorState.readOnly.of(readOnly),
           EditorView.updateListener.of((u) => u.docChanged && changed.current(u.state.doc.toString())),
         ],
       }),

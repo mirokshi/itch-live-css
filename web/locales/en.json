@@ -2,12 +2,16 @@
   "titles": {
     "editor": "itch-live-css",
     "ideas": "Ideas · itch-live-css",
+    "idea": "{{name}} · Ideas · itch-live-css",
     "showcase": "Showcase · itch-live-css",
     "admin": "Admin · itch-live-css",
     "docs": "Documentation · itch-live-css",
     "privacy": "Privacy · itch-live-css",
     "guide": "Guide · itch-live-css",
     "chapter": "{{title}} · Guide · itch-live-css"
+  },
+  "footer": {
+    "copyright": "© {{year}} {{name}}. Code under the MIT license."
   },
   "nav": {
     "label": "Sections",
@@ -71,7 +75,6 @@
     "format": "Format",
     "expand": "Expand",
     "themeOpen": "itch theme ›",
-    "loading": "Generating the preview…",
     "editFailed": "Couldn't open that edit link: {{error}}",
     "tidyFailed": "Couldn't load the formatter.",
     "saved": "Saved.",
@@ -108,8 +111,10 @@
     "tooBigSaved": "Your minified CSS takes {{bytes}} bytes and a profile takes {{max}}: it goes in a link, which has no such limit (below)."
   },
   "showcaseForm": {
+    "title": "Appear in the showcase",
+    "cancel": "Cancel",
     "label": "I want to appear in the showcase",
-    "hint": "Once we review and approve it, your page appears in the [showcase](/showcase.html): the name, the link to your page and a view of your CSS (never your HTML).",
+    "hint": "Once we review and approve it, your page appears in the [showcase](/showcase): the name, the link to your page and a view of your CSS (never your HTML).",
     "url": "Your itch page's address",
     "urlPlaceholder": "https://yourname.itch.io/",
     "name": "Name to show (optional)",
@@ -141,10 +146,18 @@
     "greetingHint": "A greeting from your text that rolls through other languages.",
     "greetingFirst": "First greeting",
     "greetingOthers": "The others, one per line",
-    "cardsLabel": "Cards with a foil border",
-    "cardsHint": "A golden shine that runs around each game's border.",
+    "foilLabel": "Foil border on the cards",
+    "foilHint": "A golden glint that runs round the border of each game.",
+    "foilColor": "Border colour",
+    "foilWidth": "Border thickness",
+    "foilSpeed": "Glint speed",
+    "foilSync": "Sync the cards",
+    "badgesLabel": "Labels and views on the cards",
+    "badgesHint": "Views and downloads of each game, and the “Most viewed” and “New” labels on the cover.",
     "asciiLabel": "ASCII character background",
-    "asciiHint": "A field of letters in the background, with waves that rewrite it."
+    "asciiHint": "A field of letters in the background, with waves that rewrite it.",
+    "schemeLabel": "Light and dark mode by the system",
+    "schemeHint": "With the system in dark, the page changes background, text and links. Pasted, no link needed."
   },
   "theme": {
     "label": "itch theme",
@@ -154,23 +167,37 @@
   },
   "ideas": {
     "title": "Ideas",
-    "intro": "Ready-to-use effects. They change on every visit, go inside your link and add to your own CSS. \"Use this idea\" opens the editor with the effect on; tune it there in the \"Ideas\" panel.",
+    "intro": "Ready-to-use effects. Pick one to see how it looks and the CSS (and the HTML, if it needs any) it carries. The ones that change on every visit go inside your link and add to your own CSS.",
     "use": "Use this idea",
+    "back": "← All ideas",
+    "show": "View",
+    "cssLabel": "CSS",
+    "htmlLabel": "HTML for your bio or description",
     "sampleName": "Your name",
     "sampleHello": "Hello!",
     "sampleBio": "A sample page.",
     "title_name": "Mixed-letter title",
     "title_text": "Each letter of your name in a different font, and the weight slowly \"breathes\". The fonts mix again on every visit.",
-    "title_pages": "Profile, game and devlog",
     "greeting_name": "Greeting that changes language",
     "greeting_text": "A greeting from your text rolls through other languages like an airport board. Screen readers read your real text.",
-    "greeting_pages": "Profile, game and devlog",
-    "cards_name": "Cards with a foil border",
-    "cards_text": "A golden shine runs around the border of each game on your profile, with its own rhythm per card and faster on hover.",
-    "cards_pages": "Profile only",
+    "foil_name": "Foil border on the cards",
+    "foil_text": "A golden glint runs round the border of each game on your profile, at a different pace on every card and faster under the mouse. Hover the cards in the preview.",
+    "badges_name": "Labels and views on the cards",
+    "badges_text": "Each game on your profile shows its views and downloads in a pill, and a label on the cover: “Most viewed” for the top game and “New” for those published less than 90 days ago. The figures come from itch.",
     "ascii_name": "ASCII character background",
     "ascii_text": "A field of letters and digits behind the page, with waves that rewrite it. It stays still if the visitor asks for less motion.",
-    "ascii_pages": "Profile, game and devlog"
+    "replay": "Play the effect again",
+    "worksOn": "Works on",
+    "controls": "Controls",
+    "preview": "Preview",
+    "foilColor": "Border colour",
+    "foilWidth": "Border thickness",
+    "foilSpeed": "Glint speed",
+    "foilSync": "Sync the cards",
+    "light": "Try in light",
+    "dark": "Try in dark",
+    "scheme_name": "Light and dark mode by the system",
+    "scheme_text": "The page follows the visitor's system mode: in dark it changes the background, text and links; in light it stays as your itch theme. It is fixed CSS, so it is pasted without a link."
   },
   "showcase": {
     "title": "Showcase",
@@ -198,6 +225,7 @@
     "title": "itch.io CSS guide",
     "recipes": "Recipes",
     "steps": "Chapters",
+    "toc": "On this page",
     "foot": "Text under CC BY 4.0 (see knowledge/LICENSE in the project). Not affiliated with itch.io."
   },
   "rules": {
