@@ -32,3 +32,5 @@ docs/
 # The web's build output (Vercel builds it from source)
 web/dist/
 web/dist-ssr/
+web/build/
+web/.react-router/

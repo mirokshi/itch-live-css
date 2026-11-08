@@ -1,11 +1,18 @@
 {
-  "framework": "vite",
+  "framework": null,
   "installCommand": "npm install && npm ci --prefix ../engine",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "outputDirectory": "build/client",
   "rewrites": [{ "source": "/c/:file", "destination": "/api/css?file=:file" }],
   "redirects": [
-    { "source": "/guia/es", "destination": "/guia/es/01-donde-va-tu-css.html" },
-    { "source": "/guia/en", "destination": "/guia/en/01-where-your-css-goes.html" }
+    { "source": "/ideas.html", "destination": "/ideas" },
+    { "source": "/showcase.html", "destination": "/showcase" },
+    { "source": "/admin.html", "destination": "/admin" },
+    { "source": "/docs.html", "destination": "/docs" },
+    { "source": "/privacy.html", "destination": "/privacy" },
+    { "source": "/ideas/:key.html", "destination": "/ideas/:key" },
+    { "source": "/guia/:lang/:name.html", "destination": "/guia/:lang/:name" },
+    { "source": "/guia/es", "destination": "/guia/es/01-donde-va-tu-css" },
+    { "source": "/guia/en", "destination": "/guia/en/01-where-your-css-goes" }
   ]
 }
