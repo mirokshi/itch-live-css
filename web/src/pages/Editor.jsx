@@ -267,15 +267,17 @@ export function Editor() {
     }
   }, []);
 
-  async function save(e) {
-    e.preventDefault();
-    e.stopPropagation(); // the dialog sits in a portal: its submit would bubble to the outer form
+  // The dialog only asks for the showcase consent: cancelling still saves, without the showcase.
+  async function save(e, share = true) {
+    e?.preventDefault();
+    e?.stopPropagation(); // the dialog sits in a portal: its submit would bubble to the outer form
     setAsking(false);
+    const body = share ? config : { ...config, showcase: null };
     try {
       let got;
-      if (saved) got = await api(`/api/configs?id=${saved.id}`, 'PUT', config, saved.key);
+      if (saved) got = await api(`/api/configs?id=${saved.id}`, 'PUT', body, saved.key);
       else {
-        got = await api('/api/configs', 'POST', config);
+        got = await api('/api/configs', 'POST', body);
         setSaved({ id: got.id, key: got.key });
         history.replaceState(null, '', `#edit=${got.id}.${got.key}`);
       }
@@ -353,19 +355,21 @@ export function Editor() {
             <CodeEditor lang="html" label={t(`pages.${page}.html`)} value={html} onChange={setHtml} viewRef={views.html} />
           </Section>
 
+          {/* nothing to take to itch yet (no CSS, no effects): no card */}
+          {(out.mode === 'import' || out.css) && (
           <Card className="mt-6" aria-live="polite">
             <CardHeader>
               <CardTitle><h2>{t('export.title')}</h2></CardTitle>
               {out.mode === 'paste' ? (
                 <CardDescription>
-                  {out.css
-                    ? <>{t('export.paste', { into: t(`pages.${page}.into`) })}{' '}{out.max ? t('export.size', { bytes: num(out.bytes), max: num(out.max) }) : t('export.noLimit')}</>
-                    : t('export.empty')}
+                  {t('export.paste', { into: t(`pages.${page}.into`) })}{' '}{out.max ? t('export.size', { bytes: num(out.bytes), max: num(out.max) }) : t('export.noLimit')}
                 </CardDescription>
               ) : (
                 <CardDescription>
                   {out.reason === 'effects'
-                    ? t(exported ? 'export.effectsSaved' : 'export.effects')
+                    ? t(exported ? 'export.effectsSaved' : 'export.effects', {
+                      effects: ['title', 'greeting', 'cards', 'ascii'].filter((k) => config[k]).map((k) => t(`ideasPanel.${k}Label`)).join(', '),
+                    })
                     : t(exported ? 'export.tooBigSaved' : 'export.tooBig', { bytes: num(out.bytes), max: num(out.max) })}
                 </CardDescription>
               )}
@@ -376,21 +380,24 @@ export function Editor() {
                 <Hint>{t('export.optional')}</Hint>
               </CardContent>
             )}
+            {out.mode === 'import' && exported && (
+              <CardContent className="space-y-2">
+                <Hint><Inline text={t('result.linkHint', { where: t(`pages.${page}.where`) })} /></Hint>
+                <Copy text={exported.link} label={t('result.linkLabel')} />
+              </CardContent>
+            )}
           </Card>
+          )}
 
           <p role="status" className="mt-6 min-h-6 text-sm text-muted-foreground">{status && t(status.id, status.params)}</p>
-          <Button type="submit">{t(out.mode === 'import' ? 'editor.saveLink' : 'editor.saveEdit')}</Button>
+          <Hint>{t('editor.exportNote')}</Hint>
+          <div className="mt-4 flex justify-end">
+            <Button type="submit">{t('editor.proceed')}</Button>
+          </div>
 
           {exported && (
             <Card className="mt-6">
               <CardContent className="space-y-3">
-                {out.mode === 'import' && (
-                  <>
-                    <h2 className="font-heading font-medium">{t('result.linkTitle')}</h2>
-                    <Hint><Inline text={t('result.linkHint', { where: t(`pages.${page}.where`) })} /></Hint>
-                    <Copy text={exported.link} label={t('result.linkLabel')} />
-                  </>
-                )}
                 {exported.bio && (
                   <>
                     <Hint>{t('result.bioHint', { text: t(`pages.${page}.text`) })}</Hint>
@@ -495,7 +502,7 @@ export function Editor() {
         </aside>
       </form>
 
-      <Dialog open={asking} onOpenChange={setAsking}>
+      <Dialog open={asking} onOpenChange={(open) => (open ? setAsking(true) : save(null, false))}>
         <DialogContent className="sm:max-w-md">
           <form className="space-y-4" onSubmit={save}>
             <DialogHeader>
@@ -512,8 +519,8 @@ export function Editor() {
               <Input id="showcase-name" disabled={!showcase.on} maxLength={40} value={showcase.name} onChange={setShow('name')} />
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setAsking(false)}>{t('showcaseForm.cancel')}</Button>
-              <Button type="submit">{t(out.mode === 'import' ? 'editor.saveLink' : 'editor.saveEdit')}</Button>
+              <Button type="button" variant="outline" onClick={() => save(null, false)}>{t('showcaseForm.cancel')}</Button>
+              <Button type="submit">{t('editor.proceed')}</Button>
             </DialogFooter>
           </form>
         </DialogContent>

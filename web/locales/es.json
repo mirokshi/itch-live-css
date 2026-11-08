@@ -80,6 +80,8 @@
     "saved": "Guardado.",
     "saveLink": "Guardar y obtener el link",
     "saveEdit": "Guardar y obtener el enlace de edición",
+    "proceed": "Aceptar",
+    "exportNote": "Dependiendo del tamaño del CSS se entrega un link o el CSS minificado.",
     "defaultTitle": "Tu nombre",
     "defaultGreeting": "¡Hola!",
     "error": "{{error}}"
@@ -104,9 +106,8 @@
     "noLimit": "Aquí no hay límite de tamaño.",
     "pasteLabel": "CSS para pegar",
     "optional": "Guardar es opcional: te da un enlace de edición para volver a este CSS, o para salir en el expositor.",
-    "empty": "Escribe tu CSS arriba y aquí lo tendrás listo para pegar.",
-    "effects": "Los efectos cambian en cada visita, así que van en un link: guarda para obtenerlo.",
-    "effectsSaved": "Los efectos cambian en cada visita, así que van en un link (abajo).",
+    "effects": "Tienes activado: {{effects}}. Los efectos cambian en cada visita, así que van en un link: acepta para obtenerlo, o desactívalos en Ideas para pegar el CSS.",
+    "effectsSaved": "Tienes activado: {{effects}}. Los efectos cambian en cada visita, así que van en un link (abajo); desactívalos en Ideas para pegar el CSS.",
     "tooBig": "Tu CSS minificado ocupa {{bytes}} bytes y el perfil admite {{max}}: va en un link, que no tiene ese límite. Guarda para obtenerlo.",
     "tooBigSaved": "Tu CSS minificado ocupa {{bytes}} bytes y el perfil admite {{max}}: va en un link, que no tiene ese límite (abajo)."
   },
@@ -123,7 +124,6 @@
     "rejected": "Expositor: no aprobado."
   },
   "result": {
-    "linkTitle": "Tu link",
     "linkHint": "Pon esta línea **al principio** {{where}} en itch:",
     "linkLabel": "Tu link",
     "bioHint": "Las ideas de título y saludo necesitan este HTML en {{text}}:",

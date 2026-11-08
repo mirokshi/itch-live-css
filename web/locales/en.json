@@ -80,6 +80,8 @@
     "saved": "Saved.",
     "saveLink": "Save and get the link",
     "saveEdit": "Save and get the edit link",
+    "proceed": "Accept",
+    "exportNote": "Depending on the size of the CSS, you get a link or the minified CSS.",
     "defaultTitle": "Your name",
     "defaultGreeting": "Hello!",
     "error": "{{error}}"
@@ -104,9 +106,8 @@
     "noLimit": "There's no size limit here.",
     "pasteLabel": "CSS to paste",
     "optional": "Saving is optional: it gives you an edit link to come back to this CSS, or to appear in the showcase.",
-    "empty": "Write your CSS above and you'll get it here ready to paste.",
-    "effects": "Effects change on every visit, so they go in a link: save to get it.",
-    "effectsSaved": "Effects change on every visit, so they go in a link (below).",
+    "effects": "Turned on: {{effects}}. Effects change on every visit, so they go in a link: accept to get it, or turn them off in Ideas to paste the CSS.",
+    "effectsSaved": "Turned on: {{effects}}. Effects change on every visit, so they go in a link (below); turn them off in Ideas to paste the CSS.",
     "tooBig": "Your minified CSS takes {{bytes}} bytes and a profile takes {{max}}: it goes in a link, which has no such limit. Save to get it.",
     "tooBigSaved": "Your minified CSS takes {{bytes}} bytes and a profile takes {{max}}: it goes in a link, which has no such limit (below)."
   },
@@ -123,7 +124,6 @@
     "rejected": "Showcase: not approved."
   },
   "result": {
-    "linkTitle": "Your link",
     "linkHint": "Put this line **at the start** {{where}} on itch:",
     "linkLabel": "Your link",
     "bioHint": "The title and greeting ideas need this HTML in {{text}}:",
