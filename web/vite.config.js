@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import { apiMiddleware } from './dev.js';
 
-const ENTRIES = ['editor', 'ideas', 'showcase', 'admin', 'docs', 'privacy', 'guide', 'lang'];
+const ENTRIES = ['editor', 'ideas', 'idea', 'showcase', 'admin', 'docs', 'privacy', 'guide', 'lang'];
 
 function pages() {
   return {

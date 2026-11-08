@@ -6,9 +6,9 @@
 import { readdirSync } from 'node:fs';
 import { renderToString } from 'react-dom/server';
 import { I18nextProvider } from 'react-i18next';
-import { splitTitle } from './common.jsx';
+import { Footer, splitTitle } from './common.jsx';
 import i18n, { LANGS } from './i18n.js';
-import { Admin, Ideas, Showcase } from './pages/Cards.jsx';
+import { Admin, IDEAS, IdeaPage, Ideas, ideaUrl, Showcase } from './pages/Cards.jsx';
 import { Chapter, Doc, GuideIndex } from './pages/Content.jsx';
 import { Editor } from './pages/Editor.jsx';
 
@@ -35,8 +35,14 @@ const PAGES = {
   '/privacy.html': { title: 'titles.privacy', entry: 'privacy', element: <Doc name="privacy" path="/privacy.html" /> },
 };
 
+// /ideas/<key>.html: one page per idea
+const IDEA_PAGES = Object.fromEntries(IDEAS.map((idea) => [ideaUrl(idea), {
+  title: 'titles.idea', titleParams: { name: i18n.getFixedT('es')(`ideas.${idea}_name`) }, entry: 'idea', element: <IdeaPage idea={idea} />,
+}]));
+
 function page(url) {
   if (Object.hasOwn(PAGES, url)) return PAGES[url];
+  if (Object.hasOwn(IDEA_PAGES, url)) return IDEA_PAGES[url];
   if (url === '/guia/' || url === '/guia/index.html') {
     const data = {
       chapters: Object.fromEntries(Object.keys(LANGS).map((l) => [l, chapters[l].map(({ href, title }) => ({ href, title }))])),
@@ -64,7 +70,7 @@ function page(url) {
   return null;
 }
 
-export const routes = [...Object.keys(PAGES), '/guia/', ...Object.values(chapters).flat().map((c) => c.href)];
+export const routes = [...Object.keys(PAGES), ...Object.keys(IDEA_PAGES), '/guia/', ...Object.values(chapters).flat().map((c) => c.href)];
 
 const esc = (s) => s.replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
 
@@ -75,6 +81,7 @@ export function render(url, asset) {
   const lang = p.lang ?? 'es';
   const t = i18n.cloneInstance({ lng: lang });
   const body = renderToString(<I18nextProvider i18n={t}>{p.element}</I18nextProvider>);
+  const foot = renderToString(<I18nextProvider i18n={t}><Footer /></I18nextProvider>);
   // props for hydration, as JSON that can't close the script element
   const data = p.data ? `\n<script type="application/json" id="guide-data">${JSON.stringify(p.data).replace(/</g, '\\u003c')}</script>` : '';
   return `<!doctype html>
@@ -86,7 +93,7 @@ export function render(url, asset) {
 <link rel="stylesheet" href="${asset('index.css')}">
 </head>
 <body>
-<div id="root" data-title="${p.title}">${body}</div>${data}${p.entry ? `\n<script type="module" src="${asset(`client/${p.entry}.jsx`)}"></script>` : ''}
+<div id="root" data-title="${p.title}">${body}</div>${foot}${data}${p.entry ? `\n<script type="module" src="${asset(`client/${p.entry}.jsx`)}"></script>` : ''}
 </body>
 </html>
 `;

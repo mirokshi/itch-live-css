@@ -2,12 +2,16 @@
   "titles": {
     "editor": "itch-live-css",
     "ideas": "Ideas · itch-live-css",
+    "idea": "{{name}} · Ideas · itch-live-css",
     "showcase": "Expositor · itch-live-css",
     "admin": "Administración · itch-live-css",
     "docs": "Documentación · itch-live-css",
     "privacy": "Privacidad · itch-live-css",
     "guide": "Guía · itch-live-css",
     "chapter": "{{title}} · Guía · itch-live-css"
+  },
+  "footer": {
+    "copyright": "© {{year}} {{name}}. Código bajo licencia MIT."
   },
   "nav": {
     "label": "Secciones",
@@ -71,7 +75,6 @@
     "format": "Dar formato",
     "expand": "Ampliar",
     "themeOpen": "Tema de itch ›",
-    "loading": "Generando la vista previa…",
     "editFailed": "No se pudo abrir ese enlace de edición: {{error}}",
     "tidyFailed": "No se pudo cargar el formateador.",
     "saved": "Guardado.",
@@ -108,6 +111,8 @@
     "tooBigSaved": "Tu CSS minificado ocupa {{bytes}} bytes y el perfil admite {{max}}: va en un link, que no tiene ese límite (abajo)."
   },
   "showcaseForm": {
+    "title": "Salir en el expositor",
+    "cancel": "Cancelar",
     "label": "Quiero salir en el expositor",
     "hint": "Cuando lo revisemos y lo aprobemos, tu página sale en el [expositor](/showcase.html): el nombre, el link a tu página y una vista de tu CSS (nunca tu HTML).",
     "url": "Dirección de tu página en itch",
@@ -144,7 +149,9 @@
     "cardsLabel": "Tarjetas con borde foil",
     "cardsHint": "Un brillo dorado que recorre el borde de cada juego.",
     "asciiLabel": "Fondo de caracteres ASCII",
-    "asciiHint": "Un campo de letras al fondo con ondas que lo reescriben."
+    "asciiHint": "Un campo de letras al fondo con ondas que lo reescriben.",
+    "schemeLabel": "Modo claro y oscuro según el sistema",
+    "schemeHint": "Con el sistema en oscuro, la página cambia fondo, texto y enlaces. Se pega sin enlace."
   },
   "theme": {
     "label": "Tema de itch",
@@ -154,8 +161,12 @@
   },
   "ideas": {
     "title": "Ideas",
-    "intro": "Efectos listos para usar. Cambian en cada visita, van dentro de tu link y se suman a tu propio CSS. «Usar esta idea» abre el editor con el efecto activado; ahí lo ajustas en el panel «Ideas».",
+    "intro": "Efectos listos para usar. Elige uno para ver cómo queda y el CSS (y el HTML, si lo necesita) que lleva. Los que cambian en cada visita van dentro de tu link y se suman a tu propio CSS.",
     "use": "Usar esta idea",
+    "back": "← Todas las ideas",
+    "show": "Ver",
+    "cssLabel": "CSS",
+    "htmlLabel": "HTML para tu bio o descripción",
     "sampleName": "Tu nombre",
     "sampleHello": "¡Hola!",
     "sampleBio": "Una página de ejemplo.",
@@ -170,7 +181,10 @@
     "cards_pages": "Solo perfil",
     "ascii_name": "Fondo de caracteres ASCII",
     "ascii_text": "Un campo de letras y números detrás de la página, con ondas que lo reescriben. Se queda quieto si el visitante pide menos movimiento.",
-    "ascii_pages": "Perfil, juego y devlog"
+    "ascii_pages": "Perfil, juego y devlog",
+    "scheme_name": "Modo claro y oscuro según el sistema",
+    "scheme_text": "La página sigue el modo del sistema del visitante: en oscuro cambia el fondo, el texto y los enlaces; en claro queda como tu tema de itch. Es CSS fijo, así que se pega sin enlace.",
+    "scheme_pages": "Perfil, juego y devlog"
   },
   "showcase": {
     "title": "Expositor",

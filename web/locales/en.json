@@ -2,12 +2,16 @@
   "titles": {
     "editor": "itch-live-css",
     "ideas": "Ideas · itch-live-css",
+    "idea": "{{name}} · Ideas · itch-live-css",
     "showcase": "Showcase · itch-live-css",
     "admin": "Admin · itch-live-css",
     "docs": "Documentation · itch-live-css",
     "privacy": "Privacy · itch-live-css",
     "guide": "Guide · itch-live-css",
     "chapter": "{{title}} · Guide · itch-live-css"
+  },
+  "footer": {
+    "copyright": "© {{year}} {{name}}. Code under the MIT license."
   },
   "nav": {
     "label": "Sections",
@@ -71,7 +75,6 @@
     "format": "Format",
     "expand": "Expand",
     "themeOpen": "itch theme ›",
-    "loading": "Generating the preview…",
     "editFailed": "Couldn't open that edit link: {{error}}",
     "tidyFailed": "Couldn't load the formatter.",
     "saved": "Saved.",
@@ -108,6 +111,8 @@
     "tooBigSaved": "Your minified CSS takes {{bytes}} bytes and a profile takes {{max}}: it goes in a link, which has no such limit (below)."
   },
   "showcaseForm": {
+    "title": "Appear in the showcase",
+    "cancel": "Cancel",
     "label": "I want to appear in the showcase",
     "hint": "Once we review and approve it, your page appears in the [showcase](/showcase.html): the name, the link to your page and a view of your CSS (never your HTML).",
     "url": "Your itch page's address",
@@ -144,7 +149,9 @@
     "cardsLabel": "Cards with a foil border",
     "cardsHint": "A golden shine that runs around each game's border.",
     "asciiLabel": "ASCII character background",
-    "asciiHint": "A field of letters in the background, with waves that rewrite it."
+    "asciiHint": "A field of letters in the background, with waves that rewrite it.",
+    "schemeLabel": "Light and dark mode by the system",
+    "schemeHint": "With the system in dark, the page changes background, text and links. Pasted, no link needed."
   },
   "theme": {
     "label": "itch theme",
@@ -154,8 +161,12 @@
   },
   "ideas": {
     "title": "Ideas",
-    "intro": "Ready-to-use effects. They change on every visit, go inside your link and add to your own CSS. \"Use this idea\" opens the editor with the effect on; tune it there in the \"Ideas\" panel.",
+    "intro": "Ready-to-use effects. Pick one to see how it looks and the CSS (and the HTML, if it needs any) it carries. The ones that change on every visit go inside your link and add to your own CSS.",
     "use": "Use this idea",
+    "back": "← All ideas",
+    "show": "View",
+    "cssLabel": "CSS",
+    "htmlLabel": "HTML for your bio or description",
     "sampleName": "Your name",
     "sampleHello": "Hello!",
     "sampleBio": "A sample page.",
@@ -170,7 +181,10 @@
     "cards_pages": "Profile only",
     "ascii_name": "ASCII character background",
     "ascii_text": "A field of letters and digits behind the page, with waves that rewrite it. It stays still if the visitor asks for less motion.",
-    "ascii_pages": "Profile, game and devlog"
+    "ascii_pages": "Profile, game and devlog",
+    "scheme_name": "Light and dark mode by the system",
+    "scheme_text": "The page follows the visitor's system mode: in dark it changes the background, text and links; in light it stays as your itch theme. It is fixed CSS, so it is pasted without a link.",
+    "scheme_pages": "Profile, game and devlog"
   },
   "showcase": {
     "title": "Showcase",
