@@ -46,3 +46,9 @@ test('any per-visit effect: only the link', () => {
     assert.deepEqual(exportFor({ ...base, ...effect, css: '#wrapper{}' }), { mode: 'import', reason: 'effects' });
   }
 });
+
+test('scheme effect is static: pasted with the user css, no link', () => {
+  const out = exportFor({ ...base, scheme: true, css: '#wrapper{color:red}' });
+  assert.equal(out.mode, 'paste');
+  assert.match(out.css, /^#wrapper\{color:red\}.*@media \(prefers-color-scheme:dark\)/);
+});

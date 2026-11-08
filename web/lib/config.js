@@ -7,7 +7,8 @@
 //   greeting  null | { first, others: ['string', ...] }
 //   cards     boolean, profile only (the effect styles the profile's game cards)
 //   ascii     boolean
-//   css       the user's own CSS, served after the effects (it wins their ties)
+//   scheme    boolean, light/dark by the visitor's system (static, so it can be pasted)
+//   css      the user's own CSS, served after the effects (it wins their ties)
 //   html      the user's bio / description / post HTML, only for the preview: never served
 //   showcase  null | { url, name }  asks to appear in the showcase (an admin approves it): the itch
 //             page's address and an optional display name
@@ -44,6 +45,7 @@ export function check(f) {
     greeting: null,
     cards: f.cards === true && page === 'profile',
     ascii: f.ascii === true,
+    scheme: f.scheme === true,
     css: optional(f.css, MAX_CSS, 'css'),
     html: optional(f.html, MAX_HTML, 'html'),
     showcase: null,
@@ -80,7 +82,7 @@ export function check(f) {
 }
 
 // Clean form → the engine's plugin list.
-export function pluginList({ title, greeting, cards, ascii }) {
+export function pluginList({ title, greeting, cards, ascii, scheme }) {
   const plugins = [];
   if (title) {
     // fonts cycle along the letters, so no font fills more than half the bag (the engine's rule)
@@ -90,6 +92,7 @@ export function pluginList({ title, greeting, cards, ascii }) {
   if (greeting) plugins.push({ use: 'greeting', options: { ...greeting, color: 'var(--gold)' } });
   if (cards) plugins.push({ use: 'cards' });
   if (ascii) plugins.push({ use: 'ascii' });
+  if (scheme) plugins.push({ use: 'scheme' });
   return plugins;
 }
 

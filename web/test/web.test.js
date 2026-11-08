@@ -15,6 +15,7 @@ const form = {
   greeting: { first: '¡Hola!', others: ['Hello!', 'Olá!'] },
   cards: true,
   ascii: false,
+  scheme: false,
 };
 const req = (path, method = 'GET', body, key) =>
   new Request(`https://x.test${path}`, {
