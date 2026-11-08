@@ -5,12 +5,15 @@
 
 import { minify } from '../../engine/src/css.js';
 import { measure } from '../../engine/src/output.js';
+import { scheme } from '../../engine/src/plugins/scheme.js';
 
-// form: the config the editor saves ({ page, title, greeting, cards, ascii, css }).
+// form: the config the editor saves ({ page, title, greeting, foil, badges, ascii, scheme, css }).
+// The scheme effect is static, so it is pasted with the user's CSS (after it: @import must stay first;
+// shortcut: the user's CSS no longer wins ties against it, when that matters split off the @imports).
 // → { mode: 'import', reason: 'effects' | 'size', bytes?, max? } | { mode: 'paste', css, bytes, max }
 export function exportFor(form) {
-  if (form.title || form.greeting || form.cards || form.ascii) return { mode: 'import', reason: 'effects' };
-  const css = minify(form.css);
+  if (form.title || form.greeting || form.cards || form.foil || form.badges || form.ascii) return { mode: 'import', reason: 'effects' };
+  const css = minify(form.css) + (form.scheme ? scheme().join('') : '');
   const { bytes, limit, fits } = measure(css, form.page === 'profile' ? 'profile' : 'project');
   const max = limit?.max ?? null;
   return fits ? { mode: 'paste', css, bytes, max } : { mode: 'import', reason: 'size', bytes, max };

@@ -5,9 +5,15 @@
 //   accent    '#rrggbb'                                  → --gold (greeting colour, card labels)
 //   title     null | { text, fonts: [key, ...] }         keys from lib/fonts.js, 2–4 of them
 //   greeting  null | { first, others: ['string', ...] }
-//   cards     boolean, profile only (the effect styles the profile's game cards)
+//   foil      boolean, profile only: a glint round each game card's border
+//   foilColor '#rrggbb' of that glint (the buttons' colour by default)
+//   foilWidth 1–4 px of the ring (1.5 by default); foilSpeed 0.5–3, a multiplier (1 by default)
+//   foilSync  boolean: the glints of all cards run in step (off: each card has its own offset)
+//   badges    boolean, profile only: figures and labels on the cards (they need itch's data)
+//             (a saved config with `cards` is both)
 //   ascii     boolean
-//   css       the user's own CSS, served after the effects (it wins their ties)
+//   scheme    boolean, light/dark by the visitor's system (static, so it can be pasted)
+//   css      the user's own CSS, served after the effects (it wins their ties)
 //   html      the user's bio / description / post HTML, only for the preview: never served
 //   showcase  null | { url, name }  asks to appear in the showcase (an admin approves it): the itch
 //             page's address and an optional display name
@@ -32,6 +38,10 @@ const optional = (s, max, name) => {
 };
 
 // Untrusted input → a clean form with only the known fields. Throws BadRequest.
+const FOIL_GOLD = '#ffc857'; // the old default: what the legacy `cards` flag always showed
+const FOIL_DEFAULT = '#2f27ce'; // the buttons' colour (--primary)
+const num = (v, lo, hi, dflt) => (typeof v === 'number' && v >= lo && v <= hi ? v : dflt);
+
 export function check(f) {
   if (!f || typeof f !== 'object') fail('config must be an object');
   if (typeof f.accent !== 'string' || !/^#[0-9a-f]{6}$/i.test(f.accent)) fail('accent must be #rrggbb');
@@ -42,8 +52,16 @@ export function check(f) {
     accent: f.accent.toLowerCase(),
     title: null,
     greeting: null,
-    cards: f.cards === true && page === 'profile',
+    foil: (f.foil === true || f.cards === true) && page === 'profile',
+    badges: (f.badges === true || f.cards === true) && page === 'profile',
+    foilColor: typeof f.foilColor === 'string' && /^#[0-9a-f]{6}$/i.test(f.foilColor)
+      ? f.foilColor.toLowerCase()
+      : f.cards === true && f.foil === undefined ? FOIL_GOLD : FOIL_DEFAULT,
+    foilWidth: num(f.foilWidth, 1, 4, 1.5),
+    foilSpeed: num(f.foilSpeed, 0.5, 3, 1),
+    foilSync: f.foilSync === true,
     ascii: f.ascii === true,
+    scheme: f.scheme === true,
     css: optional(f.css, MAX_CSS, 'css'),
     html: optional(f.html, MAX_HTML, 'html'),
     showcase: null,
@@ -80,7 +98,7 @@ export function check(f) {
 }
 
 // Clean form → the engine's plugin list.
-export function pluginList({ title, greeting, cards, ascii }) {
+export function pluginList({ title, greeting, cards, foil, foilColor = FOIL_DEFAULT, foilWidth = 1.5, foilSpeed = 1, foilSync = false, badges, ascii, scheme }) {
   const plugins = [];
   if (title) {
     // fonts cycle along the letters, so no font fills more than half the bag (the engine's rule)
@@ -88,8 +106,13 @@ export function pluginList({ title, greeting, cards, ascii }) {
     plugins.push({ use: 'title', options: { fonts: Object.fromEntries(title.fonts.map((k) => [k, FONTS[k].css])), bag } });
   }
   if (greeting) plugins.push({ use: 'greeting', options: { ...greeting, color: 'var(--gold)' } });
-  if (cards) plugins.push({ use: 'cards' });
+  if (cards) plugins.push({ use: 'cards' }); // configs saved before the split
+  else {
+    if (foil) plugins.push({ use: 'foil', options: { color: foilColor, width: foilWidth, speed: foilSpeed, sync: foilSync } });
+    if (badges) plugins.push({ use: 'badges' });
+  }
   if (ascii) plugins.push({ use: 'ascii' });
+  if (scheme) plugins.push({ use: 'scheme' });
   return plugins;
 }
 
@@ -110,7 +133,7 @@ export function build(form, opts) {
   // the user's own CSS (later in this sheet) or pasted CSS can change them with #wrapper{…}.
   head.push(`#wrapper{--gold:${form.accent};--ink:#222;--line:rgba(0,0,0,.08);--sans:system-ui,sans-serif}`);
   // the foil ring is positioned against the card
-  if (form.cards) head.push('#wrapper .game_cell{position:relative}');
+  if (form.cards || form.foil) head.push('#wrapper .game_cell{position:relative}');
   const rest = form.css.slice(lead.length).trim();
   return head.join('\n') + '\n' + render({ plugins }, opts) + (rest ? `${rest}\n` : '');
 }
