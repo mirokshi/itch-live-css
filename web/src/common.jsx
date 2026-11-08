@@ -42,7 +42,7 @@ export function LanguageSelector({ links }) {
         <SelectTrigger size="sm" aria-label={t('lang.label')} className="w-auto">
           <SelectValue>{LANGS[i18n.language]}</SelectValue>
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent position="popper" align="end" sideOffset={4}>
           {Object.entries(LANGS).map(([l, name]) => <SelectItem key={l} value={l} lang={l}>{name}</SelectItem>)}
         </SelectContent>
       </Select>
