@@ -1,6 +1,6 @@
 // Game cards: a golden "foil" border, plus figures and labels from itch's data.
 //
-// · Foil: at rest, a faint golden glint slowly runs round each card's outline (one lap every
+// · Foil: at rest, a faint golden (or `color`) glint slowly runs round each card's outline (one lap every
 //   FOIL_SLOW s, with a random offset per card on each render, so they don't move together); on
 //   hover (where the device has it) or keyboard focus inside the card, a brighter, faster one on
 //   top (FOIL_FAST s). The gradient border sits in .game_cell's ::before (slow) and ::after (fast):
@@ -45,29 +45,39 @@ function short(x) {
 const content = (shown, spoken) =>
   `content:${cssString(shown)};content:${cssString(shown)} / ${cssString(spoken)}`;
 
-// golden glint with a white centre on a conic-gradient starting at --foil:
-// [gold, white, gold, end] in degrees, at opacity a
-const foilRing = (a, [gold1, white, gold2, end]) =>
-  `conic-gradient(from var(--foil),transparent 0deg,rgba(255,200,87,${a}) ${gold1}deg,` +
-  `rgba(255,255,255,${a}) ${white}deg,rgba(255,200,87,${a}) ${gold2}deg,transparent ${end}deg)`;
+const GOLD = '#ffc857';
 
-function foilCss(rand) {
-  const fast = `opacity:1;animation:custom-foil ${FOIL_FAST}s linear infinite`;
+// glint in `color` with a white centre on a conic-gradient starting at --foil:
+// [colour, white, colour, end] in degrees, at opacity a
+const foilRing = (a, [c1, white, c2, end], rgb) =>
+  `conic-gradient(from var(--foil),transparent 0deg,rgba(${rgb},${a}) ${c1}deg,` +
+  `rgba(255,255,255,${a}) ${white}deg,rgba(${rgb},${a}) ${c2}deg,transparent ${end}deg)`;
+
+// width: the bright ring's thickness in px (1.5 by default; the resting ring is two thirds of it);
+// speed: a multiplier on both laps (1 by default, 2 twice as fast);
+// sync: every card's glint runs in step (no random offset per card)
+function foilCss(rand, color, width, speed, sync) {
+  if (!/^#[0-9a-f]{6}$/i.test(color)) throw new Error('foil: color must be #rrggbb');
+  if (!(width >= 1 && width <= 4)) throw new Error('foil: width must be between 1 and 4 px');
+  if (!(speed >= 0.5 && speed <= 3)) throw new Error('foil: speed must be between 0.5 and 3');
+  const rgb = [1, 3, 5].map((i) => parseInt(color.slice(i, i + 2), 16)).join(',');
+  const slow = FOIL_SLOW / speed;
+  const fast = `opacity:1;animation:custom-foil ${n(FOIL_FAST / speed)}s linear infinite`;
   const delays = [];
-  for (let k = 1; k <= FOIL_CARDS; k++) {
-    delays.push(`#wrapper .game_cell:nth-child(${k})::before{animation-delay:${n(-rand(0, FOIL_SLOW))}s}`);
+  for (let k = 1; !sync && k <= FOIL_CARDS; k++) {
+    delays.push(`#wrapper .game_cell:nth-child(${k})::before{animation-delay:${n(-rand(0, slow))}s}`);
   }
   return [
     '@property --foil{syntax:"<angle>";inherits:false;initial-value:0deg}',
     '@keyframes custom-foil{to{--foil:360deg}}',
     '#wrapper .game_cell::before,#wrapper .game_cell::after{content:"";position:absolute;inset:-1px;' +
-      'border-radius:inherit;pointer-events:none;padding:1.5px;opacity:0;transition:opacity .35s;' +
+      `border-radius:inherit;pointer-events:none;padding:${n(width)}px;opacity:0;transition:opacity .35s;` +
       '-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);' +
       '-webkit-mask-composite:xor;mask-composite:exclude}',
-    `#wrapper .game_cell::before{opacity:.5;padding:1px;background:${foilRing(0.8, [40, 60, 80, 120])};` +
-      `animation:custom-foil ${FOIL_SLOW}s linear infinite}`,
+    `#wrapper .game_cell::before{opacity:.5;padding:${n((width * 2) / 3)}px;background:${foilRing(0.8, [40, 60, 80, 120], rgb)};` +
+      `animation:custom-foil ${n(slow)}s linear infinite}`,
     ...delays,
-    `#wrapper .game_cell::after{background:${foilRing(0.95, [50, 80, 110, 160])}}`,
+    `#wrapper .game_cell::after{background:${foilRing(0.95, [50, 80, 110, 160], rgb)}}`,
     // the bright glint: on keyboard focus inside the card, and on hover only where hover exists (R18)
     '#wrapper .game_cell:focus-within::before{opacity:0}',
     `#wrapper .game_cell:focus-within::after{${fast}}`,
@@ -114,6 +124,16 @@ function statsCss(games, now) {
   return rules;
 }
 
-export function cards(options, { rand }, { data, now }) {
-  return [...foilCss(rand), ...statsCss(data.games ?? [], now)];
+// The two halves are separate plugins; `cards` is both (the owner's profile and configs saved before the split).
+// options: { color: '#rrggbb', width: px, speed: multiplier, sync: boolean } of the glint (gold, 1.5px, 1× by default)
+export function foil({ color = GOLD, width = 1.5, speed = 1, sync = false } = {}, { rand }) {
+  return foilCss(rand, color, width, speed, sync);
+}
+
+export function badges(options, ctx, { data, now }) {
+  return statsCss(data.games ?? [], now);
+}
+
+export function cards(options, ctx, extra) {
+  return [...foil(options, ctx), ...badges(options, ctx, extra)];
 }
