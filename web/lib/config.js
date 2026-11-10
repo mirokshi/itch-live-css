@@ -13,6 +13,9 @@
 //             (a saved config with `cards` is both)
 //   ascii     boolean
 //   scheme    boolean, light/dark by the visitor's system (static, so it can be pasted)
+//   reveal    boolean, cards and text slide in on scroll (static)
+//   progress  boolean, a bar along the top that fills as the page scrolls (static; uses `accent`)
+//   parallax  boolean, the header drifts and fades over the first scroll (static)
 //   css      the user's own CSS, served after the effects (it wins their ties)
 //   html      the user's bio / description / post HTML, only for the preview: never served
 //   showcase  null | { url, name }  asks to appear in the showcase (an admin approves it): the itch
@@ -62,6 +65,9 @@ export function check(f) {
     foilSync: f.foilSync === true,
     ascii: f.ascii === true,
     scheme: f.scheme === true,
+    reveal: f.reveal === true,
+    progress: f.progress === true,
+    parallax: f.parallax === true,
     css: optional(f.css, MAX_CSS, 'css'),
     html: optional(f.html, MAX_HTML, 'html'),
     showcase: null,
@@ -98,7 +104,7 @@ export function check(f) {
 }
 
 // Clean form → the engine's plugin list.
-export function pluginList({ title, greeting, cards, foil, foilColor = FOIL_DEFAULT, foilWidth = 1.5, foilSpeed = 1, foilSync = false, badges, ascii, scheme }) {
+export function pluginList({ title, greeting, cards, foil, foilColor = FOIL_DEFAULT, foilWidth = 1.5, foilSpeed = 1, foilSync = false, badges, ascii, scheme, reveal, progress, parallax, accent }) {
   const plugins = [];
   if (title) {
     // fonts cycle along the letters, so no font fills more than half the bag (the engine's rule)
@@ -113,6 +119,9 @@ export function pluginList({ title, greeting, cards, foil, foilColor = FOIL_DEFA
   }
   if (ascii) plugins.push({ use: 'ascii' });
   if (scheme) plugins.push({ use: 'scheme' });
+  if (reveal) plugins.push({ use: 'reveal' });
+  if (progress) plugins.push({ use: 'progress', options: { color: accent } });
+  if (parallax) plugins.push({ use: 'parallax' });
   return plugins;
 }
 

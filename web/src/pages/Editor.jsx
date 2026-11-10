@@ -28,9 +28,9 @@ const ideasDefaults = (t) => ({
   accent: '#d6336c',
   titleOn: false, titleText: t('editor.defaultTitle'), fonts: ['fraunces', 'inter', 'grotesk'],
   greetingOn: false, greetingFirst: t('editor.defaultGreeting'), greetingOthers: 'Hello!\nBonjour !\nHallo!\nOlá!\nCiao!',
-  foil: false, foilColor: '#2f27ce', foilWidth: 1.5, foilSpeed: 1, foilSync: false, badges: false, ascii: false, scheme: false,
+  foil: false, foilColor: '#2f27ce', foilWidth: 1.5, foilSpeed: 1, foilSync: false, badges: false, ascii: false, scheme: false, reveal: false, progress: false, parallax: false,
 });
-const IDEA_FIELDS = { title: 'titleOn', greeting: 'greetingOn', foil: 'foil', badges: 'badges', ascii: 'ascii', scheme: 'scheme' };
+const IDEA_FIELDS = { title: 'titleOn', greeting: 'greetingOn', foil: 'foil', badges: 'badges', ascii: 'ascii', scheme: 'scheme', reveal: 'reveal', progress: 'progress', parallax: 'parallax' };
 
 async function api(path, method, body, auth) {
   const res = await fetch(path, {
@@ -128,6 +128,9 @@ export function Editor() {
     badges: page === 'profile' && ideas.badges,
     ascii: ideas.ascii,
     scheme: ideas.scheme,
+    reveal: ideas.reveal,
+    progress: ideas.progress,
+    parallax: ideas.parallax,
     css,
     html,
     showcase: showcase.on ? { url: showcase.url.trim(), name: showcase.name } : null,
@@ -186,7 +189,7 @@ export function Editor() {
   }
 
   // effects: when an idea changes (a page switch reloads the mock, whose load refreshes them)
-  const effectsKey = JSON.stringify([config.accent, config.title, config.greeting, ideas.foil, ideas.foilColor, ideas.foilWidth, ideas.foilSpeed, ideas.foilSync, ideas.badges, config.ascii, config.scheme]);
+  const effectsKey = JSON.stringify([config.accent, config.title, config.greeting, ideas.foil, ideas.foilColor, ideas.foilWidth, ideas.foilSpeed, ideas.foilSync, ideas.badges, config.ascii, config.scheme, config.reveal, config.progress, config.parallax]);
   const first = useRef(true);
   useEffect(() => {
     if (first.current) first.current = false;
@@ -242,6 +245,9 @@ export function Editor() {
       badges: !!(f.badges ?? f.cards),
       ascii: f.ascii,
       scheme: !!f.scheme,
+      reveal: !!f.reveal,
+      progress: !!f.progress,
+      parallax: !!f.parallax,
     }));
     setCss(f.css ?? '');
     setHtml(f.html ?? '');
@@ -538,6 +544,14 @@ export function Editor() {
               <Hint>{t('ideasPanel.schemeHint')}</Hint>
             </CardContent>
           </Card>
+          {['reveal', 'progress', 'parallax'].map((k) => (
+            <Card size="sm" key={k}>
+              <CardContent className="space-y-2">
+                <Check id={`${k}-on`} checked={ideas[k]} onChange={setIdea(k)}>{t(`ideasPanel.${k}Label`)}</Check>
+                <Hint>{t(`ideasPanel.${k}Hint`)}</Hint>
+              </CardContent>
+            </Card>
+          ))}
         </aside>
       </form>
 

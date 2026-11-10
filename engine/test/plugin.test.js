@@ -60,3 +60,17 @@ test('messages: every problem carries a code and params that rebuild its text, a
   for (const [rule, group] of Object.entries(messages)) for (const key of Object.keys(group)) assert.ok(source.includes(`'${rule}.${key}'`), `${rule}.${key} is never used`);
   assert.throws(() => text('R2.nope', {}), /no message/);
 });
+
+test('scroll effects: valid CSS, guarded, timeline after the shorthand, only #wrapper selectors', async () => {
+  const { plugins } = await import('../src/index.js');
+  for (const use of ['reveal', 'progress', 'parallax']) {
+    const css = plugins[use]({}, null, {}).join('');
+    assert.match(css, /@media \(prefers-reduced-motion:no-preference\)\{@supports \(animation-timeline:/);
+    assert.match(css, /[{;]animation:[^;}]*;animation-timeline:/, use);
+    assert.match(css, /@keyframes custom-/);
+    assert.deepEqual(validate(css, 'profile').filter((p) => p.level === 'error'), [], use);
+  }
+  assert.match(plugins.progress({ color: '#d6336c', height: 6 }).join(''), /height:6px.*background:#d6336c/);
+  assert.throws(() => plugins.progress({ color: 'red;}' }), /color/);
+  assert.throws(() => plugins.progress({ height: 11 }), /height/);
+});

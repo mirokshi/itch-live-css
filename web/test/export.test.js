@@ -52,3 +52,11 @@ test('scheme effect is static: pasted with the user css, no link', () => {
   assert.equal(out.mode, 'paste');
   assert.match(out.css, /^#wrapper\{color:red\}.*@media \(prefers-color-scheme:dark\)/);
 });
+
+test('scroll effects are static: pasted with the user css and the accent colour, no link', () => {
+  const out = exportFor({ ...base, accent: '#d6336c', reveal: true, progress: true, parallax: true, css: '#wrapper{color:red}' });
+  assert.equal(out.mode, 'paste');
+  assert.match(out.css, /^#wrapper\{color:red\}@keyframes custom-reveal/);
+  assert.match(out.css, /custom-progress.*background:#d6336c/);
+  assert.match(out.css, /custom-parallax/);
+});

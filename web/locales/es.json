@@ -191,7 +191,13 @@
     "asciiLabel": "Fondo de caracteres ASCII",
     "asciiHint": "Un campo de letras al fondo con ondas que lo reescriben.",
     "schemeLabel": "Modo claro y oscuro según el sistema",
-    "schemeHint": "Con el sistema en oscuro, la página cambia fondo, texto y enlaces. Se pega sin enlace."
+    "schemeHint": "Con el sistema en oscuro, la página cambia fondo, texto y enlaces. Se pega sin enlace.",
+    "revealLabel": "Aparecer al hacer scroll",
+    "revealHint": "Las tarjetas y el texto entran deslizándose al llegar a la pantalla. Se pega sin enlace.",
+    "progressLabel": "Barra de progreso de scroll",
+    "progressHint": "Una barra arriba del todo que se llena según bajas por la página. Usa el color de acento. No va con el fondo ASCII. Se pega sin enlace.",
+    "parallaxLabel": "Cabecera con parallax",
+    "parallaxHint": "La cabecera baja más despacio que la página y se desvanece al hacer scroll. Se pega sin enlace."
   },
   "theme": {
     "label": "Tema de itch",
@@ -231,7 +237,14 @@
     "light": "Probar en claro",
     "dark": "Probar en oscuro",
     "scheme_name": "Modo claro y oscuro según el sistema",
-    "scheme_text": "La página sigue el modo del sistema del visitante: en oscuro cambia el fondo, el texto y los enlaces; en claro queda como tu tema de itch. Es CSS fijo, así que se pega sin enlace."
+    "scheme_text": "La página sigue el modo del sistema del visitante: en oscuro cambia el fondo, el texto y los enlaces; en claro queda como tu tema de itch. Es CSS fijo, así que se pega sin enlace.",
+    "reveal_name": "Aparecer al hacer scroll",
+    "reveal_text": "Las tarjetas de juegos (en el perfil) y los párrafos e imágenes (en proyectos y devlogs) entran deslizándose y apareciendo al llegar a la pantalla, con animation-timeline: view(). Es CSS fijo, así que se pega sin enlace; sin soporte, o con menos movimiento, se ve todo normal.",
+    "progress_name": "Barra de progreso de scroll",
+    "progress_text": "Una barra fina arriba del todo que se llena según bajas por la página, con animation-timeline: scroll(). Usa el color de acento y ocupa #wrapper::after, así que no va con el fondo ASCII. Se pega sin enlace.",
+    "parallax_name": "Cabecera con parallax",
+    "parallax_text": "El nombre del perfil o el banner y título del juego bajan más despacio que el resto y se desvanecen en los primeros 300 px de scroll. Es CSS fijo: se pega sin enlace.",
+    "scrollHint": "Haz scroll dentro de la vista previa para ver el efecto."
   },
   "showcase": {
     "title": "Expositor",

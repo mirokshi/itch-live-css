@@ -47,7 +47,8 @@ knowledge/
 decisions/                   ADRs, in Spanish (owner's call): 0001-postcss-validator.md (PostCSS as the validator's parser, accepted 2026-11-07)
 engine/                      phase 1, started 2026-10-24: render() (served) and paste() (pasted) from a config, seeded rng,
                              plugins/ (title, greeting, cards, ascii: the owner's 4 effects, ported 1:1 from the private repo;
-                             css: hand-written CSS through minify() in src/css.js), test/mirokshi.js + .css = the owner's profile,
+                             css: hand-written CSS through minify() in src/css.js);
+                             scroll.js (2026-11-10): reveal, progress, parallax = scroll-driven animations, static, pasted, each an /ideas page, test/mirokshi.js + .css = the owner's profile,
                              importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R4, R7–R12, R14–R16, R18, R23 so far)
                              = the PostCSS plugin itchRules() over postcss-safe-parser, plus a "syntax" problem from the strict
                              parser; problems carry line/column and a code + params (English text in src/messages.json, the

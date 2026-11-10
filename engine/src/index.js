@@ -2,6 +2,7 @@ import { ascii } from './plugins/ascii.js';
 import { badges, cards, foil } from './plugins/cards.js';
 import { css } from './plugins/css.js';
 import { greeting } from './plugins/greeting.js';
+import { parallax, progress, reveal } from './plugins/scroll.js';
 import { scheme } from './plugins/scheme.js';
 import { title } from './plugins/title.js';
 import { rng } from './random.js';
@@ -9,7 +10,7 @@ import { rng } from './random.js';
 export { importLine, measure } from './output.js';
 export { validate } from './validate.js';
 
-export const plugins = { title, greeting, cards, foil, badges, ascii, scheme, css };
+export const plugins = { title, greeting, cards, foil, badges, ascii, scheme, reveal, progress, parallax, css };
 
 // config: { plugins: [{ use: 'title', options: {...} }, ...] }
 // seed: anything; the same seed gives the same CSS. Omit it for a fresh result each call.

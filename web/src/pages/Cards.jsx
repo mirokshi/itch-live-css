@@ -36,6 +36,9 @@ const sampleForm = (t) => ({
   badges: { badges: true },
   ascii: { ascii: true },
   scheme: { scheme: true },
+  reveal: { reveal: true },
+  progress: { progress: true, page: 'devlog' },
+  parallax: { parallax: true },
 });
 
 // { idea: { css, bio } } for these ideas, filled as the answers arrive (css null: still loading)
@@ -80,7 +83,7 @@ function FontCheck({ id, checked, disabled, onChange, children }) {
 function IdeaThumb({ idea, sample, interactive }) {
   const { t } = useTranslation();
   const f = FRAME[idea] ?? {};
-  return <Thumb css={sample?.css ?? null} bio={`${sample?.bio ?? ''}${f.show ? '' : `<p>${t('ideas.sampleBio')}</p>`}`} {...f} interactive={interactive} />;
+  return <Thumb css={sample?.css ?? null} bio={`${sample?.bio ?? ''}${f.show ? '' : `<p>${t('ideas.sampleBio')}</p>`}`} {...f} scroll={interactive ? 0 : f.scroll} interactive={interactive} />;
 }
 
 // read-only code (CodeMirror) with a copy button
@@ -150,7 +153,13 @@ const FRAME = {
   // the ring follows the card's corners: rounded, with room inside, on the same light page as the other ideas
   foil: { show: 'games', h: 520, zoom: 1.3, extra: '.user_game_grid{grid-template-columns:repeat(3,1fr)!important}.game_cell{padding:12px;border-radius:14px}' },
   badges: { show: 'games', h: 500, zoom: 1 },
+  // the scroll effects need a page taller than the box: the whole mock, stretched; the list thumbs
+  // (not scrollable) start already scrolled, to show the effect midway
+  reveal: { h: 520, scroll: 250, extra: '.game_column{max-width:360px;margin:0 auto}.user_game_grid{grid-template-columns:1fr!important}' },
+  progress: { page: 'devlog', h: 520, scroll: 700, extra: '.user_formatted{min-height:1800px;background:repeating-linear-gradient(#0000 0 78px,#0001 78px 80px)}' },
+  parallax: { h: 520, scroll: 150, extra: '#profile_header .text_header h1{font-size:4em;padding:60px 0}#wrapper{min-height:1500px}' },
 };
+const SCROLL_IDEAS = ['reveal', 'progress', 'parallax'];
 
 // one idea on its own page: how it looks, and next to it what goes into itch (CSS, and HTML when it needs any)
 export function IdeaPage({ idea }) {
@@ -247,7 +256,8 @@ export function IdeaPage({ idea }) {
                 </div>
               </>
             )}
-            {idea !== 'scheme' && (
+            {SCROLL_IDEAS.includes(idea) && <p className="text-sm text-muted-foreground">{t('ideas.scrollHint')}</p>}
+            {idea !== 'scheme' && !SCROLL_IDEAS.includes(idea) && (
               <Button type="button" size="sm" className="mt-1 self-start" onClick={() => setAgain((n) => n + 1)}>{t('ideas.replay')}</Button>
             )}
           </div>

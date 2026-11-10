@@ -130,7 +130,8 @@ function onlyCss(show, h, zoom) {
   if (!hide) return '';
   return `html,body{overflow:hidden}${hide}{display:none!important}#wrapper{min-height:${h}px;display:flex;align-items:center}.user_page{width:100%;zoom:${zoom}}`;
 }
-export function Thumb({ page = 'profile', css, bio = '', show, h = 800, zoom = 1, extra = '', interactive }) {
+// scroll: the frame starts scrolled that many px (for effects driven by scrolling)
+export function Thumb({ page = 'profile', css, bio = '', show, h = 800, zoom = 1, extra = '', scroll = 0, interactive }) {
   const { t } = useTranslation();
   const box = useRef(null);
   const frame = useRef(null);
@@ -154,7 +155,8 @@ export function Thumb({ page = 'profile', css, bio = '', show, h = 800, zoom = 1
       d.head.append(only);
     }
     only.textContent = onlyCss(show, h, zoom) + extra;
-  }, [loaded, css, bio, show, h, zoom, extra]);
+    d.defaultView.scrollTo(0, scroll);
+  }, [loaded, css, bio, show, h, zoom, extra, scroll]);
   return (
     <div className="thumb" ref={box} style={{ aspectRatio: `1200 / ${h}` }}>
       <iframe ref={frame} src={MOCKS[page] ?? MOCKS.profile} title={t('thumb.title', { page: t(`pageNames.${page}`) })} tabIndex={-1} loading="lazy" style={{ height: h, ...(interactive && { pointerEvents: 'auto' }) }}

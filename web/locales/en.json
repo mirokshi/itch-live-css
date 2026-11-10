@@ -191,7 +191,13 @@
     "asciiLabel": "ASCII character background",
     "asciiHint": "A field of letters in the background, with waves that rewrite it.",
     "schemeLabel": "Light and dark mode by the system",
-    "schemeHint": "With the system in dark, the page changes background, text and links. Pasted, no link needed."
+    "schemeHint": "With the system in dark, the page changes background, text and links. Pasted, no link needed.",
+    "revealLabel": "Reveal on scroll",
+    "revealHint": "Cards and text slide in as they reach the screen. Pasted, no link needed.",
+    "progressLabel": "Scroll progress bar",
+    "progressHint": "A bar along the very top that fills as you go down the page. Uses the accent colour. Doesn't go with the ASCII background. Pasted, no link needed.",
+    "parallaxLabel": "Parallax header",
+    "parallaxHint": "The header drifts down slower than the page and fades out as you scroll. Pasted, no link needed."
   },
   "theme": {
     "label": "itch theme",
@@ -231,7 +237,14 @@
     "light": "Try in light",
     "dark": "Try in dark",
     "scheme_name": "Light and dark mode by the system",
-    "scheme_text": "The page follows the visitor's system mode: in dark it changes the background, text and links; in light it stays as your itch theme. It is fixed CSS, so it is pasted without a link."
+    "scheme_text": "The page follows the visitor's system mode: in dark it changes the background, text and links; in light it stays as your itch theme. It is fixed CSS, so it is pasted without a link.",
+    "reveal_name": "Reveal on scroll",
+    "reveal_text": "Game cards (on the profile) and paragraphs and images (on projects and devlogs) slide and fade in as they reach the screen, with animation-timeline: view(). It is fixed CSS, so it is pasted without a link; without support, or with reduced motion, everything just shows.",
+    "progress_name": "Scroll progress bar",
+    "progress_text": "A thin bar along the very top that fills as you go down the page, with animation-timeline: scroll(). It uses the accent colour and takes #wrapper::after, so it doesn't go with the ASCII background. Pasted, no link needed.",
+    "parallax_name": "Parallax header",
+    "parallax_text": "The profile name, or the game's banner and title, drift down slower than the rest and fade out over the first 300 px of scrolling. Fixed CSS: pasted, no link needed.",
+    "scrollHint": "Scroll inside the preview to see the effect."
   },
   "showcase": {
     "title": "Showcase",

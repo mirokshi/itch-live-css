@@ -17,6 +17,9 @@ const form = {
   badges: true,
   ascii: false,
   scheme: false,
+  reveal: false,
+  progress: false,
+  parallax: false,
 };
 const req = (path, method = 'GET', body, key) =>
   new Request(`https://x.test${path}`, {
@@ -26,7 +29,7 @@ const req = (path, method = 'GET', body, key) =>
   });
 
 test('check keeps known fields only and rejects bad input', () => {
-  assert.deepEqual(check({ ...form, extra: 1, foil: 'yes', badges: 1 }), { page: 'profile', ...form, accent: '#ffc857', foil: false, badges: false, foilColor: '#2f27ce', foilWidth: 1.5, foilSpeed: 1, foilSync: false, css: '', html: '', showcase: null });
+  assert.deepEqual(check({ ...form, extra: 1, foil: 'yes', badges: 1 }), { page: 'profile', ...form, accent: '#ffc857', foil: false, badges: false, foilColor: '#2f27ce', foilWidth: 1.5, foilSpeed: 1, foilSync: false, reveal: false, progress: false, parallax: false, css: '', html: '', showcase: null });
   const legacy = check({ ...form, foil: undefined, badges: undefined, cards: true }); // saved before foil and badges were split
   assert.ok(legacy.foil && legacy.badges);
   assert.equal(check({ ...form, page: 'devlog' }).page, 'devlog');
