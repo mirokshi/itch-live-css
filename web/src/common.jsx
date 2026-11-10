@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { LANGS } from './i18n.js';
 
-const LINKS = [['/', 'editor'], ['/ideas.html', 'ideas'], ['/showcase.html', 'showcase'], ['/guia/', 'guide'], ['/docs.html', 'docs']];
+const LINKS = [['/', 'editor'], ['/ideas.html', 'ideas'], ['/showcase.html', 'showcase'], ['/claves.html', 'keys'], ['/guia/', 'guide'], ['/docs.html', 'docs']];
 
 // links: { es: href, en: href } on pages whose language is in the URL (guide chapters): choosing
 // goes to that URL. Elsewhere it switches the texts in place, and the choice is kept for the next

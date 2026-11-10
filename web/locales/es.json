@@ -4,6 +4,7 @@
     "ideas": "Ideas · itch-live-css",
     "idea": "{{name}} · Ideas · itch-live-css",
     "showcase": "Expositor · itch-live-css",
+    "keys": "Mis claves · itch-live-css",
     "admin": "Administración · itch-live-css",
     "docs": "Documentación · itch-live-css",
     "privacy": "Privacidad · itch-live-css",
@@ -18,6 +19,7 @@
     "editor": "Editor",
     "ideas": "Ideas",
     "showcase": "Expositor",
+    "keys": "Mis claves",
     "guide": "Guía",
     "docs": "Documentación",
     "privacy": "Privacidad"
@@ -123,6 +125,37 @@
     "approved": "Expositor: aprobado, tu página ya sale.",
     "rejected": "Expositor: no aprobado."
   },
+  "keys": {
+    "title": "Mis claves",
+    "intro": "Cada vez que guardas se crea un enlace de edición, y es la única forma de cambiar ese CSS más tarde. Aquí los tienes todos juntos para que no se pierdan. Quien tenga un enlace puede editar ese CSS: no los compartas.",
+    "browserTitle": "En este navegador",
+    "browserText": "Los enlaces que guardes desde este navegador aparecen aquí solos. Se quedan en este equipo: si borras los datos del navegador o cambias de equipo, desaparecen.",
+    "empty": "Todavía no hay ninguno. Guarda algo en el editor, importa un archivo o pega un enlace de edición.",
+    "unknownPage": "Página",
+    "namePlaceholder": "Nombre (por ejemplo, el de tu juego)",
+    "open": "Abrir en el editor",
+    "forget": "Quitar de la lista",
+    "download": "Descargar mis enlaces (.txt)",
+    "importFile": "Importar un archivo",
+    "pasteLabel": "O pega enlaces de edición, uno por línea",
+    "pasteAdd": "Añadir a la lista",
+    "added": "Enlaces añadidos: {{count}}.",
+    "copyTitle": "Copia en la web, con correo y contraseña",
+    "copyText": "Para recuperarlos en otro equipo, o si pierdes los datos del navegador, guarda una copia cifrada. **El cifrado ocurre en tu navegador:** tu correo y tu contraseña no se envían a ninguna parte y esta web no puede leer la copia. No se manda ningún correo: el correo solo sirve, con la contraseña, para abrirla.",
+    "email": "Correo",
+    "password": "Contraseña de la copia (mínimo {{min}} caracteres)",
+    "noReset": "Si olvidas la contraseña o el correo exacto, la copia no se puede abrir ni restablecer. Usa una contraseña que solo sirva para esto.",
+    "backup": "Guardar copia",
+    "restore": "Recuperar mis claves",
+    "deleteCopy": "Borrar la copia",
+    "shortPassword": "La contraseña necesita al menos {{min}} caracteres: es lo único que protege la copia.",
+    "working": "Trabajando… tarda un par de segundos a propósito.",
+    "backedUp": "Copia guardada. Claves en este navegador: {{count}}.",
+    "restored": "Claves recuperadas. Claves en este navegador: {{count}}.",
+    "deleted": "La copia se ha borrado de la web. La lista de este navegador sigue como estaba.",
+    "notFound": "No hay ninguna copia con ese correo y esa contraseña. Revisa que estén escritos igual que al guardarla.",
+    "failed": "No ha funcionado: {{error}}"
+  },
   "result": {
     "linkHint": "Pon esta línea **al principio** {{where}} en itch:",
     "linkLabel": "Tu link",
@@ -130,6 +163,7 @@
     "bioLabel": "HTML para la bio",
     "editHint": "Guarda este enlace de edición: es la única forma de cambiar tu CSS. No lo compartas.",
     "editLabel": "Enlace de edición",
+    "keysHint": "Este enlace queda anotado en este navegador. Si lo pierdes, o cambias de equipo, recupéralo en [Mis claves](/claves.html).",
     "againLink": "Cuando cambies algo y vuelvas a guardar, itch lo mostrará sin pegar nada de nuevo.",
     "againPaste": "Si cambias algo, copia de nuevo el CSS de «Para itch» y pégalo en itch."
   },
@@ -437,11 +471,12 @@
         ],
         "items": [
           "Tu configuración: tipo de página, color, efectos, tu CSS y el HTML que pegues para la vista previa (ese HTML nunca se sirve).",
-          "Una huella de tu clave de edición, no la clave: si pierdes el enlace de edición, nadie puede recuperarlo.",
+          "Una huella de tu clave de edición, no la clave: si pierdes el enlace de edición, esta web no puede recuperarlo (para eso está la copia cifrada, opcional).",
+          "Si guardas una copia de tus claves en la página Mis claves: un bloque cifrado que solo se abre con tu correo y tu contraseña. Se cifra en tu navegador: esta web no recibe ni el correo ni la contraseña y no puede leer el bloque. Puedes borrarlo cuando quieras.",
           "Si pides salir en el expositor: la dirección de tu página de itch y el nombre que pongas, que se muestran a todo el mundo cuando se aprueban."
         ],
         "after": [
-          "Se guarda en Upstash (Redis), y la web funciona en Vercel. No se pide correo ni ningún dato personal."
+          "Se guarda en Upstash (Redis), y la web funciona en Vercel. No se pide correo ni ningún dato personal: el correo que escribes para la copia solo se usa en tu navegador y no se envía."
         ]
       },
       {

@@ -76,7 +76,9 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              content/guia/{es,en}/*.md = the guide, rendered with react-markdown + remark-gfm (copies of the private guia-paga/{es,en}/*.md; edit there, then `node guia-paga/build-web.mjs`
                              copies the chapters and the recipes); public/ = the mocks and guia/recetas/
                              (copied as they are); api/ (preview,
-                             configs with secret edit key, css = /c/<id>.css = effects + the user's own CSS (config from memory via
+                             configs with secret edit key, keys = an encrypted copy of a user's edit keys (opaque blob: the browser
+                             derives lookup id, auth and AES key from email + password, src/keychain.js; page /claves.html "Mis claves"
+                             also keeps the list in localStorage, .txt export/import), css = /c/<id>.css = effects + the user's own CSS (config from memory via
                              store.getCached: re-read once a minute, last copy if Upstash fails; the config in ITCH_OWNER_ID
                              also gets itch's game data, lib/itch.js with ITCH_API_KEY; Google Fonts @imports inlined as
                              @font-face by lib/googlefonts.js; env PAUSED=1 stops serving and saving, BLOCKED_IDS=a,b stops ids),

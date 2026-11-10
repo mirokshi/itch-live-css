@@ -19,6 +19,7 @@ import { FONTS } from '../../lib/fonts.js';
 import { CodeEditor } from '../CodeEditor.jsx';
 import { Copy, Inline, Navbar } from '../common.jsx';
 import { exportFor } from '../export.js';
+import * as keychain from '../keychain.js';
 import { applyTheme, itchSanitize, PAGES, THEME_COLOURS, THEME_DEFAULTS } from '../preview.js';
 import { ThemePanel } from '../ThemePanel.jsx';
 
@@ -259,6 +260,7 @@ export function Editor() {
       api(`/api/configs?id=${id}`, 'GET', null, key).then(
         (got) => {
           setSaved({ id, key });
+          keychain.merge([{ id, key, page: got.form.page ?? 'profile', name: '' }]); // an edit link opened on a new device
           fillForm(got.form);
           setExported(got);
         },
@@ -279,6 +281,7 @@ export function Editor() {
       else {
         got = await api('/api/configs', 'POST', body);
         setSaved({ id: got.id, key: got.key });
+        keychain.merge([{ id: got.id, key: got.key, page, name: '' }]);
         history.replaceState(null, '', `#edit=${got.id}.${got.key}`);
       }
       setExported(got);
@@ -406,6 +409,7 @@ export function Editor() {
                 )}
                 <Hint>{t('result.editHint')}</Hint>
                 <Copy text={editLink ?? ''} label={t('result.editLabel')} />
+                <Hint><Inline text={t('result.keysHint')} /></Hint>
                 <Hint>{t(out.mode === 'import' ? 'result.againLink' : 'result.againPaste')}</Hint>
                 {exported.showcase && <Hint>{t(`showcaseForm.${exported.showcase}`)}</Hint>}
               </CardContent>

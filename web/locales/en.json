@@ -4,6 +4,7 @@
     "ideas": "Ideas · itch-live-css",
     "idea": "{{name}} · Ideas · itch-live-css",
     "showcase": "Showcase · itch-live-css",
+    "keys": "My keys · itch-live-css",
     "admin": "Admin · itch-live-css",
     "docs": "Documentation · itch-live-css",
     "privacy": "Privacy · itch-live-css",
@@ -18,6 +19,7 @@
     "editor": "Editor",
     "ideas": "Ideas",
     "showcase": "Showcase",
+    "keys": "My keys",
     "guide": "Guide",
     "docs": "Documentation",
     "privacy": "Privacy"
@@ -123,6 +125,37 @@
     "approved": "Showcase: approved, your page is live.",
     "rejected": "Showcase: not approved."
   },
+  "keys": {
+    "title": "My keys",
+    "intro": "Every time you save, an edit link is created, and it is the only way to change that CSS later. Here they all are together so they don't get lost. Anyone with a link can edit that CSS: don't share them.",
+    "browserTitle": "In this browser",
+    "browserText": "The links you save from this browser show up here on their own. They stay on this computer: if you clear the browser's data or switch computers, they are gone.",
+    "empty": "There are none yet. Save something in the editor, import a file or paste an edit link.",
+    "unknownPage": "Page",
+    "namePlaceholder": "Name (for example, your game's)",
+    "open": "Open in the editor",
+    "forget": "Remove from the list",
+    "download": "Download my links (.txt)",
+    "importFile": "Import a file",
+    "pasteLabel": "Or paste edit links, one per line",
+    "pasteAdd": "Add to the list",
+    "added": "Links added: {{count}}.",
+    "copyTitle": "Copy on the web, with email and password",
+    "copyText": "To get them back on another computer, or if you lose the browser's data, save an encrypted copy. **The encryption happens in your browser:** your email and password are not sent anywhere and this site cannot read the copy. No email is sent: the email only serves, together with the password, to open it.",
+    "email": "Email",
+    "password": "Password for the copy (at least {{min}} characters)",
+    "noReset": "If you forget the password or the exact email, the copy cannot be opened or reset. Use a password that is only for this.",
+    "backup": "Save copy",
+    "restore": "Get my keys back",
+    "deleteCopy": "Delete the copy",
+    "shortPassword": "The password needs at least {{min}} characters: it is the only thing protecting the copy.",
+    "working": "Working… it takes a couple of seconds on purpose.",
+    "backedUp": "Copy saved. Keys in this browser: {{count}}.",
+    "restored": "Keys recovered. Keys in this browser: {{count}}.",
+    "deleted": "The copy was deleted from the web. This browser's list is unchanged.",
+    "notFound": "There is no copy with that email and password. Check they are typed exactly as when you saved it.",
+    "failed": "It didn't work: {{error}}"
+  },
   "result": {
     "linkHint": "Put this line **at the start** {{where}} on itch:",
     "linkLabel": "Your link",
@@ -130,6 +163,7 @@
     "bioLabel": "HTML for the bio",
     "editHint": "Keep this edit link: it's the only way to change your CSS. Don't share it.",
     "editLabel": "Edit link",
+    "keysHint": "This link is noted in this browser. If you lose it, or switch computers, get it back in [My keys](/claves.html).",
     "againLink": "When you change something and save again, itch shows it without pasting anything again.",
     "againPaste": "If you change something, copy the CSS from \"For itch\" again and paste it into itch."
   },
@@ -380,11 +414,12 @@
         ],
         "items": [
           "Your config: page type, colour, effects, your CSS and the HTML you paste for the preview (that HTML is never served).",
-          "A hash of your edit key, not the key: if you lose your edit link, nobody can recover it.",
+          "A hash of your edit key, not the key: if you lose your edit link, this site cannot recover it (that is what the optional encrypted copy is for).",
+          "If you save a copy of your keys on the My keys page: an encrypted block that only opens with your email and password. It is encrypted in your browser: this site receives neither the email nor the password and cannot read the block. You can delete it whenever you want.",
           "If you ask to appear in the showcase: your itch page's address and the name you give, shown to everyone once approved."
         ],
         "after": [
-          "It is stored with Upstash (Redis), and the site runs on Vercel. No email or other personal data is asked for."
+          "It is stored with Upstash (Redis), and the site runs on Vercel. No email or other personal data is asked for: the email you type for the copy is only used in your browser and is not sent."
         ]
       },
       {

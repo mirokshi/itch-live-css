@@ -11,6 +11,7 @@ import i18n, { LANGS } from './i18n.js';
 import { Admin, IDEAS, IdeaPage, Ideas, ideaUrl, Showcase } from './pages/Cards.jsx';
 import { Chapter, Doc, GuideIndex } from './pages/Content.jsx';
 import { Editor } from './pages/Editor.jsx';
+import { Keys } from './pages/Keys.jsx';
 
 const md = import.meta.glob('/content/guia/*/*.md', { query: '?raw', import: 'default', eager: true });
 
@@ -30,6 +31,7 @@ const PAGES = {
   '/': { title: 'titles.editor', entry: 'editor', element: <Editor /> },
   '/ideas.html': { title: 'titles.ideas', entry: 'ideas', element: <Ideas /> },
   '/showcase.html': { title: 'titles.showcase', entry: 'showcase', element: <Showcase /> },
+  '/claves.html': { title: 'titles.keys', entry: 'keys', element: <Keys /> },
   '/admin.html': { title: 'titles.admin', entry: 'admin', element: <Admin />, noindex: true },
   '/docs.html': { title: 'titles.docs', entry: 'docs', element: <Doc name="docs" path="/docs.html" /> },
   '/privacy.html': { title: 'titles.privacy', entry: 'privacy', element: <Doc name="privacy" path="/privacy.html" /> },
