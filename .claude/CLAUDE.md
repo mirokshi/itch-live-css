@@ -60,30 +60,33 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              components.json; add more with npx shadcn@4.22.1 add <name>) on Tailwind CSS 4 (src/index.css:
                              tokens, dark mode follows the system; src/app.css: the editor's layout and the itch theme panel
                              look-alike, which keeps itch's own look); the stylesheet is a build entry linked from every page;
-                             src/ = React pages (JS/JSX), multi-page with the old URLs, prerendered at build (src/server.jsx →
-                             prerender.mjs → dist/), in Spanish; i18n with react-i18next (src/i18n.js): every text is an id in
+                             React Router 7 in framework mode (react-router.config.js: ssr false, every route prerendered to
+                             build/client; vercel.json outputs that folder): src/routes.js lists the URLs (no .html), src/routes/*.jsx
+                             are the route modules (export default = the page, handle.title = a locales id), src/root.jsx = the shell
+                             (<html lang>, stylesheet, language, footer), src/pages/*.jsx = the page components, in Spanish;
+                             the old .html URLs redirect in vercel.json; i18n with react-i18next (src/i18n.js): every text is an id in
                              locales/es.json and locales/en.json (docs and privacy too, as sections of inline-Markdown strings;
                              validator messages by the engine's codes, English = engine/src/messages.json; rule titles R1–R24),
                              a language selector in the menu switches in the browser and remembers it (localStorage);
                              test/i18n.test.js keeps both languages, the engine's messages and §0's titles in step; guide
-                             chapters keep one URL per language and render in it; only their language selector hydrates (client/lang.jsx);
+                             chapters keep one URL per language (routes/chapter.jsx, one route per guide file);
                              src/pages/Editor.jsx = the configurator (CodeMirror 6 editors with the validator's marks,
                              a page-type switch profile | project | devlog saved with the config, an itch-like theme panel,
                              default-theme mocks public/preview*.html in a script-less sandboxed iframe); src/export.js =
                              what to take to itch: the user's CSS minified to paste (profile ≤ 5,120 bytes, game page and devlog
                              always), else the @import link (bigger profile CSS, or any per-visit effect); saving is optional
-                             when pasting; the effects panel opens only from the ideas page (/?idea=<key>); docs and privacy (locales/) stay in step with the knowledge base by hand;
+                             when pasting; the effects panel opens only from the ideas pages (/?idea=<key>); docs and privacy (locales/) stay in step with the knowledge base by hand; ideas pages: /ideas and /ideas/<key> (routes/idea.jsx);
                              content/guia/{es,en}/*.md = the guide, rendered with react-markdown + remark-gfm (copies of the private guia-paga/{es,en}/*.md; edit there, then `node guia-paga/build-web.mjs`
                              copies the chapters and the recipes); public/ = the mocks and guia/recetas/
                              (copied as they are); api/ (preview,
                              configs with secret edit key, keys = an encrypted copy of a user's edit keys (opaque blob: the browser
-                             derives lookup id, auth and AES key from email + password, src/keychain.js; page /claves.html "Mis claves"
+                             derives lookup id, auth and AES key from email + password, src/keychain.js; page /claves "Mis claves" (routes/keys.jsx)
                              also keeps the list in localStorage, .txt export/import), css = /c/<id>.css = effects + the user's own CSS (config from memory via
                              store.getCached: re-read once a minute, last copy if Upstash fails; the config in ITCH_OWNER_ID
                              also gets itch's game data, lib/itch.js with ITCH_API_KEY; Google Fonts @imports inlined as
                              @font-face by lib/googlefonts.js; env PAUSED=1 stops serving and saving, BLOCKED_IDS=a,b stops ids),
                              validate = engine validate() on the editor's CSS + rule titles read from §0,
-                             showcase = opt-in list, approved by the owner on admin.html with the ADMIN_KEY env var);
+                             showcase = opt-in list, approved by the owner on /admin with the ADMIN_KEY env var);
                              lib/store.js = Upstash Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a
                              local JSON file (web/.data/, git-ignored); lib/fonts.js = the title fonts (server and page);
                              vercel.json builds with `npm run build` into dist/ and also installs engine/;
