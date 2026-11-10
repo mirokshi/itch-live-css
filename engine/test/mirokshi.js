@@ -35,7 +35,8 @@ export const config = {
         color: 'var(--gold)', // defined in the owner's pasted CSS
       },
     },
-    { use: 'cards' },
+    { use: 'foil', options: { color: '#ffc857', width: 1.5, speed: 1, sync: false } }, // gold, as the owner has always had it
+    { use: 'badges' },
     { use: 'ascii' },
   ],
 };

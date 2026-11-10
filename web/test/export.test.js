@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { exportFor } from '../src/export.js';
 
-const base = { page: 'profile', title: null, greeting: null, cards: false, ascii: false };
+const base = { page: 'profile', title: null, greeting: null, foil: false, badges: false, ascii: false };
 // minified CSS of exactly n UTF-8 bytes; fill is a 1- or 2-byte character
 const sized = (n, fill = 'a') => {
   const shell = '#wrapper{--x:""}';
@@ -42,7 +42,7 @@ test('game page and devlog: always pasted, whatever the size', () => {
 });
 
 test('any per-visit effect: only the link', () => {
-  for (const effect of [{ title: { text: 'A', fonts: ['syne', 'mono'] } }, { greeting: { first: 'Hi', others: ['Hola'] } }, { cards: true }, { ascii: true }]) {
+  for (const effect of [{ title: { text: 'A', fonts: ['syne', 'mono'] } }, { greeting: { first: 'Hi', others: ['Hola'] } }, { foil: true }, { badges: true }, { ascii: true }]) {
     assert.deepEqual(exportFor({ ...base, ...effect, css: '#wrapper{}' }), { mode: 'import', reason: 'effects' });
   }
 });

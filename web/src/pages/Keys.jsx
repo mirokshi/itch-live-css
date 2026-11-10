@@ -64,7 +64,7 @@ export function Keys() {
 
   return (
     <>
-      <Navbar current="/claves.html" />
+      <Navbar current="/claves" />
       <Page>
         <Title>{t('keys.title')}</Title>
         <p className="mt-4 max-w-[72ch] text-muted-foreground">{t('keys.intro')}</p>

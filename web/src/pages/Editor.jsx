@@ -28,9 +28,9 @@ const ideasDefaults = (t) => ({
   accent: '#d6336c',
   titleOn: false, titleText: t('editor.defaultTitle'), fonts: ['fraunces', 'inter', 'grotesk'],
   greetingOn: false, greetingFirst: t('editor.defaultGreeting'), greetingOthers: 'Hello!\nBonjour !\nHallo!\nOlá!\nCiao!',
-  cards: false, ascii: false, scheme: false,
+  foil: false, foilColor: '#2f27ce', foilWidth: 1.5, foilSpeed: 1, foilSync: false, badges: false, ascii: false, scheme: false,
 });
-const IDEA_FIELDS = { title: 'titleOn', greeting: 'greetingOn', cards: 'cards', ascii: 'ascii', scheme: 'scheme' };
+const IDEA_FIELDS = { title: 'titleOn', greeting: 'greetingOn', foil: 'foil', badges: 'badges', ascii: 'ascii', scheme: 'scheme' };
 
 async function api(path, method, body, auth) {
   const res = await fetch(path, {
@@ -120,7 +120,12 @@ export function Editor() {
     greeting: ideas.greetingOn
       ? { first: ideas.greetingFirst, others: ideas.greetingOthers.split('\n').map((s) => s.trim()).filter(Boolean) }
       : null,
-    cards: page === 'profile' && ideas.cards,
+    foil: page === 'profile' && ideas.foil,
+    foilColor: ideas.foilColor,
+    foilWidth: Number(ideas.foilWidth),
+    foilSpeed: Number(ideas.foilSpeed),
+    foilSync: !!ideas.foilSync,
+    badges: page === 'profile' && ideas.badges,
     ascii: ideas.ascii,
     scheme: ideas.scheme,
     css,
@@ -181,7 +186,7 @@ export function Editor() {
   }
 
   // effects: when an idea changes (a page switch reloads the mock, whose load refreshes them)
-  const effectsKey = JSON.stringify([config.accent, config.title, config.greeting, ideas.cards, config.ascii, config.scheme]);
+  const effectsKey = JSON.stringify([config.accent, config.title, config.greeting, ideas.foil, ideas.foilColor, ideas.foilWidth, ideas.foilSpeed, ideas.foilSync, ideas.badges, config.ascii, config.scheme]);
   const first = useRef(true);
   useEffect(() => {
     if (first.current) first.current = false;
@@ -229,7 +234,12 @@ export function Editor() {
       ...(f.title && { titleText: f.title.text, fonts: f.title.fonts }),
       greetingOn: !!f.greeting,
       ...(f.greeting && { greetingFirst: f.greeting.first, greetingOthers: f.greeting.others.join('\n') }),
-      cards: f.cards,
+      foil: !!(f.foil ?? f.cards),
+      foilColor: f.foilColor ?? (f.cards ? '#ffc857' : '#2f27ce'),
+      foilWidth: f.foilWidth ?? 1.5,
+      foilSpeed: f.foilSpeed ?? 1,
+      foilSync: !!f.foilSync,
+      badges: !!(f.badges ?? f.cards),
       ascii: f.ascii,
       scheme: !!f.scheme,
     }));
@@ -250,7 +260,7 @@ export function Editor() {
     // ?idea=<key>, from the ideas page: turn that effect on and open the ideas panel
     const idea = new URLSearchParams(location.search).get('idea');
     if (Object.hasOwn(IDEA_FIELDS, idea)) {
-      if (idea === 'cards') choosePage('profile'); // the cards effect only exists on profiles
+      if (idea === 'foil' || idea === 'badges') choosePage('profile'); // the cards effects only exist on profiles
       setIdeas((i) => ({ ...i, [IDEA_FIELDS[idea]]: true }));
       setIdeasOpen(true);
     }
@@ -371,7 +381,7 @@ export function Editor() {
                 <CardDescription>
                   {out.reason === 'effects'
                     ? t(exported ? 'export.effectsSaved' : 'export.effects', {
-                      effects: ['title', 'greeting', 'cards', 'ascii'].filter((k) => config[k]).map((k) => t(`ideasPanel.${k}Label`)).join(', '),
+                      effects: ['title', 'greeting', 'foil', 'badges', 'ascii'].filter((k) => config[k]).map((k) => t(`ideasPanel.${k}Label`)).join(', '),
                     })
                     : t(exported ? 'export.tooBigSaved' : 'export.tooBig', { bytes: num(out.bytes), max: num(out.max) })}
                 </CardDescription>
@@ -487,8 +497,33 @@ export function Editor() {
           </Card>
           <Card size="sm" data-only="profile">
             <CardContent className="space-y-2">
-              <Check id="cards-on" checked={ideas.cards} onChange={setIdea('cards')}>{t('ideasPanel.cardsLabel')}</Check>
-              <Hint>{t('ideasPanel.cardsHint')}</Hint>
+              <Check id="foil-on" checked={ideas.foil} onChange={setIdea('foil')}>{t('ideasPanel.foilLabel')}</Check>
+              <Hint>{t('ideasPanel.foilHint')}</Hint>
+              {ideas.foil && (
+                <div className="flex items-center gap-3">
+                  <Label htmlFor="foil-color">{t('ideasPanel.foilColor')}</Label>
+                  <input id="foil-color" type="color" className="h-8 w-11 cursor-pointer rounded-md border bg-transparent p-0.5" value={ideas.foilColor} onChange={setIdea('foilColor')} />
+                </div>
+              )}
+              {ideas.foil && (
+                <div className="grid gap-1.5">
+                  <Label htmlFor="foil-width">{t('ideasPanel.foilWidth')}: {ideas.foilWidth} px</Label>
+                  <input id="foil-width" type="range" min="1" max="4" step="0.5" className="w-full accent-primary" value={ideas.foilWidth} onChange={setIdea('foilWidth')} />
+                </div>
+              )}
+              {ideas.foil && (
+                <div className="grid gap-1.5">
+                  <Label htmlFor="foil-speed">{t('ideasPanel.foilSpeed')}: {ideas.foilSpeed}×</Label>
+                  <input id="foil-speed" type="range" min="0.5" max="3" step="0.25" className="w-full accent-primary" value={ideas.foilSpeed} onChange={setIdea('foilSpeed')} />
+                </div>
+              )}
+              {ideas.foil && <Check id="foil-sync" checked={ideas.foilSync} onChange={setIdea('foilSync')}>{t('ideasPanel.foilSync')}</Check>}
+            </CardContent>
+          </Card>
+          <Card size="sm" data-only="profile">
+            <CardContent className="space-y-2">
+              <Check id="badges-on" checked={ideas.badges} onChange={setIdea('badges')}>{t('ideasPanel.badgesLabel')}</Check>
+              <Hint>{t('ideasPanel.badgesHint')}</Hint>
             </CardContent>
           </Card>
           <Card size="sm">

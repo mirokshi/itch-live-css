@@ -105,3 +105,7 @@
 /* a page mock shrunk to a thumbnail: the iframe is laid out at 1200px wide, then scaled to the card */
 .thumb { position: relative; aspect-ratio: 3 / 2; overflow: hidden; border-bottom: 1px solid var(--border); background: #fff; }
 .thumb iframe { position: absolute; top: 0; left: 0; width: 1200px; height: 800px; border: 0; transform-origin: 0 0; transform: scale(var(--scale, .25)); pointer-events: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}

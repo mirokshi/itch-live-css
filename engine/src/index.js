@@ -1,5 +1,5 @@
 import { ascii } from './plugins/ascii.js';
-import { cards } from './plugins/cards.js';
+import { badges, cards, foil } from './plugins/cards.js';
 import { css } from './plugins/css.js';
 import { greeting } from './plugins/greeting.js';
 import { scheme } from './plugins/scheme.js';
@@ -9,7 +9,7 @@ import { rng } from './random.js';
 export { importLine, measure } from './output.js';
 export { validate } from './validate.js';
 
-export const plugins = { title, greeting, cards, ascii, scheme, css };
+export const plugins = { title, greeting, cards, foil, badges, ascii, scheme, css };
 
 // config: { plugins: [{ use: 'title', options: {...} }, ...] }
 // seed: anything; the same seed gives the same CSS. Omit it for a fresh result each call.
