@@ -65,6 +65,38 @@ test('ascii: every text row is 100 characters wide, in every layer', () => {
   for (const row of rows) assert.equal(row.length, 100);
 });
 
+test('foil and badges are the two halves of cards', () => {
+  const run = (use) => render({ plugins: [{ use }] }, { seed: 1, data: { games }, now });
+  assert.doesNotMatch(run('foil'), /data-game_id/);
+  assert.match(run('foil'), /custom-foil/);
+  assert.doesNotMatch(run('badges'), /custom-foil/);
+  assert.match(run('badges'), /data-game_id/);
+  assert.equal(run('cards'), render({ plugins: [{ use: 'foil' }, { use: 'badges' }] }, { seed: 1, data: { games }, now }));
+});
+
+test('foil: its colour is an option, and only #rrggbb is accepted', () => {
+  const css = (options) => render({ plugins: [{ use: 'foil', options }] }, { seed: 1 });
+  assert.match(css({ color: '#33ccff' }), /rgba\(51,204,255,/);
+  assert.doesNotMatch(css({ color: '#33ccff' }), /255,200,87/);
+  assert.match(css(), /rgba\(255,200,87,/); // gold by default
+  assert.throws(() => css({ color: 'red' }), /#rrggbb/);
+});
+
+test('foil: thickness and speed', () => {
+  const css = (options) => render({ plugins: [{ use: 'foil', options }] }, { seed: 1 });
+  assert.match(css({ width: 3 }), /padding:3px;opacity:0/); // bright ring
+  assert.match(css({ width: 3 }), /padding:2px;background/); // resting ring: two thirds of it
+  assert.match(css({ speed: 2 }), /custom-foil 6s/);
+  assert.match(css({ speed: 2 }), /custom-foil 1\.2s/);
+  assert.match(css(), /animation-delay/); // each card has its own offset
+  assert.doesNotMatch(css({ sync: true }), /animation-delay/); // in step
+  assert.throws(() => css({ width: 9 }), /width/);
+  assert.throws(() => css({ speed: 0 }), /speed/);
+  // the defaults are the owner's look: 1px resting ring, 1.5px bright, 12 s and 2.4 s laps
+  assert.match(css(), /padding:1px;background/);
+  assert.match(css(), /custom-foil 12s/);
+});
+
 test('cards: figures, labels and id check', () => {
   const cards = (g) => render({ plugins: [{ use: 'cards' }] }, { seed: 1, data: { games: g }, now });
   const css = cards(games);

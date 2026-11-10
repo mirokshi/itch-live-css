@@ -37,17 +37,24 @@ function fileStore() {
   } catch {
     data = new Map();
   }
+  const save = () => {
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, JSON.stringify(Object.fromEntries(data)));
+  };
   return {
     read: async (k) => data.get(k) ?? null,
     async write(k, value) {
       data.set(k, value);
-      mkdirSync(dirname(file), { recursive: true });
-      writeFileSync(file, JSON.stringify(Object.fromEntries(data)));
+      save();
+    },
+    async remove(k) {
+      data.delete(k);
+      save();
     },
   };
 }
 
-const { read, write } =
+const { read, write, remove } =
   REDIS_URL && TOKEN
     ? {
         async read(k) {
@@ -56,6 +63,9 @@ const { read, write } =
         },
         async write(k, value) {
           await redis('SET', k, JSON.stringify(value));
+        },
+        async remove(k) {
+          await redis('DEL', k);
         },
       }
     : fileStore();
@@ -83,6 +93,11 @@ export async function getCached(id) {
     throw err;
   }
 }
+// Encrypted copies of a user's edit keys (api/keys.js): keys:<id>, opaque to the server.
+export const getBackup = (id) => read(`keys:${id}`);
+export const setBackup = (id, value) => write(`keys:${id}`, value);
+export const delBackup = (id) => remove(`keys:${id}`);
+
 // shortcut: one list read and written whole (no locking); fine for a hand-moderated list of a few
 // hundred entries, move to a Redis hash if it grows or saves collide
 export const getShowcase = async () => (await read('meta:showcase')) ?? [];

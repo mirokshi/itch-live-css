@@ -33,9 +33,9 @@ globalThis.fetch = async (url, opts) => {
 const { GET } = await import('../api/css.js');
 const configs = await import('../api/configs.js');
 const { check, pluginList } = await import('../lib/config.js');
-const { FONTS } = await import('../public/fonts.js');
+const { FONTS } = await import('../lib/fonts.js');
 
-const form = check({ accent: '#ffc857', cards: true });
+const form = check({ accent: '#ffc857', foil: true, badges: true });
 for (const id of ['owner123', 'other123', 'stale123']) db.set(`config:${id}`, JSON.stringify({ form }));
 const get = (id) => GET(new Request(`https://x.test/api/css?file=${id}.css`));
 
@@ -101,7 +101,9 @@ test("the owner's form gives the engine's owner config", () => {
     // what the form sends with these three ticked: FONTS order, which cycles into the owner's 3/3/2
     title: { text: 'Mirokshi', fonts: Object.keys(FONTS).filter((k) => ['hand', 'playfair', 'syne'].includes(k)) },
     greeting: { first: greeting.first, others: greeting.others },
-    cards: true,
+    foil: true,
+    foilColor: '#ffc857', // the owner's glint has always been gold
+    badges: true,
     ascii: true,
   });
   // the bag's order doesn't matter (it's shuffled), and font-size:1em on a letter is a no-op

@@ -8,7 +8,7 @@ Guidance for Claude Code in this repository.
 
 1. An AI-ready **knowledge base** on itch custom CSS (`knowledge/`). **Done** 2026-10-14; checked with live probes on 2026-10-16 (only jam fields still open).
 2. An open-source **engine** (`engine/`, not published to npm; the web uses it): config → CSS, plugins with option schemas, a validator whose rules map to the knowledge base's R1–R24, two outputs (pasted / served).
-3. + 4. **One web app on Vercel** (decided 2026-10-24): you build your CSS, preview it on mock pages and get a link to `@import` in itch. New Vercel project from this repo, configs by id in Upstash Redis, a secret edit link instead of accounts, first version covers profile and project (`@import` never loads on jams).
+3. + 4. **One web app on Vercel** (decided 2026-10-24): you build your CSS, preview it on mock pages and take it to itch, pasted when it fits or as a link to `@import`. New Vercel project from this repo, configs by id in Upstash Redis, a secret edit link instead of accounts, first version covers profile and project (`@import` never loads on jams).
 5. **Framework adapters** (Tailwind v3.4, Bootstrap's CSS, Animate.css) and **AI integration** (llms.txt, an MCP server, a bring-your-own-key assistant in the configurator).
 
 **Status (2026-10-16): phase 0.** Live probe Runs 1 (draft project), 2 (profile), 3 (devlog post; the jam part is not done) and 4 (size caps, without the jam part) are done; their results are in `knowledge/evidence/live-probes/` and the knowledge base is retagged. Nothing is published. A local git repo exists (branch `main`, first commit 2026-10-16) with no remote yet: commit or push only when the owner asks. The current next step and the open tasks are in `HANDOFF.md` (local, git-ignored). Read it first when it exists.
@@ -44,26 +44,54 @@ knowledge/
                              probe-cap.md, check.js, results-template.md, build.py
   method/                    how the knowledge base was built: research-workflow.js and finish-workflow.js
                              (Claude Code Workflow scripts, parameterised by args), open-questions.json (237 questions)
+decisions/                   ADRs, in Spanish (owner's call): 0001-postcss-validator.md (PostCSS as the validator's parser, accepted 2026-11-07)
 engine/                      phase 1, started 2026-10-24: render() (served) and paste() (pasted) from a config, seeded rng,
                              plugins/ (title, greeting, cards, ascii: the owner's 4 effects, ported 1:1 from the private repo;
                              css: hand-written CSS through minify() in src/css.js), test/mirokshi.js + .css = the owner's profile,
-                             importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R4, R7–R12, R14–R16, R18, R23 so far),
-                             CLI bin/cli.js measure|validate|dev (dev: preview_start {name:"engine-dev"}, 3000); tests: cd engine && npm test
-web/                         the Vercel web app, deployed 2026-10-24: public/ (form, CodeMirror 5 editors from cdnjs,
-                             a page-type switch profile | project | devlog saved with the config, default-theme mocks
-                             preview.html / preview-project.html / preview-devlog.html in a script-less sandboxed
-                             iframe, an itch-like theme panel per page type), api/ (preview,
-                             configs with secret edit key, css = /c/<id>.css = effects + the user's own CSS (config from memory via
+                             importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R4, R7–R12, R14–R16, R18, R23 so far)
+                             = the PostCSS plugin itchRules() over postcss-safe-parser, plus a "syntax" problem from the strict
+                             parser; problems carry line/column and a code + params (English text in src/messages.json, the
+                             web translates by code); src/rules.js = evidence-backed constants (caps, ad-block
+                             prefixes, keyframes prefix) with fact ids, cross-checked against §0 by test/rules.test.js;
+                             CLI bin/cli.js measure|validate|dev (dev: preview_start {name:"engine-dev"}, 3000);
+                             deps (postcss): cd engine && npm ci once; tests: cd engine && npm test
+web/                         the Vercel web app (deployed 2026-10-24; React + Vite since 2026-11-07, branch redesign/react-vite):
+                             UI: shadcn/ui (radix-nova style, default neutral theme, JS components in src/components/ui/,
+                             components.json; add more with npx shadcn@4.22.1 add <name>) on Tailwind CSS 4 (src/index.css:
+                             tokens, dark mode follows the system; src/app.css: the editor's layout and the itch theme panel
+                             look-alike, which keeps itch's own look); the stylesheet is a build entry linked from every page;
+                             React Router 7 in framework mode (react-router.config.js: ssr false, every route prerendered to
+                             build/client; vercel.json outputs that folder): src/routes.js lists the URLs (no .html), src/routes/*.jsx
+                             are the route modules (export default = the page, handle.title = a locales id), src/root.jsx = the shell
+                             (<html lang>, stylesheet, language, footer), src/pages/*.jsx = the page components, in Spanish;
+                             the old .html URLs redirect in vercel.json; i18n with react-i18next (src/i18n.js): every text is an id in
+                             locales/es.json and locales/en.json (docs and privacy too, as sections of inline-Markdown strings;
+                             validator messages by the engine's codes, English = engine/src/messages.json; rule titles R1–R24),
+                             a language selector in the menu switches in the browser and remembers it (localStorage);
+                             test/i18n.test.js keeps both languages, the engine's messages and §0's titles in step; guide
+                             chapters keep one URL per language (routes/chapter.jsx, one route per guide file);
+                             src/pages/Editor.jsx = the configurator (CodeMirror 6 editors with the validator's marks,
+                             a page-type switch profile | project | devlog saved with the config, an itch-like theme panel,
+                             default-theme mocks public/preview*.html in a script-less sandboxed iframe); src/export.js =
+                             what to take to itch: the user's CSS minified to paste (profile ≤ 5,120 bytes, game page and devlog
+                             always), else the @import link (bigger profile CSS, or any per-visit effect); saving is optional
+                             when pasting; the effects panel opens only from the ideas pages (/?idea=<key>); docs and privacy (locales/) stay in step with the knowledge base by hand; ideas pages: /ideas and /ideas/<key> (routes/idea.jsx);
+                             content/guia/{es,en}/*.md = the guide, rendered with react-markdown + remark-gfm (copies of the private guia-paga/{es,en}/*.md; edit there, then `node guia-paga/build-web.mjs`
+                             copies the chapters and the recipes); public/ = the mocks and guia/recetas/
+                             (copied as they are); api/ (preview,
+                             configs with secret edit key, keys = an encrypted copy of a user's edit keys (opaque blob: the browser
+                             derives lookup id, auth and AES key from email + password, src/keychain.js; page /claves "Mis claves" (routes/keys.jsx)
+                             also keeps the list in localStorage, .txt export/import), css = /c/<id>.css = effects + the user's own CSS (config from memory via
                              store.getCached: re-read once a minute, last copy if Upstash fails; the config in ITCH_OWNER_ID
                              also gets itch's game data, lib/itch.js with ITCH_API_KEY; Google Fonts @imports inlined as
                              @font-face by lib/googlefonts.js; env PAUSED=1 stops serving and saving, BLOCKED_IDS=a,b stops ids),
                              validate = engine validate() on the editor's CSS + rule titles read from §0,
-                             showcase = opt-in list, approved by the owner on admin.html with the ADMIN_KEY env var);
-                             other pages: ideas.html (effect gallery, "use" → /?idea=<key>), showcase.html, privacy.html,
-                             docs.html (ES + EN summary of R1–R24, kept by hand in step with the knowledge base); the
-                             export is the @import line only (no pasted fallback, owner's call), lib/store.js = Upstash
-                             Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a local JSON
-                             file (web/.data/, git-ignored); dev server: preview_start {name:"web"} (3001); tests: cd web && npm test
+                             showcase = opt-in list, approved by the owner on /admin with the ADMIN_KEY env var);
+                             lib/store.js = Upstash Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a
+                             local JSON file (web/.data/, git-ignored); lib/fonts.js = the title fonts (server and page);
+                             vercel.json builds with `npm run build` into dist/ and also installs engine/;
+                             dev server: preview_start {name:"web"} (Vite on 3001, api/ through dev.js; restart after editing
+                             api/ or lib/); tests: cd web && npm test; build: cd web && npm run build
 .github/workflows/watch.yml  hourly check of the owner's /c/SovP42id.css (200, text/css, < 3 s, effects + itch data + own CSS);
                              daily smoke check (one GET) that the logged-out profile still has the markup that CSS selects
 .claude/launch.json          preview servers: knowledge-tests (8090), knowledge-tests-xorigin (8091), web (3001) and engine-dev (3000)
@@ -88,7 +116,7 @@ web/                         the Vercel web app, deployed 2026-10-24: public/ (f
   - No personal data, tokens, csrf values or cookies.
   - **Small creators are pseudonymized** (decided and done 2026-10-16): subdomains as `creator-NN` (`crawlprofile.md` uses 01–37; every other file 38–113, one number per creator), their games as `game-NN`, devlog links as `devlog/<id>/<post>`. The private mapping is `raw/pseudonyms-2026-10-16.json` (git-ignored); new names get the next free number and go into it.
   - May be named: itch staff, the owner's pages, jams, well-known studios and tools (the list is the `KEEP` set recorded in the mapping file), and authors cited as sources for itch-CSS guides, themes or tools (e.g. nnda, speakthesky, narehop, gourangadas, hamgarian, comigo, gamesprinter, and their GitHub repos).
-- **Licenses** (added 2026-10-16): `LICENSE` (**MIT**, code anywhere, `knowledge/` included), `knowledge/LICENSE` (official **CC BY 4.0** text, for the knowledge-base content), `THIRD_PARTY_NOTICES.md` (`web_sanitize` test vectors, itch.io names). `README.md` says which files fall under which. Repo docs are in English; `ROADMAP.md` stays in Spanish.
+- **Licenses** (added 2026-10-16): `LICENSE` (**MIT**, code anywhere, `knowledge/` included), `knowledge/LICENSE` (official **CC BY 4.0** text, for the knowledge-base content), `THIRD_PARTY_NOTICES.md` (`web_sanitize` test vectors, itch.io names). `README.md` says which files fall under which. Repo docs are in English; `ROADMAP.md` and `decisions/` stay in Spanish.
 - `.gitattributes` sets `* -text`: git never converts line endings, so the CRLF section files and the probe kit stay byte-exact.
 - **Crawling itch.io:**
   - Honour robots.txt (Disallow `/embed/`, `/embed-upload/`, `/search`, `/checkout/`, `/game/download/`, `/bundle/download/`, `/register-for-purchase/`, `/email-feedback/`).

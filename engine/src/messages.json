@@ -1,0 +1,57 @@
+{
+  "R2": {
+    "wrapper": "\"{{sel}}\" must start with #wrapper: itch serves your CSS page-wide"
+  },
+  "R3": {
+    "root": "\"{{sel}}\" sets variables: set them on #wrapper or below (on :root they recoloured itch's jam header)",
+    "profile": "itch declares a profile's --itchio_ variables on .user_page, which beats #wrapper: set them on #wrapper .user_page"
+  },
+  "R4": {
+    "background": "\"{{sel}}\" uses the background shorthand, which wipes the creator's background image: use background-* longhands (B3)"
+  },
+  "R7": {
+    "cap": "{{bytes}} bytes, over the {{page}} cap of {{max}}: itch refuses the save",
+    "jam": "{{chars}} characters, past the {{max}} known to save on a jam"
+  },
+  "R8": {
+    "style": "remove every <style> and </style>: itch deletes </style> (any case), which changes the CSS around it"
+  },
+  "R9": {
+    "jam": "{{what}}: @import never loads on a jam; use @font-face for fonts",
+    "order": "{{what}} comes after other rules, so browsers ignore it: put every @import first",
+    "layer": "{{what}} follows an @layer statement that sits between imports: it loads but never applies",
+    "nested": "{{what}} sits inside a block, where @import is invalid"
+  },
+  "R10": {
+    "absolute": "{{what}}: import an absolute https:// URL; http:// is blocked as mixed content and a relative one points at itch",
+    "raw": "{{what}}: served as text/plain, so browsers ignore it; use https://cdn.jsdelivr.net/gh/USER/REPO@TAG/file.css",
+    "unpinned": "{{what}}: not pinned to a tag or full SHA, so visitors may get different versions for days"
+  },
+  "R11": {
+    "adblock": ".{{name}}: ad blockers hide classes starting {{names}} or {{last}}"
+  },
+  "R12": {
+    "numbered": "#{{id}}: numbered ids change from page to page; use a stable one (#wrapper, #inner_column, #profile_header…) or a class"
+  },
+  "R14": {
+    "outline": "{{prop}}:{{value}} hides the focus ring for keyboard users; restyle it instead (B2)",
+    "frozen": "{{prop}} !important: your @keyframes animate {{prop}}, and !important beats animations, so it can freeze them"
+  },
+  "R15": {
+    "import": "{{what}}: imported into a layer, its rules always lose to itch's",
+    "layer": "{{what}}: layered rules always lose to itch's unlayered ones"
+  },
+  "R16": {
+    "prefix": "@keyframes {{name}} needs the {{prefix}} prefix: if itch uses the same name, yours replaces its animation page-wide"
+  },
+  "R18": {
+    "gate": "\"{{sel}}\": put hover effects inside @media (hover:hover)",
+    "twin": "\"{{sel}}\" has no focus twin: give it the same effect on :focus-visible"
+  },
+  "R23": {
+    "url": "url({{url}}): use an absolute https:// URL (or data:); a relative one points at itch and http:// is blocked"
+  },
+  "syntax": {
+    "broken": "{{reason}}: browsers skip the broken part of the CSS, and itch saves it as it is"
+  }
+}

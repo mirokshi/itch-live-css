@@ -1,12 +1,47 @@
 {
   "name": "itch-live-css-web",
   "private": true,
-  "description": "Web app: build your itch.io CSS, preview it and get the @import link.",
+  "description": "Web app: build your itch.io CSS, preview it, and take it to itch pasted or as an @import link.",
   "license": "MIT",
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "dev": "node --watch dev.js",
+    "dev": "react-router dev",
+    "build": "react-router build",
     "test": "node --test"
+  },
+  "dependencies": {
+    "@codemirror/lang-css": "6.3.1",
+    "@codemirror/lang-html": "6.4.12",
+    "@codemirror/lint": "6.9.7",
+    "@codemirror/state": "6.7.6",
+    "@codemirror/theme-one-dark": "6.1.3",
+    "@codemirror/view": "6.43.15",
+    "@fontsource-variable/geist": "5.3.0",
+    "@react-router/dev": "8.5.0",
+    "@tailwindcss/vite": "4.3.3",
+    "class-variance-authority": "0.7.1",
+    "cn": "0.5.0",
+    "codemirror": "6.0.2",
+    "i18next": "26.5.7",
+    "js-beautify": "1.15.4",
+    "lucide-react": "1.61.0",
+    "radix-ui": "1.8.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-i18next": "17.1.5",
+    "react-markdown": "10.1.0",
+    "react-router": "8.5.0",
+    "remark-gfm": "4.0.1",
+    "shadcn": "4.22.1",
+    "tailwindcss": "4.3.3",
+    "tw-animate-css": "1.4.0",
+    "isbot": "^5"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "0.5.20",
+    "vite": "8.3.5"
   }
 }

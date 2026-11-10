@@ -28,3 +28,9 @@ guia-paga/
 # Notas locales: ajustes de Obsidian y plantillas/ADRs de trabajo
 .obsidian/
 docs/
+
+# The web's build output (Vercel builds it from source)
+web/dist/
+web/dist-ssr/
+web/build/
+web/.react-router/
