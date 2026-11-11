@@ -63,7 +63,7 @@ test('messages: every problem carries a code and params that rebuild its text, a
 
 test('scroll effects: valid CSS, guarded, timeline after the shorthand, only #wrapper selectors', async () => {
   const { plugins } = await import('../src/index.js');
-  for (const use of ['reveal', 'progress', 'parallax']) {
+  for (const use of ['reveal', 'progress', 'parallax', 'zoom', 'stagger', 'shrink', 'unveil']) {
     const css = plugins[use]({}, null, {}).join('');
     assert.match(css, /@media \(prefers-reduced-motion:no-preference\)\{@supports \(animation-timeline:/);
     assert.match(css, /[{;]animation:[^;}]*;animation-timeline:/, use);
@@ -73,4 +73,13 @@ test('scroll effects: valid CSS, guarded, timeline after the shorthand, only #wr
   assert.match(plugins.progress({ color: '#d6336c', height: 6 }).join(''), /height:6px.*background:#d6336c/);
   assert.throws(() => plugins.progress({ color: 'red;}' }), /color/);
   assert.throws(() => plugins.progress({ height: 11 }), /height/);
+});
+
+test('motion effects: no itch-rule errors or warnings, keyframes prefixed', async () => {
+  const { plugins } = await import('../src/index.js');
+  for (const use of ['pagefade', 'lift', 'tilt', 'entrance']) {
+    const css = plugins[use]({}, null, {}).join('');
+    assert.deepEqual(validate(css, 'profile'), [], use);
+  }
+  assert.match(plugins.tilt().join(''), /^@supports \(rotate:random\(0deg,1deg\)\)/);
 });

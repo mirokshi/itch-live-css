@@ -12,14 +12,18 @@ process.env.ITCH_OWNER_ID = 'owner123';
 const db = new Map();
 let storeDown = false;
 let itchCalls = 0;
+let fontCalls = 0;
+const reads = {}; // store key → GETs
 globalThis.fetch = async (url, opts) => {
   if (String(url) === 'https://redis.test') {
     if (storeDown) throw new Error('store timeout');
     const [cmd, k, v] = JSON.parse(opts.body);
     if (cmd === 'SET') db.set(k, v);
+    if (cmd === 'GET') reads[k] = (reads[k] ?? 0) + 1;
     return Response.json({ result: cmd === 'GET' ? db.get(k) ?? null : 'OK' });
   }
   if (String(url).startsWith('https://fonts.googleapis.com/css2?')) {
+    fontCalls++;
     if (String(url).includes('Inter')) return new Response('nope', { status: 500 }); // Google failing
     return new Response('/* latin */\n@font-face {\n  font-family: "Syne";\n  src: url(https://fonts.gstatic.com/s/syne/v1/a.woff2) format("woff2");\n}\n', { headers: { 'Content-Type': 'text/css; charset=utf-8' } });
   }
@@ -32,6 +36,7 @@ globalThis.fetch = async (url, opts) => {
 
 const { GET } = await import('../api/css.js');
 const configs = await import('../api/configs.js');
+const store = await import('../lib/store.js');
 const { check, pluginList } = await import('../lib/config.js');
 const { FONTS } = await import('../lib/fonts.js');
 
@@ -75,6 +80,23 @@ test('Google Fonts are inlined after the imports that stay, or kept as an @impor
   const bad = await (await get('fontsbad')).text();
   assert.match(bad.split('\n')[0], /^@import url\("https:\/\/fonts\.googleapis\.com\/css2\?family=Inter/);
   assert.equal(bad.split('\n')[1], '@import url("https://x.test/other.css");');
+});
+
+test('an unknown id asks the store once a minute, until it is saved', async () => {
+  assert.equal((await get('ghost123')).status, 404);
+  assert.equal((await get('ghost123')).status, 404);
+  assert.equal(reads['config:ghost123'], 1);
+  await store.set('ghost123', { form });
+  assert.equal((await get('ghost123')).status, 200);
+});
+
+test('a sheet gets at most 8 Google Fonts inlined; the rest stay as @import', async () => {
+  const css = Array.from({ length: 10 }, (_, i) => `@import url("https://fonts.googleapis.com/css2?family=F${i}");`).join('\n');
+  db.set('config:fontsmax', JSON.stringify({ form: check({ accent: '#ffc857', css }) }));
+  const before = fontCalls;
+  const out = await (await get('fontsmax')).text();
+  assert.equal(fontCalls - before, 8);
+  assert.deepEqual(out.match(/family=F\d/g), ['family=F8', 'family=F9']);
 });
 
 test('PAUSED stops serving and saving; BLOCKED_IDS stops one config', async () => {

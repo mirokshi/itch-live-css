@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { CodeEditor } from '../CodeEditor.jsx';
 import { FONTS } from '../../lib/fonts.js';
-import { IDEA_PAGES, IDEAS } from '../ideas.js';
+import { IDEA_PAGES, NO_PREVIEW, PREVIEW, TOGGLES } from '../ideas.js';
 import { CopyButton, Inline, Navbar, SavedThumb, Thumb } from '../common.jsx';
 import { Page, Title } from './Content.jsx';
 
@@ -36,9 +36,10 @@ const sampleForm = (t) => ({
   badges: { badges: true },
   ascii: { ascii: true },
   scheme: { scheme: true },
-  reveal: { reveal: true },
+  ...Object.fromEntries(TOGGLES.map((k) => [k, { [k]: true }])),
   progress: { progress: true, page: 'devlog' },
-  parallax: { parallax: true },
+  unveil: { unveil: true, page: 'devlog' },
+  zoom: { zoom: true, page: 'project' },
 });
 
 // { idea: { css, bio } } for these ideas, filled as the answers arrive (css null: still loading)
@@ -83,7 +84,7 @@ function FontCheck({ id, checked, disabled, onChange, children }) {
 function IdeaThumb({ idea, sample, interactive }) {
   const { t } = useTranslation();
   const f = FRAME[idea] ?? {};
-  return <Thumb css={sample?.css ?? null} bio={`${sample?.bio ?? ''}${f.show ? '' : `<p>${t('ideas.sampleBio')}</p>`}`} {...f} scroll={interactive ? 0 : f.scroll} interactive={interactive} />;
+  return <Thumb css={sample?.css ?? null} bio={`${sample?.bio ?? ''}${f.show ? '' : `<p>${t('ideas.sampleBio')}</p>`}${f.html ?? ''}`} {...f} scroll={interactive ? 0 : f.scroll} interactive={interactive} />;
 }
 
 // read-only code (CodeMirror) with a copy button
@@ -100,11 +101,17 @@ function CodeBox({ lang, label, text }) {
   );
 }
 
+// a gradient picture for the mocks (our own, as a data: SVG)
+function picture([a, b]) {
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='800' height='420'><linearGradient id='g'><stop offset='0' stop-color='${a}'/><stop offset='1' stop-color='${b}'/></linearGradient><rect width='800' height='420' fill='url(#g)'/></svg>`;
+  return `<p><img alt="" width="800" height="420" src="data:image/svg+xml,${encodeURIComponent(svg)}"></p><p>Lorem ipsum dolor sit amet.</p>`;
+}
+
 export const ideaUrl = (idea) => `/ideas/${idea}`;
 
 export function Ideas() {
   const { t } = useTranslation();
-  const samples = useSamples(IDEAS);
+  const samples = useSamples(PREVIEW);
   return (
     <>
     <Navbar current="/ideas" />
@@ -112,7 +119,7 @@ export function Ideas() {
       <Title>{t('ideas.title')}</Title>
       <Intro>{t('ideas.intro')}</Intro>
       <ul className={GRID}>
-        {IDEAS.map((idea) => (
+        {PREVIEW.map((idea) => (
           <MockCard key={idea} thumb={<IdeaThumb idea={idea} sample={samples[idea]} />}>
             <CardHeader>
               <CardTitle><h2>{t(`ideas.${idea}_name`)}</h2></CardTitle>
@@ -123,6 +130,16 @@ export function Ideas() {
               <Button asChild size="sm"><a href={ideaUrl(idea)}>{t('ideas.show')}</a></Button>
             </CardFooter>
           </MockCard>
+        ))}
+      </ul>
+      <h2 className="mt-10 text-xl font-semibold">{t('ideas.noPreviewTitle')}</h2>
+      <p className="mt-2 max-w-[72ch] text-muted-foreground">{t('ideas.noPreviewIntro')}</p>
+      <ul className="mt-4 max-w-[72ch] list-disc space-y-3 pl-5">
+        {NO_PREVIEW.map((idea) => (
+          <li key={idea}>
+            <a className="font-medium underline underline-offset-4" href={ideaUrl(idea)}>{t(`ideas.${idea}_name`)}</a>
+            <span className="text-muted-foreground"> — {t(`ideas.${idea}_text`)}</span>
+          </li>
         ))}
       </ul>
     </Page>
@@ -158,8 +175,21 @@ const FRAME = {
   reveal: { h: 520, scroll: 250, extra: '.game_column{max-width:360px;margin:0 auto}.user_game_grid{grid-template-columns:1fr!important}' },
   progress: { page: 'devlog', h: 520, scroll: 700, extra: '.user_formatted{min-height:1800px;background:repeating-linear-gradient(#0000 0 78px,#0001 78px 80px)}' },
   parallax: { h: 520, scroll: 150, extra: '#profile_header .text_header h1{font-size:4em;padding:60px 0}#wrapper{min-height:1500px}' },
+  stagger: { h: 520, scroll: 330, extra: '.game_column{padding:440px 0 700px}' },
+  unveil: { page: 'devlog', h: 520, scroll: 420, html: [['#ff2449', '#ffc857'], ['#2f27ce', '#38d9a9'], ['#7048e8', '#ff2449']].map(picture).join(''), extra: '.user_formatted img{display:block;width:100%;height:auto}#wrapper{min-height:1800px}' },
+  zoom: { page: 'project', h: 520, scroll: 160, extra: '#header img{display:block!important;width:100%;height:340px;background:linear-gradient(135deg,#ff2449,#2f27ce);font-size:0;color:transparent}#wrapper{min-height:1600px}' },
+  shrink: { h: 520, scroll: 140, extra: '#profile_header .text_header h1{font-size:3em}#wrapper{min-height:1600px}' },
+  entrance: { h: 400, extra: '#profile_header .text_header h1{font-size:4em;padding:40px 0}' },
+  lift: { show: 'games', h: 520, zoom: 1.3, extra: '.user_game_grid{grid-template-columns:repeat(3,1fr)!important}' },
+  tilt: { show: 'games', h: 520, zoom: 1.3, extra: '.user_game_grid{grid-template-columns:repeat(3,1fr)!important}' },
+  pagefade: { h: 520 },
 };
-const SCROLL_IDEAS = ['reveal', 'progress', 'parallax'];
+// what to do in an idea's own preview to see it (ideas.<id> in locales/); 'replayHint' ones get a Replay
+// that reloads the frame, so the load-time effects run (and re-roll) again
+const HINTS = {
+  reveal: 'scrollHint', stagger: 'scrollHint', unveil: 'scrollHint', progress: 'scrollHint', parallax: 'scrollHint', zoom: 'scrollHint', shrink: 'scrollHint',
+  lift: 'hoverHint', pagefade: 'navHint', entrance: 'replayHint', tilt: 'replayHint',
+};
 
 // one idea on its own page: how it looks, and next to it what goes into itch (CSS, and HTML when it needs any)
 export function IdeaPage({ idea }) {
@@ -256,8 +286,8 @@ export function IdeaPage({ idea }) {
                 </div>
               </>
             )}
-            {SCROLL_IDEAS.includes(idea) && <p className="text-sm text-muted-foreground">{t('ideas.scrollHint')}</p>}
-            {idea !== 'scheme' && !SCROLL_IDEAS.includes(idea) && (
+            {HINTS[idea] && <p className="text-sm text-muted-foreground">{t(`ideas.${HINTS[idea]}`)}</p>}
+            {idea !== 'scheme' && (!HINTS[idea] || HINTS[idea] === 'replayHint') && (
               <Button type="button" size="sm" className="mt-1 self-start" onClick={() => setAgain((n) => n + 1)}>{t('ideas.replay')}</Button>
             )}
           </div>
@@ -271,7 +301,7 @@ export function IdeaPage({ idea }) {
             </TabsList>
             {/* forceMount: the preview keeps its state (and its frame) while another tab shows */}
             <TabsContent value="preview" forceMount className="data-[state=inactive]:hidden">
-              <div className="overflow-hidden rounded-lg border"><IdeaThumb idea={idea} sample={sample} interactive /></div>
+              <div className="overflow-hidden rounded-lg border"><IdeaThumb key={HINTS[idea] === 'replayHint' ? again : 0} idea={idea} sample={sample} interactive /></div>
             </TabsContent>
             <TabsContent value="css"><CodeBox lang="css" label={t('ideas.cssLabel')} text={sample?.css ?? ''} /></TabsContent>
             {sample?.bio && <TabsContent value="html"><CodeBox lang="html" label={t('ideas.htmlLabel')} text={sample.bio} /></TabsContent>}

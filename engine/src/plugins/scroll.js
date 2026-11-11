@@ -52,3 +52,64 @@ export function parallax() {
     ),
   ];
 }
+
+// The banner (profile banner, game header image) grows, blurs and dims as the page scrolls away from
+// it. Its box clips it, so it never spills over the content. Only pages with a banner have the img.
+export function zoom() {
+  return [
+    '@keyframes custom-zoom{to{scale:1.2;filter:blur(6px);opacity:.5}}',
+    guard(
+      'scroll()',
+      '#wrapper #profile_header .image_header,#wrapper #header{overflow:hidden}' +
+        '#wrapper #profile_header img,#wrapper #header img{animation:custom-zoom linear both;' +
+        'animation-timeline:scroll(root);animation-range:0px 400px}',
+    ),
+  ];
+}
+
+// The game cards enter one after another along each row: same as `reveal`, but the 2nd and 3rd card
+// of every three start later in their own entry (a scroll timeline ignores animation-delay).
+export function stagger() {
+  const late = (k, from, to) =>
+    `#wrapper .game_cell:nth-child(3n+${k}){animation-range:entry ${from}% cover ${to}%}`;
+  return [
+    '@keyframes custom-stagger{from{opacity:0;translate:0 40px;scale:.94}}',
+    guard(
+      'view()',
+      '#wrapper .game_cell{animation:custom-stagger linear both;animation-timeline:view();' +
+        'animation-range:entry 0% cover 25%}' + late(2, 10, 35) + late(3, 20, 45),
+    ),
+  ];
+}
+
+// The header sticks to the top and, over the first 200 px, slides up to a slim frosted bar with a
+// smaller title. Frosted (backdrop blur over a tint of the text colour) so it works on any theme.
+// Not on pages with a banner (.has_banner, .has_image): a sticky image would cover the screen.
+export function shrink() {
+  const head = '#wrapper .user_page:not(.has_banner) #profile_header,#wrapper #header:not(.has_image)';
+  return [
+    '@keyframes custom-shrink{to{translate:0 -30px;' +
+      'background-color:color-mix(in srgb,currentColor 8%,transparent);box-shadow:0 2px 12px rgba(0,0,0,.12)}}',
+    '@keyframes custom-shrink-title{to{scale:.6}}',
+    guard(
+      'scroll()',
+      `${head}{position:sticky;top:0;z-index:5;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);` +
+        'animation:custom-shrink linear both;animation-timeline:scroll(root);animation-range:0px 200px}' +
+        `${head.split(',').map((s) => `${s} h1`).join(',')}{transform-origin:50% 100%;` +
+        'animation:custom-shrink-title linear both;animation-timeline:scroll(root);animation-range:0px 200px}',
+    ),
+  ];
+}
+
+// Images in a project description or devlog post are uncovered from the top as they come in.
+export function unveil() {
+  return [
+    // an explicit `to`: clip-path can't interpolate towards `none`, it would jump halfway
+    '@keyframes custom-unveil{from{clip-path:inset(0 0 100% 0);scale:1.08}to{clip-path:inset(0)}}',
+    guard(
+      'view()',
+      '#wrapper .user_formatted img{animation:custom-unveil linear both;animation-timeline:view();' +
+        'animation-range:entry 10% cover 40%}',
+    ),
+  ];
+}

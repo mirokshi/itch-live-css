@@ -48,7 +48,9 @@ decisions/                   ADRs, in Spanish (owner's call): 0001-postcss-valid
 engine/                      phase 1, started 2026-10-24: render() (served) and paste() (pasted) from a config, seeded rng,
                              plugins/ (title, greeting, cards, ascii: the owner's 4 effects, ported 1:1 from the private repo;
                              css: hand-written CSS through minify() in src/css.js);
-                             scroll.js (2026-11-10): reveal, progress, parallax = scroll-driven animations, static, pasted, each an /ideas page, test/mirokshi.js + .css = the owner's profile,
+                             scroll.js (reveal, stagger, unveil, progress, parallax, zoom, shrink: scroll-driven) and motion.js (entrance,
+                             lift, tilt = native random(), pagefade = @view-transition): static, pasted, each an /ideas page and an
+                             editor checkbox, listed once as TOGGLES in web/src/ideas.js (2026-11-10), test/mirokshi.js + .css = the owner's profile,
                              importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R4, R7–R12, R14–R16, R18, R23 so far)
                              = the PostCSS plugin itchRules() over postcss-safe-parser, plus a "syntax" problem from the strict
                              parser; problems carry line/column and a code + params (English text in src/messages.json, the
@@ -90,7 +92,7 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              showcase = opt-in list, approved by the owner on /admin with the ADMIN_KEY env var);
                              lib/store.js = Upstash Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a
                              local JSON file (web/.data/, git-ignored); lib/fonts.js = the title fonts (server and page);
-                             vercel.json builds with `npm run build` into dist/ and also installs engine/;
+                             vercel.json builds with `npm run build` into build/client and also installs engine/;
                              dev server: preview_start {name:"web"} (Vite on 3001, api/ through dev.js; restart after editing
                              api/ or lib/); tests: cd web && npm test; build: cd web && npm run build
 .github/workflows/watch.yml  hourly check of the owner's /c/SovP42id.css (200, text/css, < 3 s, effects + itch data + own CSS);

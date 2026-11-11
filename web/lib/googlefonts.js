@@ -13,7 +13,18 @@ const TIMEOUT = 1500;
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36';
 const IMPORT = /@import\s+url\(\s*(["']?)(https:\/\/fonts\.googleapis\.com\/css2\?[^"')\s]+)\1\s*\)\s*;/g;
 
+// The URLs come from users' CSS, so both are capped: a sheet can't make the server fetch hundreds of
+// them, and made-up ones can't fill the memory. Past MAX_PER_SHEET the @import stays as written.
+const MAX_PER_SHEET = 8;
+const MAX_URLS = 200;
+
 const cache = new Map(); // url → { css, until }; css null after a failure
+function keep(url, entry) {
+  cache.delete(url); // back of the line: the oldest goes first
+  cache.set(url, entry);
+  if (cache.size > MAX_URLS) cache.delete(cache.keys().next().value);
+  return entry.css;
+}
 
 async function fontCss(url) {
   const kept = cache.get(url);
@@ -24,18 +35,17 @@ async function fontCss(url) {
     if (!res.ok || !(res.headers.get('content-type') ?? '').startsWith('text/css') || !css.includes('@font-face')) {
       throw new Error(`HTTP ${res.status}`);
     }
-    cache.set(url, { css: minify(css), until: Date.now() + TTL });
+    return keep(url, { css: minify(css), until: Date.now() + TTL });
   } catch (err) {
     console.error('Google Fonts:', err.message);
-    cache.set(url, { css: kept?.css ?? null, until: Date.now() + RETRY });
+    return keep(url, { css: kept?.css ?? null, until: Date.now() + RETRY });
   }
-  return cache.get(url).css;
 }
 
 // served CSS → the same, with each leading Google Fonts @import replaced by its @font-face rules
 export async function inlineGoogleFonts(css) {
   const lead = css.match(LEADING)[0];
-  const found = [...lead.matchAll(IMPORT)];
+  const found = [...lead.matchAll(IMPORT)].slice(0, MAX_PER_SHEET);
   if (!found.length) return css;
   const faces = await Promise.all(found.map((m) => fontCss(m[2])));
   let kept = lead;

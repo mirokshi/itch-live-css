@@ -19,6 +19,7 @@ import { FONTS } from '../../lib/fonts.js';
 import { CodeEditor } from '../CodeEditor.jsx';
 import { Copy, Inline, Navbar } from '../common.jsx';
 import { exportFor } from '../export.js';
+import { IDEA_PAGES, TOGGLES } from '../ideas.js';
 import * as keychain from '../keychain.js';
 import { applyTheme, itchSanitize, PAGES, THEME_COLOURS, THEME_DEFAULTS } from '../preview.js';
 import { ThemePanel } from '../ThemePanel.jsx';
@@ -28,9 +29,10 @@ const ideasDefaults = (t) => ({
   accent: '#d6336c',
   titleOn: false, titleText: t('editor.defaultTitle'), fonts: ['fraunces', 'inter', 'grotesk'],
   greetingOn: false, greetingFirst: t('editor.defaultGreeting'), greetingOthers: 'Hello!\nBonjour !\nHallo!\nOlá!\nCiao!',
-  foil: false, foilColor: '#2f27ce', foilWidth: 1.5, foilSpeed: 1, foilSync: false, badges: false, ascii: false, scheme: false, reveal: false, progress: false, parallax: false,
+  foil: false, foilColor: '#2f27ce', foilWidth: 1.5, foilSpeed: 1, foilSync: false, badges: false, ascii: false, scheme: false,
+  ...Object.fromEntries(TOGGLES.map((k) => [k, false])),
 });
-const IDEA_FIELDS = { title: 'titleOn', greeting: 'greetingOn', foil: 'foil', badges: 'badges', ascii: 'ascii', scheme: 'scheme', reveal: 'reveal', progress: 'progress', parallax: 'parallax' };
+const IDEA_FIELDS = { title: 'titleOn', greeting: 'greetingOn', foil: 'foil', badges: 'badges', ascii: 'ascii', scheme: 'scheme', ...Object.fromEntries(TOGGLES.map((k) => [k, k])) };
 
 async function api(path, method, body, auth) {
   const res = await fetch(path, {
@@ -128,9 +130,7 @@ export function Editor() {
     badges: page === 'profile' && ideas.badges,
     ascii: ideas.ascii,
     scheme: ideas.scheme,
-    reveal: ideas.reveal,
-    progress: ideas.progress,
-    parallax: ideas.parallax,
+    ...Object.fromEntries(TOGGLES.map((k) => [k, IDEA_PAGES[k].includes(page) && ideas[k]])),
     css,
     html,
     showcase: showcase.on ? { url: showcase.url.trim(), name: showcase.name } : null,
@@ -189,7 +189,7 @@ export function Editor() {
   }
 
   // effects: when an idea changes (a page switch reloads the mock, whose load refreshes them)
-  const effectsKey = JSON.stringify([config.accent, config.title, config.greeting, ideas.foil, ideas.foilColor, ideas.foilWidth, ideas.foilSpeed, ideas.foilSync, ideas.badges, config.ascii, config.scheme, config.reveal, config.progress, config.parallax]);
+  const effectsKey = JSON.stringify([config.accent, config.title, config.greeting, ideas.foil, ideas.foilColor, ideas.foilWidth, ideas.foilSpeed, ideas.foilSync, ideas.badges, config.ascii, config.scheme, ...TOGGLES.map((k) => config[k])]);
   const first = useRef(true);
   useEffect(() => {
     if (first.current) first.current = false;
@@ -245,9 +245,7 @@ export function Editor() {
       badges: !!(f.badges ?? f.cards),
       ascii: f.ascii,
       scheme: !!f.scheme,
-      reveal: !!f.reveal,
-      progress: !!f.progress,
-      parallax: !!f.parallax,
+      ...Object.fromEntries(TOGGLES.map((k) => [k, !!f[k]])),
     }));
     setCss(f.css ?? '');
     setHtml(f.html ?? '');
@@ -544,8 +542,9 @@ export function Editor() {
               <Hint>{t('ideasPanel.schemeHint')}</Hint>
             </CardContent>
           </Card>
-          {['reveal', 'progress', 'parallax'].map((k) => (
-            <Card size="sm" key={k}>
+          {TOGGLES.map((k) => (
+            // data-only: the editor shows profile or project controls (a devlog uses the project's)
+            <Card size="sm" key={k} data-only={IDEA_PAGES[k].length < 3 ? (IDEA_PAGES[k].includes('profile') ? 'profile' : 'project') : undefined}>
               <CardContent className="space-y-2">
                 <Check id={`${k}-on`} checked={ideas[k]} onChange={setIdea(k)}>{t(`ideasPanel.${k}Label`)}</Check>
                 <Hint>{t(`ideasPanel.${k}Hint`)}</Hint>

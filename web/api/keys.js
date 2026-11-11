@@ -30,7 +30,7 @@ export const PUT = (request) =>
     if (paused()) return paused();
     const k = await lookup(request);
     if (k.rec && !matches(k)) return notFound();
-    const { blob } = await readJson(request);
+    const { blob } = (await readJson(request)) ?? {}; // a body of `null` is JSON too
     if (typeof blob !== 'string' || !/^[\w-]+$/.test(blob) || blob.length > MAX_BLOB) throw new BadRequest('bad blob');
     await store.setBackup(k.id, { authHash: hash(k.auth).toString('base64'), blob });
     return json({ ok: true });

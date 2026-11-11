@@ -74,6 +74,7 @@ export const get = (id) => read(`config:${id}`);
 export async function set(id, value) {
   await write(`config:${id}`, value);
   memory.set(id, { value, at: Date.now() });
+  misses.delete(id);
 }
 
 // For /c/<id>.css: a config from memory, read again at most once a minute per instance, and the
@@ -81,12 +82,24 @@ export async function set(id, value) {
 // this instance refreshes it at once; on other instances an edit shows within the minute.
 const TTL = 60 * 1000;
 const memory = new Map(); // id → { value, at }; only configs that exist, so made-up ids can't fill it
+// Unknown ids are remembered for the same minute, so a dead link on a busy page asks the store once
+// a minute, not once a visit. Capped: the oldest goes first.
+// shortcut: a flood of different made-up ids still reaches the store once each; that needs a rate
+// limit on /c/* (Vercel → Firewall), not code here.
+const MAX_MISSES = 5000;
+const misses = new Map(); // id → at
 export async function getCached(id) {
   const kept = memory.get(id);
   if (kept && Date.now() - kept.at < TTL) return kept.value;
+  if (Date.now() - misses.get(id) < TTL) return null;
   try {
     const value = await get(id);
     if (value) memory.set(id, { value, at: Date.now() });
+    else {
+      misses.delete(id); // back of the line
+      misses.set(id, Date.now());
+      if (misses.size > MAX_MISSES) misses.delete(misses.keys().next().value);
+    }
     return value;
   } catch (err) {
     if (kept) return kept.value;

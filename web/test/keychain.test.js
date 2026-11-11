@@ -57,6 +57,7 @@ test('api/keys: create, read, replace, wrong auth looks like nothing, delete', a
   // someone who knows the id but not the auth can neither read, replace nor delete it
   assert.equal((await keys.GET(req(a.id, b.auth))).status, 404);
   assert.equal((await keys.PUT(req(a.id, b.auth, 'PUT', { blob: 'AAAA' }))).status, 404);
+  assert.equal((await keys.PUT(new Request(`https://x.test/api/keys?id=${a.id}`, { method: 'PUT', body: 'null', headers: { Authorization: `Bearer ${a.auth}` } }))).status, 400);
   assert.equal((await keys.DELETE(req(a.id, b.auth, 'DELETE'))).status, 404);
   assert.deepEqual(await (await keys.GET(req(a.id, a.auth))).json(), { blob });
 

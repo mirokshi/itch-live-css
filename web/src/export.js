@@ -5,10 +5,14 @@
 
 import { minify } from '../../engine/src/css.js';
 import { measure } from '../../engine/src/output.js';
-import { parallax, progress, reveal } from '../../engine/src/plugins/scroll.js';
+import * as motion from '../../engine/src/plugins/motion.js';
+import * as scroll from '../../engine/src/plugins/scroll.js';
 import { scheme } from '../../engine/src/plugins/scheme.js';
+import { TOGGLES } from './ideas.js';
 
-// form: the config the editor saves ({ page, title, greeting, foil, badges, ascii, scheme, reveal, progress, parallax, css }).
+const STATIC = { ...scroll, ...motion };
+
+// form: the config the editor saves ({ page, title, greeting, foil, badges, ascii, scheme, the TOGGLES, css }).
 // The scheme and scroll effects are static, so it is pasted with the user's CSS (after it: @import must stay first;
 // shortcut: the user's CSS no longer wins ties against it, when that matters split off the @imports).
 // → { mode: 'import', reason: 'effects' | 'size', bytes?, max? } | { mode: 'paste', css, bytes, max }
@@ -16,9 +20,7 @@ export function exportFor(form) {
   if (form.title || form.greeting || form.cards || form.foil || form.badges || form.ascii) return { mode: 'import', reason: 'effects' };
   const css = minify(form.css) + [
     form.scheme && scheme(),
-    form.reveal && reveal(),
-    form.progress && progress({ color: form.accent }),
-    form.parallax && parallax(),
+    ...TOGGLES.map((k) => form[k] && STATIC[k]({ color: form.accent })),
   ].filter(Boolean).flat().join('');
   const { bytes, limit, fits } = measure(css, form.page === 'profile' ? 'profile' : 'project');
   const max = limit?.max ?? null;
