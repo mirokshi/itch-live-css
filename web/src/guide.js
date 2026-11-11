@@ -1,5 +1,5 @@
 // The guide's chapters, from the Markdown in content/guia/ (only loaders import this: build time).
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { splitTitle } from './common.jsx';
 import { LANGS } from './i18n.js';
 
@@ -17,5 +17,6 @@ export const chapters = Object.fromEntries(
   ]),
 );
 
-// relative to the project: the build runs this from a bundle in build/, so import.meta.url is no help
-export const recipes = () => readdirSync('public/guia/recetas').sort();
+// relative to the project: the build runs this from a bundle in build/, so import.meta.url is no help;
+// the second path is for a dev server started from the repo root (.claude/launch.json)
+export const recipes = () => readdirSync(['public/guia/recetas', 'web/public/guia/recetas'].find(existsSync)).sort();

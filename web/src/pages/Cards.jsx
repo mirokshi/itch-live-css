@@ -2,7 +2,7 @@
 // Names and URLs in the showcase come from users: React escapes them, and links only point at the
 // itch.io addresses the API checked.
 
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CodeEditor } from '../CodeEditor.jsx';
 import { FONTS } from '../../lib/fonts.js';
 import { IDEA_PAGES, NO_PREVIEW, PREVIEW, TOGGLES } from '../ideas.js';
 import { CopyButton, Inline, Navbar, SavedThumb, Thumb } from '../common.jsx';
@@ -87,6 +86,9 @@ function IdeaThumb({ idea, sample, interactive }) {
   return <Thumb css={sample?.css ?? null} bio={`${sample?.bio ?? ''}${f.show ? '' : `<p>${t('ideas.sampleBio')}</p>`}${f.html ?? ''}`} {...f} scroll={interactive ? 0 : f.scroll} interactive={interactive} />;
 }
 
+// CodeMirror (~190 KB gzipped) loads when a code tab opens, not with every page that lists cards
+const CodeEditor = lazy(() => import('../CodeEditor.jsx').then((m) => ({ default: m.CodeEditor })));
+
 // read-only code (CodeMirror) with a copy button
 function CodeBox({ lang, label, text }) {
   const view = useRef(null);
@@ -96,7 +98,9 @@ function CodeBox({ lang, label, text }) {
         <Label className="font-bold">{label}</Label>
         <CopyButton get={() => text} />
       </div>
-      <div className="cm-tall"><CodeEditor lang={lang} label={label} value={text} viewRef={view} readOnly /></div>
+      <div className="cm-tall">
+          <Suspense fallback={<Skeleton className="h-[360px]" />}><CodeEditor lang={lang} label={label} value={text} viewRef={view} readOnly /></Suspense>
+        </div>
     </div>
   );
 }

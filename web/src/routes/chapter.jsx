@@ -1,6 +1,6 @@
 import i18n from '../i18n.js';
 import { chapters } from '../guide.js';
-import { Chapter } from '../pages/Content.jsx';
+import { Chapter } from '../pages/Chapter.jsx';
 
 export function loader({ request }) {
   const url = new URL(request.url).pathname.replace(/\/$|\.data$/, '');

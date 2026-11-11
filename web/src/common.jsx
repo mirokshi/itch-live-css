@@ -1,11 +1,9 @@
 // Pieces every page shares: the site menu with the language selector, inline formatting for the
-// texts in locales/, Markdown for the guide, and the page mock shrunk into a card (ideas, showcase,
+// texts in locales/ and the page mock shrunk into a card (ideas, showcase,
 // admin).
 
 import { useEffect, useRef, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
-import remarkGfm from 'remark-gfm';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -37,7 +35,7 @@ export function LanguageSelector({ links }) {
     else i18n.changeLanguage(l);
   };
   return (
-    <div className="mt-2">
+    <div>
       <Select value={i18n.language} onValueChange={choose}>
         <SelectTrigger size="sm" aria-label={t('lang.label')} className="w-auto">
           <SelectValue>{LANGS[i18n.language]}</SelectValue>
@@ -57,7 +55,7 @@ export function Navbar({ current, langLinks }) {
     <header className="sticky top-0 z-40 border-b bg-background md:h-14">
       <div className="flex flex-wrap items-center gap-x-6 gap-y-1 px-4 py-2 md:h-full md:flex-nowrap md:py-0">
         <a href="/" className="font-heading text-base font-semibold tracking-tight">itch-live-css</a>
-        <nav className="flex flex-wrap gap-x-4 gap-y-1 text-sm md:flex-nowrap" aria-label={t('nav.label')}>
+        <nav className="order-last flex basis-full flex-wrap gap-x-4 gap-y-1 text-sm md:order-none md:basis-auto md:flex-nowrap" aria-label={t('nav.label')}>
           {LINKS.map(([href, id]) => (
             <a key={href} href={href} aria-current={href === current ? 'page' : undefined}
               className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline aria-[current=page]:font-medium aria-[current=page]:text-foreground">
@@ -104,14 +102,6 @@ export function Inline({ text }) {
     return <em key={i}>{part.slice(1, -1)}</em>;
   });
 }
-
-// the guide's chapters: tables scroll sideways on phones; raw HTML is shown as text, never rendered
-const COMPONENTS = { table: ({ node, ...props }) => <div className="overflow-x-auto"><table {...props} /></div> };
-// ids: { line number: id } for the ## headings, so the side index can link to them
-export const Markdown = ({ children, ids }) => {
-  const components = ids ? { ...COMPONENTS, h2: ({ node, ...props }) => <h2 id={ids[node?.position?.start.line]} {...props} /> } : COMPONENTS;
-  return <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{children}</ReactMarkdown>;
-};
 
 // "# Title\n\nbody" → [title, body]
 export const splitTitle = (md) => {

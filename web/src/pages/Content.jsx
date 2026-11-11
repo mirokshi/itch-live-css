@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Inline, Markdown, Navbar } from '../common.jsx';
+import { Inline, Navbar } from '../common.jsx';
 
 // one centred column; long text set by the typography plugin
 export const Page = ({ children }) => <main className="mx-auto max-w-5xl px-4 pt-6 pb-12">{children}</main>;
@@ -85,8 +85,8 @@ export function WithToc({ items, children }) {
     </main>
   );
 }
-export const Title = ({ children }) => <h1 className="font-heading text-2xl font-semibold tracking-tight">{children}</h1>;
-const PROSE = 'prose mt-6 max-w-none prose-headings:scroll-mt-20 prose-p:max-w-[72ch] prose-li:max-w-[72ch] prose-code:before:content-none prose-code:after:content-none prose-pre:overflow-x-auto';
+export const Title = ({ children }) => <h1 className="font-heading text-2xl font-semibold tracking-tight text-balance">{children}</h1>;
+export const PROSE = 'prose mt-6 max-w-none prose-headings:scroll-mt-20 prose-headings:text-balance prose-p:max-w-[72ch] prose-li:max-w-[72ch] prose-code:before:content-none prose-code:after:content-none prose-pre:overflow-x-auto';
 
 function Items({ items }) {
   return (
@@ -141,25 +141,6 @@ export function Doc({ name, path }) {
           </section>
         ))}
       </div>
-    </WithToc>
-    </>
-  );
-}
-
-// prev, next: { href, label } or null; links: the same chapter in each language
-export function Chapter({ md, prev, next, links }) {
-  const { t } = useTranslation();
-  const headings = headingsOf(md);
-  return (
-    <>
-    <Navbar current="/guia/" langLinks={links} />
-    <WithToc items={headings}>
-      <article className={PROSE}><Markdown ids={Object.fromEntries(headings.map((h) => [h.line, h.id]))}>{md}</Markdown></article>
-      <nav className="mt-8 flex flex-wrap justify-between gap-3 text-sm" aria-label={t('guide.steps')}>
-        {prev && <a className="underline underline-offset-4" href={prev.href}>{prev.label}</a>}
-        {next && <a className="underline underline-offset-4" href={next.href}>{next.label}</a>}
-      </nav>
-      <p className="mt-6 text-sm text-muted-foreground">{t('guide.foot')}</p>
     </WithToc>
     </>
   );
