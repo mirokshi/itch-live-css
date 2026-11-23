@@ -1,7 +1,9 @@
 // Validator: checks CSS against the knowledge base's rules (knowledge/itch-custom-css.md §0, R1–R24).
 // Each problem carries its rule id, so the reason and the evidence are one lookup away.
-// So far the cheap ones: R2–R4, R7–R10, R11 (only its ad-block part, ROADMAP H8), R12, R14 (outline
-// and animated properties), R15, R16, R18, R23.
+// So far the cheap ones: R2–R4, R5 (hiding or relabelling itch's UI, and the External-link badge;
+// covering and moving need the rendered page), R6 (url() beacons and [value] selectors; fake controls
+// need a person), R7–R10, R11 (only its ad-block part, ROADMAP H8), R12, R14 (outline and animated
+// properties), R15, R16, R18, R23.
 //
 // The rules are a PostCSS plugin, itchRules(): one visitor per node type, with Once/OnceExit for the
 // rules that need the whole sheet. validate() runs it over the tolerant parser, so problems still
@@ -11,7 +13,7 @@ import postcss from 'postcss';
 import safeParser from 'postcss-safe-parser';
 import { measure } from './output.js';
 import MESSAGES from './messages.json' with { type: 'json' };
-import { AD_BLOCKED, KEYFRAMES_PREFIX } from './rules.js';
+import { AD_BLOCKED, ITCH_UI, KEYFRAMES_PREFIX } from './rules.js';
 
 // The English text of a problem: messages.json[code] with its {{params}} filled in. The web shows the
 // same code in the viewer's language (its locales use the same keys and placeholders).
@@ -26,17 +28,40 @@ const GROUPS = new Set(['media', 'supports', 'container', 'layer', 'starting-sty
 
 const KEYFRAMES = /^(-webkit-)?keyframes$/i;
 const AD_CLASS = new RegExp(`\\.((?:${AD_BLOCKED.join('|')})[\\w-]*)`, 'g');
+const UI = new RegExp(`(${ITCH_UI.map((s) => s.replace('.', '\\.')).join('|')})(?![\\w-])`);
+
+// R5: declarations that hide an element (values lowercased)
+const ZERO = /^0+(\.0*)?[a-z%]*$/;
+const HIDES = new Map(Object.entries({
+  display: /^none$/,
+  visibility: /^(hidden|collapse)$/,
+  opacity: /^(0+(\.0*)?|\.0+)%?$/,
+  'font-size': ZERO,
+  color: /^transparent$/,
+  'clip-path': /^(inset\(\s*50%|circle\(\s*0)/,
+  transform: /\bscale[xy]?\(\s*0(\.0*)?%?\s*[,)]/,
+  scale: /^0(\.0*)?%?(\s|$)/,
+  height: ZERO,
+  'max-height': ZERO,
+  width: ZERO,
+  'max-width': ZERO,
+}));
+// a non-empty string: text that replaces or adds to a label
+const LABEL = /"[^"]*\S[^"]*"|'[^']*\S[^']*'/;
+// R6: states a visitor causes, so a url() loaded only there reports them (:visited can't load anything)
+const INTERACTION = /:(hover|active|focus(-visible|-within)?|checked|target|valid|invalid|placeholder-shown|autofill)(?![\w-])/i;
 
 // Where a style rule sits: null if it isn't one (a keyframe, or inside @font-face, @scope…).
 // nested: inside another style rule, so its selectors are relative. reduced, hover: inside
 // @media (prefers-reduced-motion:reduce) or @media (hover:hover).
 function context(node) {
-  const ctx = { nested: false, reduced: false, hover: false };
+  const ctx = { nested: false, reduced: false, hover: false, starting: false };
   for (let p = node.parent; p && p.type !== 'root'; p = p.parent) {
     if (p.type === 'rule') ctx.nested = true;
     else if (p.type === 'atrule' && GROUPS.has(p.name.toLowerCase())) {
       ctx.reduced ||= /prefers-reduced-motion\s*:\s*reduce/i.test(p.params);
       ctx.hover ||= p.name.toLowerCase() === 'media' && /\(\s*(any-)?hover\s*(:\s*hover\s*)?\)/i.test(p.params);
+      ctx.starting ||= p.name.toLowerCase() === 'starting-style';
     } else return null;
   }
   return ctx;
@@ -53,6 +78,45 @@ const statement = (at) => `@${at.name}${at.raws.afterName ?? ' '}${at.params}`.t
 // the values of every url(...) in a text, quoted or not
 const urls = (text) =>
   [...text.matchAll(/url\(\s*(?:"([^"]*)"|'([^']*)'|([^)'"\s]*))\s*\)/gi)].map((m) => m[1] ?? m[2] ?? m[3]);
+
+// the selectors of the rules a nested rule sits in, outermost first
+function ancestors(rule) {
+  let s = '';
+  for (let p = rule.parent; p; p = p.parent) if (p.type === 'rule') s = `${p.selector} ${s}`;
+  return s;
+}
+
+// a selector without strings, attribute selectors and :not(…), which don't name what it targets
+const plain = (sel) =>
+  sel.replace(/"[^"]*"|'[^']*'/g, '').replace(/\[[^\]]*\]/g, '').replace(/:not\((?:[^()]|\([^()]*\))*\)/gi, '');
+
+// the last compound of a selector: the element (or pseudo-element) it styles
+function target(sel) {
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < sel.length; i++) {
+    const c = sel[i];
+    if (c === '(' || c === '[') depth++;
+    else if (c === ')' || c === ']') depth--;
+    else if (!depth && /[\s>+~]/.test(c)) start = i + 1;
+  }
+  return sel.slice(start);
+}
+
+// R5: the first declaration that hides or relabels; pseudo: the selector styles a ::before/::after
+function hiding(decls, pseudo) {
+  const clipped = decls.some((d) => /^(-webkit-)?background-clip$/i.test(d.prop) && /\btext\b/i.test(d.value));
+  return decls.find((d) => {
+    const prop = propOf(d);
+    const value = d.value.trim().toLowerCase();
+    if (prop === 'content') return pseudo ? LABEL.test(d.value) : !/^(none|normal)$/.test(value);
+    // gradient text paints through a transparent colour
+    return !pseudo && !!HIDES.get(prop)?.test(value) && !(prop === 'color' && clipped);
+  });
+}
+
+// R5: on project pages itch's "External link" warning is the ::after of outbound links in descriptions
+const badge = (t) => /::?after$/i.test(t) && /^(a(?![\w-])|\[rel)/i.test(t) && !/:not\(\s*\[rel/i.test(t);
 
 // @import's params: url("x") / "x" → x
 const importUrl = (params) => (/^url\(/i.test(params) ? urls(params)[0] : /^(["'])(.*?)\1/.exec(params)?.[2]);
@@ -83,6 +147,8 @@ export function itchRules({ page, served = false } = {}) {
       const frozen = new Map();
       const ungated = new Map();
       const hovers = new Map();
+      const beacons = new Map();
+      const loaded = new Set();
       const seen = new Set();
       const first = (map, key, node) => map.has(key) || map.set(key, node);
       const relativeUrls = (text, node) => {
@@ -172,6 +238,33 @@ export function itchRules({ page, served = false } = {}) {
             }
           }
 
+          // R5 and R6 read each selector with its ancestors'
+          const outer = ancestors(rule);
+          let hidden = ctx.starting; // @starting-style is where a transition starts, not where it ends
+          for (const sel of rule.selectors) {
+            const full = plain(`${outer} ${sel}`);
+            const ui = !hidden && UI.exec(full)?.[1];
+            const bad = ui && hiding(decls, /::|:(before|after|first-line|first-letter)\b/i.test(target(sel)));
+            if (bad) {
+              hidden = true;
+              add('R5', 'warning', 'R5.hide', { decl: short(`${bad.prop}:${bad.value}`), ui }, bad);
+            }
+            if (page === 'project' && badge(target(sel))) add('R5', 'warning', 'R5.badge', { sel: short(sel) }, rule, { word: sel });
+            if (/\[\s*value\b/i.test(`${outer} ${sel}`.replace(/"[^"]*"|'[^']*'/g, ''))) {
+              add('R6', 'warning', 'R6.field', { sel: short(sel) }, rule, { word: sel });
+            }
+          }
+          // R6: a url() that loads only on interaction tells its server; reported in OnceExit unless the
+          // same URL also loads without one (then it's already cached)
+          const interactive = rule.selectors.every((s) => INTERACTION.test(plain(`${outer} ${s}`))) && rule.selectors[0];
+          for (const d of decls) {
+            for (const url of urls(d.value)) {
+              if (/^data:/i.test(url)) continue;
+              if (interactive) first(beacons, url, { node: d, sel: interactive });
+              else loaded.add(url);
+            }
+          }
+
           // R11, R12 and R18 collect here and report once per sheet
           for (const sel of rule.selectors) {
             const s = sel.replace(/\s+/g, ' ');
@@ -238,6 +331,9 @@ export function itchRules({ page, served = false } = {}) {
             add('R14', 'warning', 'R14.frozen', { prop }, node);
           }
           // R18: on touch screens a tap leaves :hover stuck; keyboard users need the same effect on focus
+          for (const [url, { node, sel }] of beacons) {
+            if (!loaded.has(url)) add('R6', 'warning', 'R6.beacon', { url: short(url), sel: short(sel) }, node, { word: url });
+          }
           for (const [s, node] of ungated) {
             add('R18', 'warning', 'R18.gate', { sel: short(s) }, node);
           }

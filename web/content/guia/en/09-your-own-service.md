@@ -25,10 +25,26 @@ You don't need it if everything you use can be pasted. The editor tells you: if 
    ![The editor's "For itch" card with the Download config.json button](/guia/img/09-download-button.webp)
 
 2. **Fork the** `itch-live-css` **repository** on GitHub (the *Fork* button). You get your own copy.
+
+   ![The repository header on GitHub with the Fork menu open and its Create a new fork option](/guia/img/09-github-fork.webp)
+
 3. **Upload your design.** In your fork, open the `service/` folder, click *Add file → Upload files*, drop your `config.json` (it replaces the example) and click *Commit changes*.
+
+   ![The service/ folder on GitHub with the Add file menu open: Create new file and Upload files](/guia/img/09-github-upload.webp)
+
 4. **Create the Vercel project.** *Add New → Project*, import your fork and, under **Root Directory**, pick `service`. Click *Deploy*.
+
+   ![Vercel's New Project screen importing the repository, with Root Directory set to service and Application Preset to Other](/guia/img/09-vercel-root-directory.webp)
+
 5. **Check that it serves.** Open `https://<your-project>.vercel.app/live.css`: you should see CSS. If you see a comment that starts with `/* config.json:`, the rest says which field is wrong.
 6. **Optional: your games' figures.** On itch: *Settings → API keys → Generate new API key*, and copy the key. [S1] On Vercel: your project → *Settings → Environment Variables* → name `ITCH_API_KEY`, value the key. Then *Deployments* → the latest → *Redeploy* (variables only reach new deployments). Without a key, the cards get the foil border, without figures.
+
+   ![itch's account settings, API keys section, with the Generate new API key button](/guia/img/09-itch-api-keys.webp)
+
+   ![Vercel's Add Environment Variable panel with the key ITCH_API_KEY and the Secret type selected](/guia/img/09-vercel-env.webp)
+
+   *Pick the Secret type: it is a key. The value in the capture is made up.*
+
 7. **Paste the link into itch.** In your page's CSS field, as the **first line**:
 
    ```css
@@ -36,6 +52,11 @@ You don't need it if everything you use can be pasted. The editor tells you: if 
    ```
 
    Nothing may come before it: a rule ahead of the `@import` silently cancels it. [S2] On a profile, only that line counts toward the 5,120-byte cap. [S3]
+
+   ![itch's Edit CSS window with an @import on the first line](/guia/img/09-itch-css-field.webp)
+
+   *itch's Edit CSS window, opened from Edit theme → Custom CSS. The capture shows the public site's link; with your service, you paste your own.*
+
 8. **Paste the bio.** If you use the title or the greeting, open `https://<your-project>.vercel.app/api/bio` and copy what it shows into your bio: it's the HTML the effects hook into.
 9. **Look at your page logged out**, in a private window, a few minutes after saving: itch serves visitors a cached copy for a few minutes, while you, logged in, always see the latest. [S4]
 

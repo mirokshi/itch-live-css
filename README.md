@@ -53,7 +53,8 @@ knowledge/
   probes/                   live probe kit for account owners (payloads, read-back script, cap procedure)
   method/                   how the knowledge base was built (workflow scripts, the original open questions)
 engine/                     the engine (in progress): config → CSS, pasted or served, a size check and a validator; npm test inside it
-service/                    run your own copy of the per-visit service on your Vercel account (see its README)
+service/                    run your own copy of the per-visit service on your Vercel account; published on its own as
+                            mirokshi/itch-live-css-service, the small repo users fork (see its README)
 ROADMAP.md                  product plan (Spanish)
 ```
 

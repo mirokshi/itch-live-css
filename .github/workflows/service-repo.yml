@@ -1,0 +1,55 @@
+# Keeps mirokshi/itch-live-css-service, the small repository users fork to run their own service,
+# in step with this one: service/publish.mjs builds it, a smoke test serves /live.css from the copy,
+# and only then is it pushed. Needs the secret SERVICE_REPO_TOKEN: a fine-grained token with
+# Contents: Read and write on that repository only. Without it, the job stops at the second checkout.
+name: service-repo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'service/**'
+      - 'engine/src/**'
+      - 'engine/package.json'
+      - 'engine/package-lock.json'
+      - 'web/lib/**'
+      - 'web/src/ideas.js'
+      - 'LICENSE'
+      - '.github/workflows/service-repo.yml'
+  workflow_dispatch:
+
+concurrency: service-repo
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: mirokshi/itch-live-css-service
+          token: ${{ secrets.SERVICE_REPO_TOKEN }}
+          path: out
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build the small repo
+        run: node service/publish.mjs out
+      - name: Smoke test (the copy serves /live.css on its own)
+        working-directory: out
+        run: |
+          npm ci --no-audit --no-fund
+          node --input-type=module -e "
+            const res = await (await import('./api/live.js')).GET();
+            const css = await res.text();
+            if (res.status !== 200 || !css.includes('custom-title')) { console.error(res.status, css.slice(0, 300)); process.exit(1); }
+            console.log('ok', css.length, 'bytes');"
+      - name: Push if anything changed
+        working-directory: out
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then echo 'nothing to sync'; exit 0; fi
+          git commit -m "Sync from ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
+          git push

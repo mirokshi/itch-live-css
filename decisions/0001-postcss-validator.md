@@ -81,8 +81,8 @@ Leyenda de la columna «Con PostCSS»:
 | R2 | Los selectores empiezan por `#wrapper` | Árbol | sí | `rule.selectors` sustituye al separador de comas. |
 | R3 | Variables en `#wrapper`, no en `:root`/`html` | Árbol | sí | |
 | R4 | Nada de `background` abreviado en `#wrapper` | Árbol | sí | |
-| R5 | No ocultar ni tapar la interfaz de itch | Parcial | – | Árbol: `display:none`, `visibility`, `opacity:0` y `content` sobre los selectores de la lista (`.footer`, `#user_tools`…). «Tapar» y «mover» necesitan la página renderizada. |
-| R6 | No engañar ni rastrear | Parcial | – | Árbol: `url()` dentro de reglas `:hover`/`:checked`/`:focus` y selectores `input[value…]` (patrones de baliza por CSS). Los controles falsos necesitan a una persona. |
+| R5 | No ocultar ni tapar la interfaz de itch | Parcial | parcial (aviso) | Árbol (hecho 2026-11-23): `display:none`, `visibility`, `opacity:0`, `font-size:0`, `color:transparent`, `clip-path`, `scale(0)`, tamaños a 0 y `content` en selectores que contienen la lista `ITCH_UI` (`.footer`, `#user_tools`, `.buy_row`…), y `::after` en enlaces de proyectos (insignia «External link»). «Tapar» y «mover» necesitan la página renderizada. |
+| R6 | No engañar ni rastrear | Parcial | parcial (aviso) | Árbol (hecho 2026-11-23): `url()` que solo carga en un estado de interacción (`:hover`, `:focus`, `:checked`…) y no en otro sitio de la hoja, y selectores `[value…]`. Los controles falsos necesitan a una persona. |
 | R7 | Límite de tamaño | Texto | sí | `measure()`, sin cambios. |
 | R8 | Nada de `<style>` ni `</style>` | Texto | sí | Sin cambios. |
 | R9 | `@import` primero y en el nivel superior | Árbol | sí | Por el orden de `root.nodes`. |
@@ -105,7 +105,7 @@ Leyenda de la columna «Con PostCSS»:
 **Totales:**
 - 11 reglas se comprueban del todo con el árbol (10 hechas; falta R22);
 - 2 se comprueban sobre el texto (las dos hechas);
-- 7 se comprueban en parte (R10 y R11 están en parte hechas);
+- 7 se comprueban en parte (R5, R6, R10 y R11 están en parte hechas);
 - 4 no se pueden comprobar desde el CSS.
 
 PostCSS cambia **cómo** leen el CSS las reglas, no **cuáles** se pueden comprobar: las 4 marcadas «No» quedan fuera de alcance con cualquier parser de CSS.
@@ -202,4 +202,4 @@ Se valoró generar las comprobaciones desde el archivo principal y se descartó:
    - añadir `itchRules()` y el problema `syntax`.
 3. [ ] `engine/src/rules.js` con las constantes respaldadas por evidencia y sus ids de evidencia, y el test de comprobación cruzada con §0.
 4. [ ] `web/vercel.json`: un `installCommand` que también instale `engine/`.
-5. [ ] Tareas posteriores, fuera de este cambio: R22, y después las partes comprobables de R5, R17 y R21.
+5. [ ] Tareas posteriores, fuera de este cambio: R22, y después las partes comprobables de R17 y R21 (las de R5 y R6 están hechas desde el 2026-11-23, como avisos).

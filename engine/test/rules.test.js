@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { LIMITS, SOURCES } from '../src/rules.js';
+import { ITCH_UI, LIMITS, SOURCES } from '../src/rules.js';
 
 const md = readFileSync(new URL('../../knowledge/itch-custom-css.md', import.meta.url), 'utf8').replace(/\r/g, '');
 const start = md.indexOf('## 0.');
@@ -28,6 +28,12 @@ test("each rules.js constant's fact ids appear in its rule's text", () => {
     assert.ok(RULES[rule], `${name}: ${rule} is not in §0`);
     for (const fact of facts) assert.ok(RULES[rule].includes(fact), `${name}: ${fact} is not in ${rule}`);
   }
+});
+
+test('every ITCH_UI selector is named in sections 02 or 03', () => {
+  const read = (name) => readFileSync(new URL(`../../knowledge/sections/${name}`, import.meta.url), 'utf8');
+  const sections = read('02-rules-and-policy.md') + read('03-page-anatomy.md');
+  for (const sel of ITCH_UI) assert.ok(sections.includes(sel), `${sel} is not in sections 02 or 03`);
 });
 
 test("R7's caps match the numbers in its text", () => {

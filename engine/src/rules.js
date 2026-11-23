@@ -16,8 +16,24 @@ export const AD_BLOCKED = ['custom-ad', 'custom-social', 'custom-share', 'custom
 // Prefix every @keyframes name needs, so it can't replace one of itch's global animations.
 export const KEYFRAMES_PREFIX = 'custom-';
 
+// itch's own UI, which CSS may restyle but never hide or relabel: footers, site headers, user tools,
+// dialogs, buy/download rows and buttons, files, prices, "More information" and the click-to-activate
+// placeholder. The header, tools and dialogs sit outside #wrapper, so R2 flags them too. Every name is
+// in sections 02 and 03 (test/rules.test.js checks it).
+export const ITCH_UI = [
+  '.footer', '#view_game_footer', '.itch_footer',
+  '.header_widget', '.primary_header', '.game_header_widget', '.jam_layout_header_widget', '#user_tools',
+  '#lightbox_container',
+  '.buy_row', '.header_buy_row', '.direct_download_row', '.bundle_row', '.donate',
+  '.buy_btn', '.download_btn', '.direct_download_btn', '.donate_btn', '.upload', '.upload_list_widget',
+  '.price_tag', '.price_value', '.dollars',
+  '.more_information_toggle', '.info_panel_wrapper', '.game_info_panel_widget',
+  '.embed_preload',
+];
+
 export const SOURCES = {
   LIMITS: { rule: 'R7', facts: ['live-cap-A1', 'live-cap-A2c', 'live-cap-B1', 'live-cap-B2', 'crawljam-29'] },
+  ITCH_UI: { rule: 'R5', facts: ['docs-10', 'docs-11', 'docs-12', 'community-23', 'community-24', 'itchcss-46', 'crawljam-24'] },
   AD_BLOCKED: { rule: 'R11', facts: ['docs-34', 'sanitizer-05', 'gapfill05-06', 'external-30', 'x08-07'] },
   KEYFRAMES_PREFIX: { rule: 'R16', facts: ['s06-static', 's06-kf'] },
 };

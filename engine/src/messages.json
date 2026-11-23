@@ -9,6 +9,14 @@
   "R4": {
     "background": "\"{{sel}}\" uses the background shorthand, which wipes the creator's background image: use background-* longhands (B3)"
   },
+  "R5": {
+    "hide": "{{decl}} hides or relabels {{ui}}, part of itch's own UI: restyle it (colour, font, radius) but keep it visible and readable; altering it can cost you CSS access",
+    "badge": "\"{{sel}}\" also hits outbound links, whose ::after is itch's \"External link\" warning: add :not([rel~=nofollow]) to the link"
+  },
+  "R6": {
+    "beacon": "url({{url}}) only loads when a visitor interacts with \"{{sel}}\", so its server learns what they did: load the same URL without the interaction too, or use data:",
+    "field": "\"{{sel}}\" selects on a field's value, a known way to leak what visitors type"
+  },
   "R7": {
     "cap": "{{bytes}} bytes, over the {{page}} cap of {{max}}: itch refuses the save",
     "jam": "{{chars}} characters, past the {{max}} known to save on a jam"

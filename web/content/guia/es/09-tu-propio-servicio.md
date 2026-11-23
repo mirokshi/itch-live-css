@@ -25,10 +25,26 @@ No lo necesitas si todo lo que haces se puede pegar. El editor te lo dice: si la
    ![La tarjeta «Para itch» del editor con el botón Descargar config.json (en la captura, la web está en inglés)](/guia/img/09-download-button.webp)
 
 2. **Haz un fork del repositorio** `itch-live-css` en GitHub (botón *Fork*). Tendrás tu propia copia.
+
+   ![Cabecera del repositorio en GitHub con el botón Fork abierto y la opción Create a new fork](/guia/img/09-github-fork.webp)
+
 3. **Sube tu diseño.** En tu fork, entra en la carpeta `service/`, pulsa *Add file → Upload files*, arrastra tu `config.json` (sustituye al de ejemplo) y pulsa *Commit changes*.
+
+   ![La carpeta service/ en GitHub con el menú Add file abierto: Create new file y Upload files](/guia/img/09-github-upload.webp)
+
 4. **Crea el proyecto en Vercel.** *Add New → Project*, importa tu fork y, en **Root Directory**, elige `service`. Pulsa *Deploy*.
+
+   ![Pantalla New Project de Vercel importando el repositorio, con Root Directory en service y Application Preset en Other](/guia/img/09-vercel-root-directory.webp)
+
 5. **Comprueba que sirve.** Abre `https://<tu-proyecto>.vercel.app/live.css`: tienes que ver CSS. Si ves un comentario que empieza por `/* config.json:`, el resto dice qué campo está mal.
 6. **Opcional, las cifras de tus juegos.** En itch: *Settings → API keys → Generate new API key* y copia la clave. [S1] En Vercel: tu proyecto → *Settings → Environment Variables* → nombre `ITCH_API_KEY`, valor la clave. Después, *Deployments* → el último → *Redeploy* (las variables solo entran en despliegues nuevos). Sin clave, las tarjetas llevan el borde foil, sin cifras.
+
+   ![Ajustes de la cuenta de itch, apartado API keys, con el botón Generate new API key](/guia/img/09-itch-api-keys.webp)
+
+   ![Panel Add Environment Variable de Vercel con la clave ITCH_API_KEY y el tipo Secret marcado](/guia/img/09-vercel-env.webp)
+
+   *Elige el tipo Secret: es una clave. El valor de la captura es inventado.*
+
 7. **Pega el link en itch.** En el campo de CSS de tu página, como **primera línea**:
 
    ```css
@@ -36,6 +52,11 @@ No lo necesitas si todo lo que haces se puede pegar. El editor te lo dice: si la
    ```
 
    Nada puede ir delante: una regla antes del `@import` lo anula sin avisar. [S2] En el perfil, solo esa línea cuenta para el tope de 5.120 bytes. [S3]
+
+   ![La ventana Edit CSS de itch con una línea @import en la primera línea](/guia/img/09-itch-css-field.webp)
+
+   *La ventana Edit CSS de itch, que se abre desde Edit theme → Custom CSS. En la captura está el link de la web pública; con tu servicio, pegas el tuyo.*
+
 8. **Pega la bio.** Si usas el título o el saludo, abre `https://<tu-proyecto>.vercel.app/api/bio` y copia lo que sale en tu bio: es el HTML al que se enganchan los efectos.
 9. **Mira tu página sin sesión**, en una ventana privada, unos minutos después de guardar: itch sirve a los visitantes una copia en caché durante unos minutos; tú, con sesión, ves siempre lo último. [S4]
 

@@ -22,8 +22,8 @@ web/.data/
 HANDOFF.md
 .claude/settings.local.json
 
-# Guía de pago "CSS para itch.io": borrador privado, no se publica con el repo
-guia-paga/
+# Fuente de la guía "CSS para itch.io": se edita aquí y build-web.mjs la copia a web/content/guia y web/public/guia
+/guia/
 
 # Notas locales: ajustes de Obsidian y plantillas/ADRs de trabajo
 .obsidian/

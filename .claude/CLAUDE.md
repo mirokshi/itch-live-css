@@ -51,7 +51,7 @@ engine/                      phase 1, started 2026-10-24: render() (served) and 
                              scroll.js (reveal, stagger, unveil, progress, parallax, zoom, shrink: scroll-driven) and motion.js (entrance,
                              lift, tilt = native random(), pagefade = @view-transition): static, pasted, each an /ideas page and an
                              editor checkbox, listed once as TOGGLES in web/src/ideas.js (2026-11-10), test/mirokshi.js + .css = the owner's profile,
-                             importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R4, R7–R12, R14–R16, R18, R23 so far)
+                             importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R12, R14–R16, R18, R23 so far; R5, R6, R10, R11 in part)
                              = the PostCSS plugin itchRules() over postcss-safe-parser, plus a "syntax" problem from the strict
                              parser; problems carry line/column and a code + params (English text in src/messages.json, the
                              web translates by code); src/rules.js = evidence-backed constants (caps, ad-block
@@ -79,8 +79,8 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              what to take to itch: the user's CSS minified to paste (profile ≤ 5,120 bytes, game page and devlog
                              always), else the @import link (bigger profile CSS, or any per-visit effect); saving is optional
                              when pasting; the effects panel opens only from the ideas pages (/?idea=<key>); docs and privacy (locales/) stay in step with the knowledge base by hand; ideas pages: /ideas and /ideas/<key> (routes/idea.jsx);
-                             content/guia/{es,en}/*.md = the guide, rendered with react-markdown + remark-gfm (copies of the private guia-paga/{es,en}/*.md; edit there, then `node guia-paga/build-web.mjs`
-                             copies the chapters and the recipes); public/ = the mocks, guia/recetas/ and guia/img/ (screenshots by guia-paga/shots.mjs)
+                             content/guia/{es,en}/*.md = the guide, rendered with react-markdown + remark-gfm (copies of the private guia/{es,en}/*.md; edit there, then `node guia/build-web.mjs`
+                             copies the chapters and the recipes); public/ = the mocks, guia/recetas/ and guia/img/ (screenshots by guia/shots.mjs)
                              (copied as they are); api/ (preview,
                              configs with secret edit key, keys = an encrypted copy of a user's edit keys (opaque blob: the browser
                              derives lookup id, auth and AES key from email + password, src/keychain.js; page /claves "Mis claves" (routes/keys.jsx)
@@ -99,7 +99,10 @@ service/                     (2026-11-23) template to run your own copy of the s
                              Directory service): api/live.js = /live.css from config.json (the form the editor's "Download
                              config.json" gives) through web/lib/config.js check() + build(), itch data with the user's own
                              ITCH_API_KEY, fonts inlined; api/bio.js = /api/bio, the bio HTML; tested by web/test/service.test.js;
-                             users' guide = guide chapter 09 (guia-paga/{es,en}/09-*.md)
+                             users' guide = guide chapter 09 (guia/{es,en}/09-*.md); publish.mjs <dir> builds the small repo
+                             users fork, mirokshi/itch-live-css-service (30 files: service at the root, lib/ = the web/lib files,
+                             engine/ = engine/src, imports rewritten and checked), pushed by .github/workflows/service-repo.yml
+                             (secret SERVICE_REPO_TOKEN) after a smoke test
 .github/workflows/watch.yml  hourly check of the owner's /c/SovP42id.css (200, text/css, < 3 s, effects + itch data + own CSS);
                              daily smoke check (one GET) that the logged-out profile still has the markup that CSS selects
 .claude/launch.json          preview servers: knowledge-tests (8090), knowledge-tests-xorigin (8091), web (3001) and engine-dev (3000)

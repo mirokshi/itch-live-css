@@ -21,6 +21,51 @@ test('R2: every style rule starts with #wrapper, also in @media, @supports and @
   assert.deepEqual(rules('#wrapper::before{content:"};a{"}/* b{} */#wrapper{background-image:url(data:x;{)}'), []);
 });
 
+test("R5: never hide or relabel itch's UI; restyling it is fine", () => {
+  for (const css of [
+    '#wrapper .footer{display:none}',
+    '#wrapper .footer a{opacity:0}', // the selector only has to contain the UI
+    '#wrapper .left_col:has(.buy_row){visibility:hidden}',
+    '#wrapper .price_value{font-size:0}',
+    '#wrapper .more_information_toggle{transform:scale(0,1)}',
+    '#wrapper .embed_preload{clip-path:inset(50%)}',
+    '#wrapper .buy_btn::after{content:"Free!"}', // relabel
+    '#wrapper .footer{& a{color:transparent}}', // nested
+  ]) assert.deepEqual(rules(css), ['R5'], css);
+  assert.deepEqual(rules('#user_tools{display:none}'), ['R2', 'R5']);
+  assert.deepEqual(rules('#wrapper .footer{display:none;opacity:0}#wrapper .x,#wrapper .buy_row{display:none}'), ['R5', 'R5']);
+  for (const css of [
+    '#wrapper .footer{color:#999;opacity:.8}#wrapper .footer a{color:inherit}',
+    '#wrapper .price_value{color:transparent;background-clip:text;background-image:linear-gradient(red,blue)}',
+    '#wrapper .buy_btn::before{content:"";display:none}', // its own pseudo-element
+    '#wrapper .game_cell:not(.footer){display:none}#wrapper .footer_x{display:none}',
+    '#wrapper .footer{transition:opacity .3s;@starting-style{opacity:0}}@starting-style{#wrapper .footer{opacity:0}}',
+  ]) assert.deepEqual(rules(css), [], css);
+});
+
+test('R5: leave the External-link badge (::after on outbound links) alone on project pages', () => {
+  assert.deepEqual(rules('#wrapper .formatted_description a::after{content:"*"}'), ['R5']);
+  assert.deepEqual(rules('#wrapper a[rel~=nofollow]:focus-visible::after{color:red}'), ['R5']);
+  assert.deepEqual(rules('#wrapper .user_formatted a:not([rel~=nofollow])::after{content:"*"}'), []);
+  assert.deepEqual(rules('#wrapper *::after{animation:none}#wrapper .game_cell::after{content:""}'), []);
+  assert.deepEqual(rules('#wrapper .user_profile a::after{content:"*"}', 'profile'), []); // no badge there
+});
+
+test('R6: no url() that loads only on interaction, no [value] selectors', () => {
+  assert.deepEqual(rules('#wrapper .x:hover{background-image:url(https://x.test/h.png)}'), ['R6', 'R18', 'R18']);
+  assert.deepEqual(rules('@media (hover:hover){#wrapper .x:hover,#wrapper .x:focus-visible{background:url(https://x.test/h.png)}}'), ['R6']);
+  assert.deepEqual(rules('#wrapper input:checked{& + label{background-image:url("https://x.test/c")}}'), ['R6']);
+  assert.deepEqual(rules('#wrapper input[value$="a"]{color:red}'), ['R6']);
+  // the same URL loads up front, so it's cached; data: makes no request; a static selector loads it anyway
+  for (const css of [
+    '#wrapper .x{background-image:url(https://x.test/h.png)}#wrapper .x:focus-visible{background-image:url(https://x.test/h.png)}',
+    '#wrapper .x:focus-visible{background-image:url(data:image/png;base64,AA)}',
+    '#wrapper .x,#wrapper .x:focus-visible{background-image:url(https://x.test/h.png)}',
+    '#wrapper .x:not(:focus-visible){background-image:url(https://x.test/h.png)}',
+    '#wrapper [title="[value"]{color:red}',
+  ]) assert.deepEqual(rules(css), [], css);
+});
+
 test('R8: no <style> tags, even in comments and strings', () => {
   assert.deepEqual(rules('#wrapper{}</STYLE >'), ['R8']);
   assert.deepEqual(rules('/* </style> */#wrapper{}'), ['R8']);

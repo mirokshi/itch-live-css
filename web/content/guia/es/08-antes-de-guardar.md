@@ -92,7 +92,7 @@ De la base de conocimiento de itch-live-css, `knowledge/itch-custom-css.md` §1,
 - **S1** Límites de tamaño, bytes, recorte, saltos de línea: verificado 2026-10-16 · live-cap-A1, live-cap-A2c, live-cap-A3a a live-cap-A3c, live-cap-B1, live-cap-B2.
 - **S2** Límite de jam: documentado · crawljam-29; inferido · gapfill01-03. No medido, según §1.
 - **S3** Reglas R2, R4, R8, R9, R12, R14, R16, R18: ver las fuentes del capítulo 2.
-- **S4** Validador: `engine validate()` cubre R2–R4, R7–R12, R14–R16, R18 y R23 por ahora (notas del proyecto). No comprueba la accesibilidad ni la página renderizada.
+- **S4** Validador: `engine validate()` cubre R2–R12, R14–R16, R18 y R23 por ahora (R5, R6, R10 y R11 en parte) (notas del proyecto). No comprueba la accesibilidad ni la página renderizada.
 - **S5** Comprobación del CSS servido: verificado · crawlprofile-58 (un GET sin `-L`, leyendo `style#custom_css`).
 - **S6** Vista del propietario y comprobaciones sin sesión: observado · crawlprofile-43, a11y-21; verificado · s10-17 (hace falta una página renderizada en vivo con los scripts de itch).
 - **S7** Anillos de foco en las paradas de Tab: verificado · s04-gf-02, s04-gf-06, s04-gf-16.

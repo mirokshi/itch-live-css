@@ -144,7 +144,7 @@ Primera versión: **perfil y proyecto** (decidido 2026-10-24); jam y devlog desp
 | Riesgo | Mitigación |
 |---|---|
 | itch cambia su DOM o sus estilos sin avisar | Rastreador de humo (fase 0); preferir los selectores documentados; versionar el mapa de páginas. |
-| Un usuario pierde el acceso al CSS por romper las normas | El validador bloquea R5 y R6 (UI, pie de página, engaños); nada que oculte o imite controles. |
+| Un usuario pierde el acceso al CSS por romper las normas | El validador avisa de R5 y R6 (ocultar o renombrar la UI y el pie, la insignia «External link», balizas `url()` y selectores `[value]`); tapar, mover o imitar controles no se ve en el CSS y lo revisa una persona. |
 | El servicio cae o va lento y deja páginas en blanco | H5: respuesta desde memoria, presupuesto de latencia, CSS pegado completo, página de estado. |
 | Costes o abuso de la instancia pública | Límites por id, tamaño máximo, interruptor, solo configuración declarativa. |
 | `random()` nativo reduce el valor del servicio para el azar | Enfocar el servidor en lo que el CSS no puede hacer (hora, idioma, datos externos, recursos generados) y en sacar CSS del tope del perfil. |

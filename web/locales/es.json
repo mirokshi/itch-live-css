@@ -351,6 +351,14 @@
     "R4": {
       "background": "\"{{sel}}\" usa el atajo background, que borra la imagen de fondo del creador: usa las propiedades background-* sueltas (B3)"
     },
+    "R5": {
+      "hide": "{{decl}} oculta o cambia el texto de {{ui}}, que es interfaz de itch: cámbiale el estilo (color, fuente, radio), pero que siga visible y legible; alterarla puede costarte el acceso al CSS",
+      "badge": "\"{{sel}}\" también alcanza los enlaces externos, cuyo ::after es el aviso «External link» de itch: añade :not([rel~=nofollow]) al enlace"
+    },
+    "R6": {
+      "beacon": "url({{url}}) solo carga cuando un visitante interactúa con \"{{sel}}\", así que su servidor se entera de lo que hizo: carga la misma URL también sin la interacción, o usa data:",
+      "field": "\"{{sel}}\" selecciona por el valor de un campo, una forma conocida de filtrar lo que escriben los visitantes"
+    },
     "R7": {
       "cap": "{{bytes}} bytes, por encima del tope de {{max}} ({{page}}): itch no guarda",
       "jam": "{{chars}} caracteres, más de los {{max}} que se sabe que se guardan en una jam"
