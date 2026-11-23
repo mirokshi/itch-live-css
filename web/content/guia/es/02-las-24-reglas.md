@@ -63,7 +63,7 @@ En cada `url()` y cada `@import`, escribe la dirección completa. Las rutas rela
 ## Nombres
 
 ### R11 — Da a las clases HTML el prefijo `custom-`
-En biografías y descripciones, itch solo conserva una clase si empieza por `custom` en minúsculas. Lo que venga después del prefijo sobrevive, pero `id`, `data-*`, `aria-*`, `role`, los manejadores de eventos y `tabindex` se eliminan. Además, evita nombres que empiecen por `custom-ad`, `custom-social`, `custom-share` y `custom-cookie`: los bloqueadores de anuncios los ocultan. [R11]
+En biografías y descripciones, itch solo conserva una clase si empieza por `custom` en minúsculas. Lo que venga después del prefijo sobrevive, pero `id`, `data-*`, `aria-*`, `role`, los manejadores de eventos y `tabindex` (salvo en un `spoiler`) se eliminan. Además, evita nombres que empiecen por `custom-ad`, `custom-social`, `custom-share` y `custom-cookie`: los bloqueadores de anuncios los ocultan. [R11]
 
 ### R16 — Pon el prefijo `custom-` a cada nombre de `@keyframes`
 itch ya define una docena de nombres de animación, como `bounce` y `spin`. Una regla con el mismo nombre sustituye la animación de itch en todas las páginas. `custom-bob` es seguro; `bob` no lo es. [R16]
@@ -133,7 +133,7 @@ Cada regla procede del §0 («Reglas que una IA nunca debe romper») y del §2 d
 - **R8** verificado 2026-10-16 · live-c42 a live-c44; documentado · repo-05; observado · crawlprofile-25; verificado · corpus-02.
 - **R9** verificado · repo-10, external-03, s06-run, crawljam-02.
 - **R10** verificado · external-04, external-05, external-06, localtests-12; observado · repo-14. Las importaciones fijadas se muestran en el capítulo 6, receta 7; el servicio por visita queda fuera de esta guía.
-- **R11** verificado 2026-10-16 · live-k03 a live-k15, live-a01 a live-a06, live-a11; documentado · docs-34; observado · sanitizer-05, gapfill05-06; verificado · external-30, x08-07.
+- **R11** verificado 2026-10-16 · live-k03 a live-k15, live-a01 a live-a06, live-a11, live-k34; documentado · docs-34; observado · sanitizer-05, gapfill05-06; verificado · external-30, x08-07.
 - **R12** verificado · crawlproject-01, crawlproject-06.
 - **R13** verificado · s01-n2, crawlproject-37, S03-N3.
 - **R14** verificado · docs-17, crawljam-07, localtests-04, localtests-24, gapfill01-13.

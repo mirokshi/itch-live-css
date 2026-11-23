@@ -63,7 +63,7 @@ In every `url()` and every `@import`, write the full address. Relative paths res
 ## Naming
 
 ### R11 — Give HTML classes the `custom-` prefix
-In bios and descriptions, itch keeps a class only if it starts with a lowercase `custom`. Anything after the prefix survives, but `id`, `data-*`, `aria-*`, `role`, event handlers and `tabindex` are removed. Also avoid names starting with `custom-ad`, `custom-social`, `custom-share` and `custom-cookie`: ad blockers hide them. [R11]
+In bios and descriptions, itch keeps a class only if it starts with a lowercase `custom`. Anything after the prefix survives, but `id`, `data-*`, `aria-*`, `role`, event handlers and `tabindex` (except on a `spoiler`) are removed. Also avoid names starting with `custom-ad`, `custom-social`, `custom-share` and `custom-cookie`: ad blockers hide them. [R11]
 
 ### R16 — Prefix every `@keyframes` name with `custom-`
 itch already defines about a dozen animation names, such as `bounce` and `spin`. A rule with the same name replaces itch's animation on every page. `custom-bob` is safe; `bob` is not. [R16]
@@ -133,7 +133,7 @@ Each rule comes from the knowledge base's §0 ("Rules an AI must never break") a
 - **R8** verified 2026-10-16 · live-c42 to live-c44; documented · repo-05; observed · crawlprofile-25; verified · corpus-02.
 - **R9** verified · repo-10, external-03, s06-run, crawljam-02.
 - **R10** verified · external-04, external-05, external-06, localtests-12; observed · repo-14. Pinned imports are shown in chapter 6, recipe 7; the per-visit service exception is outside this guide.
-- **R11** verified 2026-10-16 · live-k03 to live-k15, live-a01 to live-a06, live-a11; documented · docs-34; observed · sanitizer-05, gapfill05-06; verified · external-30, x08-07.
+- **R11** verified 2026-10-16 · live-k03 to live-k15, live-a01 to live-a06, live-a11, live-k34; documented · docs-34; observed · sanitizer-05, gapfill05-06; verified · external-30, x08-07.
 - **R12** verified · crawlproject-01, crawlproject-06.
 - **R13** verified · s01-n2, crawlproject-37, S03-N3.
 - **R14** verified · docs-17, crawljam-07, localtests-04, localtests-24, gapfill01-13.
