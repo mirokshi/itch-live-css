@@ -3,7 +3,7 @@
 // So far the cheap ones: R2–R4, R5 (hiding or relabelling itch's UI, and the External-link badge;
 // covering and moving need the rendered page), R6 (url() beacons and [value] selectors; fake controls
 // need a person), R7–R10, R11 (only its ad-block part, ROADMAP H8), R12, R14 (outline and animated
-// properties), R15, R16, R18, R23.
+// properties), R15, R16, R18, R22 (project pages), R23.
 //
 // The rules are a PostCSS plugin, itchRules(): one visitor per node type, with Once/OnceExit for the
 // rules that need the whole sheet. validate() runs it over the tolerant parser, so problems still
@@ -13,7 +13,7 @@ import postcss from 'postcss';
 import safeParser from 'postcss-safe-parser';
 import { measure } from './output.js';
 import MESSAGES from './messages.json' with { type: 'json' };
-import { AD_BLOCKED, ITCH_UI, KEYFRAMES_PREFIX } from './rules.js';
+import { AD_BLOCKED, EMBED_ANCESTORS, ITCH_UI, KEYFRAMES_PREFIX } from './rules.js';
 
 // The English text of a problem: messages.json[code] with its {{params}} filled in. The web shows the
 // same code in the viewer's language (its locales use the same keys and placeholders).
@@ -48,6 +48,24 @@ const HIDES = new Map(Object.entries({
 }));
 // a non-empty string: text that replaces or adds to a label
 const LABEL = /"[^"]*\S[^"]*"|'[^']*\S[^']*'/;
+// R22: what makes an element the containing block of the maximized game (BOXES), or traps its
+// z-index under itch's tool bar (isolation)
+const BOXES = ['filter', 'backdrop-filter', '-webkit-backdrop-filter', 'transform', 'rotate', 'scale', 'translate', 'perspective'];
+const NOT_NONE = /^(?!(none|initial|unset|revert|revert-layer)$)/;
+const TRAPS = new Map([
+  ...BOXES.map((p) => [p, NOT_NONE]),
+  ['will-change', /\b(transform|filter|perspective|rotate|scale|translate)\b/],
+  ['contain', /\b(layout|paint|strict|content)\b/],
+  ['content-visibility', /^auto$/],
+  ['isolation', /^isolate$/],
+]);
+const ANCESTOR = new RegExp(`(${EMBED_ANCESTORS.map((s) => s.replace('.', '\\.')).join('|')})(?![\\w-])`);
+// a selector that holds the game also names its ancestor
+const HOLDS_GAME = /:has\([^()]*\.(game_frame|html_embed_widget|embed_wrapper)/;
+// skips the effect on HTML5 pages, or while the game is maximized
+const EMBED_GUARD = /:not\(\s*(:has\([^()]*\.(game_frame|html_embed_widget|embed_wrapper)|\.frame_maximized)/;
+const MAXIMIZED = /\.(frame_)?maximized(?![\w-])/;
+
 // R6: states a visitor causes, so a url() loaded only there reports them (:visited can't load anything)
 const INTERACTION = /:(hover|active|focus(-visible|-within)?|checked|target|valid|invalid|placeholder-shown|autofill)(?![\w-])/i;
 
@@ -118,6 +136,22 @@ function hiding(decls, pseudo) {
 // R5: on project pages itch's "External link" warning is the ::after of outbound links in descriptions
 const badge = (t) => /::?after$/i.test(t) && /^(a(?![\w-])|\[rel)/i.test(t) && !/:not\(\s*\[rel/i.test(t);
 
+// R22: the first animation that keeps a containing-block property after it ends (fill both/forwards);
+// frames: @keyframes name → the properties it animates
+function filled(decls, frames) {
+  const fillMode = decls.findLast((d) => propOf(d) === 'animation-fill-mode')?.value ?? '';
+  for (const d of decls) {
+    const prop = propOf(d);
+    if (prop !== 'animation' && prop !== 'animation-name') continue;
+    for (const layer of d.value.split(',')) {
+      const words = layer.trim().split(/\s+/);
+      const name = words.find((w) => frames.has(w));
+      const kept = (prop === 'animation' && words.some((w) => /^(both|forwards)$/i.test(w))) || /\b(both|forwards)\b/i.test(fillMode);
+      if (name && kept && BOXES.some((p) => frames.get(name).has(p))) return { node: d, name };
+    }
+  }
+}
+
 // @import's params: url("x") / "x" → x
 const importUrl = (params) => (/^url\(/i.test(params) ? urls(params)[0] : /^(["'])(.*?)\1/.exec(params)?.[2]);
 
@@ -149,6 +183,9 @@ export function itchRules({ page, served = false } = {}) {
       const hovers = new Map();
       const beacons = new Map();
       const loaded = new Set();
+      const frames = new Map();
+      const traps = new Map(); // "ancestor|property" → the problem to report
+      const released = new Set(); // the same keys, set back to none/auto while the game is maximized
       const seen = new Set();
       const first = (map, key, node) => map.has(key) || map.set(key, node);
       const relativeUrls = (text, node) => {
@@ -203,7 +240,13 @@ export function itchRules({ page, served = false } = {}) {
 
           // R14 needs every property the @keyframes animate before it meets an !important
           root.walkAtRules(KEYFRAMES, (at) => {
-            at.walkDecls((d) => animated.add(propOf(d)));
+            const name = at.params.trim().split(/\s/)[0].replace(/^["']|["']$/g, '');
+            const props = frames.get(name) ?? new Set();
+            at.walkDecls((d) => {
+              animated.add(propOf(d));
+              props.add(propOf(d));
+            });
+            frames.set(name, props);
           });
           animated.delete('animation-timing-function');
         },
@@ -262,6 +305,33 @@ export function itchRules({ page, served = false } = {}) {
               if (/^data:/i.test(url)) continue;
               if (interactive) first(beacons, url, { node: d, sel: interactive });
               else loaded.add(url);
+            }
+          }
+
+          // R22: on project pages, effects on the HTML5 game's ancestors trap it when itch maximizes it;
+          // reported in OnceExit unless a maximized-only rule sets them back
+          // shortcut: a nested "&" selector isn't resolved against its parent, so "#inner_column{&:hover{…}}"
+          // is missed; resolve it if nested CSS on these ancestors turns up
+          if (page === 'project' && !ctx.starting) {
+            for (const sel of rule.selectors) {
+              const t = target(sel);
+              const full = `${outer} ${sel}`;
+              if (/::|:(before|after|first-line|first-letter)\b/i.test(t) || EMBED_GUARD.test(full)) continue;
+              const who = ANCESTOR.exec(plain(t))?.[1] ?? (HOLDS_GAME.test(t) ? plain(t) : null);
+              if (!who) continue;
+              const maximized = MAXIMIZED.test(full);
+              for (const d of decls) {
+                const prop = propOf(d);
+                if (!TRAPS.has(prop)) continue;
+                const key = `${who}|${prop}`;
+                if (TRAPS.get(prop).test(d.value.trim().toLowerCase())) {
+                  const code = prop === 'isolation' ? 'R22.isolation' : 'R22.trap';
+                  first(traps, key, { node: d, code, params: { decl: short(`${d.prop}:${d.value}`), sel: short(sel) } });
+                } else if (maximized) released.add(key);
+              }
+              const kept = filled(decls, frames);
+              if (kept) first(traps, `${who}|animation`, { node: kept.node, code: 'R22.fill', params: { name: kept.name, sel: short(sel) } });
+              else if (maximized && decls.some((d) => /^animation(-name)?$/.test(propOf(d)) && /^none\b/i.test(d.value))) released.add(`${who}|animation`);
             }
           }
 
@@ -331,6 +401,9 @@ export function itchRules({ page, served = false } = {}) {
             add('R14', 'warning', 'R14.frozen', { prop }, node);
           }
           // R18: on touch screens a tap leaves :hover stuck; keyboard users need the same effect on focus
+          for (const [key, { node, code, params }] of traps) {
+            if (!released.has(key)) add('R22', 'warning', code, params, node);
+          }
           for (const [url, { node, sel }] of beacons) {
             if (!loaded.has(url)) add('R6', 'warning', 'R6.beacon', { url: short(url), sel: short(sel) }, node, { word: url });
           }

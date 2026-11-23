@@ -56,6 +56,11 @@
     "gate": "\"{{sel}}\": put hover effects inside @media (hover:hover)",
     "twin": "\"{{sel}}\" has no focus twin: give it the same effect on :focus-visible"
   },
+  "R22": {
+    "trap": "{{decl}} on \"{{sel}}\", around an HTML5 game: when itch maximizes the game it stays inside this box (page-tall, or gone); put the effect on a ::before/::after, or skip game pages with :not(:has(.html_embed_widget))",
+    "isolation": "{{decl}} on \"{{sel}}\", around an HTML5 game: itch's tool bar paints over the maximized game; release it with body.frame_maximized and isolation:auto (B4)",
+    "fill": "\"{{sel}}\" keeps the end of @keyframes {{name}} (fill mode both/forwards), which traps a maximized HTML5 game inside it: drop the fill mode on this element"
+  },
   "R23": {
     "url": "url({{url}}): use an absolute https:// URL (or data:); a relative one points at itch and http:// is blocked"
   },

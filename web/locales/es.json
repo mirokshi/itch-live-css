@@ -398,6 +398,11 @@
       "gate": "\"{{sel}}\": pon los efectos hover dentro de @media (hover:hover)",
       "twin": "\"{{sel}}\" no tiene equivalente de foco: dale el mismo efecto con :focus-visible"
     },
+    "R22": {
+      "trap": "{{decl}} en \"{{sel}}\", alrededor de un juego HTML5: cuando itch maximiza el juego, se queda dentro de esta caja (tan alto como la página, o desaparece); pon el efecto en un ::before/::after, o sáltate las páginas con juego con :not(:has(.html_embed_widget))",
+      "isolation": "{{decl}} en \"{{sel}}\", alrededor de un juego HTML5: la barra de herramientas de itch se pinta encima del juego maximizado; libéralo con body.frame_maximized e isolation:auto (B4)",
+      "fill": "\"{{sel}}\" se queda con el final de @keyframes {{name}} (fill mode both/forwards), y eso atrapa dentro al juego HTML5 maximizado: quita el fill mode en este elemento"
+    },
     "R23": {
       "url": "url({{url}}): usa una URL https:// absoluta (o data:); una relativa apunta a itch y http:// se bloquea"
     },

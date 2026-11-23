@@ -31,7 +31,12 @@ export const ITCH_UI = [
   '.embed_preload',
 ];
 
+// The HTML5 game's ancestors on a project page (#inner_column is also .inner_column there). A
+// containing block or stacking context on one of them traps the game when itch maximizes it.
+export const EMBED_ANCESTORS = ['#wrapper', '#inner_column', '.inner_column', '.view_game_page', '.embed_wrapper'];
+
 export const SOURCES = {
+  EMBED_ANCESTORS: { rule: 'R22', facts: ['s04-gf-08', 's04-gf-09', 's04-gf-11'] },
   LIMITS: { rule: 'R7', facts: ['live-cap-A1', 'live-cap-A2c', 'live-cap-B1', 'live-cap-B2', 'crawljam-29'] },
   ITCH_UI: { rule: 'R5', facts: ['docs-10', 'docs-11', 'docs-12', 'community-23', 'community-24', 'itchcss-46', 'crawljam-24'] },
   AD_BLOCKED: { rule: 'R11', facts: ['docs-34', 'sanitizer-05', 'gapfill05-06', 'external-30', 'x08-07'] },
