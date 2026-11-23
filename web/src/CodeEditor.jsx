@@ -6,7 +6,7 @@
 import { css } from '@codemirror/lang-css';
 import { html } from '@codemirror/lang-html';
 import { lintGutter, setDiagnostics } from '@codemirror/lint';
-import { EditorState } from '@codemirror/state';
+import { Compartment, EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { basicSetup } from 'codemirror';
 import { useEffect, useRef } from 'react';
@@ -32,6 +32,9 @@ export function CodeEditor({ lang, label, value, onChange = () => {}, lint, view
   const host = useRef(null);
   const changed = useRef(onChange);
   changed.current = onChange;
+  // the label follows the page type and the language, so it can be swapped without a new editor
+  const labelled = useRef(new Compartment());
+  const named = (text) => EditorView.contentAttributes.of({ 'aria-label': text });
 
   useEffect(() => {
     const view = new EditorView({
@@ -42,7 +45,7 @@ export function CodeEditor({ lang, label, value, onChange = () => {}, lint, view
           basicSetup,
           lang === 'css' ? css() : html(),
           EditorView.lineWrapping,
-          EditorView.contentAttributes.of({ 'aria-label': label }),
+          labelled.current.of(named(label)),
           lintGutter(),
           EditorState.readOnly.of(readOnly),
           EditorView.updateListener.of((u) => u.docChanged && changed.current(u.state.doc.toString())),
@@ -52,6 +55,10 @@ export function CodeEditor({ lang, label, value, onChange = () => {}, lint, view
     viewRef.current = view;
     return () => view.destroy();
   }, []);
+
+  useEffect(() => {
+    viewRef.current.dispatch({ effects: labelled.current.reconfigure(named(label)) });
+  }, [label]);
 
   // a change from outside (a saved config, "Dar formato") replaces the text
   useEffect(() => {
