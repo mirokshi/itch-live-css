@@ -38,7 +38,8 @@ jobs:
         env:
           URL: https://mirokshi.itch.io/
         run: |
-          status=$(curl -sS -m 15 -o page.html -w '%{http_code}' "$URL")
+          # itch sometimes answers 429 to GitHub's shared runner IPs; --retry waits and tries again.
+          status=$(curl -sS -m 15 --retry 2 --retry-delay 20 -o page.html -w '%{http_code}' "$URL")
           echo "HTTP $status, $(wc -c < page.html) bytes"
           test "$status" = 200
           missing=()
@@ -52,7 +53,8 @@ jobs:
           done
           grep -oE '<[^>]*data-game_id="[0-9]+"[^>]*>' page.html | grep -qE 'class="([^"]* )?game_cell[ "]' \
             || missing+=('.game_cell[data-game_id]')
-          grep -qF "id=\"custom_css\">@import url('https://itch-live-css-web.vercel.app/c/SovP42id.css');" page.html \
+          # itch writes <style id="custom_css" type="text/css">, so allow attributes after the id.
+          grep -qE "id=\"custom_css\"[^>]*>@import url\('https://itch-live-css-web\.vercel\.app/c/SovP42id\.css'\);" page.html \
             || missing+=('the @import in style#custom_css')
           if (( ${#missing[@]} )); then echo "Missing: ${missing[*]}"; exit 1; fi
           echo 'All found'
