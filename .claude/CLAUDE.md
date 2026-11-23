@@ -51,7 +51,7 @@ engine/                      phase 1, started 2026-10-24: render() (served) and 
                              scroll.js (reveal, stagger, unveil, progress, parallax, zoom, shrink: scroll-driven) and motion.js (entrance,
                              lift, tilt = native random(), pagefade = @view-transition): static, pasted, each an /ideas page and an
                              editor checkbox, listed once as TOGGLES in web/src/ideas.js (2026-11-10), test/mirokshi.js + .css = the owner's profile,
-                             importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R12, R14–R19, R21–R23 so far; R5, R6, R10, R11, R17, R19, R21 in part)
+                             importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R12, R14–R23 so far; R5, R6, R10, R11, R17, R19, R20 (jams), R21 in part)
                              = the PostCSS plugin itchRules() over postcss-safe-parser, plus a "syntax" problem from the strict
                              parser; problems carry line/column and a code + params (English text in src/messages.json, the
                              web translates by code); src/rules.js = evidence-backed constants (caps, ad-block
@@ -121,7 +121,7 @@ service/                     (2026-11-23) template to run your own copy of the s
   { head -7 llms-full.txt; for f in knowledge/itch-custom-css.md knowledge/sections/*.md; do printf '\n---\n<!-- file: %s -->\n\n' "$f"; tr -d '\r' < "$f"; done; } > llms-full.tmp && mv llms-full.tmp llms-full.txt
   ```
 
-  Then update the main file's size in `llms.txt` (~79,400 characters on 2026-11-15, after the text-wrap re-check).
+  Then update the main file's size in `llms.txt` (~79,700 characters on 2026-11-23, after noting the jam template's clash with R20).
 - **Publication hygiene.** This folder will become a public repo.
   - Never store third-party content verbatim: other creators' CSS/HTML, itch's own stylesheets or page exports, cloned code. Raw downloads go to a temp/scratch folder; only analysis, statistics and short original snippets belong here.
   - No personal data, tokens, csrf values or cookies.

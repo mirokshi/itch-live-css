@@ -143,6 +143,24 @@ test('R19: a general focus ring (B2), and no outline taken away on focus', () =>
   ]) assert.deepEqual(r19(ring + css), [], css);
 });
 
+test("R20: on jams, never style every h1 or hide itch's title", () => {
+  for (const css of [
+    '#wrapper h1{color:red}',
+    '#wrapper .jam_body h1:focus-visible{color:red}',
+    '#wrapper{& h1{font-size:2em}}',
+    '#wrapper .jam_title_header{display:none}',
+    '#wrapper .jam_header_widget h1.jam_title_header{font-size:0}',
+  ]) assert.deepEqual(rules(css, 'jam'), ['R20'], css);
+  for (const css of [
+    '#wrapper .jam_title_header{color:#ffc857;font-size:3em}',
+    '#wrapper .jam_content h1{font-size:1.4em}',
+    '#wrapper .jam_header_widget h1{letter-spacing:.05em}',
+    '#wrapper h1.custom-title{color:red}',
+    '#wrapper .jam_title_header::after{content:"";display:none}',
+  ]) assert.deepEqual(rules(css, 'jam'), [], css);
+  assert.deepEqual(rules('#wrapper h1{color:red}', 'profile'), []); // jams only
+});
+
 test('R21: decorative generated text gets the empty alt', () => {
   for (const css of [
     '#wrapper .a::before{content:"★"}',

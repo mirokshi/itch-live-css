@@ -5,7 +5,8 @@
 // need a person), R7–R10, R11 (only its ad-block part, ROADMAP H8), R12, R14 (outline and animated
 // properties), R15, R16, R17 (a reduced-motion guard for each moving element, the 5 s limit, nothing
 // left hidden; whether the still page reads well needs the rendered page), R18, R19 (a general focus
-// ring, no outline dropped on focus; its contrast needs the painted colours), R21 (symbols in
+// ring, no outline dropped on focus; its contrast needs the painted colours), R20 (only its jam part:
+// no #wrapper h1, the title kept; one h1 per page needs the HTML), R21 (symbols in
 // generated content without alt text; whether an opacity:0 hides something meaningful is intent),
 // R22 (project pages), R23.
 //
@@ -479,6 +480,24 @@ export function itchRules({ page, served = false } = {}) {
             if (dropped && !drawn && !instead) {
               add('R19', 'warning', 'R19.none', { sel: short(sel) }, dropped);
               break;
+            }
+          }
+
+          // R20: on jams itch's h1.jam_title_header names the page; style it, or description h1s under
+          // .jam_content, never every h1, and never hide the title
+          if (page === 'jam') {
+            for (const sel of rule.selectors) {
+              const full = resolved(rule, sel);
+              const t = plain(target(full));
+              if (/^h1(?![\w-])/i.test(t) && !/[.#]/.test(t) && !/\.(jam_content|jam_header_widget)(?![\w-])/.test(full)) {
+                add('R20', 'warning', 'R20.jam', { sel: short(sel) }, rule, { word: sel });
+                break;
+              }
+              const bad = /\.jam_title_header(?![\w-])/.test(plain(full)) && !/::|:(before|after)\b/i.test(t) && hiding(decls, false);
+              if (bad) {
+                add('R20', 'warning', 'R20.title', { decl: short(`${bad.prop}:${bad.value}`) }, bad);
+                break;
+              }
             }
           }
 
