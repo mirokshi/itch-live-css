@@ -4,7 +4,8 @@
 // covering and moving need the rendered page), R6 (url() beacons and [value] selectors; fake controls
 // need a person), R7–R10, R11 (only its ad-block part, ROADMAP H8), R12, R14 (outline and animated
 // properties), R15, R16, R17 (a reduced-motion guard for each moving element, the 5 s limit, nothing
-// left hidden; whether the still page reads well needs the rendered page), R18, R21 (symbols in
+// left hidden; whether the still page reads well needs the rendered page), R18, R19 (a general focus
+// ring, no outline dropped on focus; its contrast needs the painted colours), R21 (symbols in
 // generated content without alt text; whether an opacity:0 hides something meaningful is intent),
 // R22 (project pages), R23.
 //
@@ -246,6 +247,13 @@ function revealed(decls, frames) {
   return decls.find((d) => /^animation(-name)?$/.test(propOf(d)) && layers(d.value).some((l) => words(l).some(shows)));
 }
 
+// R19: a focus state on the element a selector styles; general: on any element of a type, not one class or id
+const FOCUS = /:focus(-visible)?(?![\w-])/;
+const general = (t) => /^(\*|[a-z][\w-]*)?$/i.test(t.replace(FOCUS, ''));
+// R19: an outline that draws (shorthand, style or width), or one taken away
+const OUTLINE = /^outline(-style|-width)?$/;
+const NO_OUTLINE = /^(none|0+([a-z]+)?|hidden)$/;
+
 // R21: a content value's text as the accessibility tree gets it (escapes decoded), whether it is only
 // strings, and whether it carries alt text ("★" / "")
 const STRINGS = /"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'/g;
@@ -308,6 +316,8 @@ export function itchRules({ page, served = false } = {}) {
       const beacons = new Map();
       const loaded = new Set();
       const frames = new Map();
+      let styled = false; // R19: the sheet has a style rule
+      let ring = false; // R19: … and a general focus ring
       const moving = []; // R17: { sel, kind, node } of everything that moves
       const guards = []; // R17: { sel, animation, transition, important } inside prefers-reduced-motion:reduce
       const traps = new Map(); // "ancestor|property" → the problem to report
@@ -455,6 +465,23 @@ export function itchRules({ page, served = false } = {}) {
             }
           }
 
+          // R19: a general focus ring somewhere in the sheet (reported in OnceExit), and no focus rule that
+          // drops the outline without a box-shadow or border in its place (outline:none!important is R14's)
+          styled ||= decls.length > 0;
+          for (const sel of rule.selectors) {
+            const t = plain(target(resolved(rule, sel)));
+            if (!FOCUS.test(t) || /::/.test(t)) continue;
+            const outlines = decls.filter((d) => OUTLINE.test(propOf(d)));
+            const drawn = outlines.some((d) => !NO_OUTLINE.test(d.value.trim().toLowerCase()));
+            if (drawn && general(t)) ring = true;
+            const dropped = outlines.find((d) => !d.important && NO_OUTLINE.test(d.value.trim().toLowerCase()));
+            const instead = decls.some((d) => /^(box-shadow|border(-\w+)*)$/.test(propOf(d)) && !NO_OUTLINE.test(d.value.trim().toLowerCase()));
+            if (dropped && !drawn && !instead) {
+              add('R19', 'warning', 'R19.none', { sel: short(sel) }, dropped);
+              break;
+            }
+          }
+
           // R21: decorative generated text is read aloud unless some content declaration gives it alt text
           if (rule.selectors.some((s) => /::?(before|after)\b/i.test(target(s)))) {
             const contents = decls.filter((d) => propOf(d) === 'content').map((d) => ({ d, ...generated(d.value) }));
@@ -555,6 +582,8 @@ export function itchRules({ page, served = false } = {}) {
             add('R14', 'warning', 'R14.frozen', { prop }, node);
           }
           // R18: on touch screens a tap leaves :hover stuck; keyboard users need the same effect on focus
+          // R19: itch's ring is #361275, 1.14–1.5:1 on dark backgrounds
+          if (styled && !ring) add('R19', 'warning', 'R19.ring');
           // R17: each moving element needs a guard of its own, or the B1 selector that reaches it with !important
           const unguarded = new Map();
           for (const { sel, kind, node } of moving) {

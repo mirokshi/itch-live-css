@@ -10,7 +10,7 @@ test('itchRules: a PostCSS plugin whose warnings carry rule and level, and leave
   assert.equal(result.css, css); // reading .css runs the plugins synchronously
   assert.deepEqual(
     result.warnings().map((w) => [w.plugin, w.rule, w.level]),
-    [['itch-rules', 'R2', 'error'], ['itch-rules', 'R16', 'error']],
+    [['itch-rules', 'R2', 'error'], ['itch-rules', 'R16', 'error'], ['itch-rules', 'R19', 'warning']],
   );
 });
 
@@ -24,12 +24,12 @@ test('itchRules: one plugin instance, two runs, no shared state', () => {
 
 test('syntax: the strict parser adds a positioned hint and the rules still run', () => {
   const problems = validate('#wrapper a{color:red}\nbody{color:blue', 'project');
-  assert.deepEqual(problems.map((p) => p.rule), ['syntax', 'R2']);
+  assert.deepEqual(problems.map((p) => p.rule), ['syntax', 'R2', 'R19']);
   assert.equal(problems[0].level, 'error');
   assert.match(problems[0].message, /Unclosed block/);
   assert.equal(problems[0].line, 2);
   assert.equal(problems[0].column, 1);
-  assert.deepEqual(validate('#wrapper a{color:red}', 'project'), []);
+  assert.deepEqual(validate('#wrapper a{color:red}#wrapper :focus-visible{outline:2px solid}', 'project'), []);
   // itch deletes </style>, so what browsers parse is complete
   assert.deepEqual(validate('#wrapper{}</STYLE >', 'project').map((p) => p.rule), ['R8']);
 });
@@ -79,7 +79,8 @@ test('motion effects: no itch-rule errors or warnings, keyframes prefixed', asyn
   const { plugins } = await import('../src/index.js');
   for (const use of ['pagefade', 'lift', 'tilt', 'entrance']) {
     const css = plugins[use]({}, null, {}).join('');
-    assert.deepEqual(validate(css, 'profile'), [], use);
+    // the focus ring (R19, B2) is the whole sheet's, not an effect's
+    assert.deepEqual(validate(css, 'profile').filter((p) => p.code !== 'R19.ring'), [], use);
   }
   assert.match(plugins.tilt().join(''), /^@supports \(rotate:random\(0deg,1deg\)\)/);
 });

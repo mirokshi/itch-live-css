@@ -3,12 +3,15 @@ import { test } from 'node:test';
 import { render, validate } from '../src/index.js';
 import { config, games, now } from './mirokshi.js';
 
-const rules = (css, page = 'project', options) => validate(css, page, options).map((p) => p.rule);
+// R19.ring is about the whole sheet (no B2), so the rule tests leave it to its own test
+const rules = (css, page = 'project', options) =>
+  checked(css, page, options).map((p) => p.rule);
+const checked = (css, page, options) => validate(css, page, options).filter((p) => p.code !== 'R19.ring');
 
-// R17 leans on the pasted CSS's guard: output.test.js checks it on both together
-test("owner profile: the engine's served CSS breaks no rule but R17", () => {
+// R17 and R19 lean on the pasted CSS's guard and ring: output.test.js checks them on both together
+test("owner profile: the engine's served CSS breaks no rule but R17 and R19", () => {
   const problems = validate(render(config, { seed: 1, data: { games }, now }), 'profile', { served: true });
-  assert.deepEqual(problems.filter((p) => p.rule !== 'R17'), []);
+  assert.deepEqual(problems.filter((p) => p.rule !== 'R17' && p.rule !== 'R19'), []);
 });
 
 test('R17: a reduced-motion guard for whatever moves (B1, or one of its own)', () => {
@@ -118,6 +121,28 @@ test('R6: no url() that loads only on interaction, no [value] selectors', () => 
   ]) assert.deepEqual(rules(css), [], css);
 });
 
+test('R19: a general focus ring (B2), and no outline taken away on focus', () => {
+  const r19 = (css) => validate(css, 'project').filter((p) => p.rule === 'R19').map((p) => p.code);
+  assert.deepEqual(r19('#wrapper a{color:red}'), ['R19.ring']);
+  assert.deepEqual(r19('#wrapper .custom-btn:focus-visible{outline:2px solid}'), ['R19.ring']); // one class only
+  assert.deepEqual(r19('#wrapper :focus{outline-color:#ffc857}'), ['R19.ring']); // itch's thin ring, just recoloured
+  for (const css of [
+    '', '@import url("https://x.test/a.css");', '#wrapper{}', // nothing styled yet
+    '#wrapper{--focus-ring:#ffc857}#wrapper :focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}', // B2
+    '#wrapper a:focus-visible,#wrapper button:focus-visible{outline-style:solid}',
+    '#wrapper{& *:focus{outline:3px solid}}',
+  ]) assert.deepEqual(r19(css), [], css);
+  const ring = '#wrapper :focus-visible{outline:2px solid}';
+  assert.deepEqual(r19(ring + '#wrapper .x:focus{outline:none}'), ['R19.none']);
+  assert.deepEqual(r19(ring + '#wrapper a:focus:not(:focus-visible){outline:0}'), ['R19.none']);
+  for (const css of [
+    '#wrapper .x:focus{outline:none;box-shadow:0 0 0 3px #ffc857}', // a ring of its own
+    '#wrapper .x:focus{outline:0;border-bottom:2px solid}',
+    '#wrapper .x:focus{outline:none!important}', // R14's
+    '#wrapper .x{outline:none}', // no focus state named
+  ]) assert.deepEqual(r19(ring + css), [], css);
+});
+
 test('R21: decorative generated text gets the empty alt', () => {
   for (const css of [
     '#wrapper .a::before{content:"★"}',
@@ -137,7 +162,7 @@ test('R21: decorative generated text gets the empty alt', () => {
 });
 
 test("R22: no containing block or isolation on an HTML5 game's ancestors (project pages)", () => {
-  const rules = (css, page) => validate(css, page ?? 'project').map((p) => p.rule).filter((r) => r !== 'R17'); // R17 has its own test
+  const rules = (css, page) => validate(css, page ?? 'project').filter((p) => p.rule !== 'R17' && p.code !== 'R19.ring').map((p) => p.rule);
   for (const css of [
     '#wrapper #inner_column{backdrop-filter:blur(8px)}',
     '#wrapper .view_game_page{transform:translateY(0)}',
@@ -188,7 +213,7 @@ test('R16: @keyframes names start with custom-', () => {
 });
 
 test('R10: imports over https, not from raw GitHub, pinned on jsDelivr', () => {
-  const levels = (css) => validate(css, 'project').map((p) => `${p.rule} ${p.level}`);
+  const levels = (css) => checked(css, 'project').map((p) => `${p.rule} ${p.level}`);
   assert.deepEqual(levels('@import "http://x.test/a.css";'), ['R10 error']);
   assert.deepEqual(levels('@import url(a.css);'), ['R10 error']);
   assert.deepEqual(levels('@import url("https://raw.githubusercontent.com/u/r/main/a.css");'), ['R10 error']);
@@ -218,7 +243,7 @@ test('R11: no class names that ad blockers hide', () => {
 test('R3: variables on #wrapper or below; a profile sets itch\'s on #wrapper .user_page', () => {
   assert.deepEqual(rules(':root{--gold:#ffc857}'), ['R3']);
   assert.deepEqual(rules('html{--a:1}html{color:red}'), ['R3', 'R2']); // without variables it's plain R2
-  assert.deepEqual(validate('#wrapper{--itchio_link_color:red}', 'profile').map((p) => `${p.rule} ${p.level}`), ['R3 warning']);
+  assert.deepEqual(checked('#wrapper{--itchio_link_color:red}', 'profile').map((p) => `${p.rule} ${p.level}`), ['R3 warning']);
   assert.deepEqual(rules('#wrapper .user_page{--itchio_link_color:red}#wrapper{--gold:#ffc857}', 'profile'), []);
   assert.deepEqual(rules('#wrapper{--itchio_link_color:red}', 'project'), []);
 });
@@ -247,7 +272,7 @@ test('R12: no numbered ids', () => {
 });
 
 test('R14: no outline:none!important, no !important on an animated property', () => {
-  const levels = (css) => validate(css, 'project').map((p) => `${p.rule} ${p.level}`);
+  const levels = (css) => checked(css, 'project').map((p) => `${p.rule} ${p.level}`);
   assert.deepEqual(levels('#wrapper a:focus{outline:none !important}'), ['R14 error']);
   assert.deepEqual(levels('#wrapper a:focus{outline:0!important}#wrapper a{outline:none}'), ['R14 error']);
   assert.deepEqual(levels('@keyframes custom-x{to{opacity:0;animation-timing-function:ease}}#wrapper a{opacity:1!important}'), ['R14 warning']);
@@ -260,7 +285,7 @@ test('R14: no outline:none!important, no !important on an animated property', ()
 
 test('R7: the cap applies to pasted CSS only', () => {
   const big = `#wrapper{--x:"${'a'.repeat(5120)}"}`;
-  assert.deepEqual(validate(big, 'profile').map((p) => [p.rule, p.level]), [['R7', 'error']]);
+  assert.deepEqual(checked(big, 'profile').map((p) => [p.rule, p.level]), [['R7', 'error']]);
   assert.deepEqual(rules(big, 'profile', { served: true }), []);
-  assert.deepEqual(validate(`#wrapper{--x:"${'a'.repeat(20410)}"}`, 'jam').map((p) => [p.rule, p.level]), [['R7', 'warning']]);
+  assert.deepEqual(checked(`#wrapper{--x:"${'a'.repeat(20410)}"}`, 'jam').map((p) => [p.rule, p.level]), [['R7', 'warning']]);
 });

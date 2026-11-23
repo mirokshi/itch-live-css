@@ -403,6 +403,10 @@
       "gate": "\"{{sel}}\": pon los efectos hover dentro de @media (hover:hover)",
       "twin": "\"{{sel}}\" no tiene equivalente de foco: dale el mismo efecto con :focus-visible"
     },
+    "R19": {
+      "ring": "no hay un anillo de foco para enlaces y botones en general: el de itch (#361275) se queda en 1,14–1,5:1 sobre fondos oscuros; añade B2, con un color --focus-ring de al menos 3:1 sobre cada superficie",
+      "none": "\"{{sel}}\" quita el contorno de foco sin poner nada en su lugar, así que quien usa el teclado pierde de vista dónde está: cámbiale el estilo en lugar de quitarlo (B2)"
+    },
     "R21": {
       "alt": "content:{{value}} en \"{{sel}}\" lo leen en voz alta los lectores de pantalla («estrella negra», «viñeta»…): si es decoración, pon después content:{{value}} / \"\""
     },

@@ -15,7 +15,8 @@ test('validate: engine problems with the rule title from the knowledge base', as
   assert.match(r16.message, /spin/);
   assert.match(r16.title, /custom-/);
   // served through the link: no profile size check, however long
-  const long = await (await call({ css: `#wrapper .custom-a{color:red}\n/*${'x'.repeat(6000)}*/` })).json();
+  const ring = '#wrapper :focus-visible{outline:2px solid}'; // R19
+  const long = await (await call({ css: `#wrapper .custom-a{color:red}${ring}\n/*${'x'.repeat(6000)}*/` })).json();
   assert.deepEqual(long.problems, []);
 });
 
