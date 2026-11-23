@@ -18,7 +18,12 @@ You don't need it if everything you use can be pasted. The editor tells you: if 
 
 ## 9.3 Step by step
 
+![Diagram: the editor gives you config.json, you upload it to your GitHub fork, Vercel deploys it as /live.css, and your itch page imports it on every visit](/guia/img/09-flow.svg)
+
 1. **Download your design.** In the editor, with your effects on, the "For itch" card has a **Download config.json** button. Save the file.
+
+   ![The editor's "For itch" card with the Download config.json button](/guia/img/09-download-button.webp)
+
 2. **Fork the** `itch-live-css` **repository** on GitHub (the *Fork* button). You get your own copy.
 3. **Upload your design.** In your fork, open the `service/` folder, click *Add file → Upload files*, drop your `config.json` (it replaces the example) and click *Commit changes*.
 4. **Create the Vercel project.** *Add New → Project*, import your fork and, under **Root Directory**, pick `service`. Click *Deploy*.

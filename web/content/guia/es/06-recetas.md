@@ -18,6 +18,10 @@ Pega el código tal cual, o minifícalo antes: en un perfil cada byte cuenta (ca
 
 Una paleta oscura en tokens, los colores de enlace y pie de itch tomados por ti, texto de tarjeta sólido, un anillo de foco que se ve sobre fondos oscuros y el bloque de movimiento reducido.
 
+![Perfil de prueba con la receta 1: fondo azul marino, texto claro y títulos de juego en dorado](/guia/img/06-recipe-1.webp)
+
+*Sobre la maqueta de perfil de esta web.*
+
 ```css
 /* Profile starter: palette, colours, dark theme, focus ring, reduced motion */
 #wrapper {
@@ -48,6 +52,10 @@ Cambia los cuatro colores de arriba y toda la página se adapta. Si pasas a una 
 **Página:** proyecto (también da estilo a su devlog y sus comentarios). **Tamaño:** 846 bytes.
 
 La misma idea para un proyecto. Aquí las variables de itch viven en `#wrapper`, el color del texto y el panel detrás de tu contenido se estilizan en `.inner_column`, y `min-height` evita que el gris claro de itch se vea debajo de una página corta.
+
+![Página de proyecto de prueba con la receta 2: fondo y panel azul marino, título claro y botón de descarga dorado](/guia/img/06-recipe-2.webp)
+
+*Sobre la maqueta de proyecto de esta web; las cajas grises son las capturas del juego, vacías en la maqueta.*
 
 ```css
 /* Project starter (also styles the devlog and comments): palette, colours, panel, focus ring, reduced motion */
@@ -81,6 +89,10 @@ Después de pegarla, abre también la página del devlog y la de comentarios: co
 
 Columnas iguales que no se desbordan, una columna en los teléfonos, tarjetas de igual altura, portadas que llenan su caja y un pequeño levantamiento al pasar el ratón o al enfocar con el teclado.
 
+![Perfil de prueba con la receta 3: tres tarjetas de igual ancho con 40 px entre columnas](/guia/img/06-recipe-3.webp)
+
+*Sobre la maqueta de perfil, a 960 px de ancho.*
+
 ```css
 /* Profile card grid: even columns, one column on phones, equal heights, clean covers, a lift on hover and focus */
 #wrapper .mode_grid .user_game_grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); column-gap: 40px; }
@@ -104,6 +116,10 @@ El levantamiento solo ocurre en los visitantes que no han pedido movimiento redu
 
 Dos resplandores de color suaves fijos detrás de toda la página, debajo de los botones de itch, sin capturar clics.
 
+![Perfil oscuro con dos resplandores suaves, uno cálido arriba a la izquierda y otro azul abajo a la derecha](/guia/img/06-recipe-4.webp)
+
+*Junto con la receta 1, que pone el fondo oscuro donde se ven los resplandores.*
+
 ```css
 /* Full-page glow behind the content (profile or project), released while an HTML5 game is maximised */
 #wrapper { position: relative; isolation: isolate; }
@@ -126,6 +142,10 @@ Cambia los degradados como quieras: la estructura que los rodea es lo que mantie
 
 Tu nombre se desliza una vez hasta su sitio, en 0,7 segundos.
 
+![Tres momentos de la entrada del título: casi transparente y más abajo, a medio camino, y en reposo](/guia/img/05-title-entrance.webp)
+
+*Junto con la receta 1, a los 0,05 s, 0,25 s y 0,7 s.*
+
 ```css
 /* Profile title that slides in once, from hidden, and ends at rest */
 @keyframes custom-in { from { opacity: 0; translate: 0 18px; } }
@@ -140,6 +160,10 @@ El título es visible por defecto; la animación parte del estado oculto, así q
 **Página:** proyecto. **Tamaño:** 282 bytes.
 
 Difumina lo que hay detrás de la columna de contenido, como una imagen de fondo o el resplandor de la receta 4, hasta convertirlo en cristal esmerilado.
+
+![Página de proyecto sobre un fondo de rayas: dentro de la columna de contenido las rayas se ven borrosas, como a través de un cristal esmerilado](/guia/img/06-recipe-6.webp)
+
+*Las rayas y la columna semitransparente son de ejemplo, en lugar de tu imagen de fondo y tus colores de tema.*
 
 ```css
 /* Project: frosted glass behind the content, safe with a maximised HTML5 game */

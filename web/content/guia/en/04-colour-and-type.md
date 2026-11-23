@@ -86,6 +86,10 @@ itch has no dark-mode rules of its own. When you go dark:
   [S9]
 - **Recolour the profile footer** (shown in 4.4). It doesn't follow the theme. [S9]
 
+![Test profile with recipe 1's dark palette: navy background, light text and gold game titles](/guia/img/06-recipe-1.webp)
+
+*Recipe 1 (chapter 6) on this site's profile mock.*
+
 ### Following the visitor's light or dark setting
 
 Because everything reads tokens, switching with the visitor's system setting is a few lines:
@@ -110,6 +114,10 @@ This is standard CSS, not something itch does for you. On a profile, every extra
 itch's focus ring is a dark purple that almost disappears on dark themes (R19). This block (it reads the `--focus-ring` token from 4.3) replaces it everywhere, including on game cards, where a plain outline gets cut off:
 
 ```css
+![A game card focused with the keyboard: a gold ring round the card and another round its title](/guia/img/04-focus-ring.webp)
+
+*With recipe 1, the card focused with Tab gets the ring round its whole edge, not just the link.*
+
 #wrapper { --itchio_input_focus_color: var(--focus-ring); }
 #wrapper :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 #wrapper :is(.game_cell, .header_tabs, .screenshot_list, .breadcrumbs) :focus-visible { outline-offset: -2px; }

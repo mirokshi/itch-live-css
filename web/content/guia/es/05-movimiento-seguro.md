@@ -41,6 +41,10 @@ La forma correcta: dejar el elemento visible y animar **desde** el estado oculto
 
 ```css
 @keyframes custom-in { from { opacity: 0; translate: 0 18px; } }
+![Tres momentos de la entrada del título: casi transparente y más abajo, a medio camino, y en reposo](/guia/img/05-title-entrance.webp)
+
+*La receta 5 a los 0,05 s, 0,25 s y 0,7 s: termina en reposo y no se repite.*
+
 #wrapper .custom-card { animation: custom-in .6s ease-out; }
 ```
 

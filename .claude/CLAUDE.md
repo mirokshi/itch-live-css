@@ -80,7 +80,7 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              always), else the @import link (bigger profile CSS, or any per-visit effect); saving is optional
                              when pasting; the effects panel opens only from the ideas pages (/?idea=<key>); docs and privacy (locales/) stay in step with the knowledge base by hand; ideas pages: /ideas and /ideas/<key> (routes/idea.jsx);
                              content/guia/{es,en}/*.md = the guide, rendered with react-markdown + remark-gfm (copies of the private guia-paga/{es,en}/*.md; edit there, then `node guia-paga/build-web.mjs`
-                             copies the chapters and the recipes); public/ = the mocks and guia/recetas/
+                             copies the chapters and the recipes); public/ = the mocks, guia/recetas/ and guia/img/ (screenshots by guia-paga/shots.mjs)
                              (copied as they are); api/ (preview,
                              configs with secret edit key, keys = an encrypted copy of a user's edit keys (opaque blob: the browser
                              derives lookup id, auth and AES key from email + password, src/keychain.js; page /claves "Mis claves" (routes/keys.jsx)

@@ -18,7 +18,12 @@ No lo necesitas si todo lo que haces se puede pegar. El editor te lo dice: si la
 
 ## 9.3 Paso a paso
 
+![Esquema: el editor te da config.json, lo subes a tu fork de GitHub, Vercel lo despliega como /live.css y tu página de itch lo importa en cada visita](/guia/img/09-flow.svg)
+
 1. **Descarga tu diseño.** En el editor, con tus efectos activados, la tarjeta «Para itch» tiene el botón **Descargar config.json**. Guarda el archivo.
+
+   ![La tarjeta «Para itch» del editor con el botón Descargar config.json (en la captura, la web está en inglés)](/guia/img/09-download-button.webp)
+
 2. **Haz un fork del repositorio** `itch-live-css` en GitHub (botón *Fork*). Tendrás tu propia copia.
 3. **Sube tu diseño.** En tu fork, entra en la carpeta `service/`, pulsa *Add file → Upload files*, arrastra tu `config.json` (sustituye al de ejemplo) y pulsa *Commit changes*.
 4. **Crea el proyecto en Vercel.** *Add New → Project*, importa tu fork y, en **Root Directory**, elige `service`. Pulsa *Deploy*.

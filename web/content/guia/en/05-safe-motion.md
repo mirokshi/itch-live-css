@@ -41,6 +41,10 @@ The right way: leave the element visible and animate **from** the hidden state:
 
 ```css
 @keyframes custom-in { from { opacity: 0; translate: 0 18px; } }
+![Three moments of the title entrance: almost transparent and lower, halfway, and at rest](/guia/img/05-title-entrance.webp)
+
+*Recipe 5 at 0.05 s, 0.25 s and 0.7 s: it ends at rest and doesn't repeat.*
+
 #wrapper .custom-card { animation: custom-in .6s ease-out; }
 ```
 

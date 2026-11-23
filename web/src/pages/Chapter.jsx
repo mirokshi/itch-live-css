@@ -8,7 +8,10 @@ import { Navbar } from '../common.jsx';
 import { headingsOf, PROSE, WithToc } from './Content.jsx';
 
 // the guide's chapters: tables scroll sideways on phones; raw HTML is shown as text, never rendered
-const COMPONENTS = { table: ({ node, ...props }) => <div className="overflow-x-auto"><table {...props} /></div> };
+const COMPONENTS = {
+  table: ({ node, ...props }) => <div className="overflow-x-auto"><table {...props} /></div>,
+  img: ({ node, ...props }) => <img loading="lazy" decoding="async" className="rounded-md border" {...props} />,
+};
 // ids: { line number: id } for the ## headings, so the side index can link to them
 const Markdown = ({ children, ids }) => {
   const components = ids ? { ...COMPONENTS, h2: ({ node, ...props }) => <h2 id={ids[node?.position?.start.line]} {...props} /> } : COMPONENTS;

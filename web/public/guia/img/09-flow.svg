@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 500" width="420" height="500" role="img" aria-labelledby="t">
+  <title id="t">Your own service: the editor gives config.json, your GitHub fork holds it, Vercel deploys it as /live.css, and your itch page imports it on every visit</title>
+  <style>
+    .box { fill: #f6f6fa; stroke: #5b5b66; stroke-width: 1.5; }
+    .you { fill: #eceaff; stroke: #443dff; }
+    .h { font: 600 16px system-ui, sans-serif; fill: #1d1d24; }
+    .s { font: 13px ui-monospace, Consolas, monospace; fill: #44444f; }
+    .l { font: italic 13px system-ui, sans-serif; fill: #5b5b66; }
+    .a { stroke: #5b5b66; stroke-width: 1.5; fill: none; marker-end: url(#m); }
+    .d { stroke-dasharray: 5 4; }
+    #m path { fill: #5b5b66; }
+  </style>
+  <defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"/></marker></defs>
+
+  <rect class="box" x="30" y="10" width="360" height="66" rx="10"/>
+  <text class="h" x="50" y="38">The editor on this site</text>
+  <text class="s" x="50" y="60">Download config.json</text>
+
+  <path class="a" d="M210 76V128"/>
+  <text class="l" x="222" y="107">upload it</text>
+
+  <rect class="box you" x="30" y="132" width="360" height="66" rx="10"/>
+  <text class="h" x="50" y="160">Your fork on GitHub</text>
+  <text class="s" x="50" y="182">service/config.json</text>
+
+  <path class="a" d="M210 198V250"/>
+  <text class="l" x="222" y="229">deploys on every commit</text>
+
+  <rect class="box you" x="30" y="254" width="360" height="86" rx="10"/>
+  <text class="h" x="50" y="282">Your Vercel project</text>
+  <text class="s" x="50" y="304">https://you.vercel.app/live.css</text>
+  <text class="s" x="50" y="324">+ ITCH_API_KEY (optional)</text>
+
+  <path class="a d" d="M210 340V412"/>
+  <text class="l" x="222" y="372">new CSS on every visit</text>
+  <text class="l" x="222" y="392">(the @import asks for it)</text>
+
+  <rect class="box" x="30" y="416" width="360" height="74" rx="10"/>
+  <text class="h" x="50" y="444">Your itch page</text>
+  <text class="s" x="50" y="466">@import url("…/live.css");</text>
+  <text class="s" x="50" y="482">first line of its CSS</text>
+</svg>

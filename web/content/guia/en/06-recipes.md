@@ -16,6 +16,10 @@ Paste the code as it is, or minify it first: on a profile every byte counts (cha
 
 A dark palette as tokens, itch's link and footer colours taken over, solid card text, a focus ring that shows on dark backgrounds, and the reduced-motion block.
 
+![Test profile with recipe 1: navy background, light text and gold game titles](/guia/img/06-recipe-1.webp)
+
+*On this site's profile mock.*
+
 ```css
 /* Profile starter: palette, colours, dark theme, focus ring, reduced motion */
 #wrapper {
@@ -46,6 +50,10 @@ Change the four colours at the top and the whole page follows. If you switch to 
 **Page:** project (also styles its devlog and comments). **Size:** 846 bytes.
 
 The same idea for a project. Here itch's variables live on `#wrapper`, the text colour and the panel behind your content are restyled on `.inner_column`, and `min-height` stops itch's light grey from showing below a short page.
+
+![Test project page with recipe 2: navy background and panel, light title and a gold download button](/guia/img/06-recipe-2.webp)
+
+*On this site's project mock; the grey boxes are the game's screenshots, empty in the mock.*
 
 ```css
 /* Project starter (also styles the devlog and comments): palette, colours, panel, focus ring, reduced motion */
@@ -79,6 +87,10 @@ Open the devlog and the comments page too after pasting: they share this sheet (
 
 Even columns that don't overflow, one column on phones, cards of equal height, covers that fill their box, and a small lift on hover and on keyboard focus.
 
+![Test profile with recipe 3: three cards of equal width with 40 px between columns](/guia/img/06-recipe-3.webp)
+
+*On the profile mock, 960 px wide.*
+
 ```css
 /* Profile card grid: even columns, one column on phones, equal heights, clean covers, a lift on hover and focus */
 #wrapper .mode_grid .user_game_grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); column-gap: 40px; }
@@ -102,6 +114,10 @@ The lift only happens for visitors who haven't asked for reduced motion, and the
 
 Two soft colour glows fixed behind the whole page, under itch's buttons, catching no clicks.
 
+![Dark profile with two soft glows, a warm one top left and a blue one bottom right](/guia/img/06-recipe-4.webp)
+
+*Together with recipe 1, which gives the dark background the glows show on.*
+
 ```css
 /* Full-page glow behind the content (profile or project), released while an HTML5 game is maximised */
 #wrapper { position: relative; isolation: isolate; }
@@ -124,6 +140,10 @@ Change the gradients freely: the structure around them is what keeps the layer b
 
 Your name slides up into place once, in 0.7 seconds.
 
+![Three moments of the title entrance: almost transparent and lower, halfway, and at rest](/guia/img/05-title-entrance.webp)
+
+*Together with recipe 1, at 0.05 s, 0.25 s and 0.7 s.*
+
 ```css
 /* Profile title that slides in once, from hidden, and ends at rest */
 @keyframes custom-in { from { opacity: 0; translate: 0 18px; } }
@@ -138,6 +158,10 @@ The title is visible by default; the animation starts from the hidden state, so 
 **Page:** project. **Size:** 282 bytes.
 
 Blurs whatever is behind the content column, such as a background image or recipe 4's glow, into frosted glass.
+
+![Project page over a striped background: inside the content column the stripes look blurred, as through frosted glass](/guia/img/06-recipe-6.webp)
+
+*The stripes and the see-through column are stand-ins for your background image and theme colours.*
 
 ```css
 /* Project: frosted glass behind the content, safe with a maximised HTML5 game */

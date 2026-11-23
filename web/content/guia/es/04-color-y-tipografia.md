@@ -86,6 +86,10 @@ itch no tiene reglas de modo oscuro propias. Cuando pases a oscuro:
   [S9]
 - **Recolorea el pie del perfil** (mostrado en 4.4). No sigue al tema. [S9]
 
+![Perfil de prueba con la paleta oscura de la receta 1: fondo azul marino, texto claro y títulos de juego en dorado](/guia/img/06-recipe-1.webp)
+
+*La receta 1 (capítulo 6) sobre la maqueta de perfil de esta web.*
+
 ### Seguir la preferencia clara u oscura del visitante
 
 Como todo lee tokens, cambiar según el ajuste de sistema del visitante son unas pocas líneas:
@@ -110,6 +114,10 @@ Esto es CSS estándar, no algo que itch haga por ti. En un perfil, cada paleta e
 El anillo de foco de itch es un morado oscuro que casi desaparece en los temas oscuros (R19). Este bloque (lee el token `--focus-ring` de 4.3) lo sustituye en todas partes, incluidas las tarjetas de juego, donde un contorno normal se corta:
 
 ```css
+![Tarjeta de juego enfocada con el teclado: un anillo dorado rodea la tarjeta y otro el título](/guia/img/04-focus-ring.webp)
+
+*Con la receta 1, la tarjeta enfocada con Tab lleva el anillo en todo su borde, no solo en el enlace.*
+
 #wrapper { --itchio_input_focus_color: var(--focus-ring); }
 #wrapper :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 #wrapper :is(.game_cell, .header_tabs, .screenshot_list, .breadcrumbs) :focus-visible { outline-offset: -2px; }
