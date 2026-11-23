@@ -394,6 +394,11 @@
     "R16": {
       "prefix": "@keyframes {{name}} necesita el prefijo {{prefix}}: si itch usa el mismo nombre, el tuyo sustituye su animación en toda la página"
     },
+    "R17": {
+      "guard": "\"{{sel}}\" se mueve y nada lo para para quien pide reducir el movimiento: añade B1 (le llega a través de {{need}})",
+      "long": "{{decl}} en \"{{sel}}\" arranca sola y dura más de 5 s: haz que termine antes de 5 s, o que empiece con hover o foco",
+      "hidden": "\"{{sel}}\" empieza invisible y solo su animación lo muestra, así que se queda oculto si la animación no corre (movimiento reducido, B1): déjalo visible y empieza en opacity:0 dentro de los @keyframes, con fill mode backwards"
+    },
     "R18": {
       "gate": "\"{{sel}}\": pon los efectos hover dentro de @media (hover:hover)",
       "twin": "\"{{sel}}\" no tiene equivalente de foco: dale el mismo efecto con :focus-visible"

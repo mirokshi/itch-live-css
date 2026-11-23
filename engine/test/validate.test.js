@@ -5,8 +5,60 @@ import { config, games, now } from './mirokshi.js';
 
 const rules = (css, page = 'project', options) => validate(css, page, options).map((p) => p.rule);
 
-test("owner profile: the engine's served CSS breaks no rule", () => {
-  assert.deepEqual(validate(render(config, { seed: 1, data: { games }, now }), 'profile', { served: true }), []);
+// R17 leans on the pasted CSS's guard: output.test.js checks it on both together
+test("owner profile: the engine's served CSS breaks no rule but R17", () => {
+  const problems = validate(render(config, { seed: 1, data: { games }, now }), 'profile', { served: true });
+  assert.deepEqual(problems.filter((p) => p.rule !== 'R17'), []);
+});
+
+test('R17: a reduced-motion guard for whatever moves (B1, or one of its own)', () => {
+  const B1 = '@media (prefers-reduced-motion:reduce){#wrapper,#wrapper::before,#wrapper::after,#wrapper *,#wrapper *::before,#wrapper *::after{animation:none!important;transition:none!important}}';
+  const moving = [
+    '@keyframes custom-x{to{color:red}}#wrapper .a{animation:custom-x 1s}',
+    '#wrapper .a{transition:transform .2s}',
+    '#wrapper .a{transition:.2s}', // all
+    '#wrapper::after{animation:custom-x 1s}',
+    '#wrapper .a:before{transition:translate .2s}',
+  ];
+  for (const css of moving) {
+    assert.deepEqual(rules(css), ['R17'], css);
+    assert.deepEqual(rules(css + B1), [], css);
+  }
+  // #wrapper * misses #wrapper's own pseudo-elements; a guard without !important loses to the element's rule
+  assert.deepEqual(rules('#wrapper::after{animation:custom-x 1s}@media (prefers-reduced-motion:reduce){#wrapper *,#wrapper *::after{animation:none!important}}'), ['R17']);
+  assert.deepEqual(rules('#wrapper .a{animation:custom-x 1s}@media (prefers-reduced-motion:reduce){#wrapper *{animation:none}}'), ['R17']);
+  for (const css of [
+    '#wrapper .a{transition:color .2s,background-color .2s}', // colours don't move
+    '#wrapper .a{animation:custom-x 1s}@media (prefers-reduced-motion:reduce){#wrapper .a{animation:none}}', // its own guard
+    '#wrapper .a:focus-visible{animation:custom-x 1s}@media (prefers-reduced-motion:reduce){#wrapper .a{animation:none!important}}',
+    '#wrapper .a{transition:transform .2s}@media (prefers-reduced-motion:reduce){#wrapper *{transition-duration:.01ms!important}}',
+    '#wrapper::after{animation:custom-x 1s}@media (prefers-reduced-motion:reduce){#wrapper::after{display:none}}',
+    '@media (prefers-reduced-motion:no-preference){#wrapper .a{animation:custom-x 1s}}', // never runs for them
+    '#wrapper{& .a{animation:custom-x 1s}}@media (prefers-reduced-motion:reduce){#wrapper .a{animation:none}}', // nested
+  ]) assert.deepEqual(rules(css), [], css);
+});
+
+test('R17: motion that starts by itself ends within 5 s; nothing stays hidden without it', () => {
+  const B1 = '@media (prefers-reduced-motion:reduce){#wrapper *,#wrapper *::after{animation:none!important}}';
+  for (const css of [
+    '#wrapper .a{animation:custom-x 2s infinite}',
+    '#wrapper .a{animation:custom-x 2s 4s}', // delay + duration
+    '#wrapper .a{animation:custom-x 2s 3}', // 3 rounds
+    '#wrapper .a{animation:custom-x 1s cubic-bezier(.2, .7, .2, 1);animation-iteration-count:infinite}',
+    '#wrapper .a{animation-name:custom-x;animation-duration:6s}',
+  ]) assert.deepEqual(rules(css + B1), ['R17'], css);
+  for (const css of [
+    '#wrapper .a{animation:custom-x 2s 1s,custom-y 1s 2}',
+    '@media (hover:hover){#wrapper .a:hover,#wrapper .a:focus-visible{animation:custom-x 1s infinite}}', // a visitor starts it
+    '#wrapper .a{animation:custom-x linear both;animation-timeline:view()}', // scroll-driven
+  ]) assert.deepEqual(rules(css + B1), [], css);
+  // base opacity:0 that only the animation lifts
+  assert.deepEqual(rules('@keyframes custom-in{to{opacity:1}}#wrapper .a{opacity:0;animation:custom-in 1s forwards}' + B1), ['R17']);
+  for (const css of [
+    '@keyframes custom-in{from{opacity:0}}#wrapper .a{animation:custom-in 1s backwards}',
+    '@keyframes custom-spin{to{rotate:1turn}}#wrapper .a{opacity:0;animation:custom-spin 1s}', // it never shows it
+    '@keyframes custom-in{to{opacity:1}}#wrapper .a::after{content:"";opacity:0;animation:custom-in 1s forwards}', // decoration
+  ]) assert.deepEqual(rules(css + B1), [], css);
 });
 
 test('R2: every style rule starts with #wrapper, also in @media, @supports and @layer', () => {
@@ -67,6 +119,7 @@ test('R6: no url() that loads only on interaction, no [value] selectors', () => 
 });
 
 test("R22: no containing block or isolation on an HTML5 game's ancestors (project pages)", () => {
+  const rules = (css, page) => validate(css, page ?? 'project').map((p) => p.rule).filter((r) => r !== 'R17'); // R17 has its own test
   for (const css of [
     '#wrapper #inner_column{backdrop-filter:blur(8px)}',
     '#wrapper .view_game_page{transform:translateY(0)}',

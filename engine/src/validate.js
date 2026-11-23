@@ -3,7 +3,8 @@
 // So far the cheap ones: R2–R4, R5 (hiding or relabelling itch's UI, and the External-link badge;
 // covering and moving need the rendered page), R6 (url() beacons and [value] selectors; fake controls
 // need a person), R7–R10, R11 (only its ad-block part, ROADMAP H8), R12, R14 (outline and animated
-// properties), R15, R16, R18, R22 (project pages), R23.
+// properties), R15, R16, R17 (a reduced-motion guard for each moving element, the 5 s limit, nothing
+// left hidden; whether the still page reads well needs the rendered page), R18, R22 (project pages), R23.
 //
 // The rules are a PostCSS plugin, itchRules(): one visitor per node type, with Once/OnceExit for the
 // rules that need the whole sheet. validate() runs it over the tolerant parser, so problems still
@@ -48,6 +49,12 @@ const HIDES = new Map(Object.entries({
 }));
 // a non-empty string: text that replaces or adds to a label
 const LABEL = /"[^"]*\S[^"]*"|'[^']*\S[^']*'/;
+// R17: transitioned properties that move things (all: whatever changes)
+const MOVES = /^(all|transform|translate|rotate|scale|top|right|bottom|left|inset.*|margin.*|offset.*|perspective|background-position)$/;
+const EASING = /^(ease(-in|-out|-in-out)?|linear|step-start|step-end|normal|allow-discrete)$/;
+const TIME = /^[\d.]+m?s$/i;
+const seconds = (t) => (/ms$/i.test(t) ? parseFloat(t) / 1000 : parseFloat(t));
+
 // R22: what makes an element the containing block of the maximized game (BOXES), or traps its
 // z-index under itch's tool bar (isolation)
 const BOXES = ['filter', 'backdrop-filter', '-webkit-backdrop-filter', 'transform', 'rotate', 'scale', 'translate', 'perspective'];
@@ -73,11 +80,12 @@ const INTERACTION = /:(hover|active|focus(-visible|-within)?|checked|target|vali
 // nested: inside another style rule, so its selectors are relative. reduced, hover: inside
 // @media (prefers-reduced-motion:reduce) or @media (hover:hover).
 function context(node) {
-  const ctx = { nested: false, reduced: false, hover: false, starting: false };
+  const ctx = { nested: false, reduced: false, calm: false, hover: false, starting: false };
   for (let p = node.parent; p && p.type !== 'root'; p = p.parent) {
     if (p.type === 'rule') ctx.nested = true;
     else if (p.type === 'atrule' && GROUPS.has(p.name.toLowerCase())) {
       ctx.reduced ||= /prefers-reduced-motion\s*:\s*reduce/i.test(p.params);
+      ctx.calm ||= /prefers-reduced-motion\s*:\s*no-preference/i.test(p.params);
       ctx.hover ||= p.name.toLowerCase() === 'media' && /\(\s*(any-)?hover\s*(:\s*hover\s*)?\)/i.test(p.params);
       ctx.starting ||= p.name.toLowerCase() === 'starting-style';
     } else return null;
@@ -136,6 +144,106 @@ function hiding(decls, pseudo) {
 // R5: on project pages itch's "External link" warning is the ::after of outbound links in descriptions
 const badge = (t) => /::?after$/i.test(t) && /^(a(?![\w-])|\[rel)/i.test(t) && !/:not\(\s*\[rel/i.test(t);
 
+// a nested selector written out in full: "&" or a descendant of its parents
+// shortcut: a parent with a selector list contributes only its first selector; resolve each if it matters
+function resolved(rule, sel) {
+  for (let p = rule.parent; p; p = p.parent) {
+    if (p.type === 'rule') sel = sel.includes('&') ? sel.replaceAll('&', p.selectors[0]) : `${p.selectors[0]} ${sel}`;
+  }
+  return sel;
+}
+
+// a value's comma-separated layers, and a layer's words; commas and spaces inside functions stay
+function layers(value) {
+  const out = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < value.length; i++) {
+    if (value[i] === '(') depth++;
+    else if (value[i] === ')') depth--;
+    else if (value[i] === ',' && !depth) {
+      out.push(value.slice(start, i));
+      start = i + 1;
+    }
+  }
+  return [...out, value.slice(start)].map((s) => s.trim());
+}
+const words = (layer) => layer.match(/[\w.%-]+\((?:[^()]|\([^()]*\))*\)|\S+/g) ?? [];
+
+// R17: selectors compared as text: spaces collapsed, :before/:after written ::before/::after
+const norm = (sel) =>
+  sel.replace(/\s+/g, ' ').replace(/\s*([>+~])\s*/g, '$1').replace(/(^|[^:]):(before|after)\b/gi, '$1::$2').trim();
+
+// R17: B1's selector that reaches an element: #wrapper itself or #wrapper *, plus its ::before/::after
+function reach(sel) {
+  const pseudo = /::(before|after)\b/i.exec(sel)?.[0].toLowerCase() ?? '';
+  const base = sel.replace(/::(before|after)\b.*$/i, '').replace(/\([^()]*\)/g, '()').replace(/\([^()]*\)/g, '()');
+  return (/^(body\.frame_maximized\s+)?#wrapper[^\s>+~]*$/.test(base) ? '#wrapper' : '#wrapper *') + pseudo;
+}
+
+// R17: what moves in a rule: an animation, a transition of a property that moves things
+function motion(decls) {
+  const kinds = new Set();
+  for (const d of decls) {
+    const prop = propOf(d);
+    const value = d.value.trim().toLowerCase();
+    if (/^animation(-name)?$/.test(prop) && !/^(none|initial|unset|inherit|revert)\b/.test(value)) kinds.add('animation');
+    if (/^transition(-property)?$/.test(prop)) {
+      for (const layer of layers(value)) {
+        const name = words(layer).find((w) => !TIME.test(w) && !w.includes('(') && !EASING.test(w)) ?? 'all';
+        if (MOVES.test(name)) kinds.add('transition');
+      }
+    }
+  }
+  return kinds;
+}
+
+// R17: what a rule inside @media (prefers-reduced-motion:reduce) stops, and whether all of it is !important
+function stops(decls) {
+  const s = { animation: false, transition: false, important: true };
+  for (const d of decls) {
+    const prop = propOf(d);
+    const value = d.value.trim().toLowerCase();
+    const before = s.animation + s.transition;
+    if (prop === 'display' && value === 'none') s.animation = s.transition = true;
+    if (/^animation(-name)?$/.test(prop) && /^none\b/.test(value)) s.animation = true;
+    if (/^transition(-property)?$/.test(prop) && /^none\b/.test(value)) s.transition = true;
+    // the .01ms form also ends transitions at once
+    if (prop === 'transition-duration' && layers(value).every((t) => TIME.test(t) && seconds(t) <= 0.01)) s.transition = true;
+    if (s.animation + s.transition > before && !d.important) s.important = false;
+  }
+  return s;
+}
+
+// R17: the first animation that runs past 5 s: infinite, or delay + duration × count
+function endless(decls) {
+  return decls.find((d) => {
+    const prop = propOf(d);
+    const value = d.value.toLowerCase();
+    if (prop === 'animation-iteration-count') return /infinite/.test(value);
+    if (prop === 'animation-duration') return layers(value).some((t) => TIME.test(t) && seconds(t) > 5);
+    if (prop !== 'animation') return false;
+    return layers(value).some((layer) => {
+      const w = words(layer);
+      if (w[0] === 'none') return false;
+      if (w.includes('infinite')) return true;
+      const [duration = 0, delay = 0] = w.filter((t) => TIME.test(t)).map(seconds);
+      return delay + duration * parseFloat(w.find((t) => /^\d*\.?\d+$/.test(t)) ?? '1') > 5;
+    });
+  });
+}
+
+// R17: the animation that alone shows an element whose base is opacity:0 or visibility:hidden
+function revealed(decls, frames) {
+  const hidden = decls.some((d) => {
+    const value = d.value.trim().toLowerCase();
+    return (propOf(d) === 'opacity' && HIDES.get('opacity').test(value)) || (propOf(d) === 'visibility' && value === 'hidden');
+  });
+  if (!hidden) return;
+  const shows = (w) => frames.get(w)?.has('opacity') || frames.get(w)?.has('visibility');
+  return decls.find((d) => /^animation(-name)?$/.test(propOf(d)) && layers(d.value).some((l) => words(l).some(shows)));
+}
+
 // R22: the first animation that keeps a containing-block property after it ends (fill both/forwards);
 // frames: @keyframes name → the properties it animates
 function filled(decls, frames) {
@@ -184,6 +292,8 @@ export function itchRules({ page, served = false } = {}) {
       const beacons = new Map();
       const loaded = new Set();
       const frames = new Map();
+      const moving = []; // R17: { sel, kind, node } of everything that moves
+      const guards = []; // R17: { sel, animation, transition, important } inside prefers-reduced-motion:reduce
       const traps = new Map(); // "ancestor|property" → the problem to report
       const released = new Set(); // the same keys, set back to none/auto while the game is maximized
       const seen = new Set();
@@ -308,6 +418,27 @@ export function itchRules({ page, served = false } = {}) {
             }
           }
 
+          // R17: motion needs a reduced-motion guard (matched in OnceExit), ends within 5 s when it starts
+          // by itself, and never keeps hidden what only it reveals
+          if (!ctx.starting) {
+            const sels = rule.selectors.map((s) => norm(resolved(rule, s)));
+            if (ctx.reduced) {
+              const s = stops(decls);
+              if (s.animation || s.transition) for (const sel of sels) guards.push({ sel, ...s });
+            } else {
+              // inside @media (prefers-reduced-motion:no-preference) it never runs for those who asked
+              if (!ctx.calm) for (const kind of motion(decls)) for (const sel of sels) moving.push({ sel, kind, node: rule });
+              const auto = !sels.every((s) => INTERACTION.test(plain(s)));
+              const timed = !decls.some((d) => propOf(d) === 'animation-timeline' && !/^auto$/i.test(d.value.trim()));
+              const long = auto && timed && endless(decls);
+              if (long) add('R17', 'warning', 'R17.long', { decl: short(`${long.prop}:${long.value}`), sel: short(rule.selectors[0]) }, long);
+              // a ::before/::after without text is decoration, which may stay hidden
+              const text = !sels.some((s) => /::(before|after)\b/i.test(target(s))) || decls.some((d) => propOf(d) === 'content' && LABEL.test(d.value));
+              const shown = !ctx.calm && text && revealed(decls, frames);
+              if (shown) add('R17', 'warning', 'R17.hidden', { sel: short(rule.selectors[0]) }, shown);
+            }
+          }
+
           // R22: on project pages, effects on the HTML5 game's ancestors trap it when itch maximizes it;
           // reported in OnceExit unless a maximized-only rule sets them back
           // shortcut: a nested "&" selector isn't resolved against its parent, so "#inner_column{&:hover{…}}"
@@ -401,6 +532,16 @@ export function itchRules({ page, served = false } = {}) {
             add('R14', 'warning', 'R14.frozen', { prop }, node);
           }
           // R18: on touch screens a tap leaves :hover stuck; keyboard users need the same effect on focus
+          // R17: each moving element needs a guard of its own, or the B1 selector that reaches it with !important
+          const unguarded = new Map();
+          for (const { sel, kind, node } of moving) {
+            const need = reach(sel);
+            // a guard on the element also stops its :hover/:focus states, if it's !important
+            const still = sel.replace(/:(hover|active|focus(-visible|-within)?)(?![\w-])/gi, '');
+            const covered = guards.some((g) => g[kind] && (g.sel === sel || (g.important && (g.sel === need || g.sel === still))));
+            if (!covered) first(unguarded, need, { node, sel });
+          }
+          for (const [need, { node, sel }] of unguarded) add('R17', 'warning', 'R17.guard', { sel: short(sel), need }, node);
           for (const [key, { node, code, params }] of traps) {
             if (!released.has(key)) add('R22', 'warning', code, params, node);
           }

@@ -93,7 +93,7 @@ Leyenda de la columna «Con PostCSS»:
 | R14 | Límites de `!important` | Árbol | sí | Se mantiene la heurística por nombre de propiedad para las animaciones congeladas. |
 | R15 | Nada de `@layer` ni `layer()` | Árbol | sí | |
 | R16 | Prefijo `custom-` en `@keyframes` | Árbol | sí | |
-| R17 | B1 con cualquier movimiento; el movimiento termina en 5 s | Parcial | – | Árbol: hay animación o transición sin un bloque como B1; `infinite` o duraciones de más de 5 s en `animation`. «Que el estado sin animar se lea bien» necesita la página renderizada. |
+| R17 | B1 con cualquier movimiento; el movimiento termina en 5 s | Parcial | parcial (aviso) | Árbol (hecho 2026-11-23): cada animación o transición que mueve algo necesita un bloque `prefers-reduced-motion:reduce` que la pare, el suyo propio o el selector de B1 que le llega (`#wrapper`, `#wrapper *` y sus `::before`/`::after`) con `!important`; lo que va en `no-preference` no lo necesita. Las animaciones que arrancan solas (no en `:hover`/`:focus` ni ligadas al scroll) con `infinite` o más de 5 s. Un `opacity:0` de base que solo levanta la animación. «Que el estado sin animar se lea bien» necesita la página renderizada. |
 | R18 | Hover dentro de `(hover:hover)` y con su equivalente de foco | Árbol | sí | |
 | R19 | Anillo de foco con contraste ≥ 3:1 | Parcial | – | Árbol: que haya B2 o un `outline` en `:focus-visible`. El contraste necesita los colores que se pintan de verdad. |
 | R20 | Un solo `h1` | No (HTML) | – | Se comprueba en el HTML de la bio o la descripción junto con el marcado de itch. Solo «no estilar `#wrapper h1` en jams» sale del árbol. |
@@ -105,7 +105,7 @@ Leyenda de la columna «Con PostCSS»:
 **Totales:**
 - 11 reglas se comprueban del todo con el árbol (las 11 hechas; R22 desde el 2026-11-23);
 - 2 se comprueban sobre el texto (las dos hechas);
-- 7 se comprueban en parte (R5, R6, R10 y R11 están en parte hechas);
+- 7 se comprueban en parte (R5, R6, R10, R11 y R17 están en parte hechas);
 - 4 no se pueden comprobar desde el CSS.
 
 PostCSS cambia **cómo** leen el CSS las reglas, no **cuáles** se pueden comprobar: las 4 marcadas «No» quedan fuera de alcance con cualquier parser de CSS.
@@ -202,4 +202,4 @@ Se valoró generar las comprobaciones desde el archivo principal y se descartó:
    - añadir `itchRules()` y el problema `syntax`.
 3. [ ] `engine/src/rules.js` con las constantes respaldadas por evidencia y sus ids de evidencia, y el test de comprobación cruzada con §0.
 4. [ ] `web/vercel.json`: un `installCommand` que también instale `engine/`.
-5. [ ] Tareas posteriores, fuera de este cambio: las partes comprobables de R17 y R21 (R22 y las de R5 y R6 están hechas desde el 2026-11-23, como avisos).
+5. [ ] Tareas posteriores, fuera de este cambio: la parte comprobable de R21 (R22 y las de R5, R6 y R17 están hechas desde el 2026-11-23, como avisos).

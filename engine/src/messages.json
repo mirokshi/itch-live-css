@@ -52,6 +52,11 @@
   "R16": {
     "prefix": "@keyframes {{name}} needs the {{prefix}} prefix: if itch uses the same name, yours replaces its animation page-wide"
   },
+  "R17": {
+    "guard": "\"{{sel}}\" moves, and nothing stops it for visitors who ask for reduced motion: add B1 (it reaches this through {{need}})",
+    "long": "{{decl}} on \"{{sel}}\" starts by itself and runs past 5 s: make it end within 5 s, or start it on hover or focus",
+    "hidden": "\"{{sel}}\" starts invisible and only its animation shows it, so it stays hidden when the animation doesn't run (reduced motion, B1): keep it visible and start from opacity:0 in the @keyframes, with fill mode backwards"
+  },
   "R18": {
     "gate": "\"{{sel}}\": put hover effects inside @media (hover:hover)",
     "twin": "\"{{sel}}\" has no focus twin: give it the same effect on :focus-visible"

@@ -30,9 +30,21 @@ test('css plugin: the stylesheet minified, where it sits in the config', () => {
 test('phase 1 exit: the owner profile comes whole from the engine', () => {
   const pastedCss = paste(pasted);
   assert.equal(measure(pastedCss, 'profile').fits, true);
-  // the title's gold hover is decorative and the title can't take focus, so it has no focus twin
-  assert.deepEqual(validate(pastedCss, 'profile').map((p) => `${p.rule} ${p.level}`), ['R18 warning']);
-  assert.deepEqual(validate(render(config, { seed: 1, data: { games }, now }), 'profile', { served: true }), []);
+  // the title's gold hover is decorative and the title can't take focus, so it has no focus twin; its
+  // wave runs forever, past R17's 5 s (known, 2026-11-23)
+  assert.deepEqual(validate(pastedCss, 'profile').map((p) => p.code), ['R17.long', 'R18.twin']);
+  // the served effects lean on the pasted CSS's reduced-motion guard, so R17 is checked on both together:
+  // the title, greeting, foil and ascii run forever (known, 2026-11-23)
+  const served = render(config, { seed: 1, data: { games }, now });
+  assert.deepEqual(validate(served, 'profile', { served: true }).filter((p) => p.rule !== 'R17'), []);
+  const r17 = validate(pastedCss + served, 'profile', { served: true }).filter((p) => p.rule === 'R17');
+  assert.deepEqual(r17.map((p) => `${p.code} ${p.params.sel}`), [
+    'R17.long #wrapper .custom-title span',
+    'R17.long #wrapper h1.custom-title',
+    'R17.long #wrapper .custom-hello::before',
+    'R17.long #wrapper .game_cell::before',
+    'R17.long #wrapper::after',
+  ]);
 });
 
 test('importLine: https only, nothing that breaks out of the string', () => {
