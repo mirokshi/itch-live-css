@@ -41,7 +41,9 @@
     "failed": "{{what}}: couldn't be reached ({{reason}}), so browsers drop it"
   },
   "R11": {
-    "adblock": ".{{name}}: ad blockers hide classes starting {{names}} or {{last}}"
+    "adblock": ".{{name}}: ad blockers hide classes starting {{names}} or {{last}}",
+    "class": "classes {{names}} won't survive on itch, which keeps only classes starting with custom (and a few of its own, like spoiler): rename them custom-…",
+    "attr": "{{names}}: itch strips these attributes, so CSS that selects them never matches; use custom- classes, and plain HTML (headings, img alt, details) instead of aria- or role"
   },
   "R12": {
     "numbered": "#{{id}}: numbered ids change from page to page; use a stable one (#wrapper, #inner_column, #profile_header…) or a class"

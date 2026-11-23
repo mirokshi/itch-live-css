@@ -9,7 +9,7 @@ import { title } from './plugins/title.js';
 import { rng } from './random.js';
 
 export { importLine, measure } from './output.js';
-export { checkHeadings, checkImports, validate } from './validate.js';
+export { checkHeadings, checkImports, checkMarkup, validate } from './validate.js';
 
 export const plugins = { title, greeting, cards, foil, badges, ascii, scheme, reveal, progress, parallax, zoom, stagger, shrink, unveil, pagefade, lift, tilt, entrance, css };
 

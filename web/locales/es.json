@@ -384,7 +384,9 @@
       "failed": "{{what}}: no se pudo conectar ({{reason}}), así que el navegador lo descarta"
     },
     "R11": {
-      "adblock": ".{{name}}: los bloqueadores de anuncios ocultan las clases que empiezan por {{names}} o {{last}}"
+      "adblock": ".{{name}}: los bloqueadores de anuncios ocultan las clases que empiezan por {{names}} o {{last}}",
+      "class": "las clases {{names}} no sobreviven en itch, que solo deja las que empiezan por custom (y algunas suyas, como spoiler): renómbralas custom-…",
+      "attr": "{{names}}: itch quita estos atributos, así que el CSS que los selecciona nunca coincide; usa clases custom-, y HTML normal (encabezados, img con alt, details) en lugar de aria- o role"
     },
     "R12": {
       "numbered": "#{{id}}: los ids con números cambian de una página a otra; usa uno estable (#wrapper, #inner_column, #profile_header…) o una clase"

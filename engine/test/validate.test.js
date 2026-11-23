@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { checkHeadings, checkImports, render, validate } from '../src/index.js';
+import { checkHeadings, checkImports, checkMarkup, render, validate } from '../src/index.js';
 import { config, games, now } from './mirokshi.js';
 
 // R19.ring is about the whole sheet (no B2), so the rule tests leave it to its own test
@@ -168,6 +168,21 @@ test("R20: on jams, never style every h1 or hide itch's title", () => {
     '#wrapper .jam_title_header::after{content:"";display:none}',
   ]) assert.deepEqual(rules(css, 'jam'), [], css);
   assert.deepEqual(rules('#wrapper h1{color:red}', 'profile'), []); // jams only
+});
+
+test("R11 in the page HTML: classes and attributes itch's sanitizer drops (checkMarkup)", () => {
+  const found = (html) => checkMarkup(html).map((p) => `${p.code} ${p.params.names}`);
+  assert.deepEqual(found('<div class="card custom-card Custom-x md:custom-y"><p id="a" data-n="1" aria-label="x" role="note" onclick="x()">Hi</p></div>'), [
+    'R11.class card, Custom-x, md:custom-y',
+    'R11.attr id, data-n, aria-label, role, onclick',
+  ]);
+  for (const html of [
+    '<p class="custom-w-1/2 custom:md:flex text-center">x</p><span class="spoiler" tabindex="0">y</span>',
+    '<pre><code class="language-css">a{}</code></pre><img src="x.png" alt="x"><a href="#" title=\'a > b\'>z</a>',
+    '<!-- <div class="old" id="x"> -->',
+  ]) assert.deepEqual(found(html), [], html);
+  assert.deepEqual(found('<span class="custom-a" tabindex="0" hidden>x</span>'), ['R11.attr tabindex, hidden']); // tabindex only on .spoiler
+  assert.deepEqual(found('<i class="a b c d e f g h"></i>'), ['R11.class a, b, c, d, e, f…']);
 });
 
 test("R20: exactly one h1, itch's or the user's (checkHeadings)", () => {

@@ -28,6 +28,8 @@ test("validate: with the user's HTML it counts the page's h1s (R20)", async () =
   assert.deepEqual(await codes({ page: 'project', html: h1, html5: true }), []);
   assert.deepEqual(await codes({ page: 'project', html: '<p>x</p>', html5: true }), ['R20.none']);
   assert.deepEqual(await codes({ page: 'project' }), []); // no HTML, no count
+  // R11: what itch strips from the HTML
+  assert.deepEqual(await codes({ page: 'profile', html: '<p class="note" id="n">x</p>', banner: true }), ['R11.class', 'R11.attr', 'R20.none']);
   assert.equal((await call({ css: '', html: 3 })).status, 400);
 });
 

@@ -1,6 +1,8 @@
 // What the editor writes into the preview iframe (same-origin, no scripts): itch's sanitizer on the
 // user's HTML, and what itch's theme editor would write (knowledge base §4.3–4.4, §5).
 
+import { KEPT_CLASSES, STRIPPED_ATTRS } from '../../engine/src/rules.js';
+
 // Each page type's mock; its texts are under pages.<type> in locales/. A devlog post gets its game's
 // theme and CSS (knowledge base §3.7).
 export const PAGES = {
@@ -10,17 +12,18 @@ export const PAGES = {
 };
 
 // What itch's sanitizer keeps of a bio (knowledge base §5): no scripts or styles, classes only if
-// they start with "custom", no id, data-*, aria-* or role. The iframe has no allow-scripts anyway.
+// they start with "custom" or are one of its own, none of the stripped attributes (the engine's lists,
+// which the validator's R11 check uses too). The iframe has no allow-scripts anyway.
 export function itchSanitize(html) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   doc.querySelectorAll('script, style, link, meta, object, embed, form, input, button, select, textarea').forEach((e) => e.remove());
   for (const el of doc.body.querySelectorAll('*')) {
     for (const { name } of [...el.attributes]) {
       if (name === 'class') {
-        const keep = [...el.classList].filter((c) => c.startsWith('custom'));
+        const keep = [...el.classList].filter((c) => c.startsWith('custom') || KEPT_CLASSES.includes(c) || (el.localName === 'code' && c.startsWith('language-')));
         if (keep.length) el.setAttribute('class', keep.join(' '));
         else el.removeAttribute('class');
-      } else if (name === 'id' || name === 'role' || /^(on|data-|aria-)/.test(name)) el.removeAttribute(name);
+      } else if (STRIPPED_ATTRS.test(name) && !(name === 'tabindex' && el.classList.contains('spoiler'))) el.removeAttribute(name);
     }
   }
   return doc.body.innerHTML;

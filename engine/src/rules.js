@@ -13,6 +13,12 @@ export const LIMITS = {
 // Class-name starts that ad-block filter lists hide (exact names like custom-ad, custom-cookie-banner).
 export const AD_BLOCKED = ['custom-ad', 'custom-social', 'custom-share', 'custom-cookie'];
 
+// What itch's sanitizer keeps of page HTML: classes starting with lowercase "custom", plus these of its
+// own (and language-* on <code>) [§5: live-k22 to live-k25, live-k34, live-t03]; it strips these
+// attributes, tabindex except on .spoiler [§5: live-a01 to live-a07, live-a11 to live-a20].
+export const KEPT_CLASSES = ['text-center', 'text-justify', 'text-right', 'spoiler'];
+export const STRIPPED_ATTRS = /^(id|role|tabindex|hidden|inert|accesskey|contenteditable|draggable|translate|on\w+|popover\w*|data-[\w-]*|aria-[\w-]*)$/i;
+
 // Prefix every @keyframes name needs, so it can't replace one of itch's global animations.
 export const KEYFRAMES_PREFIX = 'custom-';
 
@@ -39,6 +45,7 @@ export const SOURCES = {
   EMBED_ANCESTORS: { rule: 'R22', facts: ['s04-gf-08', 's04-gf-09', 's04-gf-11'] },
   LIMITS: { rule: 'R7', facts: ['live-cap-A1', 'live-cap-A2c', 'live-cap-B1', 'live-cap-B2', 'crawljam-29'] },
   ITCH_UI: { rule: 'R5', facts: ['docs-10', 'docs-11', 'docs-12', 'community-23', 'community-24', 'itchcss-46', 'crawljam-24'] },
+  STRIPPED_ATTRS: { rule: 'R11', facts: ['live-a01', 'live-a06', 'live-a11'] },
   AD_BLOCKED: { rule: 'R11', facts: ['docs-34', 'sanitizer-05', 'gapfill05-06', 'external-30', 'x08-07'] },
   KEYFRAMES_PREFIX: { rule: 'R16', facts: ['s06-static', 's06-kf'] },
 };

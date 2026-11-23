@@ -55,7 +55,7 @@ engine/                      phase 1, started 2026-10-24: render() (served) and 
                              = the PostCSS plugin itchRules() over postcss-safe-parser, plus a "syntax" problem from the strict
                              parser; problems carry line/column and a code + params (English text in src/messages.json, the
                              web translates by code); src/rules.js = evidence-backed constants (caps, ad-block
-                             prefixes, keyframes prefix) with fact ids, cross-checked against §0 by test/rules.test.js;
+                             prefixes, keyframes prefix, what itch's sanitizer keeps) with fact ids, cross-checked against §0 by test/rules.test.js;
                              CLI bin/cli.js measure|validate|dev (dev: preview_start {name:"engine-dev"}, 3000);
                              deps (postcss): cd engine && npm ci once; tests: cd engine && npm test
 web/                         the Vercel web app (deployed 2026-10-24; React + Vite since 2026-11-07, branch redesign/react-vite):
@@ -91,7 +91,9 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              validate = engine validate() on the editor's CSS + rule titles read from §0, plus engine
                              checkImports() over lib/imports.js (R10: each @import's status and type; https on 443 to
                              public IPs only, checked at connect time, headers only, 4 per call, 3 s, cached 10 min) and, given the
-                             user's HTML, engine checkHeadings() (R20: exactly one h1, banner and html5 from the editor),
+                             user's HTML, engine checkMarkup() (R11: classes and attributes itch strips, the same KEPT_CLASSES and
+                             STRIPPED_ATTRS of engine/src/rules.js that src/preview.js's itchSanitize uses) and
+                             checkHeadings() (R20: exactly one h1, banner and html5 from the editor),
                              showcase = opt-in list, approved by the owner on /admin with the ADMIN_KEY env var);
                              lib/store.js = Upstash Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a
                              local JSON file (web/.data/, git-ignored); lib/fonts.js = the title fonts (server and page);

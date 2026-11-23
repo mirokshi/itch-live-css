@@ -19,7 +19,7 @@ import postcss from 'postcss';
 import safeParser from 'postcss-safe-parser';
 import { measure } from './output.js';
 import MESSAGES from './messages.json' with { type: 'json' };
-import { AD_BLOCKED, EMBED_ANCESTORS, ITCH_UI, KEYFRAMES_PREFIX } from './rules.js';
+import { AD_BLOCKED, EMBED_ANCESTORS, ITCH_UI, KEPT_CLASSES, KEYFRAMES_PREFIX, STRIPPED_ATTRS } from './rules.js';
 
 // The English text of a problem: messages.json[code] with its {{params}} filled in. The web shows the
 // same code in the viewer's language (its locales use the same keys and placeholders).
@@ -679,6 +679,28 @@ export async function checkImports(css, load, { max = 4, seconds = 3 } = {}) {
     const { start, end } = node.rangeBy({});
     problems.push({ rule: 'R10', level, code, params, message: text(code, params), line: start.line, column: start.column, endLine: end.line, endColumn: end.column });
   });
+  return problems;
+}
+
+// R11 in the page HTML (bio, description, post): the classes and attributes itch's sanitizer drops, so
+// CSS written for them never matches. A tag-and-attribute scan, enough for a warning.
+export function checkMarkup(html) {
+  const lost = new Set();
+  const stripped = new Set();
+  const tags = html.replace(/<!--[\s\S]*?-->/g, '').matchAll(/<([a-z][\w-]*)((?:"[^"]*"|'[^']*'|[^'">])*)>/gi);
+  for (const [, tag, attrs] of tags) {
+    const pairs = [...attrs.matchAll(/([^\s"'>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g)]
+      .map((m) => [m[1].toLowerCase(), m[2] ?? m[3] ?? m[4] ?? '']);
+    const classes = pairs.find(([name]) => name === 'class')?.[1].split(/\s+/).filter(Boolean) ?? [];
+    const code = tag.toLowerCase() === 'code';
+    for (const c of classes) if (!c.startsWith('custom') && !KEPT_CLASSES.includes(c) && !(code && c.startsWith('language-'))) lost.add(c);
+    for (const [name] of pairs) if (STRIPPED_ATTRS.test(name) && !(name === 'tabindex' && classes.includes('spoiler'))) stripped.add(name);
+  }
+  const list = (set) => [...set].slice(0, 6).join(', ') + (set.size > 6 ? '…' : '');
+  const problems = [];
+  for (const [set, code] of [[lost, 'R11.class'], [stripped, 'R11.attr']]) {
+    if (set.size) problems.push({ rule: 'R11', level: 'warning', code, params: { names: list(set) }, message: text(code, { names: list(set) }) });
+  }
   return problems;
 }
 
