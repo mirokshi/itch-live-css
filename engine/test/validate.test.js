@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { checkImports, render, validate } from '../src/index.js';
+import { checkHeadings, checkImports, render, validate } from '../src/index.js';
 import { config, games, now } from './mirokshi.js';
 
 // R19.ring is about the whole sheet (no B2), so the rule tests leave it to its own test
@@ -168,6 +168,34 @@ test("R20: on jams, never style every h1 or hide itch's title", () => {
     '#wrapper .jam_title_header::after{content:"";display:none}',
   ]) assert.deepEqual(rules(css, 'jam'), [], css);
   assert.deepEqual(rules('#wrapper h1{color:red}', 'profile'), []); // jams only
+});
+
+test("R20: exactly one h1, itch's or the user's (checkHeadings)", () => {
+  const codes = (o) => checkHeadings(o).map((p) => `${p.code}${p.params.count ? ` ${p.params.itch}+${p.params.mine}` : ''}`);
+  const h1 = '<h1 class="custom-title">Me</h1><p>Hi</p>';
+  // itch's own shows: none of yours
+  assert.deepEqual(codes({ page: 'profile', html: '<p>Hi</p>' }), []);
+  assert.deepEqual(codes({ page: 'profile', html: h1 }), ['R20.many 1+1']);
+  assert.deepEqual(codes({ page: 'devlog', html: h1 }), ['R20.many 1+1']); // the post's title always shows
+  // a banner (or an HTML5 game on a project) hides itch's: one of yours
+  assert.deepEqual(codes({ page: 'profile', banner: true, html: '<p>Hi</p>' }), ['R20.none']);
+  assert.deepEqual(codes({ page: 'profile', banner: true, html: h1 }), []);
+  assert.deepEqual(codes({ page: 'project', html5: true, html: h1 }), []);
+  assert.deepEqual(codes({ page: 'project', html: h1 }), ['R20.many 1+1']);
+  assert.deepEqual(codes({ page: 'profile', banner: true, html: h1 + '<H1>Two</H1><!-- <h1> -->' }), ['R20.many 0+2']);
+  // CSS that takes itch's away from screen readers too
+  for (const css of [
+    '#wrapper .text_header>h1{display:none}',
+    '#wrapper #profile_header{visibility:hidden}',
+    '@media (min-width:1px){#wrapper .text_header{& h1{display:none}}}',
+  ]) assert.deepEqual(codes({ page: 'profile', css, html: h1 }), [], css);
+  for (const css of [
+    '#wrapper .text_header>h1{opacity:0;font-size:0}', // still in the accessibility tree
+    '#wrapper .text_header h1::after{display:none}',
+    '#wrapper .game_cell h1{display:none}',
+  ]) assert.deepEqual(codes({ page: 'profile', css, html: h1 }), ['R20.many 1+1'], css);
+  assert.deepEqual(codes({ page: 'project', css: '#wrapper h1.game_title{display:none}', html: h1 }), []);
+  assert.deepEqual(codes({ page: 'jam', html: h1 }), []); // jams: their CSS part only
 });
 
 test('R21: decorative generated text gets the empty alt', () => {

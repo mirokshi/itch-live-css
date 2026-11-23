@@ -101,6 +101,7 @@ export function Editor() {
   const [page, setPage] = useState('profile');
   const [css, setCss] = useState('');
   const [html, setHtml] = useState('');
+  const [html5, setHtml5] = useState(false); // a project's game runs in the browser: itch hides its title (R20)
   const [ideas, setIdeas] = useState(() => ideasDefaults(t));
   const [showcase, setShowcase] = useState({ on: false, url: '', name: '' });
   const [theme, setTheme] = useState(THEME_DEFAULTS);
@@ -133,6 +134,7 @@ export function Editor() {
     ...Object.fromEntries(TOGGLES.map((k) => [k, IDEA_PAGES[k].includes(page) && ideas[k]])),
     css,
     html,
+    html5: page !== 'profile' && html5,
     showcase: showcase.on ? { url: showcase.url.trim(), name: showcase.name } : null,
   };
   const out = exportFor(config);
@@ -206,21 +208,23 @@ export function Editor() {
     if (ready()) applyTheme(doc(), theme, images);
   }, [theme, images]);
 
-  // the validator, a moment after typing stops (the problems quote the user's selectors: React escapes them)
+  // the validator, a moment after typing stops (the problems quote the user's selectors: React escapes them);
+  // with the HTML, the banner and the HTML5 box it also counts the page's h1s (R20)
   const lintRun = useRef(0);
+  const banner = !!images.banner;
   useEffect(() => {
     const timer = setTimeout(async () => {
       const mine = ++lintRun.current;
-      if (!css.trim()) return setLint(null);
+      if (!css.trim() && !html.trim()) return setLint(null);
       try {
-        const { problems } = await api('/api/validate', 'POST', { css, page });
+        const { problems } = await api('/api/validate', 'POST', { css, page, html, banner, html5: config.html5 });
         if (mine === lintRun.current) setLint({ text: css, problems });
       } catch (err) {
         if (mine === lintRun.current) setLint({ error: err.message });
       }
     }, 500);
     return () => clearTimeout(timer);
-  }, [css, page]);
+  }, [css, page, html, banner, config.html5]);
 
   // The page type: its mock (whose load refreshes everything) and its theme's default colours.
   function choosePage(next) {
@@ -249,6 +253,7 @@ export function Editor() {
     }));
     setCss(f.css ?? '');
     setHtml(f.html ?? '');
+    setHtml5(!!f.html5);
     setShowcase({ on: !!f.showcase, url: f.showcase?.url ?? '', name: f.showcase?.name ?? '' });
   }
 
@@ -365,6 +370,7 @@ export function Editor() {
               {Object.keys(PAGES).map((v) => <ToggleGroupItem key={v} value={v}>{t(`pageNames.${v}`)}</ToggleGroupItem>)}
             </ToggleGroup>
             <Hint>{t(`pages.${page}.hint`)}</Hint>
+            {page !== 'profile' && <Check id="html5" checked={html5} onChange={setHtml5}>{t('editor.html5')}</Check>}
           </Section>
 
           <Section title={t('editor.cssLegend')}>

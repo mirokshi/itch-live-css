@@ -72,7 +72,9 @@
   },
   "R20": {
     "jam": "\"{{sel}}\" styles every h1 on the jam page, itch's title (h1.jam_title_header) and the h1s in your description: scope it to .jam_title_header or to .jam_content h1",
-    "title": "{{decl}} hides the jam's title (h1.jam_title_header), the one h1 that names the page: restyle it instead"
+    "title": "{{decl}} hides the jam's title (h1.jam_title_header), the one h1 that names the page: restyle it instead",
+    "none": "the page shows no h1: itch hides its own here (a banner, an HTML5 game or your CSS); add <h1 class=\"custom-title\">…</h1> naming the page to your HTML",
+    "many": "the page would show {{count}} h1s ({{itch}} of itch's, {{mine}} in your HTML): keep one; use h2 for the rest, or hide itch's with display:none only when yours replaces it"
   },
   "R21": {
     "alt": "content:{{value}} on \"{{sel}}\" is read aloud by screen readers (\"black star\", \"bullet\"…): if it's decoration, follow it with content:{{value}} / \"\""

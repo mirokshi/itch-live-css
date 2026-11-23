@@ -682,6 +682,39 @@ export async function checkImports(css, load, { max = 4, seconds = 3 } = {}) {
   return problems;
 }
 
+// R20 on profiles, projects and devlog posts: the h1s the page shows, itch's plus the user's HTML's,
+// should be exactly one. itch's own (knowledge base §10): the profile's .text_header h1 unless there's
+// a banner, a project's h1.game_title unless there's a banner or an HTML5 game, a devlog post's title
+// always. CSS that styles that h1, or the box holding it, with display:none or visibility:hidden takes
+// it away (opacity:0 and font-size:0 leave it in the accessibility tree). html: the bio, description or
+// post as the user has it; html5: the project's game runs in the browser.
+const ITCH_H1 = {
+  profile: /(\.text_header|#profile_header)(?![\w-])/,
+  project: /(#header|\.game_title)(?![\w-])/,
+  devlog: /\.post_header(?![\w-])/,
+};
+export function checkHeadings({ html = '', css = '', page, banner = false, html5 = false }) {
+  const box = ITCH_H1[page];
+  if (!box) return [];
+  let itch = page === 'devlog' || !(banner || (page === 'project' && html5)) ? 1 : 0;
+  safeParser(asServed(css)).walkRules((rule) => {
+    const gone = declarations(rule).some((d) => {
+      const value = d.value.trim().toLowerCase();
+      return (propOf(d) === 'display' && value === 'none') || (propOf(d) === 'visibility' && /^(hidden|collapse)$/.test(value));
+    });
+    const takes = (full) => {
+      const t = plain(target(full));
+      return box.test(plain(full)) && !/::|:(before|after)\b/i.test(t) && (box.test(t) || /^h1(?![\w-])/i.test(t));
+    };
+    if (gone && context(rule) && rule.selectors.some((s) => resolved(rule, s).some(takes))) itch = 0;
+  });
+  const mine = (html.replace(/<!--[\s\S]*?-->/g, '').match(/<h1[\s>/]/gi) ?? []).length;
+  const count = itch + mine;
+  if (count === 1) return [];
+  const [code, params] = count ? ['R20.many', { count, itch, mine }] : ['R20.none', {}];
+  return [{ rule: 'R20', level: 'warning', code, params, message: text(code, params) }];
+}
+
 // The CSS browsers get: itch deletes every </style>, in any case and with inner spaces.
 const asServed = (css) => css.replace(/<\/style\s*>/gi, '');
 

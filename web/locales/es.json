@@ -71,6 +71,7 @@
   "editor": {
     "lead": "Escribe el CSS de tu página de itch.io, míralo en vivo y llévatelo listo para pegar, o en un link que no hay que volver a pegar.",
     "where": "¿Dónde lo vas a usar?",
+    "html5": "El juego se juega en el navegador (HTML5)",
     "cssLegend": "Tu CSS",
     "cssHint": "Abajo te lo damos minificado para pegar en itch, o dentro de un link si no cabe o usas efectos.",
     "htmlHint": "Solo para probar en la vista previa: no se sirve. itch quita las clases que no empiezan por `custom`, los `id` y los atributos `data-`, `aria-` y `role`, y aquí también.",
@@ -414,7 +415,9 @@
     },
     "R20": {
       "jam": "\"{{sel}}\" da estilo a todos los h1 de la página de la jam, el título de itch (h1.jam_title_header) y los h1 de tu descripción: limítalo a .jam_title_header o a .jam_content h1",
-      "title": "{{decl}} oculta el título de la jam (h1.jam_title_header), el único h1 que da nombre a la página: cámbiale el estilo en lugar de ocultarlo"
+      "title": "{{decl}} oculta el título de la jam (h1.jam_title_header), el único h1 que da nombre a la página: cámbiale el estilo en lugar de ocultarlo",
+      "none": "la página no muestra ningún h1: itch oculta el suyo aquí (un banner, un juego HTML5 o tu CSS); añade a tu HTML un <h1 class=\"custom-title\">…</h1> con el nombre de la página",
+      "many": "la página mostraría {{count}} h1 ({{itch}} de itch y {{mine}} en tu HTML): deja uno; usa h2 para el resto, u oculta el de itch con display:none solo cuando el tuyo lo sustituya"
     },
     "R21": {
       "alt": "content:{{value}} en \"{{sel}}\" lo leen en voz alta los lectores de pantalla («estrella negra», «viñeta»…): si es decoración, pon después content:{{value}} / \"\""
@@ -590,7 +593,7 @@
         "title": "En esta web",
         "paragraphs": [
           "El editor y sus herramientas (CodeMirror y js-beautify) vienen de esta misma web. La vista previa carga fuentes de Google Fonts. Las páginas de documentación y privacidad recuerdan en tu navegador (localStorage) el idioma que eliges; no sale de tu navegador.",
-          "Mientras escribes, el editor envía tu CSS a esta web para revisarlo, y no se guarda. Si tu CSS tiene @import, el servidor pide esas direcciones (solo las cabeceras) para ver si responden con CSS: esos sitios ven la IP del servidor, no la tuya."
+          "Mientras escribes, el editor envía tu CSS y el HTML que pegues a esta web para revisarlos, y no se guardan. Si tu CSS tiene @import, el servidor pide esas direcciones (solo las cabeceras) para ver si responden con CSS: esos sitios ven la IP del servidor, no la tuya."
         ]
       }
     ],

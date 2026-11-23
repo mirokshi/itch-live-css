@@ -27,12 +27,14 @@ const req = (path, method = 'GET', body, key) =>
   });
 
 test('check keeps known fields only and rejects bad input', () => {
-  assert.deepEqual(check({ ...form, extra: 1, foil: 'yes', badges: 1 }), { page: 'profile', ...form, accent: '#ffc857', foil: false, badges: false, foilColor: '#2f27ce', foilWidth: 1.5, foilSpeed: 1, foilSync: false, ...Object.fromEntries(TOGGLES.map((k) => [k, false])), css: '', html: '', showcase: null });
+  assert.deepEqual(check({ ...form, extra: 1, foil: 'yes', badges: 1 }), { page: 'profile', ...form, accent: '#ffc857', foil: false, badges: false, foilColor: '#2f27ce', foilWidth: 1.5, foilSpeed: 1, foilSync: false, ...Object.fromEntries(TOGGLES.map((k) => [k, false])), css: '', html: '', html5: false, showcase: null });
   const legacy = check({ ...form, foil: undefined, badges: undefined, cards: true }); // saved before foil and badges were split
   assert.ok(legacy.foil && legacy.badges);
   assert.equal(check({ ...form, page: 'devlog' }).page, 'devlog');
   assert.equal(check({ ...form, page: 'project' }).foil, false); // the cards effects are profile-only
   assert.equal(check({ ...form, page: 'project' }).badges, false);
+  assert.equal(check({ ...form, page: 'project', html5: true }).html5, true);
+  assert.equal(check({ ...form, html5: true }).html5, false); // profiles have no game
   assert.throws(() => check({ ...form, page: 'jam' }), /page/);
   assert.equal(check({ ...form, css: 'a{}', html: '<p>x</p>' }).html, '<p>x</p>');
   assert.throws(() => check({ ...form, css: 'a'.repeat(50001) }), /css/);

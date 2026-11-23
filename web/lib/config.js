@@ -18,6 +18,7 @@
 //             the ones IDEA_PAGES limits to some pages are off elsewhere
 //   css      the user's own CSS, served after the effects (it wins their ties)
 //   html      the user's bio / description / post HTML, only for the preview: never served
+//   html5     boolean, project and devlog: the game runs in the browser, so itch hides its title (R20)
 //   showcase  null | { url, name }  asks to appear in the showcase (an admin approves it): the itch
 //             page's address and an optional display name
 // }
@@ -69,6 +70,7 @@ export function check(f) {
     ...Object.fromEntries(TOGGLES.map((k) => [k, f[k] === true && IDEA_PAGES[k].includes(page)])),
     css: optional(f.css, MAX_CSS, 'css'),
     html: optional(f.html, MAX_HTML, 'html'),
+    html5: f.html5 === true && page !== 'profile',
     showcase: null,
   };
   if (f.showcase) {

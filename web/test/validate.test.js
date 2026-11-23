@@ -20,6 +20,17 @@ test('validate: engine problems with the rule title from the knowledge base', as
   assert.deepEqual(long.problems, []);
 });
 
+test("validate: with the user's HTML it counts the page's h1s (R20)", async () => {
+  const codes = async (body) => (await (await call({ css: '', ...body })).json()).problems.map((p) => p.code);
+  const h1 = '<h1 class="custom-title">Me</h1>';
+  assert.deepEqual(await codes({ page: 'profile', html: h1 }), ['R20.many']); // itch's own shows too
+  assert.deepEqual(await codes({ page: 'profile', html: h1, banner: true }), []);
+  assert.deepEqual(await codes({ page: 'project', html: h1, html5: true }), []);
+  assert.deepEqual(await codes({ page: 'project', html: '<p>x</p>', html5: true }), ['R20.none']);
+  assert.deepEqual(await codes({ page: 'project' }), []); // no HTML, no count
+  assert.equal((await call({ css: '', html: 3 })).status, 400);
+});
+
 test('validate: rejects anything but a CSS string', async () => {
   assert.equal((await call({ css: 3 })).status, 400);
   assert.equal((await call({ css: 'a'.repeat(50001) })).status, 400);

@@ -74,7 +74,7 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              test/i18n.test.js keeps both languages, the engine's messages and §0's titles in step; guide
                              chapters keep one URL per language (routes/chapter.jsx, one route per guide file);
                              src/pages/Editor.jsx = the configurator (CodeMirror 6 editors with the validator's marks,
-                             a page-type switch profile | project | devlog saved with the config, an itch-like theme panel,
+                             a page-type switch profile | project | devlog saved with the config (plus an "HTML5 game" box, html5, for R20), an itch-like theme panel,
                              default-theme mocks public/preview*.html in a script-less sandboxed iframe); src/export.js =
                              what to take to itch: the user's CSS minified to paste (profile ≤ 5,120 bytes, game page and devlog
                              always), else the @import link (bigger profile CSS, or any per-visit effect); saving is optional
@@ -90,7 +90,8 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              @font-face by lib/googlefonts.js; env PAUSED=1 stops serving and saving, BLOCKED_IDS=a,b stops ids),
                              validate = engine validate() on the editor's CSS + rule titles read from §0, plus engine
                              checkImports() over lib/imports.js (R10: each @import's status and type; https on 443 to
-                             public IPs only, checked at connect time, headers only, 4 per call, 3 s, cached 10 min),
+                             public IPs only, checked at connect time, headers only, 4 per call, 3 s, cached 10 min) and, given the
+                             user's HTML, engine checkHeadings() (R20: exactly one h1, banner and html5 from the editor),
                              showcase = opt-in list, approved by the owner on /admin with the ADMIN_KEY env var);
                              lib/store.js = Upstash Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a
                              local JSON file (web/.data/, git-ignored); lib/fonts.js = the title fonts (server and page);
