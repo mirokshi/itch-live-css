@@ -188,6 +188,8 @@ test("R22: no containing block or isolation on an HTML5 game's ancestors (projec
     '#wrapper .embed_wrapper{will-change:transform}',
     '#wrapper .inner_column{contain:paint}',
     '#wrapper .columns:has(.game_frame){scale:1}', // holds the game, so it's an ancestor
+    '#wrapper #inner_column{&:focus-within{filter:blur(1px)}}', // nested: & is #inner_column
+    '#wrapper{& .view_game_page{transform:scale(1)}}',
     '#wrapper{position:relative;isolation:isolate}',
     '@keyframes custom-in{from{transform:translateY(20px)}}#wrapper #inner_column{animation:custom-in .5s both}',
     '@keyframes custom-in{from{filter:blur(4px)}}#wrapper #inner_column{animation-name:custom-in;animation-fill-mode:forwards}',
@@ -196,6 +198,8 @@ test("R22: no containing block or isolation on an HTML5 game's ancestors (projec
     '#wrapper #inner_column::before{backdrop-filter:blur(8px)}', // a pseudo-element holds nothing
     '#wrapper .game_cell{transform:rotate(2deg)}#wrapper #header{filter:none}',
     '#wrapper:not(:has(.html_embed_widget)) #inner_column{backdrop-filter:blur(8px)}', // guarded
+    '#wrapper:not(:has(.html_embed_widget)){& #inner_column{filter:blur(1px)}}', // guarded by its parent
+    '#wrapper #inner_column{&::before{backdrop-filter:blur(8px)}}', // nested pseudo-element
     '#wrapper{isolation:isolate}body.frame_maximized #wrapper{isolation:auto}', // B4's release
     '#wrapper #inner_column{isolation:isolate}#wrapper:has(.game_frame.maximized) #inner_column{isolation:auto}',
     '#wrapper #inner_column{filter:blur(1px)}body.frame_maximized #wrapper #inner_column{filter:none}',

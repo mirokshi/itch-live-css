@@ -510,12 +510,10 @@ export function itchRules({ page, served = false } = {}) {
 
           // R22: on project pages, effects on the HTML5 game's ancestors trap it when itch maximizes it;
           // reported in OnceExit unless a maximized-only rule sets them back
-          // shortcut: a nested "&" selector isn't resolved against its parent, so "#inner_column{&:hover{…}}"
-          // is missed; resolve it if nested CSS on these ancestors turns up
           if (page === 'project' && !ctx.starting) {
             for (const sel of rule.selectors) {
-              const t = target(sel);
-              const full = `${outer} ${sel}`;
+              const full = resolved(rule, sel);
+              const t = target(full);
               if (/::|:(before|after|first-line|first-letter)\b/i.test(t) || EMBED_GUARD.test(full)) continue;
               const who = ANCESTOR.exec(plain(t))?.[1] ?? (HOLDS_GAME.test(t) ? plain(t) : null);
               if (!who) continue;
