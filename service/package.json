@@ -1,0 +1,7 @@
+{
+  "name": "itch-live-css-service",
+  "private": true,
+  "description": "Your own itch-live-css service: per-visit CSS for your itch.io page, on your Vercel account.",
+  "license": "MIT",
+  "type": "module"
+}

@@ -1,0 +1,9 @@
+{
+  "page": "profile",
+  "accent": "#2f27ce",
+  "title": { "text": "Hello", "fonts": ["syne", "playfair"] },
+  "greeting": { "first": "Hi!", "others": ["¡Hola!", "Bonjour !", "Hallo!", "Olá!"] },
+  "foil": true,
+  "badges": true,
+  "css": ""
+}

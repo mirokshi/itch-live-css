@@ -95,6 +95,11 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              vercel.json builds with `npm run build` into build/client and also installs engine/;
                              dev server: preview_start {name:"web"} (Vite on 3001, api/ through dev.js; restart after editing
                              api/ or lib/); tests: cd web && npm test; build: cd web && npm run build
+service/                     (2026-11-23) template to run your own copy of the service on your Vercel account (fork, Root
+                             Directory service): api/live.js = /live.css from config.json (the form the editor's "Download
+                             config.json" gives) through web/lib/config.js check() + build(), itch data with the user's own
+                             ITCH_API_KEY, fonts inlined; api/bio.js = /api/bio, the bio HTML; tested by web/test/service.test.js;
+                             users' guide = guide chapter 09 (guia-paga/{es,en}/09-*.md)
 .github/workflows/watch.yml  hourly check of the owner's /c/SovP42id.css (200, text/css, < 3 s, effects + itch data + own CSS);
                              daily smoke check (one GET) that the logged-out profile still has the markup that CSS selects
 .claude/launch.json          preview servers: knowledge-tests (8090), knowledge-tests-xorigin (8091), web (3001) and engine-dev (3000)
@@ -113,7 +118,7 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
   { head -7 llms-full.txt; for f in knowledge/itch-custom-css.md knowledge/sections/*.md; do printf '\n---\n<!-- file: %s -->\n\n' "$f"; tr -d '\r' < "$f"; done; } > llms-full.tmp && mv llms-full.tmp llms-full.txt
   ```
 
-  Then update the main file's size in `llms.txt` (~79,300 characters on 2026-10-29, after the Chrome 156 and Firefox 159 re-check).
+  Then update the main file's size in `llms.txt` (~79,400 characters on 2026-11-15, after the text-wrap re-check).
 - **Publication hygiene.** This folder will become a public repo.
   - Never store third-party content verbatim: other creators' CSS/HTML, itch's own stylesheets or page exports, cloned code. Raw downloads go to a temp/scratch folder; only analysis, statistics and short original snippets belong here.
   - No personal data, tokens, csrf values or cookies.
@@ -146,7 +151,7 @@ From the knowledge base; details in ROADMAP §1.
 - **Jams:** `@import` never loads there (the CSS sits inside `style#jam_theme`), so the per-visit service can't work on jams. Jam CSS of up to 20,410 characters is known to save.
 - **Size caps (measured 2026-10-16):** profile CSS ≤ **5,120 UTF-8 bytes** (the error message says characters), comments included, edge whitespace not; over it the save is refused, not truncated. Projects and devlogs have **no CSS cap** (659,742 characters saved; bigger saves fail as a request, "missing token"). Bio ≤ 5,000 characters of submitted HTML. Jam cap still unmeasured (20,410 known to save).
 - **`@import` blocks rendering.** A hanging host blanked a page for more than 330 s. So the pasted CSS must carry the full look, and the service must answer from memory.
-- **Native `random()`:** Chrome/Edge 156+ (verified in Chrome 156 on 2026-10-29: a new value on every load) and Safari 26.2+, about 56% of users and rising; Firefox only in Nightly. Firefox 159 (2026-10-27) shipped scroll-driven animations (documented, no Firefox run). Next dated item: `text-wrap:balance` Widely on 2026-11-13.
+- **Native `random()`:** Chrome/Edge 156+ (verified in Chrome 156 on 2026-10-29: a new value on every load) and Safari 26.2+, about 56% of users and rising; Firefox only in Nightly. Firefox 159 (2026-10-27) shipped scroll-driven animations (documented, no Firefox run). `text-wrap:balance` passed its Baseline *Widely* date (2026-11-13) but web-features and MDN still said Newly when checked on 2026-11-15; support unchanged, re-check with a later web-features release.
 - **Sanitizer:** a class survives only if it starts with lowercase `custom`; whatever follows is kept, so `custom-w-1/2`, `custom-w-[3px]` and `custom:md:flex` survive, while `md:custom-…`, `!custom-…` and `-custom-…` are dropped (verified on a project description, a bio and a devlog post, 2026-10-16). Iframes become click-to-activate placeholders only in project descriptions; bios and devlog posts keep them live. `id`, `data-*`, `aria-*` and `role` are stripped.
 - **Saved CSS as served (project and profile, 2026-10-16):** itch deletes every `</style>` (any case, `</STYLE >` too) and trims leading and trailing whitespace; everything else is served as pasted. Whether this happens at save or at render is unknown. Profiles store LF, projects CRLF.
 - **Logged-out cache:** after a save, visitors keep the old page for about 2.5 minutes (`X-Cache-Status: HIT`, then `EXPIRED`); the owner always sees the new one (`BYPASS`). A `data:` `@import` applies, so CSS can be split without a host.

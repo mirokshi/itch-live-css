@@ -332,6 +332,14 @@ export function Editor() {
     setExpanded(null);
   }
 
+  // for your own service (service/ in the repo): the form without the preview-only HTML and the showcase
+  function downloadConfig() {
+    const { html: _html, showcase: _showcase, ...form } = config;
+    const url = URL.createObjectURL(new Blob([`${JSON.stringify(form, null, 2)}\n`], { type: 'application/json' }));
+    Object.assign(document.createElement('a'), { href: url, download: 'config.json' }).click();
+    URL.revokeObjectURL(url);
+  }
+
   const editLink = saved && `${location.origin}/#edit=${saved.id}.${saved.key}`;
   const setIdea = (k) => (v) => setIdeas((i) => ({ ...i, [k]: v?.target ? v.target.value : v }));
   const toggleFont = (k) => (on) => setIdeas((i) => ({ ...i, fonts: on ? [...i.fonts, k] : i.fonts.filter((f) => f !== k) }));
@@ -401,6 +409,12 @@ export function Editor() {
               <CardContent className="space-y-2">
                 <Hint><Inline text={t('result.linkHint', { where: t(`pages.${page}.where`) })} /></Hint>
                 <Copy text={exported.link} label={t('result.linkLabel')} />
+              </CardContent>
+            )}
+            {out.mode === 'import' && (
+              <CardContent className="space-y-2">
+                <Hint><Inline text={t('export.own')} /></Hint>
+                <Button type="button" variant="outline" size="sm" onClick={downloadConfig}>{t('export.ownButton')}</Button>
               </CardContent>
             )}
           </Card>

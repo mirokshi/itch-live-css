@@ -111,7 +111,9 @@
     "effects": "Tienes activado: {{effects}}. Los efectos cambian en cada visita, así que van en un link: acepta para obtenerlo, o desactívalos en Ideas para pegar el CSS.",
     "effectsSaved": "Tienes activado: {{effects}}. Los efectos cambian en cada visita, así que van en un link (abajo); desactívalos en Ideas para pegar el CSS.",
     "tooBig": "Tu CSS minificado ocupa {{bytes}} bytes y el perfil admite {{max}}: va en un link, que no tiene ese límite. Guarda para obtenerlo.",
-    "tooBigSaved": "Tu CSS minificado ocupa {{bytes}} bytes y el perfil admite {{max}}: va en un link, que no tiene ese límite (abajo)."
+    "tooBigSaved": "Tu CSS minificado ocupa {{bytes}} bytes y el perfil admite {{max}}: va en un link, que no tiene ese límite (abajo).",
+    "own": "¿Prefieres no depender de esta web? Descarga tu diseño y sírvelo desde tu propia cuenta de Vercel: [cómo montar tu propio servicio](/guia/es/09-tu-propio-servicio).",
+    "ownButton": "Descargar config.json"
   },
   "showcaseForm": {
     "title": "Salir en el expositor",

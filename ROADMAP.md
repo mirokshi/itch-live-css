@@ -31,7 +31,7 @@ Hallazgos de la base de conocimiento que condicionan el diseño. Cada uno es una
 | H11 | En páginas con juego HTML5, `filter`, `transform`, `backdrop-filter` o `will-change` en los ancestros del juego rompen el modo maximizado (R22). | El validador lo detecta en configuraciones de proyecto; los efectos de fondo usan la receta segura de §4. |
 | H12 | itch no trae reglas de movimiento reducido, y su anillo de foco no llega a 3:1 en temas oscuros (§4, §10). | Toda salida incluye **B1** (movimiento reducido) y **B2** (foco) por defecto. |
 | H13 | Un `@import` envía la URL completa de la página como Referer (§8). | Sin cookies ni registros de visitantes; escapar todo dato que llegue en la petición (§2 P9). Política de privacidad (RGPD). |
-| H14 | Vercel Hobby: 1 M invocaciones al mes ≈ 33.000 visitas al día, y solo uso no comercial (§8). | Se eligió Vercel igualmente (2026-10-24): vale mientras el proyecto sea gratuito y el tráfico quepa; si crece o se cobra, plan Pro o mudanza. |
+| H14 | Vercel Hobby: 1 M invocaciones al mes ≈ 33.000 visitas al día, y solo uso no comercial (§8). | Se eligió Vercel igualmente (2026-10-24): el proyecto es gratuito (decidido el 2026-11-23: no se cobra nada), así que vale mientras el tráfico quepa; si crece, plan Pro o mudanza. |
 | H15 | No hay CSP que limite CSS, fuentes o imágenes externas en ningún tipo de página (§1). | El modelo `@import` es viable en perfil y proyecto. |
 | H16 | Las variables del tema solo alcanzan a quien las lee con `var()`; muchos colores y fuentes son literales, y dónde se declaran cambia según el tipo de página (§4). | El motor necesita un **mapa de selectores por tipo de página**, sacado de §3 y §4, no un único juego de reglas. |
 
@@ -133,6 +133,7 @@ Primera versión: **perfil y proyecto** (decidido 2026-10-24); jam y devlog desp
 
 - Modo código en el configurador; API y `npx itch-live-css push`; GitHub Action.
 - Guía para escribir plugins; los plugins de la comunidad entran por PR revisado.
+- [x] **Servicio propio** (2026-11-23): plantilla `service/` (fork + Vercel con Root Directory `service`), botón «Descargar config.json» en el editor y capítulo 9 de la guía. Con su propia clave, cada usuario tiene las cifras de itch en sus tarjetas.
 - Login con itch.io (OAuth) como alternativa al enlace secreto.
 - Fuentes de datos precalculadas: RSS de devlogs, GitHub, directo en Twitch, y la **API de itch** (vistas y descargas por juego, como `cards.js` + `itch.js` del repo privado; casa las tarjetas por `data-game_id`, que no es un selector documentado). La API necesita la clave de cada usuario: en la instancia pública eso obliga a guardar secretos cifrados, o a dejarlo solo para quien aloje su propio servicio.
 
@@ -167,6 +168,11 @@ Tomadas el 2026-10-24:
 - **Edición**: enlace secreto, sin cuentas.
 - **Primera versión**: perfil y proyecto.
 - **Tu propio CSS va en el link** y se entrega **solo la línea del `@import`**, sin copia pegada de respaldo. Cambia los principios 2 y la regla «solo plugins oficiales» de la fase 2: si el servicio falla, el perfil se ve sin efectos ni ese CSS.
+
+Tomada el 2026-11-23:
+
+- **Nada de pago**: no se cobra por nada, tampoco por la guía, que es gratis en `/guia`.
+- **Servicio propio**: cada usuario puede montar el servicio en su cuenta de Vercel (carpeta `service/`, capítulo 9 de la guía), además de usar la instancia pública.
 
 Pendientes:
 

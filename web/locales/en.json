@@ -111,7 +111,9 @@
     "effects": "Turned on: {{effects}}. Effects change on every visit, so they go in a link: accept to get it, or turn them off in Ideas to paste the CSS.",
     "effectsSaved": "Turned on: {{effects}}. Effects change on every visit, so they go in a link (below); turn them off in Ideas to paste the CSS.",
     "tooBig": "Your minified CSS takes {{bytes}} bytes and a profile takes {{max}}: it goes in a link, which has no such limit. Save to get it.",
-    "tooBigSaved": "Your minified CSS takes {{bytes}} bytes and a profile takes {{max}}: it goes in a link, which has no such limit (below)."
+    "tooBigSaved": "Your minified CSS takes {{bytes}} bytes and a profile takes {{max}}: it goes in a link, which has no such limit (below).",
+    "own": "Rather not depend on this site? Download your design and serve it from your own Vercel account: [how to run your own service](/guia/en/09-your-own-service).",
+    "ownButton": "Download config.json"
   },
   "showcaseForm": {
     "title": "Appear in the showcase",
