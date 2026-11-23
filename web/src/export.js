@@ -1,7 +1,8 @@
 // What the editor gives for itch's CSS field: the user's CSS minified, to paste, or the @import
 // link. Effects change on every visit, so they need the link. Without them the CSS is pasted when
 // it fits: a profile takes 5,120 UTF-8 bytes (knowledge base R7), a game page any size; a devlog
-// uses its game's CSS. Pasting is safer than the link: an @import blocks the page until it answers.
+// uses its game's CSS. A jam is always pasted (@import never loads there): past the 20,410 characters
+// known to save, `over` says it may not. Pasting is safer than the link: an @import blocks the page until it answers.
 
 import { minify } from '../../engine/src/css.js';
 import { measure } from '../../engine/src/output.js';
@@ -15,14 +16,16 @@ const STATIC = { ...scroll, ...motion };
 // form: the config the editor saves ({ page, title, greeting, foil, badges, ascii, scheme, the TOGGLES, css }).
 // The scheme and scroll effects are static, so it is pasted with the user's CSS (after it: @import must stay first;
 // shortcut: the user's CSS no longer wins ties against it, when that matters split off the @imports).
-// → { mode: 'import', reason: 'effects' | 'size', bytes?, max? } | { mode: 'paste', css, bytes, max }
+// → { mode: 'import', reason: 'effects' | 'size', bytes?, max? } | { mode: 'paste', css, bytes, max, chars?, over? }
 export function exportFor(form) {
   if (form.title || form.greeting || form.cards || form.foil || form.badges || form.ascii) return { mode: 'import', reason: 'effects' };
   const css = minify(form.css) + [
     form.scheme && scheme(),
     ...TOGGLES.map((k) => form[k] && STATIC[k]({ color: form.accent })),
   ].filter(Boolean).flat().join('');
-  const { bytes, limit, fits } = measure(css, form.page === 'profile' ? 'profile' : 'project');
+  const kind = form.page === 'profile' || form.page === 'jam' ? form.page : 'project';
+  const { bytes, chars, limit, fits } = measure(css, kind);
   const max = limit?.max ?? null;
+  if (kind === 'jam') return { mode: 'paste', css, bytes, max, chars, over: fits === null };
   return fits ? { mode: 'paste', css, bytes, max } : { mode: 'import', reason: 'size', bytes, max };
 }

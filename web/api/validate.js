@@ -3,8 +3,9 @@
 // doesn't apply), plus whether each @import answers 2xx text/css and, with the user's HTML, what itch
 // strips from it (R11) and whether the page shows exactly one h1 (R20; banner: the theme has one,
 // html5: the project's game is HTML5).
-// A devlog uses its project's CSS, so it's checked as a project. title is the rule's headline in the
-// knowledge base (§0 of knowledge/itch-custom-css.md).
+// A devlog uses its project's CSS, so it's checked as a project; a jam's CSS is pasted inside the page,
+// where @import never loads, so it's checked as pasted and its imports aren't fetched. title is the
+// rule's headline in the knowledge base (§0 of knowledge/itch-custom-css.md).
 
 import { readFileSync } from 'node:fs';
 import { checkHeadings, checkImports, checkMarkup, validate } from '../../engine/src/index.js';
@@ -31,7 +32,9 @@ export const POST = (request) =>
     // R10's status and type need the @imports' answers (lib/imports.js: public hosts only, cached, capped
     // per caller; on Vercel x-real-ip is the client's address, set by its edge)
     const ip = request.headers.get('x-real-ip') ?? request.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'local';
-    const checked = [...validate(css, page === 'profile' ? 'profile' : 'project', { served: true }), ...(await checkImports(css, (url) => load(url, ip)))];
+    const jam = page === 'jam';
+    const kind = page === 'profile' || jam ? page : 'project';
+    const checked = [...validate(css, kind, { served: !jam }), ...(jam ? [] : await checkImports(css, (url) => load(url, ip)))];
     // without the user's HTML there is nothing to strip and no h1s to count
     if (html.trim()) checked.push(...checkMarkup(html), ...checkHeadings({ html, css, page, banner: banner === true, html5: html5 === true }));
     const problems = checked.map((p) => ({ ...p, title: TITLES[p.rule] ?? '' }));

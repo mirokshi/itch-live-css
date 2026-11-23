@@ -116,11 +116,12 @@ export function Editor() {
   const [expanded, setExpanded] = useState(null); // 'css' | 'html' while in the dialog
   const [asking, setAsking] = useState(false); // the save dialog, with the showcase consent
 
+  const served = page !== 'jam'; // a jam's CSS sits inside the page: no link, so no per-visit effects (nor scheme)
   const config = {
     page,
     accent: ideas.accent,
-    title: ideas.titleOn ? { text: ideas.titleText, fonts: Object.keys(FONTS).filter((k) => ideas.fonts.includes(k)) } : null,
-    greeting: ideas.greetingOn
+    title: served && ideas.titleOn ? { text: ideas.titleText, fonts: Object.keys(FONTS).filter((k) => ideas.fonts.includes(k)) } : null,
+    greeting: served && ideas.greetingOn
       ? { first: ideas.greetingFirst, others: ideas.greetingOthers.split('\n').map((s) => s.trim()).filter(Boolean) }
       : null,
     foil: page === 'profile' && ideas.foil,
@@ -129,12 +130,12 @@ export function Editor() {
     foilSpeed: Number(ideas.foilSpeed),
     foilSync: !!ideas.foilSync,
     badges: page === 'profile' && ideas.badges,
-    ascii: ideas.ascii,
-    scheme: ideas.scheme,
+    ascii: served && ideas.ascii,
+    scheme: served && ideas.scheme,
     ...Object.fromEntries(TOGGLES.map((k) => [k, IDEA_PAGES[k].includes(page) && ideas[k]])),
     css,
     html,
-    html5: page !== 'profile' && html5,
+    html5: (page === 'project' || page === 'devlog') && html5,
     showcase: showcase.on ? { url: showcase.url.trim(), name: showcase.name } : null,
   };
   const out = exportFor(config);
@@ -229,7 +230,7 @@ export function Editor() {
   // The page type: its mock (whose load refreshes everything) and its theme's default colours.
   function choosePage(next) {
     setPage(next);
-    setTheme((t) => ({ ...t, ...THEME_COLOURS[next === 'profile' ? 'profile' : 'game'] }));
+    setTheme((t) => ({ ...t, ...THEME_COLOURS[next === 'profile' || next === 'jam' ? next : 'game'] }));
   }
 
   function fillForm(f) {
@@ -370,7 +371,7 @@ export function Editor() {
               {Object.keys(PAGES).map((v) => <ToggleGroupItem key={v} value={v}>{t(`pageNames.${v}`)}</ToggleGroupItem>)}
             </ToggleGroup>
             <Hint>{t(`pages.${page}.hint`)}</Hint>
-            {page !== 'profile' && <Check id="html5" checked={html5} onChange={setHtml5}>{t('editor.html5')}</Check>}
+            {(page === 'project' || page === 'devlog') && <Check id="html5" checked={html5} onChange={setHtml5}>{t('editor.html5')}</Check>}
           </Section>
 
           <Section title={t('editor.cssLegend')}>
@@ -393,7 +394,10 @@ export function Editor() {
               <CardTitle><h2>{t('export.title')}</h2></CardTitle>
               {out.mode === 'paste' ? (
                 <CardDescription>
-                  {t('export.paste', { into: t(`pages.${page}.into`) })}{' '}{out.max ? t('export.size', { bytes: num(out.bytes), max: num(out.max) }) : t('export.noLimit')}
+                  {t('export.paste', { into: t(`pages.${page}.into`) })}{' '}
+                  {page === 'jam'
+                    ? t(out.over ? 'export.jamOver' : 'export.jamSize', { chars: num(out.chars), max: num(out.max) })
+                    : out.max ? t('export.size', { bytes: num(out.bytes), max: num(out.max) }) : t('export.noLimit')}
                 </CardDescription>
               ) : (
                 <CardDescription>
@@ -489,7 +493,7 @@ export function Editor() {
             <Label htmlFor="accent">{t('ideasPanel.accent')}</Label>
             <input id="accent" type="color" className="h-8 w-11 cursor-pointer rounded-md border bg-transparent p-0.5" value={ideas.accent} onChange={setIdea('accent')} />
           </div>
-          <Card size="sm">
+          <Card size="sm" data-only="profile project">
             <CardContent className="space-y-2">
               <Check id="title-on" checked={ideas.titleOn} onChange={setIdea('titleOn')}>{t('ideasPanel.titleLabel')}</Check>
               <Hint>{t('ideasPanel.titleHint')}</Hint>
@@ -505,7 +509,7 @@ export function Editor() {
               </div>
             </CardContent>
           </Card>
-          <Card size="sm">
+          <Card size="sm" data-only="profile project">
             <CardContent className="space-y-2">
               <Check id="greeting-on" checked={ideas.greetingOn} onChange={setIdea('greetingOn')}>{t('ideasPanel.greetingLabel')}</Check>
               <Hint>{t('ideasPanel.greetingHint')}</Hint>
@@ -550,21 +554,21 @@ export function Editor() {
               <Hint>{t('ideasPanel.badgesHint')}</Hint>
             </CardContent>
           </Card>
-          <Card size="sm">
+          <Card size="sm" data-only="profile project">
             <CardContent className="space-y-2">
               <Check id="ascii-on" checked={ideas.ascii} onChange={setIdea('ascii')}>{t('ideasPanel.asciiLabel')}</Check>
               <Hint>{t('ideasPanel.asciiHint')}</Hint>
             </CardContent>
           </Card>
-          <Card size="sm">
+          <Card size="sm" data-only="profile project">
             <CardContent className="space-y-2">
               <Check id="scheme-on" checked={ideas.scheme} onChange={setIdea('scheme')}>{t('ideasPanel.schemeLabel')}</Check>
               <Hint>{t('ideasPanel.schemeHint')}</Hint>
             </CardContent>
           </Card>
           {TOGGLES.map((k) => (
-            // data-only: the editor shows profile or project controls (a devlog uses the project's)
-            <Card size="sm" key={k} data-only={IDEA_PAGES[k].length < 3 ? (IDEA_PAGES[k].includes('profile') ? 'profile' : 'project') : undefined}>
+            // data-only: the page types whose controls show it (a devlog uses the project's)
+            <Card size="sm" key={k} data-only={[...new Set(IDEA_PAGES[k].map((p) => (p === 'devlog' ? 'project' : p)))].join(' ')}>
               <CardContent className="space-y-2">
                 <Check id={`${k}-on`} checked={ideas[k]} onChange={setIdea(k)}>{t(`ideasPanel.${k}Label`)}</Check>
                 <Hint>{t(`ideasPanel.${k}Hint`)}</Hint>

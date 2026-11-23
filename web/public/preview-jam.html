@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jam page preview</title>
+<!-- A generic itch.io jam overview with the default theme. Our own markup and styles, following the
+     tree in knowledge/itch-custom-css.md §3 (itch's HTML and CSS are not copied). On itch the host's
+     CSS sits inside style#jam_theme, after the generated rules; here style#custom_css comes right after
+     it, which cascades the same. The page fills #bio (the jam's description), style#jam_theme and
+     style#custom_css. -->
+<link rel="stylesheet" href="preview-jam.css">
+<link rel="stylesheet" id="theme_font">
+<style id="jam_theme"></style>
+<style id="live"></style>
+<style id="custom_css"></style>
+</head>
+<body class="jam_layout">
+<div class="header_widget jam_layout_header_widget"><span class="logo">itch.io</span></div>
+<div id="wrapper" class="jam_page_wrap">
+  <div class="view_jam_page during_submit">
+    <div class="jam_banner_outer"><img class="jam_banner" alt="My Jam"></div>
+    <div class="jam_body">
+      <div class="jam_header_widget">
+        <h1 class="jam_title_header">My Jam</h1>
+        <div class="stats_container">
+          <div class="stat_box"><span class="stat_value">128</span> <span class="stat_label">Joined</span></div>
+          <div class="stat_box"><span class="stat_value">4</span> <span class="stat_label">Submissions</span></div>
+        </div>
+        <div class="header_tabs">
+          <a class="header_tab active" href="#">Overview</a><a class="header_tab" href="#">Submissions</a><a class="header_tab" href="#">Community</a>
+        </div>
+      </div>
+      <div class="submitter_outer">
+        <div class="jam_submitter_widget"><p>Submissions close in 3 days</p><a class="button" href="#">Join jam</a></div>
+      </div>
+      <div class="jam_content user_formatted" id="bio"></div>
+    </div>
+    <div id="entries" class="grid_outer">
+      <div class="header_row"><h2>Submissions</h2><span class="game_count">4 entries</span></div>
+      <div class="jam_filter_picker"><a class="filter_item active" href="#">All</a><a class="filter_item" href="#">Web</a><a class="filter_item" href="#">Windows</a></div>
+      <div class="game_grid_widget browse_game_grid" id="game_grid_1">
+        <div class="game_cell"><a class="game_thumb" href="#"></a><div class="game_cell_data"><div class="game_title"><a class="title" href="#">Entry one</a></div><div class="game_author"><a href="#">someone</a></div></div></div>
+        <div class="game_cell"><a class="game_thumb" href="#"></a><div class="game_cell_data"><div class="game_title"><a class="title" href="#">Entry two</a></div><div class="game_author"><a href="#">someone else</a></div></div></div>
+        <div class="game_cell"><a class="game_thumb" href="#"></a><div class="game_cell_data"><div class="game_title"><a class="title" href="#">Entry three</a></div><div class="game_author"><a href="#">a team</a></div></div></div>
+        <div class="game_cell"><a class="game_thumb" href="#"></a><div class="game_cell_data"><div class="game_title"><a class="title" href="#">Entry four</a></div><div class="game_author"><a href="#">a duo</a></div></div></div>
+      </div>
+      <div class="itch_footer"><a href="#">itch.io</a> · <a href="#">Community guidelines</a> · <a href="#">Report</a></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

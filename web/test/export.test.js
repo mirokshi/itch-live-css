@@ -33,6 +33,13 @@ test('the size is measured after minifying: comments and spare whitespace are fr
   assert.deepEqual(exportFor({ ...base, css }), { mode: 'paste', css: '#wrapper{color :red}', bytes: 20, max: 5120 });
 });
 
+test('jam: always pasted (no @import there); past the 20,410 characters known to save, it says so', () => {
+  const fits = exportFor({ ...base, page: 'jam', css: sized(20410) });
+  assert.deepEqual([fits.mode, fits.chars, fits.max, fits.over], ['paste', 20410, 20410, false]);
+  const over = exportFor({ ...base, page: 'jam', css: sized(20411) });
+  assert.deepEqual([over.mode, over.chars, over.over], ['paste', 20411, true]);
+});
+
 test('game page and devlog: always pasted, whatever the size', () => {
   for (const page of ['project', 'devlog']) {
     const out = exportFor({ ...base, page, css: sized(60001) });

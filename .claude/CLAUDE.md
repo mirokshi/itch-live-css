@@ -8,7 +8,7 @@ Guidance for Claude Code in this repository.
 
 1. An AI-ready **knowledge base** on itch custom CSS (`knowledge/`). **Done** 2026-10-14; checked with live probes on 2026-10-16 (only jam fields still open).
 2. An open-source **engine** (`engine/`, not published to npm; the web uses it): config → CSS, plugins with option schemas, a validator whose rules map to the knowledge base's R1–R24, two outputs (pasted / served).
-3. + 4. **One web app on Vercel** (decided 2026-10-24): you build your CSS, preview it on mock pages and take it to itch, pasted when it fits or as a link to `@import`. New Vercel project from this repo, configs by id in Upstash Redis, a secret edit link instead of accounts, first version covers profile and project (`@import` never loads on jams).
+3. + 4. **One web app on Vercel** (decided 2026-10-24): you build your CSS, preview it on mock pages and take it to itch, pasted when it fits or as a link to `@import`. New Vercel project from this repo, configs by id in Upstash Redis, a secret edit link instead of accounts, it covers profile, project and devlog, and since 2026-11-24 jams too (always pasted: `@import` never loads there).
 5. **Framework adapters** (Tailwind v3.4, Bootstrap's CSS, Animate.css) and **AI integration** (llms.txt, an MCP server, a bring-your-own-key assistant in the configurator).
 
 **Status (2026-10-16): phase 0.** Live probe Runs 1 (draft project), 2 (profile), 3 (devlog post; the jam part is not done) and 4 (size caps, without the jam part) are done; their results are in `knowledge/evidence/live-probes/` and the knowledge base is retagged. Nothing is published. A local git repo exists (branch `main`, first commit 2026-10-16) with no remote yet: commit or push only when the owner asks. The current next step and the open tasks are in `HANDOFF.md` (local, git-ignored). Read it first when it exists.
@@ -74,10 +74,11 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              test/i18n.test.js keeps both languages, the engine's messages and §0's titles in step; guide
                              chapters keep one URL per language (routes/chapter.jsx, one route per guide file);
                              src/pages/Editor.jsx = the configurator (CodeMirror 6 editors with the validator's marks,
-                             a page-type switch profile | project | devlog saved with the config (plus an "HTML5 game" box, html5, for R20), an itch-like theme panel,
-                             default-theme mocks public/preview*.html in a script-less sandboxed iframe); src/export.js =
+                             a page-type switch profile | project | devlog | jam saved with the config (plus an "HTML5 game" box, html5, for R20), an itch-like theme panel
+                             (rows by data-only="profile project jam" lists, app.css; a jam's generated theme in src/preview.js),
+                             default-theme mocks public/preview*.html, preview-jam.html since 2026-11-24, in a script-less sandboxed iframe); src/export.js =
                              what to take to itch: the user's CSS minified to paste (profile ≤ 5,120 bytes, game page and devlog
-                             always), else the @import link (bigger profile CSS, or any per-visit effect); saving is optional
+                             always, jam always with a warning past the 20,410 characters known to save), else the @import link (bigger profile CSS, or any per-visit effect); saving is optional
                              when pasting; the effects panel opens only from the ideas pages (/?idea=<key>); docs and privacy (locales/) stay in step with the knowledge base by hand; ideas pages: /ideas and /ideas/<key> (routes/idea.jsx);
                              content/guia/{es,en}/*.md = the guide, rendered with react-markdown + remark-gfm (copies of the private guia/{es,en}/*.md; edit there, then `node guia/build-web.mjs`
                              copies the chapters and the recipes); public/ = the mocks, guia/recetas/ and guia/img/ (screenshots by guia/shots.mjs)

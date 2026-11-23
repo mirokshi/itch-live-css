@@ -30,7 +30,8 @@
   "pageNames": {
     "profile": "Profile",
     "project": "Game page",
-    "devlog": "Devlog"
+    "devlog": "Devlog",
+    "jam": "Jam"
   },
   "thumb": {
     "title": "Preview: {{page}}"
@@ -66,6 +67,15 @@
       "into": "into the game's CSS",
       "sample": "Version 1.0 is out today. Thanks for playing.",
       "hint": "A devlog has no CSS of its own: it uses the game's (Edit theme on the game page → CSS)."
+    },
+    "jam": {
+      "title": "Jam page preview",
+      "html": "Your jam description HTML",
+      "text": "the jam's description",
+      "where": "of the jam's CSS",
+      "into": "into the jam's CSS",
+      "sample": "A sample jam. This is its description.",
+      "hint": "On itch: the jam's theme editor → CSS. A jam never loads an @import, so everything is pasted: no link, no effects that change on every visit."
     }
   },
   "editor": {
@@ -107,6 +117,8 @@
     "paste": "Paste this {{into}} on itch.",
     "size": "It takes {{bytes}} of {{max}} bytes.",
     "noLimit": "There's no size limit here.",
+    "jamSize": "It takes {{chars}} characters; a jam is known to save up to {{max}}.",
+    "jamOver": "It takes {{chars}} characters, past the {{max}} a jam is known to save: itch may not save it.",
     "pasteLabel": "CSS to paste",
     "optional": "Saving is optional: it gives you an edit link to come back to this CSS, or to appear in the showcase.",
     "effects": "Turned on: {{effects}}. Effects change on every visit, so they go in a link: accept to get it, or turn them off in Ideas to paste the CSS.",

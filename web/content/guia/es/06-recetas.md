@@ -1,6 +1,6 @@
 # Capítulo 6 — Recetas listas para copiar
 
-Siete recetas basadas en los capítulos 1–5. Cada una es un archivo de la carpeta `recetas/` de esta guía. Cada receta pasa el validador de itch-live-css, que comprueba automáticamente las reglas del capítulo 2 que pueden verificarse por máquina. El tamaño indicado es después de minificar, que es lo que pegas.
+Ocho recetas basadas en los capítulos 1–5. Cada una es un archivo de la carpeta `recetas/` de esta guía. Cada receta pasa el validador de itch-live-css, que comprueba automáticamente las reglas del capítulo 2 que pueden verificarse por máquina. El tamaño indicado es después de minificar, que es lo que pegas.
 
 Pega el código tal cual, o minifícalo antes: en un perfil cada byte cuenta (capítulo 1); en un proyecto, una sola línea evita los saltos de línea dobles.
 
@@ -8,8 +8,8 @@ Pega el código tal cual, o minifícalo antes: en un perfil cada byte cuenta (ca
 
 ## Combinar recetas
 
-- **Define la paleta una sola vez.** Las recetas 1, 2 y 7 empiezan cada una con tokens (`--bg`, `--text`, `--accent`). Al combinar recetas, deja una sola copia de los tokens y cambia los colores ahí.
-- **Incluye el bloque de movimiento reducido una sola vez.** Las recetas 1, 2 y 5 lo contienen; si usas dos de ellas, borra la segunda copia.
+- **Define la paleta una sola vez.** Las recetas 1, 2, 7 y 8 empiezan cada una con tokens (`--bg`, `--text`, `--accent`). Al combinar recetas, deja una sola copia de los tokens y cambia los colores ahí.
+- **Incluye el bloque de movimiento reducido una sola vez.** Las recetas 1, 2, 5 y 8 lo contienen; si usas dos de ellas, borra la segunda copia.
 - **Comprueba el total.** Las recetas 1, 3, 4 y 5 juntas suman unos 2.100 bytes en un perfil, una vez eliminado el bloque duplicado, muy por debajo del límite de 5.120.
 
 ## Receta 1 — Base de perfil
@@ -197,11 +197,58 @@ Reglas para hacerlo con seguridad:
 4. **Elige un alojamiento fiable.** Un `@import` retiene toda la página hasta que se carga. En una prueba, un servidor que aceptó la conexión y nunca respondió dejó la página en blanco durante más de cinco minutos. Una CDN conocida es la opción segura.
 5. **Nunca en jams.** El CSS de una jam va dentro del bloque de estilo propio de itch, donde `@import` nunca se carga. Pega todo, hasta unos 20 KB (capítulo 1).
 
+## Receta 8 — Base de jam
+
+**Página:** la página principal de una jam. **Tamaño:** 1.356 caracteres.
+
+En una jam, tu CSS va dentro del bloque de tema que genera itch, así que ningún `@import` carga: todo va pegado, hasta los unos 20.410 caracteres que se sabe que guarda una jam (capítulo 1). Esta receta pone las nueve variables de las jams en `#wrapper`, también los tonos del botón (si cambias su color y no sus tonos, itch mantiene los de antes), colorea el panel y la rejilla de entregas, y deja el título de itch como el único `h1`: los encabezados de tu descripción se estilan dentro de `.jam_content`, nunca con `#wrapper h1` (R20).
+
+![Página de jam de prueba con la receta 8: fondo y panel azul marino, título y botón dorados](/guia/img/06-recipe-8.webp)
+
+*Sobre la maqueta de jam de esta web; las cajas grises son las portadas de las entregas, vacías en la maqueta.*
+
+```css
+/* Jam starter: palette, itch's jam variables, panel, headings, grid text, focus ring, reduced motion */
+#wrapper {
+  --bg: #0b1433;
+  --panel: rgba(20, 32, 70, .92);
+  --text: #eef3ff;
+  --muted: #b8c2dc;
+  --accent: #ffc857;
+  --focus-ring: #ffc857;
+  --itchio_link_color: var(--accent);
+  --itchio_border_color: rgba(238, 243, 255, .2);
+  --itchio_border_radius: 8px;
+  --itchio_button_color: var(--accent);
+  --itchio_button_fg_color: var(--bg);
+  --itchio_button_hover_color: #ffd47a;
+  --itchio_button_active_color: #f0b840;
+  --itchio_button_shadow_color: #c99a30;
+  --itchio_button_border_color: #c99a30;
+  --itchio_input_focus_color: var(--focus-ring);
+  color-scheme: dark;
+  color: var(--text);
+  background-color: var(--bg);
+}
+#wrapper .jam_body, #wrapper .grid_outer { background-color: var(--panel); }
+#wrapper .jam_title_header { color: var(--accent); }
+#wrapper .jam_content h1, #wrapper .view_jam_page :is(h2, h3) { color: var(--text); }
+#wrapper .game_cell .game_author a, #wrapper .game_count { color: var(--muted) !important; }
+#wrapper .jam_filter_picker .filter_item.active { border-color: var(--accent) !important; }
+#wrapper .grid_outer .itch_footer { border-top-color: var(--itchio_border_color); }
+#wrapper :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+#wrapper :is(.game_cell, .header_tabs, .screenshot_list, .breadcrumbs) :focus-visible { outline-offset: -2px; }
+@media (prefers-reduced-motion:reduce){#wrapper,#wrapper::before,#wrapper::after,#wrapper *,#wrapper *::before,#wrapper *::after{animation:none!important;transition:none!important}}
+```
+
+Los textos grises de la rejilla, el recuento y el borde del filtro activo los escribe itch con `!important`, así que la receta también lo necesita en esas dos reglas, y solo en esas (R14).
+
 ## Lista de comprobación
 
 - [ ] Cada receta pegada en el tipo de página correcto.
 - [ ] Un solo conjunto de tokens y un solo bloque de movimiento reducido en la hoja combinada.
 - [ ] Total del perfil medido en bytes, por debajo de 5.120.
+- [ ] En una jam, todo pegado, sin `@import`, y por debajo de unos 20.410 caracteres.
 - [ ] Páginas de proyecto comprobadas en la principal, el índice del devlog, una entrada del devlog y los comentarios.
 - [ ] Con un `@import`: primera línea, etiqueta fijada de jsDelivr, y la página se ve bien con la importación bloqueada.
 
@@ -218,5 +265,6 @@ Cada receta está compuesta a partir de reglas y bloques de la base de conocimie
 - Receta 5: capítulo 5 (S3, S4) y capítulo 2 (R20).
 - Receta 6: §4 «Maximized HTML5 game», panel esmerilado seguro: verificado · s04-gf-10, s04-gf-11, s04-gf-13; el marco de altura completa de la página: verificado · s04-gf-08, s04-gf-09.
 - Receta 7: §8: colocación de `@import`: verificado · localtests-09, localtests-50, itchcss-08; solo cuenta la línea: verificado · external-01, repo-09; fijación en jsDelivr y fallo de raw de GitHub: verificado · external-05, community-12, external-45; la página debe funcionar sin la importación: observado · repo-54; verificado · external-06, localtests-12; un servidor que no responde dejó la página en blanco más de 330 s: verificado · g08-17; jams: verificado · s04-1, crawljam-14.
+- Receta 8: §4.5: variables de la jam en `#wrapper`: verificado · crawljam-05; las nueve variables: verificado · crawljam-11; los tonos del botón: verificado · crawljam-34; colores literales e `!important`: verificado · crawljam-08, crawljam-11; R20 en jams: observado · crawljam-46; los bloques B1 y B2, capítulo 5.
 
-**Estado de las pruebas.** Cada archivo pasó `engine validate()` para su tipo de página el 7 de noviembre de 2026. Los tamaños proceden del minificador del propio engine. Las recetas aún no se han renderizado en una página real de itch.
+**Estado de las pruebas.** Cada archivo pasó `engine validate()` para su tipo de página el 7 de noviembre de 2026 (la receta 8, como jam, el 24 de noviembre). Los tamaños proceden del minificador del propio engine. Las recetas aún no se han renderizado en una página real de itch.

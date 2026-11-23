@@ -33,9 +33,16 @@ test("validate: with the user's HTML it counts the page's h1s (R20)", async () =
   assert.equal((await call({ css: '', html: 3 })).status, 400);
 });
 
+test('validate: a jam is checked as pasted, and its @imports never load there', async () => {
+  const codes = async (css) => (await (await call({ css, page: 'jam' })).json()).problems.map((p) => p.code);
+  assert.deepEqual(await codes('@import url("https://a.test/x.css");#wrapper :focus-visible{outline:2px solid}'), ['R9.jam']);
+  assert.deepEqual(await codes(`#wrapper :focus-visible{outline:2px solid}#wrapper{--x:"${'a'.repeat(20410)}"}`), ['R7.jam']);
+  assert.deepEqual(await codes('#wrapper h1{color:red}#wrapper :focus-visible{outline:2px solid}'), ['R20.jam']);
+});
+
 test('validate: rejects anything but a CSS string', async () => {
   assert.equal((await call({ css: 3 })).status, 400);
   assert.equal((await call({ css: 'a'.repeat(50001) })).status, 400);
   assert.equal((await call(null)).status, 400);
-  assert.equal((await call({ css: '', page: 'jam' })).status, 400);
+  assert.equal((await call({ css: '', page: 'forum' })).status, 400);
 });

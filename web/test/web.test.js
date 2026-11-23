@@ -35,7 +35,10 @@ test('check keeps known fields only and rejects bad input', () => {
   assert.equal(check({ ...form, page: 'project' }).badges, false);
   assert.equal(check({ ...form, page: 'project', html5: true }).html5, true);
   assert.equal(check({ ...form, html5: true }).html5, false); // profiles have no game
-  assert.throws(() => check({ ...form, page: 'jam' }), /page/);
+  assert.throws(() => check({ ...form, page: 'forum' }), /page/);
+  // a jam: no per-visit effects (no link loads there), no scheme, no HTML5 box; the static ones it supports stay
+  const jam = check({ ...form, page: 'jam', ascii: true, scheme: true, html5: true, reveal: true, lift: true });
+  assert.deepEqual([jam.title, jam.greeting, jam.foil, jam.badges, jam.ascii, jam.scheme, jam.html5, jam.reveal, jam.lift], [null, null, false, false, false, false, false, true, false]);
   assert.equal(check({ ...form, css: 'a{}', html: '<p>x</p>' }).html, '<p>x</p>');
   assert.throws(() => check({ ...form, css: 'a'.repeat(50001) }), /css/);
   assert.throws(() => check({ ...form, html: 'a'.repeat(5001) }), /html/);

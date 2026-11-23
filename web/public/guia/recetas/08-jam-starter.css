@@ -1,0 +1,31 @@
+/* Jam starter: palette, itch's jam variables, panel, headings, grid text, focus ring, reduced motion */
+#wrapper {
+  --bg: #0b1433;
+  --panel: rgba(20, 32, 70, .92);
+  --text: #eef3ff;
+  --muted: #b8c2dc;
+  --accent: #ffc857;
+  --focus-ring: #ffc857;
+  --itchio_link_color: var(--accent);
+  --itchio_border_color: rgba(238, 243, 255, .2);
+  --itchio_border_radius: 8px;
+  --itchio_button_color: var(--accent);
+  --itchio_button_fg_color: var(--bg);
+  --itchio_button_hover_color: #ffd47a;
+  --itchio_button_active_color: #f0b840;
+  --itchio_button_shadow_color: #c99a30;
+  --itchio_button_border_color: #c99a30;
+  --itchio_input_focus_color: var(--focus-ring);
+  color-scheme: dark;
+  color: var(--text);
+  background-color: var(--bg);
+}
+#wrapper .jam_body, #wrapper .grid_outer { background-color: var(--panel); }
+#wrapper .jam_title_header { color: var(--accent); }
+#wrapper .jam_content h1, #wrapper .view_jam_page :is(h2, h3) { color: var(--text); }
+#wrapper .game_cell .game_author a, #wrapper .game_count { color: var(--muted) !important; }
+#wrapper .jam_filter_picker .filter_item.active { border-color: var(--accent) !important; }
+#wrapper .grid_outer .itch_footer { border-top-color: var(--itchio_border_color); }
+#wrapper :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+#wrapper :is(.game_cell, .header_tabs, .screenshot_list, .breadcrumbs) :focus-visible { outline-offset: -2px; }
+@media (prefers-reduced-motion:reduce){#wrapper,#wrapper::before,#wrapper::after,#wrapper *,#wrapper *::before,#wrapper *::after{animation:none!important;transition:none!important}}

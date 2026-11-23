@@ -6,9 +6,11 @@ export const IDEAS = ['title', 'greeting', 'foil', 'badges', 'ascii', 'scheme', 
 export const NO_PREVIEW = ['pagefade'];
 export const PREVIEW = IDEAS.filter((k) => !NO_PREVIEW.includes(k));
 
-// the pages each effect works on (the keys of pageNames in locales/); jams are left out: their CSS sits
-// inside the page, so the per-visit effects can't run there and the static ones are not checked
+// the pages each effect works on (the keys of pageNames in locales/). Jams take only the static ones whose
+// selectors exist there (cards in #entries, .user_formatted, #wrapper, the navigation): their CSS sits
+// inside the page, so the per-visit effects can't run there
 const ALL = ['profile', 'project', 'devlog'];
-export const IDEA_PAGES = { title: ALL, greeting: ALL, foil: ['profile'], badges: ['profile'], ascii: ALL, scheme: ALL, reveal: ALL, stagger: ['profile'], unveil: ['project', 'devlog'], progress: ALL, parallax: ALL,
-  zoom: ALL, shrink: ALL, entrance: ALL, lift: ['profile'], tilt: ['profile'], pagefade: ALL,
+const JAM = [...ALL, 'jam'];
+export const IDEA_PAGES = { title: ALL, greeting: ALL, foil: ['profile'], badges: ['profile'], ascii: ALL, scheme: ALL, reveal: JAM, stagger: ['profile'], unveil: ['project', 'devlog', 'jam'], progress: JAM, parallax: ALL,
+  zoom: ALL, shrink: ALL, entrance: ALL, lift: ['profile'], tilt: ['profile'], pagefade: JAM,
 };

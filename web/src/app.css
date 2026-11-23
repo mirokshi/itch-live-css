@@ -2,8 +2,11 @@
    the itch theme panel look-alike, page mocks shrunk into cards, and the CodeMirror boxes. Colours
    come from shadcn's tokens (index.css), except the itch panel, which copies itch's own. */
 
-/* controls for one page type only: data-only="profile" or "project" (a devlog uses the project's) */
-.app[data-page="profile"] [data-only="project"], .app:not([data-page="profile"]) [data-only="profile"] { display: none !important; }
+/* controls for some page types only: data-only lists them ("profile", "project", "jam"; a devlog uses the project's) */
+.app[data-page="profile"] [data-only]:not([data-only~="profile"]),
+.app[data-page="project"] [data-only]:not([data-only~="project"]),
+.app[data-page="devlog"] [data-only]:not([data-only~="project"]),
+.app[data-page="jam"] [data-only]:not([data-only~="jam"]) { display: none !important; }
 
 .app { display: grid; grid-template-columns: minmax(300px, 440px) 1fr; height: calc(100vh - 3.5rem); } /* 3.5rem = the top bar */
 .app.ideas-open { grid-template-columns: minmax(300px, 440px) 1fr minmax(260px, 340px); }

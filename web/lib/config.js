@@ -1,7 +1,8 @@
 // The web's config (what the form edits and the store keeps) → served CSS, bio HTML and @import line.
 //
 // form: {
-//   page      'profile' | 'project' | 'devlog'  where the CSS goes (a devlog uses its project's CSS)
+//   page      'profile' | 'project' | 'devlog' | 'jam'  where the CSS goes (a devlog uses its project's CSS;
+//             a jam's CSS sits inside the page, where @import never loads: no per-visit effects there)
 //   accent    '#rrggbb'                                  → --gold (greeting colour, card labels)
 //   title     null | { text, fonts: [key, ...] }         keys from lib/fonts.js, 2–4 of them
 //   greeting  null | { first, others: ['string', ...] }
@@ -28,7 +29,7 @@ import { FONTS } from './fonts.js';
 import { BadRequest } from './http.js';
 import { IDEA_PAGES, TOGGLES } from '../src/ideas.js';
 
-export const PAGES = ['profile', 'project', 'devlog'];
+export const PAGES = ['profile', 'project', 'devlog', 'jam'];
 const MAX_CSS = 50000; // characters
 const MAX_HTML = 5000; // characters, itch's bio cap
 
@@ -52,6 +53,7 @@ export function check(f) {
   if (typeof f.accent !== 'string' || !/^#[0-9a-f]{6}$/i.test(f.accent)) fail('accent must be #rrggbb');
   const page = f.page ?? 'profile';
   if (!PAGES.includes(page)) fail(`page must be one of ${PAGES.join(', ')}`);
+  const served = page !== 'jam'; // the link's effects, and scheme (written for profile and game pages)
   const out = {
     page,
     accent: f.accent.toLowerCase(),
@@ -65,12 +67,12 @@ export function check(f) {
     foilWidth: num(f.foilWidth, 1, 4, 1.5),
     foilSpeed: num(f.foilSpeed, 0.5, 3, 1),
     foilSync: f.foilSync === true,
-    ascii: f.ascii === true,
-    scheme: f.scheme === true,
+    ascii: f.ascii === true && served,
+    scheme: f.scheme === true && served,
     ...Object.fromEntries(TOGGLES.map((k) => [k, f[k] === true && IDEA_PAGES[k].includes(page)])),
     css: optional(f.css, MAX_CSS, 'css'),
     html: optional(f.html, MAX_HTML, 'html'),
-    html5: f.html5 === true && page !== 'profile',
+    html5: f.html5 === true && (page === 'project' || page === 'devlog'),
     showcase: null,
   };
   if (f.showcase) {
@@ -83,7 +85,7 @@ export function check(f) {
     out.showcase = { url, name: name.trim() };
   }
 
-  if (f.title) {
+  if (f.title && served) {
     const { text: t, fonts } = f.title;
     if (!text(t, 24)) fail('title: text of 1–24 characters');
     if (
@@ -93,7 +95,7 @@ export function check(f) {
     out.title = { text: t, fonts: [...fonts] };
   }
 
-  if (f.greeting) {
+  if (f.greeting && served) {
     const { first, others } = f.greeting;
     if (!text(first, 40)) fail('greeting: first greeting of 1–40 characters');
     if (!Array.isArray(others) || others.length < 1 || others.length > 20 || !others.every((s) => text(s, 40))) {

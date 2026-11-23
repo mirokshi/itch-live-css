@@ -98,7 +98,7 @@ Las fases 2 y 3 son **una sola web** en un proyecto nuevo de Vercel (decidido 20
 
 ### Fase 3 · Configurador web (versión mínima para no programadores)
 
-Primera versión: **perfil y proyecto** (decidido 2026-10-24); jam y devlog después.
+Primera versión: **perfil y proyecto** (decidido 2026-10-24); jam y devlog después. El devlog llegó después; la jam, el 2026-11-24: todo pegado, con maqueta y tema de jam en la vista previa, validación como jam, solo los efectos estáticos que funcionan allí y la receta 8 de la guía.
 
 - Elegir tipo de página → catálogo de efectos con formularios generados desde los esquemas.
 - Vista previa sobre **maquetas propias** de cada tipo de página (mismas clases que itch, estilos propios: no se redistribuye el HTML ni el CSS de itch).

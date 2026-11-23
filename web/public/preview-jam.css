@@ -1,0 +1,63 @@
+/* Mock of a jam overview with itch's default theme, written from scratch (not itch's CSS). Layout and
+   defaults from knowledge/itch-custom-css.md §3 and sections/04 §5:
+   · the site header (.jam_layout_header_widget) sits outside #wrapper; #wrapper is .jam_page_wrap, the
+     page background, where the theme puts the text colour, font, size % and the 9 --itchio_ variables;
+   · .view_jam_page holds the banner (.has_banner), .jam_body (the BG2 panel: header, tabs, submitter
+     box, description) and #entries (.grid_outer, the submissions grid and the footer);
+   · .jam_body clips and takes --itchio_border_radius (fallback 0), the submitter box too (fallback 4px);
+   · ≤ 960 px the panel touches the edges, ≤ 820 px the submitter box loses its radius, ≤ 650 px the
+     margins are 10 px and the title shrinks, ≤ 600 px the stats go.
+   style#jam_theme (filled by the page) sets the colours, fonts, size, panel and shadow. */
+body { margin: 0; font-family: Lato, system-ui, sans-serif; }
+.header_widget { display: flex; align-items: center; height: 48px; padding: 0 16px; background: #2b2c33; color: #fff; font-weight: 700; }
+
+/* class selectors, as itch's jam.css: the theme's .jam_page_wrap / .jam_body rules must win */
+.jam_page_wrap { min-height: 100vh; padding: 20px 0 40px; box-sizing: border-box; color: #222; background-color: #fff; --itchio_border_color: #dadada; }
+.jam_page_wrap a { color: var(--itchio_link_color, #fa5c5c); }
+.jam_banner_outer { display: none; }
+.has_banner .jam_banner_outer { display: block; margin: -20px 0 20px; }
+.jam_banner { display: block; max-width: 100%; margin: 0 auto; }
+
+.jam_body { max-width: 960px; margin: 0 auto; overflow: hidden; background-color: #fff; border-radius: var(--itchio_border_radius, 0); }
+.jam_header_widget { padding: 30px 30px 0; text-align: center; border-bottom: 1px solid var(--itchio_border_color); }
+.jam_title_header { margin: 0 0 20px; font-size: 2.625em; line-height: 1.15; }
+.stats_container { display: flex; justify-content: center; gap: 40px; margin-bottom: 20px; }
+.stat_value { display: block; font-size: 1.6em; font-weight: 700; }
+.stat_label { font-size: .85em; opacity: .7; }
+.header_tabs { display: flex; justify-content: center; }
+.jam_page_wrap .header_tab { padding: 10px 16px; color: inherit; text-decoration: none; border-bottom: 3px solid transparent; }
+.header_tab.active, .header_tab:hover { border-bottom-color: var(--itchio_button_color, #fa5c5c); }
+.submitter_outer { padding: 20px 30px 0; }
+.jam_submitter_widget { padding: 4px 20px 16px; text-align: center; border: 1px solid var(--itchio_border_color); border-radius: var(--itchio_border_radius, 4px); }
+.jam_content { padding: 20px 30px 30px; line-height: 1.5; }
+.jam_content h1 { margin: 0 0 .5em; font-size: 2em; line-height: 1.2; }
+
+.jam_page_wrap .button {
+  display: inline-block; padding: 8px 18px; border: 1px solid var(--itchio_button_border_color, #c4474b); border-radius: 3px;
+  background-color: var(--itchio_button_color, #fa5c5c); color: var(--itchio_button_fg_color, #fff); font-weight: 700;
+  text-decoration: none; text-shadow: 0 1px 0 var(--itchio_button_shadow_color, #c4474b);
+}
+.jam_page_wrap .button:hover { background-color: var(--itchio_button_hover_color, var(--itchio_button_color, #fa5c5c)); }
+
+.grid_outer { max-width: 960px; margin: 20px auto 0; padding: 0 30px 20px; box-sizing: border-box; background-color: #fff; }
+.header_row { display: flex; align-items: baseline; justify-content: space-between; padding: 20px 0 10px; border-bottom: 1px solid var(--itchio_border_color); }
+.header_row h2 { margin: 0; font-size: 1.4em; }
+.game_count { color: #8c8c8c; font-size: .9em; }
+.jam_filter_picker { display: flex; gap: 8px; padding: 12px 0; font-size: .9em; }
+.jam_page_wrap .filter_item { padding: 4px 10px; border: 1px solid transparent; border-radius: 3px; color: inherit; text-decoration: none; }
+.filter_item.active { border-color: #fa5c5c; }
+.browse_game_grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+.game_thumb { display: block; aspect-ratio: 315 / 250; background: #ddd; }
+.game_title { margin: 8px 0 2px; font-weight: 700; }
+.game_author, .game_author a { color: #8c8c8c; font-size: .9em; }
+.itch_footer { margin-top: 30px; padding-top: 12px; border-top: 1px solid #dadada; font-size: 12px; color: #888; }
+
+@media (max-width: 960px) and (min-width: 651px) { .jam_body, .grid_outer { margin-left: 0; margin-right: 0; } }
+@media (max-width: 820px) { .jam_submitter_widget { border-radius: 0; } }
+@media (max-width: 650px) {
+  .jam_body { margin: 0 10px; }
+  .jam_title_header { font-size: 1.25em; }
+  .header_tabs { justify-content: flex-start; overflow-x: auto; }
+  .jam_header_widget, .submitter_outer, .jam_content, .grid_outer { padding-left: 15px; padding-right: 15px; }
+}
+@media (max-width: 600px) { .stats_container { display: none; } }

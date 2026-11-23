@@ -1,13 +1,13 @@
 # Chapter 6 — Copy-ready recipes
 
-Seven recipes built on chapters 1–5. Each one is a file in this guide's `recetas/` folder. Every recipe passes the itch-live-css validator, which checks the rules from chapter 2 that can be checked by machine. The size shown is after minifying, which is what you paste.
+Eight recipes built on chapters 1–5. Each one is a file in this guide's `recetas/` folder. Every recipe passes the itch-live-css validator, which checks the rules from chapter 2 that can be checked by machine. The size shown is after minifying, which is what you paste.
 
 Paste the code as it is, or minify it first: on a profile every byte counts (chapter 1); on a project, one line avoids the doubled line breaks.
 
 ## Combining recipes
 
-- **Define the palette once.** Recipes 1, 2 and 7 each start with tokens (`--bg`, `--text`, `--accent`). When you combine recipes, keep one copy of the tokens and change the colours there.
-- **Include the reduced-motion block once.** Recipes 1, 2 and 5 contain it; if you use two of them, delete the second copy.
+- **Define the palette once.** Recipes 1, 2, 7 and 8 each start with tokens (`--bg`, `--text`, `--accent`). When you combine recipes, keep one copy of the tokens and change the colours there.
+- **Include the reduced-motion block once.** Recipes 1, 2, 5 and 8 contain it; if you use two of them, delete the second copy.
 - **Check the total.** Recipes 1, 3, 4 and 5 together come to about 2,100 bytes on a profile once the duplicate block is removed, well under the 5,120 limit.
 
 ## Recipe 1 — Profile starter
@@ -195,11 +195,58 @@ Rules for doing it safely:
 4. **Pick a reliable host.** An `@import` holds back the whole page until it loads. In a test, a host that accepted the connection and never answered kept the page blank for more than five minutes. A well-known CDN is the safe choice.
 5. **Not on jams.** A jam's CSS sits inside itch's own style block, where `@import` never loads. Paste everything, up to about 20 KB (chapter 1).
 
+## Recipe 8 — Jam starter
+
+**Page:** a jam's overview page. **Size:** 1,356 characters.
+
+On a jam, your CSS sits inside the theme block itch generates, so no `@import` ever loads: everything is pasted, up to the roughly 20,410 characters a jam is known to save (chapter 1). This recipe sets the nine jam variables on `#wrapper`, the button shades too (change the colour but not its shades and itch keeps the old ones), colours the panel and the submissions grid, and leaves itch's title as the only `h1`: headings in your description are styled inside `.jam_content`, never with `#wrapper h1` (R20).
+
+![Test jam page with recipe 8: navy background and panel, gold title and button](/guia/img/06-recipe-8.webp)
+
+*On this site's jam mock; the grey boxes are the entries' covers, empty in the mock.*
+
+```css
+/* Jam starter: palette, itch's jam variables, panel, headings, grid text, focus ring, reduced motion */
+#wrapper {
+  --bg: #0b1433;
+  --panel: rgba(20, 32, 70, .92);
+  --text: #eef3ff;
+  --muted: #b8c2dc;
+  --accent: #ffc857;
+  --focus-ring: #ffc857;
+  --itchio_link_color: var(--accent);
+  --itchio_border_color: rgba(238, 243, 255, .2);
+  --itchio_border_radius: 8px;
+  --itchio_button_color: var(--accent);
+  --itchio_button_fg_color: var(--bg);
+  --itchio_button_hover_color: #ffd47a;
+  --itchio_button_active_color: #f0b840;
+  --itchio_button_shadow_color: #c99a30;
+  --itchio_button_border_color: #c99a30;
+  --itchio_input_focus_color: var(--focus-ring);
+  color-scheme: dark;
+  color: var(--text);
+  background-color: var(--bg);
+}
+#wrapper .jam_body, #wrapper .grid_outer { background-color: var(--panel); }
+#wrapper .jam_title_header { color: var(--accent); }
+#wrapper .jam_content h1, #wrapper .view_jam_page :is(h2, h3) { color: var(--text); }
+#wrapper .game_cell .game_author a, #wrapper .game_count { color: var(--muted) !important; }
+#wrapper .jam_filter_picker .filter_item.active { border-color: var(--accent) !important; }
+#wrapper .grid_outer .itch_footer { border-top-color: var(--itchio_border_color); }
+#wrapper :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+#wrapper :is(.game_cell, .header_tabs, .screenshot_list, .breadcrumbs) :focus-visible { outline-offset: -2px; }
+@media (prefers-reduced-motion:reduce){#wrapper,#wrapper::before,#wrapper::after,#wrapper *,#wrapper *::before,#wrapper *::after{animation:none!important;transition:none!important}}
+```
+
+itch writes the grid's grey texts, the count and the active filter's border with `!important`, so the recipe needs it on those two rules too, and only there (R14).
+
 ## Checklist
 
 - [ ] Each recipe pasted on the right page type.
 - [ ] One set of tokens and one reduced-motion block in the combined sheet.
 - [ ] Profile total measured in bytes, under 5,120.
+- [ ] On a jam, everything pasted, no `@import`, and under about 20,410 characters.
 - [ ] Project pages checked on the main page, the devlog index, a devlog post and the comments.
 - [ ] With an `@import`: first line, pinned jsDelivr tag, and the page still looks right with the import blocked.
 
@@ -216,5 +263,6 @@ Every recipe is assembled from rules and blocks in the itch-live-css knowledge b
 - Recipe 5: chapter 5 (S3, S4) and chapter 2 (R20).
 - Recipe 6: §4 "Maximized HTML5 game", safe frosted panel: verified · s04-gf-10, s04-gf-11, s04-gf-13; the page-tall frame: verified · s04-gf-08, s04-gf-09.
 - Recipe 7: §8: `@import` placement: verified · localtests-09, localtests-50, itchcss-08; only the line counts: verified · external-01, repo-09; jsDelivr pinning and raw GitHub failing: verified · external-05, community-12, external-45; the page must work without the import: observed · repo-54; verified · external-06, localtests-12; a hanging host blanked the page over 330 s: verified · g08-17; jams: verified · s04-1, crawljam-14.
+- Recipe 8: §4.5: jam variables on `#wrapper`: verified · crawljam-05; the nine variables: verified · crawljam-11; the button shades: verified · crawljam-34; literal colours and `!important`: verified · crawljam-08, crawljam-11; R20 on jams: observed · crawljam-46; blocks B1 and B2, chapter 5.
 
-**Testing status.** Each file passed `engine validate()` for its page type on 2026-11-07. Sizes come from the engine's own minifier. The recipes have not yet been rendered on a live itch page.
+**Testing status.** Each file passed `engine validate()` for its page type on 2026-11-07 (recipe 8, as a jam, on 2026-11-24). Sizes come from the engine's own minifier. The recipes have not yet been rendered on a live itch page.

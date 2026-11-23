@@ -30,7 +30,8 @@
   "pageNames": {
     "profile": "Perfil",
     "project": "Página de juego",
-    "devlog": "Devlog"
+    "devlog": "Devlog",
+    "jam": "Jam"
   },
   "thumb": {
     "title": "Vista previa: {{page}}"
@@ -66,6 +67,15 @@
       "into": "en el CSS del juego",
       "sample": "Hoy sale la versión 1.0. Gracias por jugar.",
       "hint": "Un devlog no tiene CSS propio: usa el del juego (Edit theme en la página del juego → CSS)."
+    },
+    "jam": {
+      "title": "Vista previa de la página de la jam",
+      "html": "Tu HTML de la descripción de la jam",
+      "text": "la descripción de la jam",
+      "where": "del CSS de la jam",
+      "into": "en el CSS de la jam",
+      "sample": "Una jam de ejemplo. Esta es su descripción.",
+      "hint": "En itch: el editor de tema de la jam → CSS. En una jam no carga ningún @import, así que todo va pegado: sin link ni efectos que cambien en cada visita."
     }
   },
   "editor": {
@@ -107,6 +117,8 @@
     "paste": "Pega esto {{into}} en itch.",
     "size": "Ocupa {{bytes}} de {{max}} bytes.",
     "noLimit": "Aquí no hay límite de tamaño.",
+    "jamSize": "Ocupa {{chars}} caracteres; se sabe que una jam guarda hasta {{max}}.",
+    "jamOver": "Ocupa {{chars}} caracteres, más de los {{max}} que se sabe que guarda una jam: puede que itch no lo guarde.",
     "pasteLabel": "CSS para pegar",
     "optional": "Guardar es opcional: te da un enlace de edición para volver a este CSS, o para salir en el expositor.",
     "effects": "Tienes activado: {{effects}}. Los efectos cambian en cada visita, así que van en un link: acepta para obtenerlo, o desactívalos en Ideas para pegar el CSS.",
