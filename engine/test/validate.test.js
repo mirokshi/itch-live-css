@@ -27,6 +27,8 @@ test('R17: a reduced-motion guard for whatever moves (B1, or one of its own)', (
     assert.deepEqual(rules(css), ['R17'], css);
     assert.deepEqual(rules(css + B1), [], css);
   }
+  // a nested rule under a selector list moves each of them: here #wrapper::after too, which #wrapper *::after misses
+  assert.deepEqual(rules('#wrapper .a,#wrapper{&::after{animation:custom-x 1s}}@media (prefers-reduced-motion:reduce){#wrapper *::after{animation:none!important}}'), ['R17']);
   // #wrapper * misses #wrapper's own pseudo-elements; a guard without !important loses to the element's rule
   assert.deepEqual(rules('#wrapper::after{animation:custom-x 1s}@media (prefers-reduced-motion:reduce){#wrapper *,#wrapper *::after{animation:none!important}}'), ['R17']);
   assert.deepEqual(rules('#wrapper .a{animation:custom-x 1s}@media (prefers-reduced-motion:reduce){#wrapper *{animation:none}}'), ['R17']);
@@ -49,9 +51,16 @@ test('R17: motion that starts by itself ends within 5 s; nothing stays hidden wi
     '#wrapper .a{animation:custom-x 2s 3}', // 3 rounds
     '#wrapper .a{animation:custom-x 1s cubic-bezier(.2, .7, .2, 1);animation-iteration-count:infinite}',
     '#wrapper .a{animation-name:custom-x;animation-duration:6s}',
+    '#wrapper .a{animation:custom-x 2s;animation-iteration-count:3}', // longhands over the shorthand
+    '#wrapper .a{animation:custom-x 1s;animation-delay:4.5s}',
+    '#wrapper .a{animation-name:custom-x,custom-y;animation-duration:1s,6s}', // the second one
   ]) assert.deepEqual(rules(css + B1), ['R17'], css);
   for (const css of [
     '#wrapper .a{animation:custom-x 2s 1s,custom-y 1s 2}',
+    '#wrapper .a{animation:custom-x 2s 3;animation-iteration-count:1}',
+    '#wrapper .a{animation-iteration-count:infinite;animation:custom-x 1s}', // the shorthand resets it
+    '#wrapper .a{animation-duration:10s}', // no animation-name: nothing runs
+    '#wrapper .a{animation:custom-x infinite}', // 0 s long: nothing moves
     '@media (hover:hover){#wrapper .a:hover,#wrapper .a:focus-visible{animation:custom-x 1s infinite}}', // a visitor starts it
     '#wrapper .a{animation:custom-x linear both;animation-timeline:view()}', // scroll-driven
   ]) assert.deepEqual(rules(css + B1), [], css);

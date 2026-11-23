@@ -148,13 +148,15 @@ function hiding(decls, pseudo) {
 // R5: on project pages itch's "External link" warning is the ::after of outbound links in descriptions
 const badge = (t) => /::?after$/i.test(t) && /^(a(?![\w-])|\[rel)/i.test(t) && !/:not\(\s*\[rel/i.test(t);
 
-// a nested selector written out in full: "&" or a descendant of its parents
-// shortcut: a parent with a selector list contributes only its first selector; resolve each if it matters
+// a nested selector written out in full, once per selector of each parent: "&" or a descendant of them
 function resolved(rule, sel) {
+  let out = [sel];
   for (let p = rule.parent; p; p = p.parent) {
-    if (p.type === 'rule') sel = sel.includes('&') ? sel.replaceAll('&', p.selectors[0]) : `${p.selectors[0]} ${sel}`;
+    if (p.type !== 'rule') continue;
+    const ups = p.selectors;
+    out = out.flatMap((s) => ups.map((up) => (s.includes('&') ? s.replaceAll('&', up) : `${up} ${s}`)));
   }
-  return sel;
+  return out;
 }
 
 // a value's comma-separated layers, and a layer's words; commas and spaces inside functions stay
@@ -219,22 +221,33 @@ function stops(decls) {
   return s;
 }
 
-// R17: the first animation that runs past 5 s: infinite, or delay + duration × count
+// R17: if an animation runs past 5 s (infinite, or delay + duration × count), the last animation
+// declaration of the rule. The shorthand sets every list and resets the longhands; a longhand after it
+// replaces its own list; shorter lists repeat over animation-name's, as in browsers.
 function endless(decls) {
-  return decls.find((d) => {
+  const runs = { name: [], duration: [0], delay: [0], count: [1] };
+  const count = (t) => (t === 'infinite' ? Infinity : Number.isNaN(parseFloat(t)) ? 1 : parseFloat(t));
+  let last;
+  for (const d of decls) {
     const prop = propOf(d);
-    const value = d.value.toLowerCase();
-    if (prop === 'animation-iteration-count') return /infinite/.test(value);
-    if (prop === 'animation-duration') return layers(value).some((t) => TIME.test(t) && seconds(t) > 5);
-    if (prop !== 'animation') return false;
-    return layers(value).some((layer) => {
-      const w = words(layer);
-      if (w[0] === 'none') return false;
-      if (w.includes('infinite')) return true;
-      const [duration = 0, delay = 0] = w.filter((t) => TIME.test(t)).map(seconds);
-      return delay + duration * parseFloat(w.find((t) => /^\d*\.?\d+$/.test(t)) ?? '1') > 5;
-    });
-  });
+    const list = layers(d.value.toLowerCase());
+    if (prop === 'animation') {
+      const parsed = list.map((layer) => {
+        const w = words(layer);
+        const [duration = 0, delay = 0] = w.filter((t) => TIME.test(t)).map(seconds);
+        const n = w.find((t) => t === 'infinite' || /^\d*\.?\d+$/.test(t));
+        return { name: w.includes('none') ? 'none' : 'named', duration, delay, count: n ? count(n) : 1 };
+      });
+      for (const key of Object.keys(runs)) runs[key] = parsed.map((p) => p[key]);
+    } else if (prop === 'animation-name') runs.name = list;
+    else if (prop === 'animation-duration' || prop === 'animation-delay') runs[prop.slice(10)] = list.map((t) => (TIME.test(t) ? seconds(t) : 0));
+    else if (prop === 'animation-iteration-count') runs.count = list.map(count);
+    else continue;
+    last = d;
+  }
+  const at = (list, i) => list[i % list.length];
+  // a zero duration never moves, even infinitely (0 × Infinity is NaN)
+  return runs.name.some((name, i) => name !== 'none' && at(runs.delay, i) + at(runs.duration, i) * at(runs.count, i) > 5) ? last : undefined;
 }
 
 // R17: the animation that alone shows an element whose base is opacity:0 or visibility:hidden
@@ -447,8 +460,10 @@ export function itchRules({ page, served = false } = {}) {
 
           // R17: motion needs a reduced-motion guard (matched in OnceExit), ends within 5 s when it starts
           // by itself, and never keeps hidden what only it reveals
+          // [selector as written, written out in full] for every parent selector it nests in
+          const spelled = rule.selectors.flatMap((sel) => resolved(rule, sel).map((full) => [sel, full]));
           if (!ctx.starting) {
-            const sels = rule.selectors.map((s) => norm(resolved(rule, s)));
+            const sels = spelled.map(([, full]) => norm(full));
             if (ctx.reduced) {
               const s = stops(decls);
               if (s.animation || s.transition) for (const sel of sels) guards.push({ sel, ...s });
@@ -469,8 +484,8 @@ export function itchRules({ page, served = false } = {}) {
           // R19: a general focus ring somewhere in the sheet (reported in OnceExit), and no focus rule that
           // drops the outline without a box-shadow or border in its place (outline:none!important is R14's)
           styled ||= decls.length > 0;
-          for (const sel of rule.selectors) {
-            const t = plain(target(resolved(rule, sel)));
+          for (const [sel, full] of spelled) {
+            const t = plain(target(full));
             if (!FOCUS.test(t) || /::/.test(t)) continue;
             const outlines = decls.filter((d) => OUTLINE.test(propOf(d)));
             const drawn = outlines.some((d) => !NO_OUTLINE.test(d.value.trim().toLowerCase()));
@@ -486,8 +501,7 @@ export function itchRules({ page, served = false } = {}) {
           // R20: on jams itch's h1.jam_title_header names the page; style it, or description h1s under
           // .jam_content, never every h1, and never hide the title
           if (page === 'jam') {
-            for (const sel of rule.selectors) {
-              const full = resolved(rule, sel);
+            for (const [sel, full] of spelled) {
               const t = plain(target(full));
               if (/^h1(?![\w-])/i.test(t) && !/[.#]/.test(t) && !/\.(jam_content|jam_header_widget)(?![\w-])/.test(full)) {
                 add('R20', 'warning', 'R20.jam', { sel: short(sel) }, rule, { word: sel });
@@ -511,8 +525,7 @@ export function itchRules({ page, served = false } = {}) {
           // R22: on project pages, effects on the HTML5 game's ancestors trap it when itch maximizes it;
           // reported in OnceExit unless a maximized-only rule sets them back
           if (page === 'project' && !ctx.starting) {
-            for (const sel of rule.selectors) {
-              const full = resolved(rule, sel);
+            for (const [sel, full] of spelled) {
               const t = target(full);
               if (/::|:(before|after|first-line|first-letter)\b/i.test(t) || EMBED_GUARD.test(full)) continue;
               const who = ANCESTOR.exec(plain(t))?.[1] ?? (HOLDS_GAME.test(t) ? plain(t) : null);
