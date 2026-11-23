@@ -375,7 +375,12 @@
     "R10": {
       "absolute": "{{what}}: importa una URL https:// absoluta; http:// se bloquea por contenido mixto y una relativa apunta a itch",
       "raw": "{{what}}: se sirve como text/plain, así que el navegador lo ignora; usa https://cdn.jsdelivr.net/gh/USUARIO/REPO@TAG/archivo.css",
-      "unpinned": "{{what}}: no está fijado a una etiqueta o un SHA completo, así que los visitantes pueden recibir versiones distintas durante días"
+      "unpinned": "{{what}}: no está fijado a una etiqueta o un SHA completo, así que los visitantes pueden recibir versiones distintas durante días",
+      "status": "{{what}}: respondió HTTP {{status}}, así que el navegador lo descarta",
+      "fonts": "{{what}}: Google Fonts respondió HTTP 400, casi siempre por un nombre de familia mal escrito o un peso fuera del rango de la fuente; el navegador lo descarta y muestra la fuente de reserva",
+      "type": "{{what}}: se sirve como {{type}}, no como text/css, así que el navegador lo ignora",
+      "slow": "{{what}}: no respondió en {{seconds}} s; mientras un @import no responde, la página se queda en blanco",
+      "failed": "{{what}}: no se pudo conectar ({{reason}}), así que el navegador lo descarta"
     },
     "R11": {
       "adblock": ".{{name}}: los bloqueadores de anuncios ocultan las clases que empiezan por {{names}} o {{last}}"
@@ -584,7 +589,8 @@
       {
         "title": "En esta web",
         "paragraphs": [
-          "El editor y sus herramientas (CodeMirror y js-beautify) vienen de esta misma web. La vista previa carga fuentes de Google Fonts. Las páginas de documentación y privacidad recuerdan en tu navegador (localStorage) el idioma que eliges; no sale de tu navegador."
+          "El editor y sus herramientas (CodeMirror y js-beautify) vienen de esta misma web. La vista previa carga fuentes de Google Fonts. Las páginas de documentación y privacidad recuerdan en tu navegador (localStorage) el idioma que eliges; no sale de tu navegador.",
+          "Mientras escribes, el editor envía tu CSS a esta web para revisarlo, y no se guarda. Si tu CSS tiene @import, el servidor pide esas direcciones (solo las cabeceras) para ver si responden con CSS: esos sitios ven la IP del servidor, no la tuya."
         ]
       }
     ],

@@ -498,7 +498,8 @@
       {
         "title": "On this site",
         "paragraphs": [
-          "The editor and its tools (CodeMirror and js-beautify) come from this site itself. The preview loads fonts from Google Fonts. The documentation and privacy pages remember your language choice in your browser (localStorage); it never leaves your browser."
+          "The editor and its tools (CodeMirror and js-beautify) come from this site itself. The preview loads fonts from Google Fonts. The documentation and privacy pages remember your language choice in your browser (localStorage); it never leaves your browser.",
+          "While you type, the editor sends your CSS to this site to check it, and it isn't stored. If your CSS has @import, the server requests those addresses (headers only) to see whether they answer with CSS: those sites see the server's IP, not yours."
         ]
       }
     ],

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { render, validate } from '../src/index.js';
+import { checkImports, render, validate } from '../src/index.js';
 import { config, games, now } from './mirokshi.js';
 
 // R19.ring is about the whole sheet (no B2), so the rule tests leave it to its own test
@@ -217,6 +217,41 @@ test("R22: no containing block or isolation on an HTML5 game's ancestors (projec
     '@starting-style{#wrapper #inner_column{transform:scale(.9)}}',
   ]) assert.deepEqual(rules(css), [], css);
   assert.deepEqual(rules('#wrapper{filter:saturate(1.2)}', 'profile'), []);
+});
+
+test('R10 over the network: each @import answers 2xx text/css (checkImports, with a fake loader)', async () => {
+  const answers = {
+    'https://a.test/ok.css': { status: 200, type: 'text/css; charset=utf-8' },
+    'https://a.test/gone.css': { status: 404, type: 'text/html' },
+    'https://fonts.googleapis.com/css2?family=Synee&display=swap': { status: 400, type: 'text/html' },
+    'https://a.test/plain.css': { status: 200, type: 'text/plain' },
+    'https://a.test/slow.css': { error: 'timeout' },
+    'https://a.test/down.css': { error: 'failed', reason: 'ENOTFOUND' },
+  };
+  const asked = [];
+  const load = async (url) => {
+    asked.push(url);
+    return answers[url] ?? { error: 'blocked' };
+  };
+  const at = (problems) => problems.map((p) => `${p.code} ${p.level} ${p.line}:${p.column}`);
+  const urls = Object.keys(answers);
+  const imports = (list) => list.map((u) => `@import url("${u}");`).join('\n');
+  assert.deepEqual(at(await checkImports(imports(urls.slice(0, 4)), load)), [
+    'R10.status error 2:1',
+    'R10.fonts error 3:1',
+    'R10.type error 4:1',
+  ]);
+  assert.deepEqual(at(await checkImports(imports(urls.slice(4)), load)), ['R10.slow warning 1:1', 'R10.failed error 2:1']);
+  // each https URL once, at most 4; http:// (R10.absolute), raw GitHub (R10.raw), nested and blocked ones give nothing
+  asked.length = 0;
+  const css = '@import "https://a.test/x.css";@import url(https://a.test/x.css);@import "http://a.test/h.css";' +
+    '@import "https://raw.githubusercontent.com/u/r/main/a.css";@media print{@import "https://a.test/n.css";}' +
+    imports(['https://a.test/1.css', 'https://a.test/2.css', 'https://a.test/3.css', 'https://a.test/4.css']);
+  assert.deepEqual(await checkImports(css, load), []);
+  assert.deepEqual(asked, ['https://a.test/x.css', 'https://a.test/1.css', 'https://a.test/2.css', 'https://a.test/3.css']);
+  // the message is the engine's text for the code
+  const [p] = await checkImports(imports(['https://a.test/gone.css']), load);
+  assert.equal(p.message, '@import url("https://a.test/gone.css"): answered HTTP 404, so browsers drop it');
 });
 
 test('R8: no <style> tags, even in comments and strings', () => {

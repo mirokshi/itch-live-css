@@ -33,7 +33,12 @@
   "R10": {
     "absolute": "{{what}}: import an absolute https:// URL; http:// is blocked as mixed content and a relative one points at itch",
     "raw": "{{what}}: served as text/plain, so browsers ignore it; use https://cdn.jsdelivr.net/gh/USER/REPO@TAG/file.css",
-    "unpinned": "{{what}}: not pinned to a tag or full SHA, so visitors may get different versions for days"
+    "unpinned": "{{what}}: not pinned to a tag or full SHA, so visitors may get different versions for days",
+    "status": "{{what}}: answered HTTP {{status}}, so browsers drop it",
+    "fonts": "{{what}}: Google Fonts answered HTTP 400, usually a misspelled family or a weight past the font's range; browsers drop it and show the fallback font",
+    "type": "{{what}}: served as {{type}}, not text/css, so browsers ignore it",
+    "slow": "{{what}}: no answer within {{seconds}} s; while an @import hangs, the page stays blank",
+    "failed": "{{what}}: couldn't be reached ({{reason}}), so browsers drop it"
   },
   "R11": {
     "adblock": ".{{name}}: ad blockers hide classes starting {{names}} or {{last}}"

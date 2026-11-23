@@ -86,7 +86,7 @@ Leyenda de la columna «Con PostCSS»:
 | R7 | Límite de tamaño | Texto | sí | `measure()`, sin cambios. |
 | R8 | Nada de `<style>` ni `</style>` | Texto | sí | Sin cambios. |
 | R9 | `@import` primero y en el nivel superior | Árbol | sí | Por el orden de `root.nodes`. |
-| R10 | `https`, `text/css`, 2xx y versión fijada | Parcial | parcial | Árbol: esquema, hosts raw de GitHub y versión fijada en jsDelivr (hecho). El código de estado y el tipo de contenido necesitan una petición. |
+| R10 | `https`, `text/css`, 2xx y versión fijada | Parcial | sí (con la web) | Árbol: esquema, hosts raw de GitHub y versión fijada en jsDelivr (hecho). El código de estado y el tipo de contenido necesitan una petición (hecho 2026-11-23): `checkImports(css, load)` en el engine los interpreta, y `web/lib/imports.js` hace las peticiones desde `/api/validate` (solo https al 443 y a IPs públicas, comprobadas al conectar; solo cabeceras; 4 imports, 3 s, caché de 10 min). Error si no es 2xx o `text/css` (con pista para el 400 de Google Fonts), aviso si no responde. |
 | R11 | Clases `custom-`; nombres que ocultan los bloqueadores | Parcial | parcial | Árbol: nombres de clase del CSS que ocultan los bloqueadores (hecho). El prefijo `custom-` se comprueba en el HTML de la bio o la descripción, no en el CSS. |
 | R12 | Nada de ids numerados | Árbol | sí | |
 | R13 | La hoja de un proyecto también se aplica al devlog y a los comentarios | No (render) | – | Hay que renderizar los cuatro tipos de página; los mocks de la web cubren proyecto y devlog. |
@@ -105,7 +105,7 @@ Leyenda de la columna «Con PostCSS»:
 **Totales:**
 - 11 reglas se comprueban del todo con el árbol (las 11 hechas; R22 desde el 2026-11-23);
 - 2 se comprueban sobre el texto (las dos hechas);
-- 7 se comprueban en parte (las 7 en parte hechas: R5, R6, R10, R11, R17, R19 y R21);
+- 7 se comprueban en parte (las 7 en parte hechas: R5, R6, R10, R11, R17, R19 y R21; R10 ya entera con la petición de la web);
 - 4 no se pueden comprobar desde el CSS.
 
 PostCSS cambia **cómo** leen el CSS las reglas, no **cuáles** se pueden comprobar: las 4 marcadas «No» quedan fuera de alcance con cualquier parser de CSS.

@@ -88,7 +88,9 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              store.getCached: re-read once a minute, last copy if Upstash fails; the config in ITCH_OWNER_ID
                              also gets itch's game data, lib/itch.js with ITCH_API_KEY; Google Fonts @imports inlined as
                              @font-face by lib/googlefonts.js; env PAUSED=1 stops serving and saving, BLOCKED_IDS=a,b stops ids),
-                             validate = engine validate() on the editor's CSS + rule titles read from §0,
+                             validate = engine validate() on the editor's CSS + rule titles read from §0, plus engine
+                             checkImports() over lib/imports.js (R10: each @import's status and type; https on 443 to
+                             public IPs only, checked at connect time, headers only, 4 per call, 3 s, cached 10 min),
                              showcase = opt-in list, approved by the owner on /admin with the ADMIN_KEY env var);
                              lib/store.js = Upstash Redis over REST when UPSTASH_REDIS_REST_* or KV_REST_API_* are set, else a
                              local JSON file (web/.data/, git-ignored); lib/fonts.js = the title fonts (server and page);

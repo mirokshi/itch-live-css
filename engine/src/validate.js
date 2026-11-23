@@ -2,7 +2,8 @@
 // Each problem carries its rule id, so the reason and the evidence are one lookup away.
 // So far the cheap ones: R2–R4, R5 (hiding or relabelling itch's UI, and the External-link badge;
 // covering and moving need the rendered page), R6 (url() beacons and [value] selectors; fake controls
-// need a person), R7–R10, R11 (only its ad-block part, ROADMAP H8), R12, R14 (outline and animated
+// need a person), R7–R10 (R10's status and type: checkImports(), with a loader from the caller), R11
+// (only its ad-block part, ROADMAP H8), R12, R14 (outline and animated
 // properties), R15, R16, R17 (a reduced-motion guard for each moving element, the 5 s limit, nothing
 // left hidden; whether the still page reads well needs the rendered page), R18, R19 (a general focus
 // ring, no outline dropped on focus; its contrast needs the painted colours), R20 (only its jam part:
@@ -645,6 +646,41 @@ export function itchRules({ page, served = false } = {}) {
   };
 }
 itchRules.postcss = true;
+
+// R10 over the network: what each @import's response means. The engine makes no requests: the caller
+// passes load(url) → { status, type } (after redirects) or { error: 'timeout' | 'failed' | 'blocked', reason? }
+// ('blocked': the caller's own limits, not the user's mistake). Checks the top-level https imports,
+// each URL once, at most `max`; raw GitHub URLs are R10.raw already.
+export async function checkImports(css, load, { max = 4, seconds = 3 } = {}) {
+  const root = safeParser(asServed(css));
+  const found = new Map(); // url → its first @import
+  for (const node of root.nodes) {
+    if (node.type !== 'atrule' || node.name.toLowerCase() !== 'import' || node.nodes) continue;
+    const url = importUrl(node.params) ?? '';
+    if (/^https:\/\//i.test(url) && !/^https:\/\/(raw|gist)\.githubusercontent\.com\//i.test(url) && !found.has(url)) found.set(url, node);
+  }
+  const checks = [...found].slice(0, max);
+  const answers = await Promise.all(checks.map(([url]) => load(url)));
+  const problems = [];
+  checks.forEach(([url, node], i) => {
+    const res = answers[i];
+    const what = short(statement(node));
+    let level = 'error';
+    let code;
+    let params = { what };
+    if (res.error === 'timeout') [level, code, params] = ['warning', 'R10.slow', { what, seconds }];
+    else if (res.error === 'failed') [code, params] = ['R10.failed', { what, reason: res.reason ?? 'no connection' }];
+    else if (res.error) return;
+    else if (!(res.status >= 200 && res.status < 300)) {
+      // Google Fonts answers 400 for a misspelled family or an axis past the font's range (knowledge base §8)
+      [code, params] = res.status === 400 && /^https:\/\/fonts\.googleapis\.com\//i.test(url) ? ['R10.fonts', { what }] : ['R10.status', { what, status: res.status }];
+    } else if (!/^text\/css\b/i.test(res.type ?? '')) [code, params] = ['R10.type', { what, type: (res.type || 'no type').split(';')[0] }];
+    else return;
+    const { start, end } = node.rangeBy({});
+    problems.push({ rule: 'R10', level, code, params, message: text(code, params), line: start.line, column: start.column, endLine: end.line, endColumn: end.column });
+  });
+  return problems;
+}
 
 // The CSS browsers get: itch deletes every </style>, in any case and with inner spaces.
 const asServed = (css) => css.replace(/<\/style\s*>/gi, '');
