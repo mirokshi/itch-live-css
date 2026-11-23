@@ -213,6 +213,26 @@ test("R20: exactly one h1, itch's or the user's (checkHeadings)", () => {
   assert.deepEqual(codes({ page: 'jam', html: h1 }), []); // jams: their CSS part only
 });
 
+test('R19: the focus ring reaches 3:1 on every surface the sheet paints', () => {
+  const found = (css, page = 'project') => validate(css, page).filter((p) => p.code === 'R19.contrast').map((p) => `${p.params.surface} ${p.params.ratio}`);
+  const ring = '#wrapper :focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}';
+  // the knowledge base's figures for #ffc857 (§0 B2): 11.75:1 on #0b1433, 1.54:1 on white
+  assert.deepEqual(found(`#wrapper{--focus-ring:#ffc857;background-color:#0b1433}${ring}`), []);
+  assert.deepEqual(found(`#wrapper{--focus-ring:#ffc857;background-color:#fff}${ring}`), ['#wrapper 1.54']);
+  // a see-through panel is laid over #wrapper's colour; each surface is checked
+  assert.deepEqual(found(`#wrapper{--focus-ring:#ffc857;background-color:#0b1433}#wrapper .inner_column{background-color:rgba(255,255,255,.95)}${ring}`), ['.inner_column 1.39']);
+  assert.deepEqual(found('#wrapper{background-color:#0b1433}#wrapper .jam_body,#wrapper .grid_outer{background-color:#f4f4f4}#wrapper :focus-visible{outline:2px solid #ffc857}', 'jam'), ['.jam_body 1.40', '.grid_outer 1.40']);
+  assert.deepEqual(found('#wrapper .user_page{background-color:white}#wrapper :focus-visible{outline-style:solid;outline-color:#ffc857}', 'profile'), ['.user_page 1.54']);
+  // nothing known, nothing said: itch's own colours, a colour it can't read, another mode, no ring
+  for (const css of [
+    `#wrapper{--focus-ring:#ffc857}${ring}`, // the background is the theme's
+    '#wrapper{background-color:#fff}#wrapper :focus-visible{outline:2px solid currentColor}',
+    `#wrapper{--focus-ring:#ffc857}#wrapper .inner_column{background-color:rgba(255,255,255,.5)}${ring}`, // see-through over the unknown
+    `#wrapper{--focus-ring:#ffc857;background-color:#0b1433}@media (prefers-color-scheme:light){#wrapper{background-color:#fff}}${ring}`,
+    '#wrapper{background-color:#fff}#wrapper .custom-btn:focus-visible{outline:2px solid #ffc857}', // not a general ring
+  ]) assert.deepEqual(found(css), [], css);
+});
+
 test('R21: decorative generated text gets the empty alt', () => {
   for (const css of [
     '#wrapper .a::before{content:"★"}',

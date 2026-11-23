@@ -6,7 +6,7 @@
 // (only its ad-block part, ROADMAP H8), R12, R14 (outline and animated
 // properties), R15, R16, R17 (a reduced-motion guard for each moving element, the 5 s limit, nothing
 // left hidden; whether the still page reads well needs the rendered page), R18, R19 (a general focus
-// ring, no outline dropped on focus; its contrast needs the painted colours), R20 (only its jam part:
+// ring, no outline dropped on focus, and its contrast where the sheet sets both colours), R20 (only its jam part:
 // no #wrapper h1, the title kept; one h1 per page needs the HTML), R21 (symbols in
 // generated content without alt text; whether an opacity:0 hides something meaningful is intent),
 // R22 (project pages), R23.
@@ -269,6 +269,44 @@ const general = (t) => /^(\*|[a-z][\w-]*)?$/i.test(t.replace(FOCUS, ''));
 const OUTLINE = /^outline(-style|-width)?$/;
 const NO_OUTLINE = /^(none|0+([a-z]+)?|hidden)$/;
 
+// R19 contrast, where the sheet itself sets the colours: the general ring against each surface the
+// sheet paints (§0 B2: --focus-ring ≥ 3:1 on every surface). Surfaces per page type: #wrapper, and the
+// panel the content sits on.
+const SURFACES = {
+  profile: ['#wrapper', '.user_page'],
+  project: ['#wrapper', '.inner_column', '#inner_column'],
+  jam: ['#wrapper', '.jam_body', '.grid_outer'],
+};
+// a CSS colour → [r, g, b, alpha], or null when it can't be read from the text alone
+function colour(text) {
+  const v = text.trim().toLowerCase();
+  if (v === 'white') return [255, 255, 255, 1];
+  if (v === 'black') return [0, 0, 0, 1];
+  let m = /^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/.exec(v);
+  if (m) {
+    const hex = m[1].length <= 4 ? [...m[1]].map((c) => c + c).join('') : m[1];
+    const [r, g, b, a = 255] = [0, 2, 4, 6].map((i) => parseInt(hex.slice(i, i + 2), 16)).filter((n) => !Number.isNaN(n));
+    return [r, g, b, a / 255];
+  }
+  m = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)\s*(?:[,/]\s*([\d.]+)(%?))?\s*\)$/.exec(v);
+  if (m) return [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : m[5] ? m[4] / 100 : +m[4]];
+  return null;
+}
+// var(--x) and var(--x, fallback) from the custom properties set on #wrapper
+const unvar = (text, vars, depth = 0) =>
+  depth > 5 ? text : text.replace(/var\(\s*(--[\w-]+)\s*(?:,\s*([^()]*))?\)/g, (_, name, fallback) =>
+    (vars.has(name) ? unvar(vars.get(name), vars, depth + 1) : (fallback ?? '')));
+// a colour laid over an opaque one
+const over = (top, base) => [0, 1, 2].map((i) => top[i] * top[3] + base[i] * (1 - top[3])).concat(1);
+const luminance = (c) => c.slice(0, 3).reduce((sum, v, i) => {
+  const s = v / 255;
+  return sum + (s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4) * [0.2126, 0.7152, 0.0722][i];
+}, 0);
+const contrast = (a, b) => {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+};
+
 // R21: a content value's text as the accessibility tree gets it (escapes decoded), whether it is only
 // strings, and whether it carries alt text ("★" / "")
 const STRINGS = /"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'/g;
@@ -333,6 +371,9 @@ export function itchRules({ page, served = false } = {}) {
       const frames = new Map();
       let styled = false; // R19: the sheet has a style rule
       let ring = false; // R19: … and a general focus ring
+      let ringColour = null; // R19: { text, node } of that ring's colour, from a top-level rule
+      const vars = new Map(); // R19: custom properties set on #wrapper at top level
+      const surfaces = new Map(); // R19: surface → background text set at top level
       const moving = []; // R17: { sel, kind, node } of everything that moves
       const guards = []; // R17: { sel, animation, transition, important } inside prefers-reduced-motion:reduce
       const traps = new Map(); // "ancestor|property" → the problem to report
@@ -490,12 +531,28 @@ export function itchRules({ page, served = false } = {}) {
             if (!FOCUS.test(t) || /::/.test(t)) continue;
             const outlines = decls.filter((d) => OUTLINE.test(propOf(d)));
             const drawn = outlines.some((d) => !NO_OUTLINE.test(d.value.trim().toLowerCase()));
-            if (drawn && general(t)) ring = true;
+            if (drawn && general(t)) {
+              ring = true;
+              // the colour it draws with, for the contrast check (rules inside @media may be another mode)
+              const painted = decls.findLast((d) => propOf(d) === 'outline' || propOf(d) === 'outline-color');
+              if (painted && rule.parent.type === 'root') ringColour = { text: painted.value, node: painted };
+            }
             const dropped = outlines.find((d) => !d.important && NO_OUTLINE.test(d.value.trim().toLowerCase()));
             const instead = decls.some((d) => /^(box-shadow|border(-\w+)*)$/.test(propOf(d)) && !NO_OUTLINE.test(d.value.trim().toLowerCase()));
             if (dropped && !drawn && !instead) {
               add('R19', 'warning', 'R19.none', { sel: short(sel) }, dropped);
               break;
+            }
+          }
+
+          // R19 contrast: the colours the sheet sets at top level (the rest depends on itch's theme or a mode)
+          if (rule.parent.type === 'root') {
+            for (const [, full] of spelled) {
+              const t = plain(target(full)).trim();
+              if (t === '#wrapper') for (const d of decls) if (d.prop.startsWith('--')) vars.set(d.prop, d.value);
+              if (!(SURFACES[page] ?? []).includes(t)) continue;
+              const bg = decls.findLast((d) => propOf(d) === 'background-color' || (propOf(d) === 'background' && !/\s|\(/.test(d.value.trim())));
+              if (bg) surfaces.set(t, bg.value);
             }
           }
 
@@ -615,6 +672,20 @@ export function itchRules({ page, served = false } = {}) {
           // R18: on touch screens a tap leaves :hover stuck; keyboard users need the same effect on focus
           // R19: itch's ring is #361275, 1.14–1.5:1 on dark backgrounds
           if (styled && !ring) add('R19', 'warning', 'R19.ring');
+          // R19 contrast: the ring's colour against each surface whose background the sheet sets; a
+          // see-through ring or surface is laid over what's under it when that is known
+          const ringWord = ringColour && words(unvar(ringColour.text, vars)).find((w) => colour(w));
+          const ringRgb = ringWord && colour(ringWord);
+          const wrapperRgb = colour(unvar(surfaces.get('#wrapper') ?? '', vars));
+          for (const [surface, text] of ringRgb ? surfaces : []) {
+            let bg = colour(unvar(text, vars));
+            if (bg && bg[3] < 1) bg = wrapperRgb?.[3] === 1 && surface !== '#wrapper' ? over(bg, wrapperRgb) : null;
+            if (!bg) continue;
+            const ratio = contrast(ringRgb[3] < 1 ? over(ringRgb, bg) : ringRgb, bg);
+            if (ratio < 3) {
+              add('R19', 'warning', 'R19.contrast', { ring: short(ringWord), ratio: ratio.toFixed(2), surface, bg: short(unvar(text, vars).trim()) }, ringColour.node);
+            }
+          }
           // R17: each moving element needs a guard of its own, or the B1 selector that reaches it with !important
           const unguarded = new Map();
           for (const { sel, kind, node } of moving) {

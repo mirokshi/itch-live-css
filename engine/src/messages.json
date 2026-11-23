@@ -70,7 +70,8 @@
   },
   "R19": {
     "ring": "no focus ring for links and buttons in general: itch's own (#361275) is 1.14–1.5:1 on dark backgrounds; add B2, with a --focus-ring colour of at least 3:1 on every surface",
-    "none": "\"{{sel}}\" takes the focus outline away with nothing in its place, so keyboard users lose track of where they are: restyle it instead (B2)"
+    "none": "\"{{sel}}\" takes the focus outline away with nothing in its place, so keyboard users lose track of where they are: restyle it instead (B2)",
+    "contrast": "the focus ring ({{ring}}) is {{ratio}}:1 on {{surface}} ({{bg}}): keyboard users need at least 3:1, so pick a --focus-ring that stands out on every background"
   },
   "R20": {
     "jam": "\"{{sel}}\" styles every h1 on the jam page, itch's title (h1.jam_title_header) and the h1s in your description: scope it to .jam_title_header or to .jam_content h1",
