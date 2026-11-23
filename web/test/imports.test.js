@@ -18,3 +18,11 @@ test('imports: the server never calls anything but https on 443 at a public addr
     'https://localhost/a.css', // a name that resolves to a local address: refused when connecting
   ]) assert.deepEqual(await load(url), { error: 'blocked' }, url);
 });
+
+test('imports: 20 requests a minute per caller; refused URLs and cached answers cost nothing', async () => {
+  for (let i = 0; i < 25; i++) assert.deepEqual(await load(`http://x.test/${i}.css`, '203.0.113.1'), { error: 'blocked' }); // never sent
+  for (let i = 0; i < 20; i++) assert.deepEqual(await load(`https://localhost/limit-${i}.css`, '203.0.113.1'), { error: 'blocked' }, `${i}`);
+  assert.deepEqual(await load('https://localhost/limit-20.css', '203.0.113.1'), { error: 'limited' });
+  assert.deepEqual(await load('https://localhost/limit-0.css', '203.0.113.1'), { error: 'blocked' }); // kept from before
+  assert.deepEqual(await load('https://localhost/limit-21.css', '203.0.113.2'), { error: 'blocked' }); // another caller
+});

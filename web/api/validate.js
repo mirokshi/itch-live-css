@@ -28,8 +28,10 @@ export const POST = (request) =>
     if (typeof css !== 'string' || css.length > 50000) throw new BadRequest('css: text of at most 50000 characters');
     if (typeof html !== 'string' || html.length > 50000) throw new BadRequest('html: text of at most 50000 characters');
     if (!PAGES.includes(page)) throw new BadRequest(`page must be one of ${PAGES.join(', ')}`);
-    // R10's status and type need the @imports' answers (lib/imports.js: public hosts only, cached)
-    const checked = [...validate(css, page === 'profile' ? 'profile' : 'project', { served: true }), ...(await checkImports(css, load))];
+    // R10's status and type need the @imports' answers (lib/imports.js: public hosts only, cached, capped
+    // per caller; on Vercel x-real-ip is the client's address, set by its edge)
+    const ip = request.headers.get('x-real-ip') ?? request.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'local';
+    const checked = [...validate(css, page === 'profile' ? 'profile' : 'project', { served: true }), ...(await checkImports(css, (url) => load(url, ip)))];
     // without the user's HTML there is nothing to strip and no h1s to count
     if (html.trim()) checked.push(...checkMarkup(html), ...checkHeadings({ html, css, page, banner: banner === true, html5: html5 === true }));
     const problems = checked.map((p) => ({ ...p, title: TITLES[p.rule] ?? '' }));

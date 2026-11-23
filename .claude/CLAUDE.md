@@ -90,7 +90,8 @@ web/                         the Vercel web app (deployed 2026-10-24; React + Vi
                              @font-face by lib/googlefonts.js; env PAUSED=1 stops serving and saving, BLOCKED_IDS=a,b stops ids),
                              validate = engine validate() on the editor's CSS + rule titles read from §0, plus engine
                              checkImports() over lib/imports.js (R10: each @import's status and type; https on 443 to
-                             public IPs only, checked at connect time, headers only, 4 per call, 3 s, cached 10 min) and, given the
+                             public IPs only, checked at connect time, headers only, 4 per call, 3 s, cached 10 min; requests that go
+                             out capped at 20 a minute per caller (x-real-ip) and 120 per instance, in memory) and, given the
                              user's HTML, engine checkMarkup() (R11: classes and attributes itch strips, the same KEPT_CLASSES and
                              STRIPPED_ATTRS of engine/src/rules.js that src/preview.js's itchSanitize uses) and
                              checkHeadings() (R20: exactly one h1, banner and html5 from the editor),

@@ -3,6 +3,8 @@
 // https on port 443, every address checked when the connection is made (after redirects too, and with
 // no window for DNS to change in between) against private, local and metadata ranges. 3 s per URL in
 // all, up to 3 redirects, answers kept 10 minutes (failures 1 minute), at most 200 URLs remembered.
+// Requests that really go out are capped per caller and per instance (cached answers are free), so the
+// endpoint can't be used to make this server call other sites at will.
 
 import { lookup } from 'node:dns';
 import { request } from 'node:https';
@@ -14,6 +16,9 @@ const RETRY = 60 * 1000;
 const MAX_URLS = 200;
 const HOPS = 3;
 const UA = 'Mozilla/5.0 (compatible; itch-live-css validator)';
+const PER_IP = 20; // requests a minute
+const PER_INSTANCE = 120;
+const WINDOW = 60 * 1000;
 
 const PRIVATE = new BlockList();
 for (const [net, bits] of [
@@ -38,12 +43,37 @@ function safeLookup(hostname, options, callback) {
   });
 }
 
+// refused before any connection: not https on 443, or a private address written as such
+function refused(url) {
+  const u = new URL(url);
+  const host = u.hostname.replace(/^\[|\]$/g, '');
+  return u.protocol !== 'https:' || (u.port && u.port !== '443') || (isIP(host) && blocked(host));
+}
+
+// shortcut: counted in each instance's memory, so N instances allow N times as much; move it to Redis
+// if abuse shows up
+const spent = new Map(); // caller → timestamps within the window
+let everyone = [];
+function allowed(ip) {
+  const now = Date.now();
+  const mine = (spent.get(ip) ?? []).filter((t) => now - t < WINDOW);
+  everyone = everyone.filter((t) => now - t < WINDOW);
+  const ok = mine.length < PER_IP && everyone.length < PER_INSTANCE;
+  if (ok) {
+    mine.push(now);
+    everyone.push(now);
+  }
+  spent.delete(ip); // back of the line, as in the cache below
+  spent.set(ip, mine);
+  if (spent.size > 1000) spent.delete(spent.keys().next().value);
+  return ok;
+}
+
 // one request: { status, type, location } or { error, reason }
 function headers(url, ms) {
   return new Promise((resolve) => {
     const u = new URL(url);
-    const host = u.hostname.replace(/^\[|\]$/g, '');
-    if (u.protocol !== 'https:' || (u.port && u.port !== '443') || (isIP(host) && blocked(host))) return resolve({ error: 'blocked' });
+    if (refused(url)) return resolve({ error: 'blocked' });
     if (ms <= 0) return resolve({ error: 'timeout' });
     const req = request(u, { method: 'GET', lookup: safeLookup, headers: { 'User-Agent': UA, Accept: 'text/css,*/*;q=0.1' } }, (res) => {
       clearTimeout(timer);
@@ -62,9 +92,12 @@ function headers(url, ms) {
 }
 
 const cache = new Map(); // url → { res, until }
-export async function load(url) {
+// ip: the caller's address; past its limit → { error: 'limited' } (not kept, and the validator says nothing)
+export async function load(url, ip = 'local') {
   const kept = cache.get(url);
   if (kept && Date.now() < kept.until) return kept.res;
+  if (refused(url)) return { error: 'blocked' };
+  if (!allowed(ip)) return { error: 'limited' };
   const deadline = Date.now() + TIMEOUT;
   let res;
   for (let at = url, hop = 0; ; hop++) {
