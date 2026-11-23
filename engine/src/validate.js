@@ -4,7 +4,9 @@
 // covering and moving need the rendered page), R6 (url() beacons and [value] selectors; fake controls
 // need a person), R7–R10, R11 (only its ad-block part, ROADMAP H8), R12, R14 (outline and animated
 // properties), R15, R16, R17 (a reduced-motion guard for each moving element, the 5 s limit, nothing
-// left hidden; whether the still page reads well needs the rendered page), R18, R22 (project pages), R23.
+// left hidden; whether the still page reads well needs the rendered page), R18, R21 (symbols in
+// generated content without alt text; whether an opacity:0 hides something meaningful is intent),
+// R22 (project pages), R23.
 //
 // The rules are a PostCSS plugin, itchRules(): one visitor per node type, with Once/OnceExit for the
 // rules that need the whole sheet. validate() runs it over the tolerant parser, so problems still
@@ -244,6 +246,20 @@ function revealed(decls, frames) {
   return decls.find((d) => /^animation(-name)?$/.test(propOf(d)) && layers(d.value).some((l) => words(l).some(shows)));
 }
 
+// R21: a content value's text as the accessibility tree gets it (escapes decoded), whether it is only
+// strings, and whether it carries alt text ("★" / "")
+const STRINGS = /"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'/g;
+function generated(value) {
+  const text = [...value.matchAll(STRINGS)]
+    .map((m) => m[1] ?? m[2])
+    .join('')
+    .replace(/\\([0-9a-f]{1,6})\s?|\\(.)/gi, (_, hex, c) => (hex ? String.fromCodePoint(Math.min(parseInt(hex, 16), 0x10ffff)) : c));
+  const rest = value.replace(STRINGS, '');
+  return { text, onlyStrings: !/[^\s/]/.test(rest.replace(/\/.*$/s, '')), alt: rest.includes('/') };
+}
+// symbols only: no letters or digits, and more than ASCII punctuation (which screen readers mostly skip)
+const decorative = (text) => /[^\s!-/:-@[-`{-~]/.test(text) && !/[\p{L}\p{N}]/u.test(text);
+
 // R22: the first animation that keeps a containing-block property after it ends (fill both/forwards);
 // frames: @keyframes name → the properties it animates
 function filled(decls, frames) {
@@ -437,6 +453,13 @@ export function itchRules({ page, served = false } = {}) {
               const shown = !ctx.calm && text && revealed(decls, frames);
               if (shown) add('R17', 'warning', 'R17.hidden', { sel: short(rule.selectors[0]) }, shown);
             }
+          }
+
+          // R21: decorative generated text is read aloud unless some content declaration gives it alt text
+          if (rule.selectors.some((s) => /::?(before|after)\b/i.test(target(s)))) {
+            const contents = decls.filter((d) => propOf(d) === 'content').map((d) => ({ d, ...generated(d.value) }));
+            const loud = !contents.some((c) => c.alt) && contents.find((c) => c.onlyStrings && decorative(c.text));
+            if (loud) add('R21', 'warning', 'R21.alt', { value: short(loud.d.value), sel: short(rule.selectors[0]) }, loud.d);
           }
 
           // R22: on project pages, effects on the HTML5 game's ancestors trap it when itch maximizes it;

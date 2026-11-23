@@ -118,6 +118,24 @@ test('R6: no url() that loads only on interaction, no [value] selectors', () => 
   ]) assert.deepEqual(rules(css), [], css);
 });
 
+test('R21: decorative generated text gets the empty alt', () => {
+  for (const css of [
+    '#wrapper .a::before{content:"★"}',
+    '#wrapper .a:after{content:\'→ \'}',
+    '#wrapper .a::before{content:"\\2022"}', // an escaped bullet
+    '#wrapper{& .a::after{content:"✦✦"}}',
+  ]) assert.deepEqual(rules(css), ['R21'], css);
+  for (const css of [
+    '#wrapper .a::before{content:"★";content:"★" / ""}', // the fallback pair
+    '#wrapper .a::before{content:"▲ 12" / "12 views"}',
+    '#wrapper .a::before{content:"New!"}', // words are content
+    '#wrapper .a::before{content:"";content:" "}',
+    '#wrapper .a::before{content:"(";}#wrapper .a::after{content:" | "}', // ASCII punctuation
+    '#wrapper li::before{content:counter(n) " • "}', // the counter is content
+    '#wrapper .a{content:"★"}', // on the element itself, not generated
+  ]) assert.deepEqual(rules(css), [], css);
+});
+
 test("R22: no containing block or isolation on an HTML5 game's ancestors (project pages)", () => {
   const rules = (css, page) => validate(css, page ?? 'project').map((p) => p.rule).filter((r) => r !== 'R17'); // R17 has its own test
   for (const css of [

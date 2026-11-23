@@ -51,7 +51,7 @@ engine/                      phase 1, started 2026-10-24: render() (served) and 
                              scroll.js (reveal, stagger, unveil, progress, parallax, zoom, shrink: scroll-driven) and motion.js (entrance,
                              lift, tilt = native random(), pagefade = @view-transition): static, pasted, each an /ideas page and an
                              editor checkbox, listed once as TOGGLES in web/src/ideas.js (2026-11-10), test/mirokshi.js + .css = the owner's profile,
-                             importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R12, R14–R18, R22, R23 so far; R5, R6, R10, R11, R17 in part)
+                             importLine() and measure() (src/output.js), validate() (src/validate.js: R2–R12, R14–R18, R21–R23 so far; R5, R6, R10, R11, R17, R21 in part)
                              = the PostCSS plugin itchRules() over postcss-safe-parser, plus a "syntax" problem from the strict
                              parser; problems carry line/column and a code + params (English text in src/messages.json, the
                              web translates by code); src/rules.js = evidence-backed constants (caps, ad-block

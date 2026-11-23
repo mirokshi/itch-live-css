@@ -61,6 +61,9 @@
     "gate": "\"{{sel}}\": put hover effects inside @media (hover:hover)",
     "twin": "\"{{sel}}\" has no focus twin: give it the same effect on :focus-visible"
   },
+  "R21": {
+    "alt": "content:{{value}} on \"{{sel}}\" is read aloud by screen readers (\"black star\", \"bullet\"…): if it's decoration, follow it with content:{{value}} / \"\""
+  },
   "R22": {
     "trap": "{{decl}} on \"{{sel}}\", around an HTML5 game: when itch maximizes the game it stays inside this box (page-tall, or gone); put the effect on a ::before/::after, or skip game pages with :not(:has(.html_embed_widget))",
     "isolation": "{{decl}} on \"{{sel}}\", around an HTML5 game: itch's tool bar paints over the maximized game; release it with body.frame_maximized and isolation:auto (B4)",

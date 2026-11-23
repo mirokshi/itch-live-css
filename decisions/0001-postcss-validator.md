@@ -97,7 +97,7 @@ Leyenda de la columna «Con PostCSS»:
 | R18 | Hover dentro de `(hover:hover)` y con su equivalente de foco | Árbol | sí | |
 | R19 | Anillo de foco con contraste ≥ 3:1 | Parcial | – | Árbol: que haya B2 o un `outline` en `:focus-visible`. El contraste necesita los colores que se pintan de verdad. |
 | R20 | Un solo `h1` | No (HTML) | – | Se comprueba en el HTML de la bio o la descripción junto con el marcado de itch. Solo «no estilar `#wrapper h1` en jams» sale del árbol. |
-| R21 | `display:none` para lo que no debe oírse; alt vacío en el contenido decorativo | Parcial | – | Árbol: `content:"★"` sin la forma de alt `/ ""`. Si un `opacity:0` oculta algo con significado depende de la intención. |
+| R21 | `display:none` para lo que no debe oírse; alt vacío en el contenido decorativo | Parcial | parcial (aviso) | Árbol (hecho 2026-11-23): un `::before`/`::after` cuyo `content` es solo cadenas de símbolos (sin letras ni números, y más que puntuación ASCII; los escapes como `"\2022"` se decodifican) y ninguna declaración `content` de la regla lleva alt (`/ ""`). Si un `opacity:0` oculta algo con significado depende de la intención. |
 | R22 | Nada de `filter`/`transform`… en los ancestros del embed HTML5 | Árbol | sí (aviso) | Hecho 2026-11-23: selectores que terminan en `#wrapper`, `#inner_column`, `.inner_column`, `.view_game_page`, `.embed_wrapper` o un `:has()` con el juego, en páginas de proyecto; `isolation` y animaciones con fill mode `both`/`forwards` incluidas. No avisa si el selector se salta el juego (`:not(:has(.html_embed_widget))`) o si una regla de `.frame_maximized` lo devuelve a `none`/`auto`. Es aviso porque el validador no sabe si la página tiene un juego HTML5. |
 | R23 | `https://` absoluto en cada `url()` | Árbol | sí | |
 | R24 | Comprobar sin sesión, a 320/375 px | No (persona) | – | Es un paso de prueba. |
@@ -105,7 +105,7 @@ Leyenda de la columna «Con PostCSS»:
 **Totales:**
 - 11 reglas se comprueban del todo con el árbol (las 11 hechas; R22 desde el 2026-11-23);
 - 2 se comprueban sobre el texto (las dos hechas);
-- 7 se comprueban en parte (R5, R6, R10, R11 y R17 están en parte hechas);
+- 7 se comprueban en parte (R5, R6, R10, R11, R17 y R21 están en parte hechas; falta R19);
 - 4 no se pueden comprobar desde el CSS.
 
 PostCSS cambia **cómo** leen el CSS las reglas, no **cuáles** se pueden comprobar: las 4 marcadas «No» quedan fuera de alcance con cualquier parser de CSS.
@@ -202,4 +202,4 @@ Se valoró generar las comprobaciones desde el archivo principal y se descartó:
    - añadir `itchRules()` y el problema `syntax`.
 3. [ ] `engine/src/rules.js` con las constantes respaldadas por evidencia y sus ids de evidencia, y el test de comprobación cruzada con §0.
 4. [ ] `web/vercel.json`: un `installCommand` que también instale `engine/`.
-5. [ ] Tareas posteriores, fuera de este cambio: la parte comprobable de R21 (R22 y las de R5, R6 y R17 están hechas desde el 2026-11-23, como avisos).
+5. [x] Tareas posteriores, fuera de este cambio: R22 y las partes comprobables de R5, R6, R17 y R21 (hechas el 2026-11-23, como avisos). Quedan las partes del árbol de R19 (B2 o un `outline` en `:focus-visible`) y R20 (`#wrapper h1` en jams), que esta lista no incluía.
